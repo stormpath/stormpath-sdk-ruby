@@ -12,9 +12,11 @@ describe 'HTTP Clients test' do
     password = 'vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ'
     client.set_auth(domain, user, password)
 
-    response = client.get_content domain
+    httpMethod = 'get'
+    method = client.method("#{httpMethod}")
+    response = method.call domain
 
-    p MultiJson.load response
+    p MultiJson.load response.content
 
     response.to_s.should be_instance_of String
   end

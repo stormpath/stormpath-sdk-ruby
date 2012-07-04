@@ -1,45 +1,66 @@
-class DataStore
+require "stormpath-sdk/ds/resource_factory"
+require "stormpath-sdk/http/request"
 
-  String DEFAULT_SERVER_HOST = "api.stormpath.com"
+module Stormpath
 
-  Integer DEFAULT_API_VERSION = 1
+  module DataStore
 
-  def initialize(requestExecutor, baseUrl)
+    class DataStore
+
+      String DEFAULT_SERVER_HOST = "api.stormpath.com"
+
+      Integer DEFAULT_API_VERSION = 1
+
+      def initialize(requestExecutor, baseUrl)
 
 
-    #Assert.notNull(baseUrl, "baseUrl cannot be null");
-    #Assert.notNull(requestExecutor, "RequestExecutor cannot be null.");
-    @baseUrl = baseUrl;
-    @requestExecutor = requestExecutor;
-    #@resourceFactory = new DefaultResourceFactory(this);
-    #@mapMarshaller = new JacksonMapMarshaller();
-  end
+        #Assert.notNull(baseUrl, "baseUrl cannot be null");
+        #Assert.notNull(requestExecutor, "RequestExecutor cannot be null.");
+        @baseUrl = baseUrl;
+        @requestExecutor = requestExecutor;
+        @resourceFactory = ResourceFactory.new(self)
+        #@mapMarshaller = new JacksonMapMarshaller();
+      end
 
-  def instantiate(clazz)
+      def instantiate(clazz)
 
-  end
+      end
 
-  def instantiate(clazz, properties)
+      def instantiate(clazz, properties)
 
-  end
+      end
 
-  def load(href, clazz)
+      def load(href, clazz)
 
-    if (clazz == Tenant)
-      Tenant.new
+        data = execute_request('get', @baseUrl + href) #TODO: check for fully qualified URLS
+        @resourceFactory.instantiate(clazz, data)
+
+      end
+
+      # Private methods
+      private
+
+      def execute_request(httpMethod, href)
+
+        request = Request.new(httpMethod, href, nil, nil, nil)
+        response = @requestExecutor.execute_request request
+        response.content
+      end
+
+      def create(parentHref, resource)
+
+      end
+
+      def create(parentHref, resource, returnType)
+
+      end
+
+      def save(resource)
+
+      end
+
     end
   end
 
-  def create(parentHref, resource)
-
-  end
-
-  def create(parentHref, resource, returnType)
-
-  end
-
-  def save(resource)
-
-  end
-
 end
+
