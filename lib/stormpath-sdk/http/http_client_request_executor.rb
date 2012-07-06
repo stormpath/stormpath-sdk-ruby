@@ -20,6 +20,7 @@ module Stormpath
         @httpClient.set_auth(domain, user, password)
 
         method = @httpClient.method(request.httpMethod)
+
         method.call domain
 
       end

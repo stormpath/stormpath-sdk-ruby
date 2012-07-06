@@ -1,11 +1,11 @@
+require "stormpath-sdk/resource/resource"
+
 module Stormpath
 
   module Resource
 
-    class InstanceResource
-      # To change this template use File | Settings | File Templates.
+    class InstanceResource < Resource
     end
-
   end
 
 end

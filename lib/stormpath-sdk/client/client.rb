@@ -1,6 +1,6 @@
 require "stormpath-sdk/ds/data_store"
 require "stormpath-sdk/http/http_client_request_executor"
-require "stormpath-sdk/tenant/tenant"
+require "stormpath-sdk/resource/tenant"
 
 module Stormpath
 
@@ -20,7 +20,7 @@ module Stormpath
 
 
       def current_tenant
-        @dataStore.load("/tenants/current", Tenant)
+        @dataStore.load_resource("/tenants/current", Tenant)
       end
     end
   end

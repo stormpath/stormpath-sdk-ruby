@@ -9,9 +9,9 @@ module Stormpath
         @dataStore = dataStore
       end
 
-      def instantiate(clazz, data)
+      def instantiate(clazz, constructorArgs)
 
-        clazz.new @dataStore, data
+        clazz.new @dataStore, constructorArgs
       end
 
     end

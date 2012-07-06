@@ -13,8 +13,13 @@ describe Client do
     @client.should be_instance_of Client
   end
 
-  it "client should return a tenant" do
-    @client.current_tenant.should be_instance_of Tenant
+  it "tenant's properties must come complete'" do
+    tenant = @client.current_tenant
+    key = tenant.get_key
+    name = tenant.get_name
+
+    key.should be_kind_of String
+    name.should be_kind_of String
   end
 end
 

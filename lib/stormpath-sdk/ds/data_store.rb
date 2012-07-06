@@ -1,5 +1,6 @@
 require "stormpath-sdk/ds/resource_factory"
 require "stormpath-sdk/http/request"
+require "multi_json"
 
 module Stormpath
 
@@ -22,18 +23,14 @@ module Stormpath
         #@mapMarshaller = new JacksonMapMarshaller();
       end
 
-      def instantiate(clazz)
-
-      end
-
       def instantiate(clazz, properties)
 
       end
 
-      def load(href, clazz)
+      def load_resource(href, clazz)
 
         data = execute_request('get', @baseUrl + href) #TODO: check for fully qualified URLS
-        @resourceFactory.instantiate(clazz, data)
+        @resourceFactory.instantiate(clazz, data.to_hash)
 
       end
 
@@ -44,11 +41,7 @@ module Stormpath
 
         request = Request.new(httpMethod, href, nil, nil, nil)
         response = @requestExecutor.execute_request request
-        response.content
-      end
-
-      def create(parentHref, resource)
-
+        MultiJson.load response.content
       end
 
       def create(parentHref, resource, returnType)
