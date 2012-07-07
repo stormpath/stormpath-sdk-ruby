@@ -42,7 +42,7 @@ module Stormpath
       end
 
       def get_property_names
-        keys = @properties.keys
+        @properties.keys
       end
 
       def get_href
@@ -104,7 +104,7 @@ module Stormpath
 
       def materialize
         clazz = Kernel.const_get self.class.name.split('::').last
-        resource = @dataStore.load get_href, clazz
+        resource = @dataStore.load_resource get_href, clazz
         @properties.replace resource.properties
         @materialized = true
 

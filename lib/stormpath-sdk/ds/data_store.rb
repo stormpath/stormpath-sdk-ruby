@@ -25,6 +25,7 @@ module Stormpath
 
       def instantiate(clazz, properties)
 
+        @resourceFactory.instantiate(clazz, properties)
       end
 
       def load_resource(href, clazz)
