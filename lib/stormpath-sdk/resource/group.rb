@@ -1,20 +1,20 @@
 require "stormpath-sdk/resource/instance_resource"
 require "stormpath-sdk/resource/tenant"
-require "stormpath-sdk/resource/group_list"
+require "stormpath-sdk/resource/directory"
 require "stormpath-sdk/resource/account_list"
 
 module Stormpath
 
   module Resource
 
-    class Directory < InstanceResource
+    class Group < InstanceResource
 
       NAME = "name"
       DESCRIPTION = "description"
       STATUS = "status"
-      ACCOUNTS = "accounts"
-      GROUPS = "groups"
       TENANT = "tenant"
+      DIRECTORY = "directory"
+      ACCOUNTS = "accounts"
 
       def initialize dataStore, properties
 
@@ -56,25 +56,20 @@ module Stormpath
 
       end
 
-      def create_account account, registrationWorkflowEnabled
+      def get_tenant
+        get_resource_property TENANT, Tenant
+      end
 
-        #TODO:implement
+      def get_directory
+        get_resource_property DIRECTORY, Directory
       end
 
       def get_accounts
         get_resource_property ACCOUNTS, AccountList
       end
 
-      def get_groups
-        get_resource_property GROUPS, GroupList
-      end
-
-      def get_tenant
-        get_resource_property TENANT, Tenant
-      end
-
     end
 
   end
-end
 
+end

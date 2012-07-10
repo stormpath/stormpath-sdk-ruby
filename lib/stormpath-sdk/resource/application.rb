@@ -1,6 +1,7 @@
 require "stormpath-sdk/resource/instance_resource"
 require "stormpath-sdk/resource/tenant"
 require "stormpath-sdk/resource/account_list"
+require "stormpath-sdk/resource/password_reset_token"
 
 module Stormpath
 
@@ -65,7 +66,7 @@ module Stormpath
       end
 
       def get_password_reset_token
-        #TODO: implement
+        get_resource_property PASSWORD_RESET_TOKENS, PasswordResetToken
       end
 
       def authenticate request

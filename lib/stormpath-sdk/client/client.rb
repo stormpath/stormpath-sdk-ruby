@@ -8,6 +8,7 @@ module Stormpath
 
     include Stormpath::Http
     include Stormpath::DataStore
+    include Stormpath::Resource
 
     class Client
 

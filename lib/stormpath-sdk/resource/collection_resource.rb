@@ -5,7 +5,6 @@ module Stormpath
   module Resource
 
     class CollectionResource < Resource
-      include Enumerable
 
       OFFSET = "offset"
       LIMIT = "limit"

@@ -9,6 +9,8 @@ module Stormpath
       def initialize dataStore, properties
 
         @dataStore = dataStore
+        @readLock = Mutex.new
+        @writeLock = Mutex.new
         @properties = Hash.new
         set_properties properties
 
@@ -16,15 +18,23 @@ module Stormpath
 
       def set_properties properties
 
-        @dirty = false
+        @writeLock.lock
 
-        if (!properties.nil? and properties.is_a? Hash)
-          @properties.replace properties
-          href_only = @properties.size == 1 and @properties.has_key? HREF_PROP_NAME
-          @materialized = !href_only
+        begin
 
-        else
-          @materialized = false
+          @dirty = false
+
+          if (!properties.nil? and properties.is_a? Hash)
+            @properties.replace properties
+            href_only = @properties.size == 1 and @properties.has_key? HREF_PROP_NAME
+            @materialized = !href_only
+
+          else
+            @materialized = false
+          end
+
+        ensure
+          @writeLock.unlock
         end
       end
 
@@ -42,7 +52,14 @@ module Stormpath
       end
 
       def get_property_names
-        @properties.keys
+        @readLock.lock
+
+        begin
+          @properties.keys
+        ensure
+          @readLock.unlock
+        end
+
       end
 
       def get_href
@@ -87,27 +104,42 @@ module Stormpath
 
       def set_property name, value
 
-        if (value.nil?)
+        @writeLock.lock
 
-          removed = @properties.delete name
+        begin
+          if (value.nil?)
 
-          if (!removed.nil?)
+            removed = @properties.delete name
+
+            if (!removed.nil?)
+              @dirty = true
+            end
+
+          else
+            @properties.store name, value
             @dirty = true
           end
-
-        else
-          @properties.store name, value
-          @dirty = true
+        ensure
+          @writeLock.unlock
         end
 
       end
 
       def materialize
         clazz = Kernel.const_get self.class.name.split('::').last
-        resource = @dataStore.get_resource get_href, clazz
-        @properties.replace resource.properties
-        @materialized = true
 
+        @writeLock.lock
+
+        begin
+
+          resource = @dataStore.get_resource get_href, clazz
+          @properties.replace resource.properties
+          @materialized = true
+
+        ensure
+
+          @writeLock.unlock
+        end
       end
 
       private
@@ -122,7 +154,14 @@ module Stormpath
       end
 
       def read_property name
-        @properties[name]
+        @readLock.lock
+
+        begin
+          @properties[name]
+        ensure
+          @readLock.unlock
+        end
+
       end
     end
   end
