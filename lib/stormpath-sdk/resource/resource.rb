@@ -51,7 +51,7 @@ module Stormpath
 
       protected
 
-      attr_reader :dataStore, :materialized
+      attr_reader :dataStore, :materialized, :properties
 
       def get_resource_property key, clazz
 
@@ -104,7 +104,7 @@ module Stormpath
 
       def materialize
         clazz = Kernel.const_get self.class.name.split('::').last
-        resource = @dataStore.load_resource get_href, clazz
+        resource = @dataStore.get_resource get_href, clazz
         @properties.replace resource.properties
         @materialized = true
 
@@ -114,11 +114,11 @@ module Stormpath
 
       def get_href_from_hash(props)
 
-        value = !props.nil? and props.is_a? Hash ? props[HREF_PROP_NAME] : nil
-
-        if (value.is_a? Hash)
-          value
+        if (!props.nil? and props.is_a? Hash)
+          value = props[HREF_PROP_NAME]
         end
+
+        value
       end
 
       def read_property name

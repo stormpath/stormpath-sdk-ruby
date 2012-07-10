@@ -28,11 +28,34 @@ module Stormpath
         @resourceFactory.instantiate(clazz, properties)
       end
 
-      def load_resource(href, clazz)
+      def get_resource(href, clazz)
 
-        data = execute_request('get', @baseUrl + href) #TODO: check for fully qualified URLS
+        qHref = href
+
+        if (needs_to_be_fully_qualified qHref)
+          qHref = qualify qHref
+        end
+
+        data = execute_request('get', qHref)
         @resourceFactory.instantiate(clazz, data.to_hash)
 
+      end
+
+      protected
+
+      def needs_to_be_fully_qualified href
+        !href.downcase.start_with? 'http'
+      end
+
+      def qualify href
+
+        slashAdded = ''
+
+        if (!href.start_with? '/')
+          slashAdded = '/'
+        end
+
+        @baseUrl + slashAdded + href
       end
 
       # Private methods
@@ -43,14 +66,6 @@ module Stormpath
         request = Request.new(httpMethod, href, nil, nil, nil)
         response = @requestExecutor.execute_request request
         MultiJson.load response.content
-      end
-
-      def create(parentHref, resource, returnType)
-
-      end
-
-      def save(resource)
-
       end
 
     end

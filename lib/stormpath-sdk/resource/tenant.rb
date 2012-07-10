@@ -1,4 +1,6 @@
 require "stormpath-sdk/resource/instance_resource"
+require "stormpath-sdk/resource/application_list"
+require "stormpath-sdk/resource/directory_list"
 
 module Stormpath
 
@@ -29,9 +31,13 @@ module Stormpath
 
       def get_applications
 
+        get_resource_property APPLICATIONS, ApplicationList
+
       end
 
       def get_directories
+
+        get_resource_property DIRECTORIES, DirectoryList
 
       end
 

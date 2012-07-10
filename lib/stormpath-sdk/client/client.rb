@@ -20,7 +20,7 @@ module Stormpath
 
 
       def current_tenant
-        @dataStore.load_resource("/tenants/current", Tenant)
+        @dataStore.get_resource("/tenants/current", Tenant)
       end
     end
   end

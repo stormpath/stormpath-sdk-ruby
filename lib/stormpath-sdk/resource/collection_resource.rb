@@ -45,10 +45,10 @@ module Stormpath
 
       def to_resource_array vals
 
-        clazz = Kernel.const_get self.class.name.split('::').last
+        clazz = get_item_type
         items = Array.new
 
-        if vals.is_a? Hash
+        if vals.is_a? Array
 
           i = 0
           vals.each { |val|
@@ -56,6 +56,7 @@ module Stormpath
             items[i] = resource
             i = i + 1
           }
+
         end
 
         items
