@@ -1,4 +1,5 @@
 require "httpclient"
+require "base64"
 
 module Stormpath
 
@@ -21,9 +22,18 @@ module Stormpath
 
         method = @httpClient.method(request.httpMethod)
 
-        method.call domain
+        if request.body.nil?
+
+          method.call domain
+
+        else
+
+          method.call domain, request.body, {'Authorization' => ' Basic ' + Base64.encode64(user + ':' + password), 'Content-Type' => 'application/json'}
+
+        end
 
       end
+
     end
 
   end

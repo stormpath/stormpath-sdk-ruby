@@ -2,6 +2,7 @@ require "stormpath-sdk/resource/instance_resource"
 require "stormpath-sdk/resource/tenant"
 require "stormpath-sdk/resource/account_list"
 require "stormpath-sdk/resource/password_reset_token"
+require "stormpath-sdk/auth/basic_authenticator"
 
 module Stormpath
 
@@ -70,7 +71,8 @@ module Stormpath
       end
 
       def authenticate request
-        #TODO: implement
+        response = BasicAuthenticator.new dataStore
+        response.authenticate get_href, request
       end
 
     end

@@ -66,9 +66,11 @@ module Stormpath
         get_property HREF_PROP_NAME
       end
 
+      attr_reader :properties
+
       protected
 
-      attr_reader :dataStore, :materialized, :properties
+      attr_reader :dataStore, :materialized
 
       def get_resource_property key, clazz
 
