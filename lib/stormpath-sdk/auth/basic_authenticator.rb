@@ -25,7 +25,7 @@ module Stormpath
 
         value = username + ':' + pwString
 
-        value = Base64.encode64 value
+        value = Base64.encode64(value).tr("\n", '')
 
         attempt = @dataStore.instantiate BasicLoginAttempt, nil
         attempt.set_type 'basic'

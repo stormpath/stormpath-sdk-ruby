@@ -3,6 +3,7 @@ require "stormpath-sdk/resource/tenant"
 require "stormpath-sdk/resource/account_list"
 require "stormpath-sdk/resource/password_reset_token"
 require "stormpath-sdk/auth/basic_authenticator"
+require "stormpath-sdk/resource/status"
 
 module Stormpath
 
@@ -10,6 +11,7 @@ module Stormpath
 
     class Application < InstanceResource
 
+      include Status
 
       NAME = "name"
       DESCRIPTION = "description"
@@ -51,8 +53,8 @@ module Stormpath
 
       def set_status status
 
-        if (!status.nil?)
-          set_property STATUS, status.upcase
+        if (get_status_hash.has_key? status)
+          set_property STATUS, get_status_hash[status]
         end
 
       end

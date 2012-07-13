@@ -1,5 +1,6 @@
 require "stormpath-sdk/ds/resource_factory"
 require "stormpath-sdk/http/request"
+require "stormpath-sdk/resource/utils"
 require "multi_json"
 
 module Stormpath
@@ -8,9 +9,11 @@ module Stormpath
 
     class DataStore
 
-      String DEFAULT_SERVER_HOST = "api.stormpath.com"
+      include Stormpath::Resource::Utils
 
-      Integer DEFAULT_API_VERSION = 1
+      DEFAULT_SERVER_HOST = "api.stormpath.com"
+
+      DEFAULT_API_VERSION = 1
 
       def initialize(requestExecutor, baseUrl)
 
@@ -42,6 +45,27 @@ module Stormpath
 
       def create parentHref, resource, returnType
         save_resource parentHref, resource, returnType
+      end
+
+      def save resource
+        #Assert.notNull(resource, "resource argument cannot be null.");
+        #Assert.isInstanceOf(AbstractResource.class, resource);
+        #Assert.isInstanceOf(Saveable.class, resource);
+
+        href = resource.get_href
+        #Assert.isTrue(StringUtils.hasLength(href), "save may only be called on objects that have already been persisted (i.e. they have an existing href).");
+
+        if (needs_to_be_fully_qualified(href))
+          href = qualify(href)
+        end
+
+        clazz = to_class_from_instance resource
+
+        returnValue = save_resource href, resource, clazz
+
+        #ensure the caller's argument is updated with what is returned from the server:
+        resource.set_properties returnValue.properties
+
       end
 
       protected

@@ -2,12 +2,15 @@ require "stormpath-sdk/resource/instance_resource"
 require "stormpath-sdk/resource/tenant"
 require "stormpath-sdk/resource/directory"
 require "stormpath-sdk/resource/account_list"
+require "stormpath-sdk/resource/status"
 
 module Stormpath
 
   module Resource
 
     class Group < InstanceResource
+
+      include Status
 
       NAME = "name"
       DESCRIPTION = "description"
@@ -50,8 +53,8 @@ module Stormpath
 
       def set_status status
 
-        if (!status.nil?)
-          set_property STATUS, status.upcase
+        if (get_status_hash.has_key? status)
+          set_property STATUS, get_status_hash[status]
         end
 
       end

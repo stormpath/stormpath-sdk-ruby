@@ -71,12 +71,14 @@ describe Client do
     description = application.get_description
     tenant = application.get_tenant
     accounts = application.get_accounts
+    passwordResetTokens = application.get_password_reset_token
 
     name.should be_kind_of String
     status.should be_kind_of String
     description.should be_kind_of String
     tenant.should be_kind_of Tenant
     accounts.should be_kind_of AccountList
+    passwordResetTokens.should be_kind_of PasswordResetToken
 
     accounts.each { |acc|
 
@@ -188,15 +190,18 @@ describe Client do
     surname = account.get_surname
     groups = account.get_groups
     directory = account.get_directory
+    emailVerificationToken = account.get_email_verification_token
 
     username.should be_kind_of String
     status.should be_kind_of String
     email.should be_kind_of String
     givenName.should be_kind_of String
-    middleName.should be_kind_of String
+    #  middleName is optional
+    #middleName.should be_kind_of String
     surname.should be_kind_of String
     groups.should be_kind_of GroupList
     directory.should be_kind_of Directory
+    emailVerificationToken.should be_kind_of EmailVerificationToken
 
     groups.each { |group|
 

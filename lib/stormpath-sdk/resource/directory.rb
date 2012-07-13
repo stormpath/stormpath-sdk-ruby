@@ -2,12 +2,16 @@ require "stormpath-sdk/resource/instance_resource"
 require "stormpath-sdk/resource/tenant"
 require "stormpath-sdk/resource/group_list"
 require "stormpath-sdk/resource/account_list"
+require "stormpath-sdk/resource/account"
+require "stormpath-sdk/resource/status"
 
 module Stormpath
 
   module Resource
 
     class Directory < InstanceResource
+
+      include Status
 
       NAME = "name"
       DESCRIPTION = "description"
@@ -50,15 +54,20 @@ module Stormpath
 
       def set_status status
 
-        if (!status.nil?)
-          set_property STATUS, status.upcase
+        if (get_status_hash.has_key? status)
+          set_property STATUS, get_status_hash[status]
         end
 
       end
 
       def create_account account, registrationWorkflowEnabled
+        accounts = get_accounts
+        href = accounts.get_href
+        if (registrationWorkflowEnabled)
+          href += "?registrationWorkflowEnabled=" + registrationWorkflowEnabled
+        end
 
-        #TODO:implement
+        dataStore.create href, account, Account
       end
 
       def get_accounts

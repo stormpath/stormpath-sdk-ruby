@@ -1,8 +1,12 @@
+require "stormpath-sdk/resource/utils"
+
 module Stormpath
 
   module Resource
 
     class Resource
+
+      include Utils
 
       HREF_PROP_NAME = "href"
 
@@ -128,7 +132,7 @@ module Stormpath
       end
 
       def materialize
-        clazz = Kernel.const_get self.class.name.split('::').last
+        clazz = to_class_from_instance self
 
         @writeLock.lock
 

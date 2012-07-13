@@ -1,9 +1,4 @@
-source "http://rubygems.org"
+source :rubygems
 
-gem "rake"
-gem "rspec-core"
-gem "rspec-mocks"
-gem "rspec-expectations"
-gem "httpclient"
-gem "multi_json"
+gemspec
 

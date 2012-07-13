@@ -1,10 +1,16 @@
-require 'rake/testtask'
+require 'rubygems'
+require 'rubygems/package_task'
+require 'rspec/core/rake_task'
 
-Rake::TestTask.new do |t|
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
+spec = eval(File.read('stormpath-sdk.gemspec'))
+
+Gem::PackageTask.new(spec) do |p|
+  p.gem_spec = spec
 end
 
-desc "Run tests"
-task :default => :test
+RSpec::Core::RakeTask.new do |t|
+  t.pattern = '**/*_spec.rb'
+  t.rspec_opts = ['-c']
+end
+
+task :default => :spec

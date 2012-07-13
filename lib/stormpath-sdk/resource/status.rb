@@ -4,12 +4,11 @@ module Stormpath
 
     module Status
 
-      :ENABLED
-      :DISABLED
-      status_hash = {:ENABLED => :ENABLED.to_s, :DISABLED => :DISABLED.to_s}
+      ENABLED = 'ENABLED'
+      DISABLED = 'DISABLED'
 
       def get_status_hash
-        status_hash
+        {ENABLED => ENABLED, DISABLED => DISABLED}
       end
 
     end

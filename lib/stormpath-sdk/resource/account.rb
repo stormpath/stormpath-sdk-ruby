@@ -22,7 +22,7 @@ module Stormpath
       STATUS = "status"
       GROUPS = "groups"
       DIRECTORY = "directory"
-      EMAIL_VERIFICATION_TOKENS = "emailVerificationTokens"
+      EMAIL_VERIFICATION_TOKEN = "emailVerificationToken"
 
       def initialize dataStore, properties
 
@@ -87,7 +87,7 @@ module Stormpath
       def set_status status
 
         if (get_status_hash.has_key? status)
-          #set_property STATUS, get_status_hash.fetch status TODO: implement correctly
+          set_property STATUS, get_status_hash[status]
         end
 
       end
@@ -101,7 +101,7 @@ module Stormpath
       end
 
       def get_email_verification_token
-        get_resource_property EMAIL_VERIFICATION_TOKENS, EmailVerificationToken
+        get_resource_property EMAIL_VERIFICATION_TOKEN, EmailVerificationToken
       end
 
     end
