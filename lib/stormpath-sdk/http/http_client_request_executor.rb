@@ -1,3 +1,5 @@
+require "stormpath-sdk/util/assert"
+require "stormpath-sdk/http/response"
 require "httpclient"
 
 module Stormpath
@@ -6,6 +8,8 @@ module Stormpath
 
     class HttpClientRequestExecutor
 
+      include Stormpath::Util::Assert
+
       def initialize(apiKey)
         @apiKey = apiKey
         @httpClient = HTTPClient.new
@@ -13,6 +17,8 @@ module Stormpath
       end
 
       def execute_request(request)
+
+        assert_not_nil request, "Request argument cannot be null."
 
         domain = request.href
         user = @apiKey.id
@@ -23,13 +29,15 @@ module Stormpath
 
         if request.body.nil?
 
-          method.call domain
+          response = method.call domain
 
         else
 
-          method.call domain, request.body, {'Content-Type' => 'application/json'}
+          response = method.call domain, request.body, {'Content-Type' => 'application/json'}
 
         end
+
+        Stormpath::Http::Response.new response.http_header.status_code, response.http_header.body_type, response.content, response.http_header.body_size
 
       end
 

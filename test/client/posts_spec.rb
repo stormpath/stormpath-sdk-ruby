@@ -25,6 +25,26 @@ describe "POST Operations" do
     result.should be_kind_of Account
   end
 
+  it "application should NOT be able to authenticate and catch the error" do
+
+    begin
+
+      href = 'applications/A0atUpZARYGApaN5f88O3A'
+      application = @dataStore.get_resource href, Application
+      result = application.authenticate UsernamePasswordRequest.new 'kentucky', 'WRONG_PASS', nil
+
+    rescue ResourceError => re
+      p '** Authentication Error **'
+      p 'Message: ' + re.message
+      p 'HTTP Status: ' + re.get_status.to_s
+      p 'Developer Message: ' + re.get_developer_message
+      p 'More Information: ' + re.get_more_info
+      p 'Error Code: ' + re.get_code.to_s
+    end
+
+    result.should_not be_kind_of Account
+  end
+
   it "directory should be able to create account" do
 
     if (@createAccount)

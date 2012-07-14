@@ -3,10 +3,9 @@ Gem::Specification.new do |s|
   s.version = '0.1.0'
   s.date = '2012-07-13'
   s.summary = "Stormpath SDK"
-  s.description = "Stormpath SDK to used communicated with the Stormpath REST API"
+  s.description = "Stormpath SDK used to interact with the Stormpath REST API"
   s.authors = ["Elder Crisostomo"]
   s.email = 'elder@stormpath.com'
-  s.files = ["lib/stormpath-sdk.rb"]
   s.homepage = 'https://github.com/stormpath/stormpath-sdk-ruby'
 
   s.platform = Gem::Platform::RUBY

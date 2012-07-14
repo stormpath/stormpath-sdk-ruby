@@ -1,6 +1,9 @@
 require "stormpath-sdk/ds/resource_factory"
 require "stormpath-sdk/http/request"
 require "stormpath-sdk/resource/utils"
+require "stormpath-sdk/util/assert"
+require "stormpath-sdk/resource/error"
+require "stormpath-sdk/resource/resource_error"
 require "multi_json"
 
 module Stormpath
@@ -10,6 +13,7 @@ module Stormpath
     class DataStore
 
       include Stormpath::Resource::Utils
+      include Stormpath::Util::Assert
 
       DEFAULT_SERVER_HOST = "api.stormpath.com"
 
@@ -17,9 +21,8 @@ module Stormpath
 
       def initialize(requestExecutor, baseUrl)
 
-
-        #Assert.notNull(baseUrl, "baseUrl cannot be null");
-        #Assert.notNull(requestExecutor, "RequestExecutor cannot be null.");
+        assert_not_nil baseUrl, "baseUrl cannot be null"
+        assert_not_nil requestExecutor, "RequestExecutor cannot be null."
         @baseUrl = baseUrl;
         @requestExecutor = requestExecutor;
         @resourceFactory = ResourceFactory.new(self)
@@ -48,12 +51,11 @@ module Stormpath
       end
 
       def save resource
-        #Assert.notNull(resource, "resource argument cannot be null.");
-        #Assert.isInstanceOf(AbstractResource.class, resource);
-        #Assert.isInstanceOf(Saveable.class, resource);
+        assert_not_nil resource, "resource argument cannot be null."
+        assert_kind_of Resource, resource, "resource argument must be instance of Resource"
 
         href = resource.get_href
-        #Assert.isTrue(StringUtils.hasLength(href), "save may only be called on objects that have already been persisted (i.e. they have an existing href).");
+        assert_is_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
 
         if (needs_to_be_fully_qualified(href))
           href = qualify(href)
@@ -90,16 +92,24 @@ module Stormpath
 
       def execute_request(httpMethod, href, body)
 
-        request = Request.new(httpMethod, href, nil, nil, body)
+        request = Stormpath::Http::Request.new(httpMethod, href, nil, nil, body)
         response = @requestExecutor.execute_request request
-        MultiJson.load response.content
+
+        result = MultiJson.load response.body
+
+        if response.error?
+          error = Error.new result
+          raise ResourceError.new error
+        end
+
+        result
       end
 
       def save_resource href, resource, returnType
 
-        #Assert.notNull(resource, "resource argument cannot be null.");
-        #Assert.notNull(returnType, "returnType class cannot be null.");
-        #Assert.isInstanceOf(AbstractResource.class, resource);
+        assert_not_nil resource, "resource argument cannot be null."
+        assert_not_nil returnType, "returnType class cannot be null."
+        assert_kind_of Resource, resource, "resource argument must be instance of Resource"
 
         qHref = href
 
