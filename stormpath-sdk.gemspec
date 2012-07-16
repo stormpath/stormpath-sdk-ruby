@@ -22,7 +22,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-mocks', '~> 2.10.1'
   s.add_development_dependency 'rack', '~> 1.4.1'
 
-
-  s.extra_rdoc_files = ['README.md', 'LICENSE']
-  s.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'stormpath-sdk', '--main', 'README.md']
+  s.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'stormpath-sdk', '--main']
 end

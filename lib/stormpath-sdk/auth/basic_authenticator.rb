@@ -1,12 +1,10 @@
-require "base64"
-require "stormpath-sdk/auth/basic_login_attempt"
-require "stormpath-sdk/auth/authentication_result"
-
 module Stormpath
 
   module Authentication
 
     class BasicAuthenticator
+
+      include Stormpath::Util::Assert
 
       def initialize dataStore
         @dataStore = dataStore
@@ -14,8 +12,8 @@ module Stormpath
 
       def authenticate parentHref, request
 
-        #Assert.notNull(parentHref, "href argument must be specified");
-        #Assert.isInstanceOf(UsernamePasswordRequest.class, request, "Only UsernamePasswordRequest instances are supported.");
+        assert_not_nil parentHref, "parentHref argument must be specified"
+        assert_kind_of UsernamePasswordRequest, request, "Only UsernamePasswordRequest instances are supported."
 
         username = request.get_principals
         username = (username != nil) ? username : ''

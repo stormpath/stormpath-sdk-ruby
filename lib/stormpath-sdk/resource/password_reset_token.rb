@@ -1,6 +1,3 @@
-require "stormpath-sdk/resource/resource"
-require "stormpath-sdk/resource/account"
-
 module Stormpath
 
   module Resource

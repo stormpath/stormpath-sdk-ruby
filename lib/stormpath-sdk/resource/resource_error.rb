@@ -1,5 +1,3 @@
-require "stormpath-sdk/resource/error"
-
 module Stormpath
 
   module Resource

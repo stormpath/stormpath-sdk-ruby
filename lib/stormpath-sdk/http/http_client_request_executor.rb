@@ -1,13 +1,10 @@
-require "stormpath-sdk/util/assert"
-require "stormpath-sdk/http/response"
-require "httpclient"
-
 module Stormpath
 
   module Http
 
     class HttpClientRequestExecutor
 
+      include Stormpath::Http
       include Stormpath::Util::Assert
 
       def initialize(apiKey)
@@ -37,7 +34,7 @@ module Stormpath
 
         end
 
-        Stormpath::Http::Response.new response.http_header.status_code, response.http_header.body_type, response.content, response.http_header.body_size
+        Response.new response.http_header.status_code, response.http_header.body_type, response.content, response.http_header.body_size
 
       end
 

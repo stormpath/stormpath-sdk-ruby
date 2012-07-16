@@ -1,7 +1,3 @@
-require "stormpath-sdk/resource/instance_resource"
-require "stormpath-sdk/resource/application_list"
-require "stormpath-sdk/resource/directory_list"
-
 module Stormpath
 
   module Resource

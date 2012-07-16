@@ -1,10 +1,3 @@
-require "stormpath-sdk/resource/instance_resource"
-require "stormpath-sdk/resource/directory"
-require "stormpath-sdk/resource/tenant"
-require "stormpath-sdk/resource/email_verification_token"
-require "stormpath-sdk/resource/group_list"
-require "stormpath-sdk/resource/status"
-
 module Stormpath
 
   module Resource

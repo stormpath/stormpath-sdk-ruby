@@ -1,6 +1,3 @@
-require "stormpath-sdk/resource/collection_resource"
-require "stormpath-sdk/resource/directory"
-
 module Stormpath
 
   module Resource

@@ -1,5 +1,3 @@
-require "httpclient"
-
 module Stormpath
 
   module Http

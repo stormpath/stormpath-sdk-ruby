@@ -1,10 +1,3 @@
-require "stormpath-sdk/resource/instance_resource"
-require "stormpath-sdk/resource/tenant"
-require "stormpath-sdk/resource/account_list"
-require "stormpath-sdk/resource/password_reset_token"
-require "stormpath-sdk/auth/basic_authenticator"
-require "stormpath-sdk/resource/status"
-
 module Stormpath
 
   module Resource
@@ -73,7 +66,7 @@ module Stormpath
       end
 
       def authenticate request
-        response = BasicAuthenticator.new dataStore
+        response = Stormpath::Authentication::BasicAuthenticator.new dataStore
         response.authenticate get_href, request
       end
 

@@ -1,17 +1,11 @@
-require "stormpath-sdk/ds/resource_factory"
-require "stormpath-sdk/http/request"
-require "stormpath-sdk/resource/utils"
-require "stormpath-sdk/util/assert"
-require "stormpath-sdk/resource/error"
-require "stormpath-sdk/resource/resource_error"
-require "multi_json"
-
 module Stormpath
 
   module DataStore
 
     class DataStore
 
+      include Stormpath::Http
+      include Stormpath::Resource
       include Stormpath::Resource::Utils
       include Stormpath::Util::Assert
 
@@ -92,7 +86,7 @@ module Stormpath
 
       def execute_request(httpMethod, href, body)
 
-        request = Stormpath::Http::Request.new(httpMethod, href, nil, nil, body)
+        request = Request.new(httpMethod, href, nil, nil, body)
         response = @requestExecutor.execute_request request
 
         result = MultiJson.load response.body

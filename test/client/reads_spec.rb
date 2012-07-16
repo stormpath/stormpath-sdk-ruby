@@ -1,6 +1,7 @@
 require "stormpath-sdk"
 
 include Stormpath::Client
+include Stormpath::Resource
 
 describe Client do
 

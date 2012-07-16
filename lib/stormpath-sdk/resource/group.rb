@@ -1,9 +1,3 @@
-require "stormpath-sdk/resource/instance_resource"
-require "stormpath-sdk/resource/tenant"
-require "stormpath-sdk/resource/directory"
-require "stormpath-sdk/resource/account_list"
-require "stormpath-sdk/resource/status"
-
 module Stormpath
 
   module Resource

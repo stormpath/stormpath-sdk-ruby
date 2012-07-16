@@ -1,5 +1,3 @@
-require "stormpath-sdk/resource/instance_resource"
-
 module Stormpath
 
   module Resource
