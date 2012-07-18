@@ -16,6 +16,7 @@ module Stormpath
       GROUPS = "groups"
       DIRECTORY = "directory"
       EMAIL_VERIFICATION_TOKEN = "emailVerificationToken"
+      GROUP_MEMBERSHIPS = "groupMemberships"
 
       def initialize dataStore, properties
 
@@ -95,6 +96,17 @@ module Stormpath
 
       def get_email_verification_token
         get_resource_property EMAIL_VERIFICATION_TOKEN, EmailVerificationToken
+      end
+
+      def add_group group
+
+        groupMembership = dataStore.instantiate GroupMembership, nil
+        groupMembership.create self, group
+
+      end
+
+      def get_group_memberships
+        get_resource_property GROUP_MEMBERSHIPS, GroupMembershipList
       end
 
     end

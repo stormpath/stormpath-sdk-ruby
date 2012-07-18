@@ -44,23 +44,34 @@ module Stormpath
         save_resource parentHref, resource, returnType
       end
 
-      def save resource
+      def save resource, *clazz
         assert_not_nil resource, "resource argument cannot be null."
         assert_kind_of Resource, resource, "resource argument must be instance of Resource"
 
         href = resource.get_href
-        assert_is_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
+        assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
 
         if (needs_to_be_fully_qualified(href))
           href = qualify(href)
         end
 
-        clazz = to_class_from_instance resource
+        clazz = (clazz.nil? or clazz.length == 0) ? to_class_from_instance(resource) : clazz[0]
 
         returnValue = save_resource href, resource, clazz
 
         #ensure the caller's argument is updated with what is returned from the server:
         resource.set_properties returnValue.properties
+
+        returnValue
+
+      end
+
+      def delete resource
+
+        assert_not_nil resource, "resource argument cannot be null."
+        assert_kind_of Resource, resource, "resource argument must be instance of Resource"
+
+        execute_request('delete', resource.get_href, nil)
 
       end
 

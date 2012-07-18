@@ -13,6 +13,12 @@ describe "POST Operations" do
     @updateApplication = false
     @updateDirectory = false
     @updateGroup = false
+    @createApplication = false
+    @verifyEmail = false
+    @createPasswordResetToken = false
+    @verifyPasswordResetToken = false
+    @createGroupMemberShipFromAccount = false
+    @createGroupMemberShipFromGroup = false
   end
 
   it "application should be able to authenticate" do
@@ -52,7 +58,7 @@ describe "POST Operations" do
       href = 'directories/_oIg8zU5QWyiz22DcVYVLg'
       directory = @dataStore.get_resource href, Directory
 
-      account = Account.new @dataStore, nil
+      account = @dataStore.instantiate Account, nil
       account.set_email 'rubysdk@email.com'
       account.set_given_name 'Ruby'
       account.set_password 'super_P4ss'
@@ -126,7 +132,7 @@ describe "POST Operations" do
     if (@updateGroup)
 
       href = 'groups/Ki3qEVTeSZmaRUgAdf9h_w'
-      group = @dataStore.get_resource href, Directory
+      group = @dataStore.get_resource href, Group
 
       group.set_name group.get_name + ' Modified'
       group.set_status Status::ENABLED
@@ -139,5 +145,125 @@ describe "POST Operations" do
 
   end
 
+  it "application should be created" do
+
+    if (@createApplication)
+
+      tenant = @client.current_tenant
+
+      application = @dataStore.instantiate Application, nil
+      application.set_name 'Test Application Creation'
+      application.set_description 'Test Application Description'
+
+      result = tenant.create_application application
+
+      result.should be_kind_of Application
+
+    end
+
+  end
+
+  it "email should get verified" do
+
+    if (@verifyEmail)
+
+      verificationToken = 'ujhNWAIVT2Wtfk-no3ajtw'
+
+      tenant = @client.current_tenant
+
+      result = tenant.verify_account_email verificationToken
+
+      result.should be_kind_of Account
+
+    end
+
+  end
+
+  it "password reset token should be created" do
+
+    if (@createPasswordResetToken)
+
+      href = 'applications/A0atUpZARYGApaN5f88O3A'
+      application = @dataStore.get_resource href, Application
+
+      passwordResetToken = application.create_password_reset_token 'rubysdk@email.com'
+
+      passwordResetToken.should be_kind_of PasswordResetToken
+
+    end
+
+  end
+
+  it "password reset token should be verified" do
+
+    if (@verifyPasswordResetToken)
+
+      href = 'applications/A0atUpZARYGApaN5f88O3A'
+      application = @dataStore.get_resource href, Application
+
+      passwordResetToken = application.verify_password_reset_token 'XW1AAKnlT-6sX0KEvLAbDg'
+
+      passwordResetToken.should be_kind_of PasswordResetToken
+
+    end
+
+  end
+
+  it "account should be linked to specified group" do
+
+    if (@createGroupMemberShipFromAccount)
+
+      groupHref = 'groups/Ki3qEVTeSZmaRUgAdf9h_w'
+      group = @dataStore.get_resource groupHref, Group
+
+      accountHref = 'accounts/9T-6HmQ5SsygYGH1xDcysQ'
+      account = @dataStore.get_resource accountHref, Account
+
+      account.add_group group
+
+      groupLinked = false
+      account.get_group_memberships.each { |groupMembership|
+
+        group = groupMembership.get_group
+
+        if (!group.nil? and group.get_href.include? groupHref)
+          groupLinked = true
+          break
+        end
+      }
+
+      groupLinked.should == true
+
+    end
+
+  end
+
+
+  it "group should be linked to specified account" do
+
+    if (@createGroupMemberShipFromGroup)
+
+      groupHref = 'groups/1h9hasRvRr-8sx5GeJN_Dg'
+      group = @dataStore.get_resource groupHref, Group
+
+      accountHref = 'accounts/9T-6HmQ5SsygYGH1xDcysQ'
+      account = @dataStore.get_resource accountHref, Account
+
+      group.add_account account
+
+      accountLinked = false
+      group.get_accounts.each { |tmpAccount|
+
+        if (tmpAccount.get_href.include? accountHref)
+          accountLinked = true
+          break
+        end
+      }
+
+      accountLinked.should == true
+
+    end
+
+  end
 
 end

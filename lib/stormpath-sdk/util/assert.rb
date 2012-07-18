@@ -18,7 +18,7 @@ module Stormpath
 
       def assert_true arg, message
 
-        raise ArgumentError, message, caller unless !arg
+        raise ArgumentError, message, caller unless arg
 
       end
     end

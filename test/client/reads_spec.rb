@@ -192,6 +192,7 @@ describe Client do
     groups = account.get_groups
     directory = account.get_directory
     emailVerificationToken = account.get_email_verification_token
+    groupMemberShips = account.get_group_memberships
 
     username.should be_kind_of String
     status.should be_kind_of String
@@ -203,6 +204,7 @@ describe Client do
     groups.should be_kind_of GroupList
     directory.should be_kind_of Directory
     emailVerificationToken.should be_kind_of EmailVerificationToken
+    groupMemberShips.should be_kind_of GroupMembershipList
 
     groups.each { |group|
 

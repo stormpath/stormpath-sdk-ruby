@@ -65,6 +65,13 @@ module Stormpath
         get_resource_property ACCOUNTS, AccountList
       end
 
+      def add_account account
+
+        groupMembership = dataStore.instantiate GroupMembership, nil
+        groupMembership.create account, self
+
+      end
+
     end
 
   end

@@ -9,7 +9,7 @@ module Stormpath
       APPLICATIONS = "applications"
       DIRECTORIES = "directories"
 
-      def initialize(dataStore, propertiesHash)
+      def initialize dataStore, propertiesHash
         super dataStore, propertiesHash
       end
 
@@ -21,7 +21,10 @@ module Stormpath
         get_property KEY
       end
 
-      def createApplication(application)
+      def create_application application
+
+        href = "/applications"; #TODO: enable auto discovery
+        dataStore.create href, application, Application
 
       end
 
@@ -35,6 +38,20 @@ module Stormpath
 
         get_resource_property DIRECTORIES, DirectoryList
 
+      end
+
+      def verify_account_email token
+
+        #TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
+        href = "/accounts/emailVerificationTokens/" + token
+
+        tokenHash = Hash.new
+        tokenHash.store HREF_PROP_NAME, href
+
+        evToken = dataStore.instantiate EmailVerificationToken, tokenHash
+
+        #execute a POST (should clean this up / make it more obvious)
+        dataStore.save evToken, Account
       end
 
     end

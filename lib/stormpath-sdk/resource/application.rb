@@ -65,6 +65,28 @@ module Stormpath
         get_resource_property PASSWORD_RESET_TOKENS, PasswordResetToken
       end
 
+      def create_password_reset_token email
+
+        href = get_password_reset_token.get_href
+
+        passwordResetProps = Hash.new
+        passwordResetProps.store 'email', email
+
+        passwordResetToken = dataStore.instantiate PasswordResetToken, passwordResetProps
+
+        dataStore.create href, passwordResetToken, PasswordResetToken
+
+      end
+
+      def verify_password_reset_token token
+
+        href = get_password_reset_token.get_href
+        href += '/' + token
+
+        dataStore.get_resource href, PasswordResetToken
+
+      end
+
       def authenticate request
         response = Stormpath::Authentication::BasicAuthenticator.new dataStore
         response.authenticate get_href, request
