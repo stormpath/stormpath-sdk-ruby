@@ -97,10 +97,11 @@ module Stormpath
 
       def execute_request(httpMethod, href, body)
 
-        request = Request.new(httpMethod, href, nil, nil, body)
+        request = Request.new(httpMethod, href, nil, Hash.new, body)
+        apply_default_request_headers request
         response = @requestExecutor.execute_request request
 
-        result = MultiJson.load response.body
+        result = response.body.length > 0 ? MultiJson.load(response.body) : ''
 
         if response.error?
           error = Error.new result
@@ -108,6 +109,16 @@ module Stormpath
         end
 
         result
+      end
+
+      def apply_default_request_headers request
+
+        request.httpHeaders.store 'Accept', 'application/json'
+        request.httpHeaders.store 'User-Agent', 'Stormpath-RubySDK/' #TODO: add SDK version
+
+        if (!request.body.nil? and request.body.length > 0)
+          request.httpHeaders.store 'Content-Type', 'application/json'
+        end
       end
 
       def save_resource href, resource, returnType

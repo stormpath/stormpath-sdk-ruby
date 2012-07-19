@@ -19,6 +19,7 @@ describe "POST Operations" do
     @verifyPasswordResetToken = false
     @createGroupMemberShipFromAccount = false
     @createGroupMemberShipFromGroup = false
+    @updateGroupMembershipWithDeletion = false
   end
 
   it "application should be able to authenticate" do
@@ -261,6 +262,50 @@ describe "POST Operations" do
       }
 
       accountLinked.should == true
+
+    end
+
+  end
+
+  it "group membership should be updated with deletion/creation" do
+
+    if (@updateGroupMembershipWithDeletion)
+
+      groupHref = 'groups/1h9hasRvRr-8sx5GeJN_Dg'
+      group = @dataStore.get_resource groupHref, Group
+
+      accountHref = 'accounts/9T-6HmQ5SsygYGH1xDcysQ'
+      account = @dataStore.get_resource accountHref, Account
+
+      groupLinked = false
+      groupMembership = nil
+      account.get_group_memberships.each { |tmpGroupMembership|
+
+        groupMembership = tmpGroupMembership
+        tmpGroup = groupMembership.get_group
+
+        if (!tmpGroup.nil? and tmpGroup.get_href.include? groupHref)
+          groupLinked = true
+          break
+        end
+      }
+
+      if (!groupLinked)
+        groupMembership.delete
+        group.add_account account
+      end
+
+      account.get_group_memberships.each { |tmpGroupMembership|
+
+        tmpGroup = tmpGroupMembership.get_group
+
+        if (!tmpGroup.nil? and tmpGroup.get_href.include? groupHref)
+          groupMembership = tmpGroupMembership
+          break
+        end
+      }
+
+      groupMembership.get_group.get_href.should include groupHref
 
     end
 

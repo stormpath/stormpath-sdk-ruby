@@ -26,11 +26,11 @@ module Stormpath
 
         if request.body.nil?
 
-          response = method.call domain
+          response = method.call domain, request.queryString, request.httpHeaders
 
         else
 
-          response = method.call domain, request.body, {'Content-Type' => 'application/json'}
+          response = method.call domain, request.body, request.httpHeaders
 
         end
 

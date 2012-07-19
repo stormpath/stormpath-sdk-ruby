@@ -1,6 +1,7 @@
 require "base64"
 require "httpclient"
 require "multi_json"
+require "uri"
 
 require "stormpath-sdk/client/api_key"
 require "stormpath-sdk/client/client"

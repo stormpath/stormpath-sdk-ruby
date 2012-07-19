@@ -217,6 +217,23 @@ describe Client do
       groupName.should be_kind_of String
     }
 
+    groupMemberShips.each { |groupMembership|
+
+      groupMembership.should be_kind_of GroupMembership
+
+      group = groupMembership.get_group
+
+      if (!group.nil?)
+
+        groupName = group.get_name
+
+        # just checking that at least one
+        # group property can be read from here
+        groupName.should be_kind_of String
+
+      end
+    }
+
 
   end
 
