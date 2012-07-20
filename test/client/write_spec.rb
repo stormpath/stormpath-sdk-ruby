@@ -2,7 +2,7 @@ require "stormpath-sdk"
 
 include Stormpath::Authentication
 
-describe "POST Operations" do
+describe "WRITE Operations" do
 
   before(:all) do
     apiKey = ApiKey.new '4OCDGOGPLVQW8FZO49N5EMZE9', 'vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ'

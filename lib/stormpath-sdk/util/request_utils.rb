@@ -11,13 +11,13 @@ module Stormpath
       # param uri
       # return true if the specified URI is using a non-standard port, false otherwise
       #
-      def default_port? uri
+      def self.default_port? uri
         scheme = uri.scheme.downcase
         port = uri.port
         port <= 0 || (port == 80 && scheme.eql?("http")) || (port == 443 && scheme.eql?("https"))
       end
 
-      def encode_url value, path, canonical
+      def self.encode_url value, path, canonical
 
         encoded = URI.escape value
 

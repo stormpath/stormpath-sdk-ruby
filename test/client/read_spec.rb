@@ -3,7 +3,7 @@ require "stormpath-sdk"
 include Stormpath::Client
 include Stormpath::Resource
 
-describe Client do
+describe "READ Operations" do
 
   before(:all) do
     apiKey = ApiKey.new '4OCDGOGPLVQW8FZO49N5EMZE9', 'vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ'
