@@ -3,6 +3,7 @@ require "httpclient"
 require "multi_json"
 require "openssl"
 require "uri"
+require "uuidtools"
 
 require "stormpath-sdk/client/api_key"
 require "stormpath-sdk/client/client"

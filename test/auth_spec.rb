@@ -2,6 +2,7 @@ require "stormpath-sdk"
 
 include Stormpath::Client
 include Stormpath::Http::Authc
+include Stormpath::Http
 
 describe "AUTH Tests" do
 
@@ -13,24 +14,14 @@ describe "AUTH Tests" do
   it "signature should sign correctly" do
 
 
-    kSecret = @signer.to_utf8(Sauthc1Signer::AUTHENTICATION_SCHEME + @apiKey.secret)
-    kDate = @signer.sign("key", kSecret, Sauthc1Signer::DEFAULT_ALGORITHM);
-    kNonce = @signer.sign("nonce", kDate, Sauthc1Signer::DEFAULT_ALGORITHM);
-    kSigning = @signer.sign(Sauthc1Signer::ID_TERMINATOR, kNonce, Sauthc1Signer::DEFAULT_ALGORITHM);
+    href = "http://localhost:8080/v1/tenant"
 
-    value = "yeahwhateverTY/LO"
-    rubyHexValue = @signer.to_hex value
+    request = Request.new('get', href, nil, Hash.new, nil)
 
-    p kSecret
-    p kDate
-    p kNonce
-    p kSigning
+    signer = Sauthc1Signer.new
+    signer.sign_request request, @apiKey
 
-    p rubyHexValue
-
-    javaHexValue = '79656168776861746576657254592f4c4f'
-
-    rubyHexValue.should == javaHexValue
+    p 'Done with signing'
 
 
   end

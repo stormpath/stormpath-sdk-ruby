@@ -8,6 +8,7 @@ module Stormpath
       include Stormpath::Util::Assert
 
       def initialize(apiKey)
+        @signer = Sauthc1Signer.new
         @apiKey = apiKey
         @httpClient = HTTPClient.new
 
@@ -18,11 +19,12 @@ module Stormpath
         assert_not_nil request, "Request argument cannot be null."
 
         domain = request.href
-        user = @apiKey.id
-        password = @apiKey.secret
-        @httpClient.set_auth(domain, user, password)
+        @signer.sign_request request, @apiKey
+        #user = @apiKey.id
+        #password = @apiKey.secret
+        #@httpClient.set_auth(domain, user, password)
 
-        method = @httpClient.method(request.httpMethod)
+        method = @httpClient.method(request.httpMethod.downcase)
 
         if request.body.nil?
 

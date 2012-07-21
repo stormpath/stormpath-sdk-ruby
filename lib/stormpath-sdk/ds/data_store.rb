@@ -116,7 +116,7 @@ module Stormpath
         request.httpHeaders.store 'Accept', 'application/json'
         request.httpHeaders.store 'User-Agent', 'Stormpath-RubySDK/' #TODO: add SDK version
 
-        if (!request.body.nil? and request.body.length > 0)
+        if !request.body.nil? and request.body.length > 0
           request.httpHeaders.store 'Content-Type', 'application/json'
         end
       end

@@ -8,12 +8,20 @@ module Stormpath
 
       def initialize(httpMethod, href, queryString, httpHeaders, body)
 
-        @httpMethod = httpMethod
+        @httpMethod = httpMethod.upcase
         @href = href
         @queryString = queryString
         @httpHeaders = httpHeaders
         @body = body
 
+        if !body.nil?
+          @httpHeaders.store 'Content-Length', @body.length
+        end
+
+      end
+
+      def resource_uri
+        URI href
       end
 
     end

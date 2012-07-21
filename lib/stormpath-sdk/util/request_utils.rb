@@ -22,12 +22,26 @@ module Stormpath
         encoded = URI.escape value
 
         if canonical
-          encoded['+'] = '%20'
-          encoded['*'] = '%2A'
-          encoded['%7E'] = '~' # yes, this is reversed (compared to the 2 above) intentionally
+
+          strMap = {'+' => '%20', '*' => '%2A', '%7E' => '~'}
+
+          strMap.each do |key, value|
+
+            if encoded.include? key
+              encoded[key] = value
+            end
+
+          end
+
+          # encoded['%7E'] = '~'  --> yes, this is reversed (compared to the other two) intentionally
 
           if path
-            encoded['%2F'] = '/'
+
+            str = '%2F'
+            if encoded.include? str
+              encoded[str] = '/'
+            end
+
           end
 
         end
