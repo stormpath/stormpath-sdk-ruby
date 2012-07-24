@@ -19,10 +19,10 @@ module Stormpath
         assert_not_nil request, "Request argument cannot be null."
 
         domain = request.href
-        @signer.sign_request request, @apiKey
-        #user = @apiKey.id
-        #password = @apiKey.secret
-        #@httpClient.set_auth(domain, user, password)
+        #@signer.sign_request request, @apiKey TODO: get digest authentication to work
+        user = @apiKey.id
+        password = @apiKey.secret
+        @httpClient.set_auth(domain, user, password)
 
         method = @httpClient.method(request.httpMethod.downcase)
 

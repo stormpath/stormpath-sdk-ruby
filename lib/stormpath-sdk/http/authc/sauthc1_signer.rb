@@ -51,7 +51,7 @@ module Stormpath
           canonicalQueryString = canonicalize_query_string request
           canonicalHeadersString = canonicalize_headers request
           signedHeadersString = get_signed_headers request
-          requestPayloadHashHex = to_hex(hash(get_request_payload(request)))
+          requestPayloadHashHex = to_hex(hash_text(get_request_payload(request)))
 
           canonicalRequest = method + NL +
               canonicalResourcePath + NL +
@@ -62,7 +62,7 @@ module Stormpath
 
           id = apiKey.id + "/" + dateStamp + "/" + nonce + "/" + ID_TERMINATOR
 
-          canonicalRequestHashHex = to_hex(hash(canonicalRequest))
+          canonicalRequestHashHex = to_hex(hash_text(canonicalRequest))
 
           stringToSign = ALGORITHM + NL +
               timestamp + NL +
@@ -118,17 +118,17 @@ module Stormpath
           '' #TODO: implement
         end
 
-        def hash text
+        def hash_text text
           Digest.digest DEFAULT_ALGORITHM, to_utf8(text)
         end
 
         def sign data, key, algorithm
 
-          data = to_utf8 data
+          digestData = to_utf8 data
 
           digest = Digest::Digest.new(algorithm)
 
-          HMAC.digest(digest, key, data)
+          HMAC.digest(digest, key, digestData)
 
         end
 
