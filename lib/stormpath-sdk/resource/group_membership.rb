@@ -7,10 +7,6 @@ module Stormpath
       ACCOUNT = "account"
       GROUP = "group"
 
-      def initialize dataStore, properties
-        super dataStore, properties
-      end
-
       def get_account
         get_resource_property ACCOUNT, Account
       end

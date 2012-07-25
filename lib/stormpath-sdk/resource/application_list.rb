@@ -4,12 +4,6 @@ module Stormpath
 
     class ApplicationList < CollectionResource
 
-      def initialize dataStore, properties
-
-        super dataStore, properties
-
-      end
-
       def get_item_type
 
         Application

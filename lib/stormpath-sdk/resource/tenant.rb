@@ -9,10 +9,6 @@ module Stormpath
       APPLICATIONS = "applications"
       DIRECTORIES = "directories"
 
-      def initialize dataStore, propertiesHash
-        super dataStore, propertiesHash
-      end
-
       def get_name
         get_property NAME
       end

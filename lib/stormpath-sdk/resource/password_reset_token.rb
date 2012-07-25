@@ -8,12 +8,6 @@ module Stormpath
       EMAIL = "email"
       ACCOUNT = "account"
 
-      def initialize dataStore, properties
-
-        super dataStore, properties
-
-      end
-
       def get_email
         get_property EMAIL
       end

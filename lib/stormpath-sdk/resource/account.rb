@@ -18,12 +18,6 @@ module Stormpath
       EMAIL_VERIFICATION_TOKEN = "emailVerificationToken"
       GROUP_MEMBERSHIPS = "groupMemberships"
 
-      def initialize dataStore, properties
-
-        super dataStore, properties
-
-      end
-
       def get_username
         get_property USERNAME
       end

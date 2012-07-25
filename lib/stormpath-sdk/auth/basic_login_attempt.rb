@@ -7,10 +7,6 @@ module Stormpath
       TYPE = "type"
       VALUE = "value"
 
-      def initialize dataStore, properties
-        super dataStore, properties
-      end
-
       def get_type
         get_property TYPE
       end

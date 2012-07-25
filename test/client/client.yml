@@ -1,0 +1,16 @@
+apiKey.id: 4OCDGOGPLVQW8FZO49N5EMZE9
+apiKey.secret: vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ
+
+different.apiKey.id: 4OCDGOGPLVQW8FZO49N5EMZE9
+different.apiKey.secret: vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ
+
+
+stormpath:
+  apiKey:
+    id: 4OCDGOGPLVQW8FZO49N5EMZE9
+    secret: vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ
+
+different.stormpath:
+  different.apiKey:
+    different.id: 4OCDGOGPLVQW8FZO49N5EMZE9
+    different.secret: vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ

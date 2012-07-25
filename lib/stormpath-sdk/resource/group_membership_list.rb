@@ -4,12 +4,6 @@ module Stormpath
 
     class GroupMembershipList < CollectionResource
 
-      def initialize dataStore, properties
-
-        super dataStore, properties
-
-      end
-
       def get_item_type
 
         GroupMembership

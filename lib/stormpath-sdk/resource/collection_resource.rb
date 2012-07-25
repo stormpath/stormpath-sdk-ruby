@@ -8,10 +8,6 @@ module Stormpath
       LIMIT = "limit"
       ITEMS = "items"
 
-      def initialize dataSource, properties
-        super dataSource, properties
-      end
-
       def each(&block)
         get_current_page.items.each(&block)
       end

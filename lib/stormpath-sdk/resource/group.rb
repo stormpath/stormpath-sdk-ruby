@@ -13,12 +13,6 @@ module Stormpath
       DIRECTORY = "directory"
       ACCOUNTS = "accounts"
 
-      def initialize dataStore, properties
-
-        super dataStore, properties
-
-      end
-
       def get_name
         get_property NAME
       end

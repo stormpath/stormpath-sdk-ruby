@@ -13,11 +13,10 @@ module Stormpath
 
       DEFAULT_API_VERSION = 1
 
-      def initialize(requestExecutor, baseUrl)
+      def initialize(requestExecutor, *baseUrl)
 
-        assert_not_nil baseUrl, "baseUrl cannot be null"
         assert_not_nil requestExecutor, "RequestExecutor cannot be null."
-        @baseUrl = baseUrl;
+        @baseUrl = get_base_url *baseUrl
         @requestExecutor = requestExecutor;
         @resourceFactory = ResourceFactory.new(self)
       end
@@ -136,6 +135,12 @@ module Stormpath
         response = execute_request('post', qHref, MultiJson.dump(resource.properties))
         @resourceFactory.instantiate(returnType, response.to_hash)
 
+      end
+
+      def get_base_url *baseUrl
+        (!baseUrl.empty? and !baseUrl[0].nil?) ?
+            baseUrl[0] :
+            "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
       end
 
     end

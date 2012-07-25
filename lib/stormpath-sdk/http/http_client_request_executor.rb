@@ -4,7 +4,6 @@ module Stormpath
 
     class HttpClientRequestExecutor
 
-      include Stormpath::Http
       include Stormpath::Util::Assert
 
       def initialize(apiKey)

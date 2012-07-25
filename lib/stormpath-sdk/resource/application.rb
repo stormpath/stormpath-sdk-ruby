@@ -13,11 +13,6 @@ module Stormpath
       ACCOUNTS = "accounts"
       PASSWORD_RESET_TOKENS = "passwordResetTokens"
 
-
-      def initialize dataStore, properties
-        super dataStore, properties
-      end
-
       def get_name
         get_property NAME
       end

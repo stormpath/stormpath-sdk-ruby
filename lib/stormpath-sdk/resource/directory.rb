@@ -13,12 +13,6 @@ module Stormpath
       GROUPS = "groups"
       TENANT = "tenant"
 
-      def initialize dataStore, properties
-
-        super dataStore, properties
-
-      end
-
       def get_name
         get_property NAME
       end
