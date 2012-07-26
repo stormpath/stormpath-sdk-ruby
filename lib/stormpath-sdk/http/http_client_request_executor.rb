@@ -4,12 +4,13 @@ module Stormpath
 
     class HttpClientRequestExecutor
 
+      include Stormpath::Http::Authc
       include Stormpath::Util::Assert
 
-      def initialize(apiKey)
+      def initialize(api_key)
         @signer = Sauthc1Signer.new
-        @apiKey = apiKey
-        @httpClient = HTTPClient.new
+        @api_key = api_key
+        @http_client = HTTPClient.new
 
       end
 
@@ -18,12 +19,9 @@ module Stormpath
         assert_not_nil request, "Request argument cannot be null."
 
         domain = request.href
-        #@signer.sign_request request, @apiKey TODO: get digest authentication to work
-        user = @apiKey.id
-        password = @apiKey.secret
-        @httpClient.set_auth(domain, user, password)
+        @signer.sign_request request, @api_key
 
-        method = @httpClient.method(request.httpMethod.downcase)
+        method = @http_client.method(request.httpMethod.downcase)
 
         if request.body.nil?
 

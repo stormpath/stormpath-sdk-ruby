@@ -22,7 +22,7 @@ module Stormpath
         SAUTHC1_SIGNATURE = "sauthc1Signature"
         DATE_FORMAT = "%Y%m%d"
         TIMESTAMP_FORMAT = "%Y%m%dT%H%M%SZ"
-        NL = "\\n"
+        NL = "\n"
 
         def sign_request request, apiKey
 
@@ -112,7 +112,7 @@ module Stormpath
 
         end
 
-        #protected
+        protected
 
         def canonicalize_query_string request
           '' #TODO: implement
@@ -133,6 +133,7 @@ module Stormpath
         end
 
         def to_utf8 str
+          #we ask for multi line unicode text
           str.scan(/./mu).join
         end
 
@@ -152,10 +153,10 @@ module Stormpath
 
         end
 
-        #private
+        private
 
         def create_name_value_pair name, value
-          result = name + '=' + value
+          name + '=' + value
         end
 
         def canonicalize_resource_path resourcePath
@@ -176,7 +177,7 @@ module Stormpath
 
           sortedHeaders.each do |header|
 
-            result << header.downcase << ':' << request.httpHeaders[header]
+            result << header.downcase << ':' << request.httpHeaders[header].to_s
 
             result << NL
           end

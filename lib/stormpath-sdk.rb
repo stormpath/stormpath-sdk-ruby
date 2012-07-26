@@ -7,7 +7,7 @@ require "uri"
 require "uuidtools"
 require "yaml"
 
-
+require "stormpath-sdk/version" unless defined? Stormpath::VERSION
 require "stormpath-sdk/util/assert"
 require "stormpath-sdk/client/api_key"
 require "stormpath-sdk/client/client"

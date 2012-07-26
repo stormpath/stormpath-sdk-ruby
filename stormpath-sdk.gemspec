@@ -1,7 +1,9 @@
+require "'./lib/stormpath-sdk/version'"
+
 Gem::Specification.new do |s|
   s.name = 'stormpath-sdk'
-  s.version = '0.1.0'
-  s.date = '2012-07-13'
+  s.version = Stormpath::VERSION
+  s.date = Stormpath::VERSION_DATE
   s.summary = "Stormpath SDK"
   s.description = "Stormpath SDK used to interact with the Stormpath REST API"
   s.authors = ["Elder Crisostomo"]

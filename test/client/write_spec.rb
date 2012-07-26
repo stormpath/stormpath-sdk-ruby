@@ -81,12 +81,13 @@ describe "WRITE Operations" do
       href = 'accounts/9T-6HmQ5SsygYGH1xDcysQ'
       account = @dataStore.get_resource href, Account
 
-      account.set_middle_name 'Modified'
+      modValue = 'Modified at: ' + Time.now.to_s
+      account.set_middle_name modValue
       account.set_status Status::ENABLED
 
       account.save
 
-      account.get_middle_name.should be_kind_of String
+      account.get_middle_name.should == modValue
 
     end
 
