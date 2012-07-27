@@ -32,7 +32,7 @@ module Stormpath
       def get_status
         value = get_property STATUS
 
-        if (!value.nil?)
+        if !value.nil?
           value = value.upcase
         end
 
@@ -41,7 +41,7 @@ module Stormpath
 
       def set_status status
 
-        if (get_status_hash.has_key? status)
+        if get_status_hash.has_key? status
           set_property STATUS, get_status_hash[status]
         end
 
@@ -64,12 +64,12 @@ module Stormpath
 
         href = get_password_reset_token.get_href
 
-        passwordResetProps = Hash.new
-        passwordResetProps.store 'email', email
+        password_reset_props = Hash.new
+        password_reset_props.store 'email', email
 
-        passwordResetToken = dataStore.instantiate PasswordResetToken, passwordResetProps
+        password_reset_token = data_store.instantiate PasswordResetToken, password_reset_props
 
-        dataStore.create href, passwordResetToken, PasswordResetToken
+        data_store.create href, password_reset_token, PasswordResetToken
 
       end
 
@@ -78,12 +78,12 @@ module Stormpath
         href = get_password_reset_token.get_href
         href += '/' + token
 
-        dataStore.get_resource href, PasswordResetToken
+        data_store.get_resource href, PasswordResetToken
 
       end
 
       def authenticate request
-        response = Stormpath::Authentication::BasicAuthenticator.new dataStore
+        response = Stormpath::Authentication::BasicAuthenticator.new data_store
         response.authenticate get_href, request
       end
 

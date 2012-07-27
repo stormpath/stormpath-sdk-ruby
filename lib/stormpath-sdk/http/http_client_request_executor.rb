@@ -21,19 +21,22 @@ module Stormpath
         domain = request.href
         @signer.sign_request request, @api_key
 
-        method = @http_client.method(request.httpMethod.downcase)
+        method = @http_client.method(request.http_method.downcase)
 
         if request.body.nil?
 
-          response = method.call domain, request.queryString, request.httpHeaders
+          response = method.call domain, request.query_string, request.http_headers
 
         else
 
-          response = method.call domain, request.body, request.httpHeaders
+          response = method.call domain, request.body, request.http_headers
 
         end
 
-        Response.new response.http_header.status_code, response.http_header.body_type, response.content, response.http_header.body_size
+        Response.new response.http_header.status_code,
+                     response.http_header.body_type,
+                     response.content,
+                     response.http_header.body_size
 
       end
 

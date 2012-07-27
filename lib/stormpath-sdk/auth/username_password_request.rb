@@ -27,9 +27,9 @@ module Stormpath
         @username = nil
         @host = nil
 
-        @password.each { |char|
+        @password.each { |pass_char|
 
-          char = 0x00
+          pass_char = 0x00
         }
 
         @password = nil

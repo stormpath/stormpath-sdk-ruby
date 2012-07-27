@@ -6,10 +6,10 @@ include Stormpath::Resource
 describe "READ Operations" do
 
   before(:all) do
-    apiKey = ApiKey.new '4OCDGOGPLVQW8FZO49N5EMZE9', 'vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ'
-    @client = Client.new apiKey, 'http://localhost:8080/v1'
+    apiKey = ApiKey.new 'myApkiKeyId', 'myApkiKeySecret'
+    @client = Client.new apiKey
     @tenant = @client.current_tenant
-    @dataStore = @client.dataStore
+    @data_store = @client.data_store
   end
 
   it "client should be created from api_key" do
@@ -62,8 +62,8 @@ describe "READ Operations" do
 
   it "application's properties must come complete'" do
 
-    href = 'applications/A0atUpZARYGApaN5f88O3A'
-    application = @dataStore.get_resource href, Application
+    href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
+    application = @data_store.get_resource href, Application
 
     application.should be_kind_of Application
 
@@ -72,24 +72,24 @@ describe "READ Operations" do
     description = application.get_description
     tenant = application.get_tenant
     accounts = application.get_accounts
-    passwordResetTokens = application.get_password_reset_token
+    password_reset_tokens = application.get_password_reset_token
 
     name.should be_kind_of String
     status.should be_kind_of String
     description.should be_kind_of String
     tenant.should be_kind_of Tenant
     accounts.should be_kind_of AccountList
-    passwordResetTokens.should be_kind_of PasswordResetToken
+    password_reset_tokens.should be_kind_of PasswordResetToken
 
     accounts.each { |acc|
 
       acc.should be_kind_of Account
 
-      accName = acc.get_username
+      acc_name = acc.get_username
 
       # just checking that at least one
       # account property can be read from here
-      accName.should be_kind_of String
+      acc_name.should be_kind_of String
     }
 
 
@@ -97,8 +97,8 @@ describe "READ Operations" do
 
   it "directory's properties must come complete'" do
 
-    href = 'directories/_oIg8zU5QWyiz22DcVYVLg'
-    directory = @dataStore.get_resource href, Directory
+    href = 'directories/wDTY5jppTLS2uZEAcqaL5A'
+    directory = @data_store.get_resource href, Directory
 
     directory.should be_kind_of Directory
 
@@ -120,22 +120,22 @@ describe "READ Operations" do
 
       acc.should be_kind_of Account
 
-      accName = acc.get_username
+      acc_name = acc.get_username
 
       # just checking that at least one
       # account property can be read from here
-      accName.should be_kind_of String
+      acc_name.should be_kind_of String
     }
 
     groups.each { |group|
 
       group.should be_kind_of Group
 
-      groupName = group.get_name
+      group_name = group.get_name
 
       # just checking that at least one
       # group property can be read from here
-      groupName.should be_kind_of String
+      group_name.should be_kind_of String
     }
 
 
@@ -143,8 +143,8 @@ describe "READ Operations" do
 
   it "group's properties must come complete'" do
 
-    href = 'groups/Ki3qEVTeSZmaRUgAdf9h_w'
-    group = @dataStore.get_resource href, Group
+    href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
+    group = @data_store.get_resource href, Group
 
     group.should be_kind_of Group
 
@@ -166,11 +166,11 @@ describe "READ Operations" do
 
       acc.should be_kind_of Account
 
-      accName = acc.get_username
+      acc_name = acc.get_username
 
       # just checking that at least one
       # account property can be read from here
-      accName.should be_kind_of String
+      acc_name.should be_kind_of String
     }
 
 
@@ -178,46 +178,46 @@ describe "READ Operations" do
 
   it "account's properties must come complete'" do
 
-    href = 'accounts/9T-6HmQ5SsygYGH1xDcysQ'
-    account = @dataStore.get_resource href, Account
+    href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
+    account = @data_store.get_resource href, Account
 
     account.should be_kind_of Account
 
     username = account.get_username
     status = account.get_status
     email = account.get_email
-    givenName = account.get_given_name
-    middleName = account.get_middle_name
+    given_name = account.get_given_name
+    middle_name = account.get_middle_name
     surname = account.get_surname
     groups = account.get_groups
     directory = account.get_directory
-    emailVerificationToken = account.get_email_verification_token
-    groupMemberShips = account.get_group_memberships
+    email_verification_token = account.get_email_verification_token
+    group_memberships = account.get_group_memberships
 
     username.should be_kind_of String
     status.should be_kind_of String
     email.should be_kind_of String
-    givenName.should be_kind_of String
-    #  middleName is optional
-    #middleName.should be_kind_of String
+    given_name.should be_kind_of String
+    #  middle_name is optional
+    #middle_name.should be_kind_of String
     surname.should be_kind_of String
     groups.should be_kind_of GroupList
     directory.should be_kind_of Directory
-    emailVerificationToken.should be_kind_of EmailVerificationToken
-    groupMemberShips.should be_kind_of GroupMembershipList
+    email_verification_token.should be_kind_of EmailVerificationToken
+    group_memberships.should be_kind_of GroupMembershipList
 
     groups.each { |group|
 
       group.should be_kind_of Group
 
-      groupName = group.get_name
+      group_name = group.get_name
 
       # just checking that at least one
       # group property can be read from here
-      groupName.should be_kind_of String
+      group_name.should be_kind_of String
     }
 
-    groupMemberShips.each { |groupMembership|
+    group_memberships.each { |groupMembership|
 
       groupMembership.should be_kind_of GroupMembership
 
@@ -225,11 +225,11 @@ describe "READ Operations" do
 
       if (!group.nil?)
 
-        groupName = group.get_name
+        group_name = group.get_name
 
         # just checking that at least one
         # group property can be read from here
-        groupName.should be_kind_of String
+        group_name.should be_kind_of String
 
       end
     }

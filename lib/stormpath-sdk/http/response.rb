@@ -4,24 +4,24 @@ module Stormpath
 
     class Response
 
-      attr_reader :httpStatus, :headers, :body
+      attr_reader :http_status, :headers, :body
       attr_writer :headers
 
-      def initialize httpStatus, contentType, body, contentLength
-        @httpStatus = httpStatus
+      def initialize http_status, content_type, body, content_length
+        @http_status = http_status
         @headers = HTTP::Message::Headers.new
         @body = body
-        @headers.content_type = contentType
-        @headers.body_size = contentLength
+        @headers.content_type = content_type
+        @headers.body_size = content_length
       end
 
 
       def client_error?
-        httpStatus >= 400 and httpStatus < 500
+        http_status >= 400 and http_status < 500
       end
 
       def server_error?
-        httpStatus >= 500 and httpStatus < 600
+        http_status >= 500 and http_status < 600
       end
 
       def error?

@@ -5,7 +5,7 @@ module Stormpath
     class InstanceResource < Resource
 
       def save
-        dataStore.save self
+        data_store.save self
       end
     end
   end

@@ -42,16 +42,16 @@ module Stormpath
         get_property GIVEN_NAME
       end
 
-      def set_given_name givenName
-        set_property GIVEN_NAME, givenName
+      def set_given_name given_name
+        set_property GIVEN_NAME, given_name
       end
 
       def get_middle_name
         get_property MIDDLE_NAME
       end
 
-      def set_middle_name middleName
-        set_property MIDDLE_NAME, middleName
+      def set_middle_name middle_name
+        set_property MIDDLE_NAME, middle_name
       end
 
       def get_surname
@@ -65,7 +65,7 @@ module Stormpath
       def get_status
         value = get_property STATUS
 
-        if (!value.nil?)
+        if !value.nil?
           value = value.upcase
         end
 
@@ -74,7 +74,7 @@ module Stormpath
 
       def set_status status
 
-        if (get_status_hash.has_key? status)
+        if get_status_hash.has_key? status
           set_property STATUS, get_status_hash[status]
         end
 
@@ -94,8 +94,8 @@ module Stormpath
 
       def add_group group
 
-        groupMembership = dataStore.instantiate GroupMembership, nil
-        groupMembership.create self, group
+        group_membership = data_store.instantiate GroupMembership, nil
+        group_membership.create self, group
 
       end
 

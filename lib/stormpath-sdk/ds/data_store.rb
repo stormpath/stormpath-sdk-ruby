@@ -13,34 +13,34 @@ module Stormpath
 
       DEFAULT_API_VERSION = 1
 
-      def initialize(requestExecutor, *baseUrl)
+      def initialize(request_executor, *base_url)
 
-        assert_not_nil requestExecutor, "RequestExecutor cannot be null."
-        @baseUrl = get_base_url *baseUrl
-        @requestExecutor = requestExecutor;
-        @resourceFactory = ResourceFactory.new(self)
+        assert_not_nil request_executor, "RequestExecutor cannot be null."
+        @base_url = get_base_url *base_url
+        @request_executor = request_executor
+        @resource_factory = ResourceFactory.new(self)
       end
 
       def instantiate(clazz, properties)
 
-        @resourceFactory.instantiate(clazz, properties)
+        @resource_factory.instantiate(clazz, properties)
       end
 
       def get_resource(href, clazz)
 
-        qHref = href
+        q_href = href
 
-        if (needs_to_be_fully_qualified qHref)
-          qHref = qualify qHref
+        if needs_to_be_fully_qualified q_href
+          q_href = qualify q_href
         end
 
-        data = execute_request('get', qHref, nil)
-        @resourceFactory.instantiate(clazz, data.to_hash)
+        data = execute_request('get', q_href, nil)
+        @resource_factory.instantiate(clazz, data.to_hash)
 
       end
 
-      def create parentHref, resource, returnType
-        save_resource parentHref, resource, returnType
+      def create parent_href, resource, return_type
+        save_resource parent_href, resource, return_type
       end
 
       def save resource, *clazz
@@ -50,18 +50,18 @@ module Stormpath
         href = resource.get_href
         assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
 
-        if (needs_to_be_fully_qualified(href))
+        if needs_to_be_fully_qualified(href)
           href = qualify(href)
         end
 
         clazz = (clazz.nil? or clazz.length == 0) ? to_class_from_instance(resource) : clazz[0]
 
-        returnValue = save_resource href, resource, clazz
+        return_value = save_resource href, resource, clazz
 
         #ensure the caller's argument is updated with what is returned from the server:
-        resource.set_properties returnValue.properties
+        resource.set_properties return_value.properties
 
-        returnValue
+        return_value
 
       end
 
@@ -82,23 +82,22 @@ module Stormpath
 
       def qualify href
 
-        slashAdded = ''
+        slash_added = ''
 
-        if (!href.start_with? '/')
-          slashAdded = '/'
+        if !href.start_with? '/'
+          slash_added = '/'
         end
 
-        @baseUrl + slashAdded + href
+        @base_url + slash_added + href
       end
 
-      # Private methods
       private
 
-      def execute_request(httpMethod, href, body)
+      def execute_request(http_method, href, body)
 
-        request = Request.new(httpMethod, href, nil, Hash.new, body)
+        request = Request.new(http_method, href, nil, Hash.new, body)
         apply_default_request_headers request
-        response = @requestExecutor.execute_request request
+        response = @request_executor.execute_request request
 
         result = response.body.length > 0 ? MultiJson.load(response.body) : ''
 
@@ -112,34 +111,34 @@ module Stormpath
 
       def apply_default_request_headers request
 
-        request.httpHeaders.store 'Accept', 'application/json'
-        request.httpHeaders.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
+        request.http_headers.store 'Accept', 'application/json'
+        request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
 
         if !request.body.nil? and request.body.length > 0
-          request.httpHeaders.store 'Content-Type', 'application/json'
+          request.http_headers.store 'Content-Type', 'application/json'
         end
       end
 
-      def save_resource href, resource, returnType
+      def save_resource href, resource, return_type
 
         assert_not_nil resource, "resource argument cannot be null."
-        assert_not_nil returnType, "returnType class cannot be null."
+        assert_not_nil return_type, "returnType class cannot be null."
         assert_kind_of Resource, resource, "resource argument must be instance of Resource"
 
-        qHref = href
+        q_href = href
 
-        if (needs_to_be_fully_qualified qHref)
-          qHref = qualify qHref
+        if needs_to_be_fully_qualified q_href
+          q_href = qualify q_href
         end
 
-        response = execute_request('post', qHref, MultiJson.dump(resource.properties))
-        @resourceFactory.instantiate(returnType, response.to_hash)
+        response = execute_request('post', q_href, MultiJson.dump(resource.properties))
+        @resource_factory.instantiate(return_type, response.to_hash)
 
       end
 
-      def get_base_url *baseUrl
-        (!baseUrl.empty? and !baseUrl[0].nil?) ?
-            baseUrl[0] :
+      def get_base_url *base_url
+        (!base_url.empty? and !base_url[0].nil?) ?
+            base_url[0] :
             "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
       end
 

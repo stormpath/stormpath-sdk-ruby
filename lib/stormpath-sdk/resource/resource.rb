@@ -8,11 +8,11 @@ module Stormpath
 
       HREF_PROP_NAME = "href"
 
-      def initialize dataStore, properties
+      def initialize data_store, properties
 
-        @dataStore = dataStore
-        @readLock = Mutex.new
-        @writeLock = Mutex.new
+        @data_store = data_store
+        @read_lock = Mutex.new
+        @write_lock = Mutex.new
         @properties = Hash.new
         set_properties properties
 
@@ -20,13 +20,13 @@ module Stormpath
 
       def set_properties properties
 
-        @writeLock.lock
+        @write_lock.lock
 
         begin
 
           @dirty = false
 
-          if (!properties.nil? and properties.is_a? Hash)
+          if !properties.nil? and properties.is_a? Hash
             @properties.replace properties
             href_only = @properties.size == 1 and @properties.has_key? HREF_PROP_NAME
             @materialized = !href_only
@@ -36,15 +36,15 @@ module Stormpath
           end
 
         ensure
-          @writeLock.unlock
+          @write_lock.unlock
         end
       end
 
       def get_property name
 
-        if (!HREF_PROP_NAME.eql? name)
+        if !HREF_PROP_NAME.eql? name
           #not the href/id, must be a property that requires materialization:
-          if (!is_new and !materialized)
+          if !is_new and !materialized
 
             materialize
           end
@@ -54,12 +54,12 @@ module Stormpath
       end
 
       def get_property_names
-        @readLock.lock
+        @read_lock.lock
 
         begin
           @properties.keys
         ensure
-          @readLock.unlock
+          @read_lock.unlock
         end
 
       end
@@ -72,18 +72,18 @@ module Stormpath
 
       protected
 
-      attr_reader :dataStore, :materialized
+      attr_reader :data_store, :materialized
 
       def get_resource_property key, clazz
 
         value = get_property key
 
-        if (value.is_a? Hash)
+        if value.is_a? Hash
           href = get_href_from_hash value
         end
 
-        if (!href.nil?)
-          @dataStore.instantiate clazz, value
+        if !href.nil?
+          @data_store.instantiate clazz, value
         end
       end
 
@@ -97,7 +97,7 @@ module Stormpath
 
         prop = read_property HREF_PROP_NAME
 
-        if (prop.nil?)
+        if prop.nil?
           true
 
         else
@@ -108,14 +108,14 @@ module Stormpath
 
       def set_property name, value
 
-        @writeLock.lock
+        @write_lock.lock
 
         begin
-          if (value.nil?)
+          if value.nil?
 
             removed = @properties.delete name
 
-            if (!removed.nil?)
+            if !removed.nil?
               @dirty = true
             end
 
@@ -124,7 +124,7 @@ module Stormpath
             @dirty = true
           end
         ensure
-          @writeLock.unlock
+          @write_lock.unlock
         end
 
       end
@@ -132,17 +132,17 @@ module Stormpath
       def materialize
         clazz = to_class_from_instance self
 
-        @writeLock.lock
+        @write_lock.lock
 
         begin
 
-          resource = @dataStore.get_resource get_href, clazz
+          resource = @data_store.get_resource get_href, clazz
           @properties.replace resource.properties
           @materialized = true
 
         ensure
 
-          @writeLock.unlock
+          @write_lock.unlock
         end
       end
 
@@ -150,7 +150,7 @@ module Stormpath
 
       def get_href_from_hash(props)
 
-        if (!props.nil? and props.is_a? Hash)
+        if !props.nil? and props.is_a? Hash
           value = props[HREF_PROP_NAME]
         end
 
@@ -158,12 +158,12 @@ module Stormpath
       end
 
       def read_property name
-        @readLock.lock
+        @read_lock.lock
 
         begin
           @properties[name]
         ensure
-          @readLock.unlock
+          @read_lock.unlock
         end
 
       end

@@ -4,16 +4,16 @@ module Stormpath
 
     class Client
 
-      attr_reader :dataStore
+      attr_reader :data_store
 
-      def initialize(apiKey, baseUrl)
-        requestExecutor = Stormpath::Http::HttpClientRequestExecutor.new(apiKey)
-        @dataStore = Stormpath::DataStore::DataStore.new(requestExecutor, baseUrl)
+      def initialize(api_key, *base_url)
+        request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key)
+        @data_store = Stormpath::DataStore::DataStore.new(request_executor, *base_url)
       end
 
 
       def current_tenant
-        @dataStore.get_resource("/tenants/current", Stormpath::Resource::Tenant)
+        @data_store.get_resource("/tenants/current", Stormpath::Resource::Tenant)
       end
     end
   end

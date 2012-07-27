@@ -6,31 +6,31 @@ module Stormpath
 
       include Stormpath::Util::Assert
 
-      def initialize dataStore
-        @dataStore = dataStore
+      def initialize data_store
+        @data_store = data_store
       end
 
-      def authenticate parentHref, request
+      def authenticate parent_href, request
 
-        assert_not_nil parentHref, "parentHref argument must be specified"
+        assert_not_nil parent_href, "parentHref argument must be specified"
         assert_kind_of UsernamePasswordRequest, request, "Only UsernamePasswordRequest instances are supported."
 
         username = request.get_principals
         username = (username != nil) ? username : ''
 
         password = request.get_credentials
-        pwString = password.to_s
+        pw_string = password.to_s
 
-        value = username + ':' + pwString
+        value = username + ':' + pw_string
 
         value = Base64.encode64(value).tr("\n", '')
 
-        attempt = @dataStore.instantiate BasicLoginAttempt, nil
+        attempt = @data_store.instantiate BasicLoginAttempt, nil
         attempt.set_type 'basic'
         attempt.set_value value
 
-        href = parentHref + '/loginAttempts'
-        result = @dataStore.create href, attempt, AuthenticationResult
+        href = parent_href + '/loginAttempts'
+        result = @data_store.create href, attempt, AuthenticationResult
         result.get_account
 
       end

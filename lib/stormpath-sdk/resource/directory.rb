@@ -32,7 +32,7 @@ module Stormpath
       def get_status
         value = get_property STATUS
 
-        if (!value.nil?)
+        if !value.nil?
           value = value.upcase
         end
 
@@ -41,20 +41,20 @@ module Stormpath
 
       def set_status status
 
-        if (get_status_hash.has_key? status)
+        if get_status_hash.has_key? status
           set_property STATUS, get_status_hash[status]
         end
 
       end
 
-      def create_account account, registrationWorkflowEnabled
+      def create_account account, *registration_workflow_enabled
         accounts = get_accounts
         href = accounts.get_href
-        if (registrationWorkflowEnabled)
-          href += "?registrationWorkflowEnabled=" + registrationWorkflowEnabled
+        if !registration_workflow_enabled.nil? and !registration_workflow_enabled.empty?
+          href += '?registrationWorkflowEnabled=' + registration_workflow_enabled[0].to_s
         end
 
-        dataStore.create href, account, Account
+        data_store.create href, account, Account
       end
 
       def get_accounts

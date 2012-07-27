@@ -26,8 +26,8 @@ module Stormpath
       include Stormpath::Util::Assert
 
       def initialize
-        @apiKeyIdPropertyName = "apiKey.id"
-        @apiKeySecretPropertyName = "apiKey.secret"
+        @api_key_id_property_name = "apiKey.id"
+        @api_key_secret_property_name = "apiKey.secret"
       end
 
       # Allows usage of a YAML loadable object (IO object or the result of invoking Object.to_yaml)
@@ -40,7 +40,7 @@ module Stormpath
       # @return the ClientBuilder instance for method chaining.
       def set_api_key_properties properties
 
-        @apiKeyProperties = properties
+        @api_key_properties = properties
         self
 
       end
@@ -55,7 +55,7 @@ module Stormpath
       # @return the ClientBuilder instance for method chaining.
       def set_api_key_file file
         assert_kind_of IO, file, 'file must be kind of IO'
-        @apiKeyFile = file
+        @api_key_file = file
         self
       end
 
@@ -119,19 +119,19 @@ module Stormpath
       #/
       def set_api_key_file_location location
         assert_kind_of String, location, 'location must be kind of String'
-        @apiKeyFileLocation = location
+        @api_key_file_location = location
         self
       end
 
 
       # Sets the name used to query for the API Key ID from a YAML instance.  That is:
       # <pre>
-      # apiKeyId = yml.access(<b>apiKeyIdPropertyName</b>)
+      # apiKeyId = yml.access(<b>api_key_id_property_name</b>)
       # </pre>
       #
       # The Hash#access method searches through the provided path and returns the found value.
       #
-      # The <b>apiKeyIdPropertyName</b> key can be as deep as needed, as long as it comes
+      # The <b>api_key_id_property_name</b> key can be as deep as needed, as long as it comes
       # in the exact path order.
       # Example: Having the file 'apiKey.yml' with the following content:
       #
@@ -143,11 +143,11 @@ module Stormpath
       #
       #           ClientBuilder#set_api_key_id_property_name('stormpath', 'apiKey', 'id')
       #
-      # @param apiKeyIdPropertyName the name used to query for the API Key ID from a YAML instance.
+      # @param api_key_id_property_name the name used to query for the API Key ID from a YAML instance.
       # @return the ClientBuilder instance for method chaining.
-      def set_api_key_id_property_name *apiKeyIdPropertyName
+      def set_api_key_id_property_name *api_key_id_property_name
 
-        @apiKeyIdPropertyName = *apiKeyIdPropertyName
+        @api_key_id_property_name = *api_key_id_property_name
         self
 
       end
@@ -155,12 +155,12 @@ module Stormpath
 
       # Sets the name used to query for the API Key Secret from a YAML instance.  That is:
       # <pre>
-      # apiKeyId = yml.access(<b>apiKeySecretPropertyName</b>)
+      # apiKeyId = yml.access(<b>api_key_secret_property_name</b>)
       # </pre>
       #
       # The Hash#access method searches through the provided path and returns the found value.
       #
-      # The <b>apiKeySecretPropertyName</b> key can be as deep as needed, as long as it comes
+      # The <b>api_key_secret_property_name</b> key can be as deep as needed, as long as it comes
       # in the exact path order.
       # Example: Having the file 'apiKey.yml' with the following content:
       #
@@ -172,11 +172,11 @@ module Stormpath
       #
       #           ClientBuilder#set_api_key_id_property_name('stormpath', 'apiKey', 'secret')
       #
-      # @param apiKeySecretPropertyName the name used to query for the API Key Secret from a YAML instance.
+      # @param api_key_secret_property_name the name used to query for the API Key Secret from a YAML instance.
       # @return the ClientBuilder instance for method chaining.
-      def set_api_key_secret_property_name *apiKeySecretPropertyName
+      def set_api_key_secret_property_name *api_key_secret_property_name
 
-        @apiKeySecretPropertyName = *apiKeySecretPropertyName
+        @api_key_secret_property_name = *api_key_secret_property_name
         self
 
       end
@@ -187,7 +187,7 @@ module Stormpath
       #
       def build
 
-        if @apiKeyProperties.nil? or (@apiKeyProperties.respond_to? 'empty?' and @apiKeyProperties.empty?)
+        if @api_key_properties.nil? or (@api_key_properties.respond_to? 'empty?' and @api_key_properties.empty?)
 
 
           #need to load the properties file
@@ -204,38 +204,38 @@ module Stormpath
 
         else
 
-          yaml_obj = YAML::load(@apiKeyProperties)
+          yaml_obj = YAML::load(@api_key_properties)
 
         end
 
-        apiKeyId = get_required_property_value yaml_obj, 'apiKeyId', @apiKeyIdPropertyName
+        api_key_id = get_required_property_value yaml_obj, 'api_key_id', @api_key_id_property_name
 
-        apiKeySecret = get_required_property_value yaml_obj, 'apiKeySecret', @apiKeySecretPropertyName
+        api_key_secret = get_required_property_value yaml_obj, 'api_key_secret', @api_key_secret_property_name
 
-        assert_not_nil apiKeyId, 'apiKeyId must not be nil when acquiring it from the YAML object'
-        assert_not_nil apiKeySecret, 'apiKeySecret must not be nil when acquiring it from the YAML object'
+        assert_not_nil api_key_id, 'api_key_id must not be nil when acquiring it from the YAML object'
+        assert_not_nil api_key_secret, 'api_key_secret must not be nil when acquiring it from the YAML object'
 
-        apiKey = ApiKey.new apiKeyId, apiKeySecret
+        api_key = ApiKey.new api_key_id, api_key_secret
 
-        Client.new apiKey, @baseUrl
+        Client.new api_key, @base_url
 
       end
 
-      def set_base_url baseUrl
-        @baseUrl = baseUrl
+      def set_base_url base_url
+        @base_url = base_url
         self
       end
 
       private
 
 
-      def get_property_value yml, propName, separator
+      def get_property_value yml, prop_name, separator
 
-        value = yml.access(propName, separator)
+        value = yml.access(prop_name, separator)
 
         if !value.nil?
 
-          if (value.kind_of? String)
+          if value.kind_of? String
 
             value = value.strip
 
@@ -251,20 +251,20 @@ module Stormpath
 
       end
 
-      def get_required_property_value yml, masterName, *propName
+      def get_required_property_value yml, masterName, *prop_name
 
 
-        propNameValue = propName[0]
+        prop_name_value = prop_name[0]
 
         separator = '--YAMLKeysSeparator--'
-        value = get_property_value(yml, propNameValue.respond_to?('join') ?
-            propName[0].join(separator) :
-            propNameValue,
+        value = get_property_value(yml, prop_name_value.respond_to?('join') ?
+            prop_name[0].join(separator) :
+            prop_name_value,
                                    separator)
 
         if value.nil?
 
-          raise ArgumentError, "There is no '" + propName.join(':') + "' property in the " +
+          raise ArgumentError, "There is no '" + prop_name.join(':') + "' property in the " +
               "configured apiKey YAML.  You can either specify that property or " +
               "configure the " + masterName + "PropertyName value on the ClientBuilder to specify a " +
               "custom property name."
@@ -276,11 +276,11 @@ module Stormpath
 
       def get_available_file
 
-        if @apiKeyFile
-          return @apiKeyFile
+        if @api_key_file
+          return @api_key_file
         end
 
-        open(@apiKeyFileLocation) { |f| f.read }
+        open(@api_key_file_location) { |f| f.read }
 
       end
 

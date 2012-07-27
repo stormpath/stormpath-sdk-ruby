@@ -23,12 +23,12 @@ module Stormpath
 
         if canonical
 
-          strMap = {'+' => '%20', '*' => '%2A', '%7E' => '~'}
+          str_map = {'+' => '%20', '*' => '%2A', '%7E' => '~'}
 
-          strMap.each do |key, value|
+          str_map.each do |key, str_value|
 
             if encoded.include? key
-              encoded[key] = value
+              encoded[key] = str_value
             end
 
           end

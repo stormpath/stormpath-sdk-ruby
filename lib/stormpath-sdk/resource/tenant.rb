@@ -20,7 +20,7 @@ module Stormpath
       def create_application application
 
         href = "/applications"; #TODO: enable auto discovery
-        dataStore.create href, application, Application
+        data_store.create href, application, Application
 
       end
 
@@ -41,13 +41,13 @@ module Stormpath
         #TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
         href = "/accounts/emailVerificationTokens/" + token
 
-        tokenHash = Hash.new
-        tokenHash.store HREF_PROP_NAME, href
+        token_hash = Hash.new
+        token_hash.store HREF_PROP_NAME, href
 
-        evToken = dataStore.instantiate EmailVerificationToken, tokenHash
+        ev_token = data_store.instantiate EmailVerificationToken, token_hash
 
         #execute a POST (should clean this up / make it more obvious)
-        dataStore.save evToken, Account
+        data_store.save ev_token, Account
       end
 
     end

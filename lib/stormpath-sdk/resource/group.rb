@@ -32,7 +32,7 @@ module Stormpath
       def get_status
         value = get_property STATUS
 
-        if (!value.nil?)
+        if !value.nil?
           value = value.upcase
         end
 
@@ -41,7 +41,7 @@ module Stormpath
 
       def set_status status
 
-        if (get_status_hash.has_key? status)
+        if get_status_hash.has_key? status
           set_property STATUS, get_status_hash[status]
         end
 
@@ -61,8 +61,8 @@ module Stormpath
 
       def add_account account
 
-        groupMembership = dataStore.instantiate GroupMembership, nil
-        groupMembership.create account, self
+        group_membership = data_store.instantiate GroupMembership, nil
+        group_membership.create account, self
 
       end
 

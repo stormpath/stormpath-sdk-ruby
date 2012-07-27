@@ -31,7 +31,7 @@ module Stormpath
       end
 
       def to_resource clazz, properties
-        self.dataStore.instantiate clazz, properties
+        self.data_store.instantiate clazz, properties
       end
 
       private

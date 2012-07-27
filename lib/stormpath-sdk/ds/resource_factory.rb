@@ -4,14 +4,14 @@ module Stormpath
 
     class ResourceFactory
 
-      def initialize(dataStore)
+      def initialize(data_store)
 
-        @dataStore = dataStore
+        @data_store = data_store
       end
 
-      def instantiate(clazz, constructorArgs)
+      def instantiate(clazz, constructor_args)
 
-        clazz.new @dataStore, constructorArgs
+        clazz.new @data_store, constructor_args
       end
 
     end
