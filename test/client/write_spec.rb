@@ -97,7 +97,7 @@ describe "WRITE Operations" do
 
     if (@update_application)
 
-      href = 'applications/A0atUpZARYGApaN5f88O3A'
+      href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
       application = @data_store.get_resource href, Application
 
       application.set_name application.get_name + ' Modified'
@@ -115,7 +115,7 @@ describe "WRITE Operations" do
 
     if (@update_directory)
 
-      href = 'directories/_oIg8zU5QWyiz22DcVYVLg'
+      href = 'directories/wDTY5jppTLS2uZEAcqaL5A'
       directory = @data_store.get_resource href, Directory
 
       directory.set_name directory.get_name + ' Modified'
@@ -133,10 +133,10 @@ describe "WRITE Operations" do
 
     if (@update_group)
 
-      href = 'groups/Ki3qEVTeSZmaRUgAdf9h_w'
+      href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
       group = @data_store.get_resource href, Group
 
-      group.set_name group.get_name + ' Modified'
+      group.set_name group.get_description + ' Modified'
       group.set_status Status::ENABLED
 
       group.save
@@ -185,7 +185,7 @@ describe "WRITE Operations" do
 
     if (@create_password_reset_token)
 
-      href = 'applications/A0atUpZARYGApaN5f88O3A'
+      href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
       application = @data_store.get_resource href, Application
 
       password_reset_token = application.create_password_reset_token 'rubysdk@email.com'
@@ -200,7 +200,7 @@ describe "WRITE Operations" do
 
     if (@verify_password_reset_token)
 
-      href = 'applications/A0atUpZARYGApaN5f88O3A'
+      href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
       application = @data_store.get_resource href, Application
 
       password_reset_token = application.verify_password_reset_token 'XW1AAKnlT-6sX0KEvLAbDg'
@@ -215,10 +215,10 @@ describe "WRITE Operations" do
 
     if (@create_group_membership_from_account)
 
-      group_href = 'groups/Ki3qEVTeSZmaRUgAdf9h_w'
+      group_href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
       group = @data_store.get_resource group_href, Group
 
-      account_href = 'accounts/9T-6HmQ5SsygYGH1xDcysQ'
+      account_href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
       account = @data_store.get_resource account_href, Account
 
       account.add_group group
@@ -245,10 +245,10 @@ describe "WRITE Operations" do
 
     if (@create_group_membership_from_group)
 
-      group_href = 'groups/1h9hasRvRr-8sx5GeJN_Dg'
+      group_href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
       group = @data_store.get_resource group_href, Group
 
-      account_href = 'accounts/9T-6HmQ5SsygYGH1xDcysQ'
+      account_href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
       account = @data_store.get_resource account_href, Account
 
       group.add_account account
@@ -272,10 +272,10 @@ describe "WRITE Operations" do
 
     if (@update_group_membership_with_deletion)
 
-      group_href = 'groups/1h9hasRvRr-8sx5GeJN_Dg'
+      group_href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
       group = @data_store.get_resource group_href, Group
 
-      account_href = 'accounts/9T-6HmQ5SsygYGH1xDcysQ'
+      account_href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
       account = @data_store.get_resource account_href, Account
 
       group_linked = false
