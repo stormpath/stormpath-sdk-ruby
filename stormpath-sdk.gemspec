@@ -1,4 +1,4 @@
-require "'./lib/stormpath-sdk/version'"
+require "./lib/stormpath-sdk/version"
 
 Gem::Specification.new do |s|
   s.name = 'stormpath-sdk'
