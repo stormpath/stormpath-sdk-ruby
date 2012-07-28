@@ -16,7 +16,9 @@ Via rubygems.org:
 $ gem install stormpath-sdk
 To build and install the development branch yourself from the latest source:
 
+```
 $ git clone git@github.com:stormpath/stormpath-sdk-ruby.git
 $ cd stormpath-sdk-ruby
 $ rake gem
 $ gem install pkg/stormpath-sdk-{version}
+```
