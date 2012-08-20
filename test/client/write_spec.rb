@@ -15,8 +15,9 @@ describe "WRITE Operations" do
     @update_group = false
     @create_application = false
     @verify_email = false
-    @create_password_reset_token = false
+    @send_password_reset_email = false
     @verify_password_reset_token = false
+    @create_account_with_group_membership = false
     @create_group_membership_from_account = false
     @create_group_membership_from_group = false
     @update_group_membership_with_deletion = false
@@ -27,9 +28,11 @@ describe "WRITE Operations" do
     href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
     application = @data_store.get_resource href, Application
 
-    result = application.authenticate UsernamePasswordRequest.new 'tootertest', 'super_P4ss', nil
+    result = application.authenticate_account UsernamePasswordRequest.new 'tootertest', 'super_P4ss', nil
 
-    result.should be_kind_of Account
+    result.should be_kind_of AuthenticationResult
+
+    result.get_account.should be_kind_of Account
   end
 
   it "application should NOT be able to authenticate and catch the error" do
@@ -38,7 +41,7 @@ describe "WRITE Operations" do
 
       href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
       application = @data_store.get_resource href, Application
-      result = application.authenticate UsernamePasswordRequest.new 'tootertest', 'WRONG_PASS', nil
+      result = application.authenticate_account UsernamePasswordRequest.new 'tootertest', 'WRONG_PASS', nil
 
     rescue ResourceError => re
       p '** Authentication Error **'
@@ -49,7 +52,7 @@ describe "WRITE Operations" do
       p 'Error Code: ' + re.get_code.to_s
     end
 
-    result.should_not be_kind_of Account
+    result.should_not be_kind_of AuthenticationResult
   end
 
   it "directory should be able to create account" do
@@ -181,16 +184,16 @@ describe "WRITE Operations" do
 
   end
 
-  it "password reset token should be created" do
+  it "password reset email should be sent" do
 
-    if (@create_password_reset_token)
+    if (@send_password_reset_email)
 
       href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
       application = @data_store.get_resource href, Application
 
-      password_reset_token = application.create_password_reset_token 'rubysdk@email.com'
+      result = application.send_password_reset_email 'rubysdk@email.com'
 
-      password_reset_token.should be_kind_of PasswordResetToken
+      result.should be_kind_of Account
 
     end
 
@@ -203,13 +206,58 @@ describe "WRITE Operations" do
       href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
       application = @data_store.get_resource href, Application
 
-      password_reset_token = application.verify_password_reset_token 'XW1AAKnlT-6sX0KEvLAbDg'
+      result = application.verify_password_reset_token 'N0Zt1W9jTW2hP37XAE1jTQ'
 
-      password_reset_token.should be_kind_of PasswordResetToken
+      result.should be_kind_of Account
 
     end
 
   end
+
+  it "account should be created linked to a group" do
+
+    if (@create_account_with_group_membership)
+
+      directory_href = 'directories/wDTY5jppTLS2uZEAcqaL5A'
+      directory = @data_store.get_resource directory_href, Directory
+
+      group_href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
+      group = @data_store.get_resource group_href, Group
+
+      account = @data_store.instantiate Account, nil
+      account.set_email 'rubysdkwithgroup@email.com'
+      account.set_given_name 'Ruby'
+      account.set_password 'super_P4ss'
+      account.set_surname 'Sdk With Group'
+      account.set_username 'rubysdkwithgroup'
+
+      begin
+
+        directory.create_account account
+        account.add_group group
+
+      rescue ResourceError => re
+
+        false.should be true
+
+      end
+
+      group_added = false
+      account.get_groups.each { |tmpGroup|
+
+        if tmpGroup.get_href.include? group_href
+
+          group_added = true
+          break
+        end
+      }
+
+      group_added.should be true
+
+    end
+
+  end
+
 
   it "account should be linked to specified group" do
 
