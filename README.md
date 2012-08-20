@@ -13,7 +13,10 @@ https://github.com/stormpath/stormpath-sdk-ruby/wiki
 
 Via rubygems.org:
 
+```
 $ gem install stormpath-sdk
+```
+
 To build and install the development branch yourself from the latest source:
 
 ```
