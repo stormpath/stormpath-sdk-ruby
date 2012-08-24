@@ -14,6 +14,7 @@ describe "WRITE Operations" do
     @update_directory = false
     @update_group = false
     @create_application = false
+    @change_password = false
     @verify_email = false
     @send_password_reset_email = false
     @verify_password_reset_token = false
@@ -209,6 +210,35 @@ describe "WRITE Operations" do
       result = application.verify_password_reset_token 'N0Zt1W9jTW2hP37XAE1jTQ'
 
       result.should be_kind_of Account
+
+    end
+
+  end
+
+  it "password should be changed" do
+
+    if (@change_password)
+
+      href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
+      application = @data_store.get_resource href, Application
+
+      account = application.verify_password_reset_token 'TFMWt3lbQdWc7MNF48pJbw'
+
+      account.should be_kind_of Account
+
+      new_password = 'changed_P4ss'
+      account.set_password new_password
+      account.save
+
+      begin
+
+        application.authenticate_account UsernamePasswordRequest.new account.get_username, new_password, nil
+
+      rescue ResourceError => re
+
+        false.should be true
+
+      end
 
     end
 
