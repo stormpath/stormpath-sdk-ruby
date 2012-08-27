@@ -1,4 +1,4 @@
-stormpath-sdk-php Changelog
+stormpath-sdk-ruby Changelog
 ====================
 
 Version 0.2.0
