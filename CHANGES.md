@@ -1,6 +1,14 @@
 stormpath-sdk-php Changelog
 ====================
 
+Version 0.2.0
+-------------
+
+Released on August 20, 2012
+
+- Result of the Application authentication was changed from Account to AuthenticationResult.
+- The password verification's method name for token creation on the Application class was changed to 'send_password_reset_email'.
+
 Version 0.1.0
 -------------
 
