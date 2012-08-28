@@ -29,6 +29,7 @@ module Stormpath
         @read_lock = Mutex.new
         @write_lock = Mutex.new
         @properties = Hash.new
+        @dirtyProperties = Hash.new
         set_properties properties
 
       end
@@ -43,10 +44,15 @@ module Stormpath
 
           if !properties.nil? and properties.is_a? Hash
             @properties.replace properties
+
+            # Don't consider this resource materialized if it is only a reference.  A reference is any object that
+            # has only one 'href' property.
             href_only = @properties.size == 1 and @properties.has_key? HREF_PROP_NAME
             @materialized = !href_only
 
           else
+            @properties.clear
+            @dirtyProperties.clear
             @materialized = false
           end
 
@@ -61,8 +67,28 @@ module Stormpath
           #not the href/id, must be a property that requires materialization:
           if !is_new and !materialized
 
-            materialize
+            # only materialize if the property hasn't been set previously (no need to execute a server
+            # request since we have the most recent value already):
+            present = false
+            @read_lock.lock
+
+            begin
+
+              present = @dirtyProperties.has_key? name
+
+            ensure
+
+              @read_lock.unlock
+
+            end
+
+            if !present
+              # exhausted present properties - we require a server call:
+              materialize
+            end
+
           end
+
         end
 
         read_property name
@@ -126,18 +152,9 @@ module Stormpath
         @write_lock.lock
 
         begin
-          if value.nil?
-
-            removed = @properties.delete name
-
-            if !removed.nil?
-              @dirty = true
-            end
-
-          else
-            @properties.store name, value
-            @dirty = true
-          end
+          @properties.store name, value
+          @dirtyProperties.store name, value
+          @dirty = true
         ensure
           @write_lock.unlock
         end
@@ -153,6 +170,10 @@ module Stormpath
 
           resource = @data_store.get_resource get_href, clazz
           @properties.replace resource.properties
+
+          #retain dirty properties:
+          @properties.merge! @dirtyProperties
+
           @materialized = true
 
         ensure
