@@ -16,4 +16,13 @@ class TestResource < Stormpath::Resource::Resource
     set_property 'description', description
   end
 
+  def set_password password
+    set_property 'password', password
+  end
+
+  protected
+  def printable_property? property_name
+    'password' != property_name
+  end
+
 end

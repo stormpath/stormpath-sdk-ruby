@@ -21,7 +21,7 @@ module Stormpath
 
       attr_reader :host
 
-      def initialize username, password, host
+      def initialize username, password, host = nil
         @username = username
         @password = (password != nil and password.length > 0) ? password.chars.to_a : "".chars.to_a
         @host = host

@@ -36,7 +36,7 @@ module Stormpath
         @resource_factory = ResourceFactory.new(self)
       end
 
-      def instantiate(clazz, properties)
+      def instantiate(clazz, properties = {})
 
         @resource_factory.instantiate(clazz, properties)
       end
@@ -60,7 +60,7 @@ module Stormpath
 
         if resource.kind_of? return_type
 
-          resource.set_properties returned_resource.properties
+          resource.set_properties to_hash(returned_resource)
 
         end
 
@@ -84,7 +84,7 @@ module Stormpath
         return_value = save_resource href, resource, clazz
 
         #ensure the caller's argument is updated with what is returned from the server:
-        resource.set_properties return_value.properties
+        resource.set_properties to_hash(return_value)
 
         return_value
 
@@ -156,7 +156,7 @@ module Stormpath
           q_href = qualify q_href
         end
 
-        response = execute_request('post', q_href, MultiJson.dump(resource.properties))
+        response = execute_request('post', q_href, MultiJson.dump(to_hash(resource)))
         @resource_factory.instantiate(return_type, response.to_hash)
 
       end
@@ -165,6 +165,41 @@ module Stormpath
         (!base_url.empty? and !base_url[0].nil?) ?
             base_url[0] :
             "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
+      end
+
+      def to_hash resource
+
+        property_names = resource.get_property_names
+        properties = Hash.new
+
+        property_names.each do |name|
+
+          property = resource.get_property name
+
+          if property.kind_of? Hash
+
+            property = to_simple_reference name, property
+
+          end
+
+          properties.store name, property
+
+        end
+
+        properties
+
+      end
+
+      def to_simple_reference property_name, hash
+
+        href_prop_name = Resource::Resource::HREF_PROP_NAME
+        assert_true (hash.kind_of? Hash and !hash.empty? and hash.has_key? href_prop_name), "Nested resource " +
+            "'#{property_name}' must have an 'href' property."
+
+        href = hash[href_prop_name]
+
+        {href_prop_name => href}
+
       end
 
     end

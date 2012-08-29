@@ -24,7 +24,7 @@ module Stormpath
         @data_store = data_store
       end
 
-      def instantiate(clazz, constructor_args)
+      def instantiate(clazz, constructor_args = {})
 
         clazz.new @data_store, constructor_args
       end

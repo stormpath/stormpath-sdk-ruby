@@ -118,6 +118,11 @@ module Stormpath
         get_resource_property GROUP_MEMBERSHIPS, GroupMembershipList
       end
 
+      protected
+      def printable_property? property_name
+        PASSWORD != property_name
+      end
+
     end
 
   end

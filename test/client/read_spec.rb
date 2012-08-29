@@ -237,6 +237,19 @@ describe "READ Operations" do
 
   end
 
+  it "dirty properties must be retained after materialization" do
+
+    account = @data_store.instantiate Account, {'href' => 'accounts/gJH4bh6QQKK0awRmwD72Cg'}
+
+    name = 'Name Before Materialization'
+
+    account.set_given_name name
+
+    account.get_surname.should be_kind_of String
+
+    account.get_given_name.should == name
+  end
+
 end
 
 

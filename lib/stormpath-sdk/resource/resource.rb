@@ -23,13 +23,13 @@ module Stormpath
 
       HREF_PROP_NAME = "href"
 
-      def initialize data_store, properties
+      def initialize data_store, properties = {}
 
         @data_store = data_store
         @read_lock = Mutex.new
         @write_lock = Mutex.new
         @properties = Hash.new
-        @dirtyProperties = Hash.new
+        @dirty_properties = Hash.new
         set_properties properties
 
       end
@@ -40,6 +40,8 @@ module Stormpath
 
         begin
 
+          @properties.clear
+          @dirty_properties.clear
           @dirty = false
 
           if !properties.nil? and properties.is_a? Hash
@@ -51,8 +53,6 @@ module Stormpath
             @materialized = !href_only
 
           else
-            @properties.clear
-            @dirtyProperties.clear
             @materialized = false
           end
 
@@ -74,7 +74,7 @@ module Stormpath
 
             begin
 
-              present = @dirtyProperties.has_key? name
+              present = @dirty_properties.has_key? name
 
             ensure
 
@@ -109,7 +109,105 @@ module Stormpath
         get_property HREF_PROP_NAME
       end
 
-      attr_reader :properties
+      def inspect
+
+        @read_lock.lock
+
+        str = ''
+
+        begin
+
+          counter = 2
+          @properties.each do |key, value|
+
+            if str.empty?
+
+              str = '#<' + class_name_with_id + ' @properties={'
+
+            else
+
+              if printable_property? key
+
+                str << "\"#{key}\"=>"
+
+                if value.kind_of? Hash and value.has_key? HREF_PROP_NAME
+
+                  str << '{"' << HREF_PROP_NAME + '"=>"' + value[HREF_PROP_NAME] + '"}'
+
+                else
+
+                  str << "\"#{value}\""
+
+                end
+
+                if counter < @properties.length
+
+                  str << ', '
+
+                end
+
+              end
+
+              counter+= 1
+
+            end
+
+          end
+
+        ensure
+
+          @read_lock.unlock
+
+        end
+
+        if !str.empty?
+          str << '}>'
+        end
+
+        str
+
+      end
+
+      def to_s
+        '#<' + class_name_with_id + '>'
+      end
+
+      def to_yaml
+
+        yaml = '--- !ruby/object:' << self.class.name << "\n"
+
+        @read_lock.lock
+
+        begin
+
+          first_property = true
+          @properties.each do |key, value|
+
+            if printable_property? key
+
+              if first_property
+
+                yaml << " properties\n "
+
+              end
+
+              yaml << ' ' << key << ': ' << value << "\n"
+
+              first_property = false
+
+            end
+
+          end
+
+        ensure
+
+          @read_lock.unlock
+
+        end
+
+        yaml << "\n"
+
+      end
 
       protected
 
@@ -153,7 +251,7 @@ module Stormpath
 
         begin
           @properties.store name, value
-          @dirtyProperties.store name, value
+          @dirty_properties.store name, value
           @dirty = true
         ensure
           @write_lock.unlock
@@ -172,7 +270,7 @@ module Stormpath
           @properties.replace resource.properties
 
           #retain dirty properties:
-          @properties.merge! @dirtyProperties
+          @properties.merge! @dirty_properties
 
           @materialized = true
 
@@ -180,6 +278,22 @@ module Stormpath
 
           @write_lock.unlock
         end
+
+      end
+
+      def properties
+        @properties
+      end
+
+      ##
+      # Returns {@code true} if the internal property is safe to print in to_s or inspect, {@code false} otherwise.
+      #
+      # @param property_name The name of the property to check for safe printing
+      # @return {@code true} if the internal property is safe to print in to_s, {@code false} otherwise.
+      def printable_property? property_name
+
+        return true
+
       end
 
       private
@@ -202,6 +316,10 @@ module Stormpath
           @read_lock.unlock
         end
 
+      end
+
+      def class_name_with_id
+        self.class.name + ':0x' + ('%x' % (self.object_id << 1)).to_s
       end
     end
   end

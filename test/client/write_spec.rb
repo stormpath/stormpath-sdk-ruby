@@ -10,6 +10,7 @@ describe "WRITE Operations" do
     @data_store = @client.data_store
     @create_account = false
     @update_account = false
+    @remove_account_property = false
     @update_application = false
     @update_directory = false
     @update_group = false
@@ -26,10 +27,10 @@ describe "WRITE Operations" do
 
   it "application should be able to authenticate" do
 
-    href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
+    href = 'applications/A0atUpZARYGApaN5f88O3A'
     application = @data_store.get_resource href, Application
 
-    result = application.authenticate_account UsernamePasswordRequest.new 'tootertest', 'super_P4ss', nil
+    result = application.authenticate_account UsernamePasswordRequest.new 'kentucky', 'super_P4ss'
 
     result.should be_kind_of AuthenticationResult
 
@@ -40,9 +41,9 @@ describe "WRITE Operations" do
 
     begin
 
-      href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
+      href = 'applications/A0atUpZARYGApaN5f88O3A'
       application = @data_store.get_resource href, Application
-      result = application.authenticate_account UsernamePasswordRequest.new 'tootertest', 'WRONG_PASS', nil
+      result = application.authenticate_account UsernamePasswordRequest.new 'kentucky', 'WRONG_PASS'
 
     rescue ResourceError => re
       p '** Authentication Error **'
@@ -60,17 +61,17 @@ describe "WRITE Operations" do
 
     if (@create_account)
 
-      href = 'directories/wDTY5jppTLS2uZEAcqaL5A'
+      href = 'directories/_oIg8zU5QWyiz22DcVYVLg'
       directory = @data_store.get_resource href, Directory
 
-      account = @data_store.instantiate Account, nil
+      account = @data_store.instantiate Account
       account.set_email 'rubysdk@email.com'
       account.set_given_name 'Ruby'
       account.set_password 'super_P4ss'
       account.set_surname 'Sdk'
       account.set_username 'rubysdk'
 
-      result = directory.create_account account
+      result = directory.create_account account, false
 
       result.should be_kind_of Account
 
@@ -92,6 +93,30 @@ describe "WRITE Operations" do
       account.save
 
       account.get_middle_name.should == mod_value
+
+    end
+
+  end
+
+  it "account property should be updated/removed" do
+
+    if (@remove_account_property)
+
+      href = 'accounts/gJH4bh6QQKK0awRmwD72Cg'
+      account = @data_store.get_resource href, Account
+
+      mod_value = 'Modified at: ' + Time.now.to_s
+      account.set_middle_name mod_value
+
+      account.save
+
+      account.get_middle_name.should == mod_value
+
+      account.set_middle_name nil
+
+      account.save
+
+      account.get_middle_name.should == nil
 
     end
 
@@ -157,7 +182,7 @@ describe "WRITE Operations" do
 
       tenant = @client.current_tenant
 
-      application = @data_store.instantiate Application, nil
+      application = @data_store.instantiate Application
       application.set_name 'Test Application Creation'
       application.set_description 'Test Application Description'
 
@@ -232,7 +257,7 @@ describe "WRITE Operations" do
 
       begin
 
-        application.authenticate_account UsernamePasswordRequest.new account.get_username, new_password, nil
+        application.authenticate_account UsernamePasswordRequest.new account.get_username, new_password
 
       rescue ResourceError => re
 
@@ -254,7 +279,7 @@ describe "WRITE Operations" do
       group_href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
       group = @data_store.get_resource group_href, Group
 
-      account = @data_store.instantiate Account, nil
+      account = @data_store.instantiate Account
       account.set_email 'rubysdkwithgroup@email.com'
       account.set_given_name 'Ruby'
       account.set_password 'super_P4ss'
