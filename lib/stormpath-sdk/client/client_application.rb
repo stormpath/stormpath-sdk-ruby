@@ -15,34 +15,24 @@
 #
 module Stormpath
 
-  module Util
+  module Client
 
-    module Assert
+    # A ClientApplication is a simple wrapper around a {@link Stormpath::Client::Client} and
+    # {@link Stormpath::Resource::Application} instance, returned from
+    # the {@code ClientApplicationBuilder}.{@link Stormpath::Client::ClientApplicationBuilder#build_application}
+    # method.
+    # @since 0.3.0
+    class ClientApplication
 
-      def assert_not_nil object, message
+      attr_reader :client, :application
 
-        raise ArgumentError, message, caller unless !object.nil?
-
-      end
-
-      def assert_kind_of clazz, object, message
-
-        raise ArgumentError, message, caller unless object.kind_of? clazz
-
-      end
-
-      def assert_true arg, message
-
-        raise ArgumentError, message, caller unless arg
-
-      end
-
-      def assert_false arg, message
-
-        raise ArgumentError, message, caller unless !arg
-
+      def initialize client, application
+        @client = client
+        @application = application
       end
 
     end
+
   end
+
 end

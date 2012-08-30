@@ -28,7 +28,7 @@ module Stormpath
     # <pre>
     # location = "/home/jsmith/.stormpath/apiKey.yml";
     #
-    # client = ClientBuilder.new.set_api_key_file_location(location).build()
+    # client = ClientBuilder.new.set_api_key_file_location(location).build
     # </pre>
     # <p/>
     # You may load files from the filesystem or URLs by specifying the file location.
@@ -102,14 +102,14 @@ module Stormpath
       # <pre>
       # location = "/home/jsmith/.stormpath/apiKey.yml";
       #
-      # client = ClientBuilder.new.set_api_key_file_location(location).build()
+      # client = ClientBuilder.new.set_api_key_file_location(location).build
       # </pre>
       # <h3>Custom Property Names</h3>
       # If you want to control the property names used in the file, you may configure them via
       # {@link #set_api_key_id_property_name(String) set_api_key_id_property_name} and
       # {@link #set_api_key_secret_property_name(String) set_api_key_secret_property_name}.
       # <p/>
-      # For example, if you had a {@code /home/jsmith/.stormpath/apiKey.properties} file with the following
+      # For example, if you had a {@code /home/jsmith/.stormpath/apiKey.yml} file with the following
       # name/value pairs:
       # <pre>
       # myStormpathApiKeyId = 'foo'
@@ -133,9 +133,11 @@ module Stormpath
       # @return the ClientBuilder instance for method chaining.
       #/
       def set_api_key_file_location location
+
         assert_kind_of String, location, 'location must be kind of String'
         @api_key_file_location = location
         self
+
       end
 
 
@@ -209,11 +211,9 @@ module Stormpath
 
           file = get_available_file
 
-          if file.nil?
-            raise ArgumentError, "No API Key file could be found or loaded from a file location.  Please " +
-                "configure the 'apiKeyFileLocation' property or alternatively configure a " +
-                "YAML loadable instance."
-          end
+          assert_not_nil file, "No API Key file could be found or loaded from a file location.  Please " +
+              "configure the 'apiKeyFileLocation' property or alternatively configure a " +
+              "YAML loadable instance."
 
           yaml_obj = YAML::load(file)
 
@@ -237,8 +237,10 @@ module Stormpath
       end
 
       def set_base_url base_url
+
         @base_url = base_url
         self
+
       end
 
       private
@@ -277,13 +279,10 @@ module Stormpath
             prop_name_value,
                                    separator)
 
-        if value.nil?
-
-          raise ArgumentError, "There is no '" + prop_name.join(':') + "' property in the " +
-              "configured apiKey YAML.  You can either specify that property or " +
-              "configure the " + masterName + "PropertyName value on the ClientBuilder to specify a " +
-              "custom property name."
-        end
+        assert_not_nil value, "There is no '" + prop_name.join(':') + "' property in the " +
+            "configured apiKey YAML.  You can either specify that property or " +
+            "configure the #{masterName}_property_name value on the ClientBuilder to specify a " +
+            "custom property name."
 
         value
 
