@@ -1,6 +1,18 @@
 stormpath-sdk-ruby Changelog
 ====================
 
+Version 0.3.0
+-------------
+
+Released on August 31, 2012
+
+- The properties method is now protected, only available for the resources hierarchy. The properties on the data store are now obtained via Stormpath::Resource::Resource's get_property_names and get_property functions.
+- The 'inspect' and 'to_s' methods were overridden in Stormpath::Resource::Resource to keep some properties (like password) from being displayed.
+- Logic to retain non-persisted properties was added (dirty properties).
+- A resource's property can now be removed by setting it to nil.
+- The Stormpath::Client::ClientApplicationBuilder class was added and implemented to produce a Stormpath::Client::ClientApplication from a single URL with the credentials on it.
+
+
 Version 0.2.0
 -------------
 
