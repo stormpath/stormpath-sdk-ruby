@@ -17,7 +17,7 @@ module Stormpath
 
   module Resource
 
-    class GroupMembership < InstanceResource
+    class GroupMembership < Resource
 
       ACCOUNT = "account"
       GROUP = "group"
@@ -26,19 +26,11 @@ module Stormpath
         get_resource_property ACCOUNT, Account
       end
 
-      def set_account account
-        set_property ACCOUNT, account
-      end
-
       def get_group
         get_resource_property GROUP, Group
       end
 
-      def set_group group
-        set_property GROUP, group
-      end
-
-      def create account, group
+      def self.create account, group, data_store
 
         #TODO: enable auto discovery
         href = "/groupMemberships"

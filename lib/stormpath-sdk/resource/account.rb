@@ -109,8 +109,7 @@ module Stormpath
 
       def add_group group
 
-        group_membership = data_store.instantiate GroupMembership, nil
-        group_membership.create self, group
+        GroupMembership::create self, group, data_store
 
       end
 

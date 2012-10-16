@@ -76,8 +76,7 @@ module Stormpath
 
       def add_account account
 
-        group_membership = data_store.instantiate GroupMembership, nil
-        group_membership.create account, self
+        GroupMembership::create account, self, data_store
 
       end
 

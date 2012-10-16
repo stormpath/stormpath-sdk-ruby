@@ -20,9 +20,9 @@ describe "WRITE Operations" do
     @send_password_reset_email = false
     @verify_password_reset_token = false
     @create_account_with_group_membership = false
-    @create_group_membership_from_account = false
-    @create_group_membership_from_group = false
-    @update_group_membership_with_deletion = false
+    @create_group_membership_from_account = true
+    @create_group_membership_from_group = true
+    @update_group_membership_with_deletion = true
   end
 
   it "application should be able to authenticate" do
@@ -318,10 +318,10 @@ describe "WRITE Operations" do
 
     if (@create_group_membership_from_account)
 
-      group_href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
+      group_href = 'groups/0I5wmUILTvqHraXLERE9fw'
       group = @data_store.get_resource group_href, Group
 
-      account_href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
+      account_href = 'accounts/RpB0hBFVSTmoLZTqHlwBRg'
       account = @data_store.get_resource account_href, Account
 
       account.add_group group
@@ -348,10 +348,10 @@ describe "WRITE Operations" do
 
     if (@create_group_membership_from_group)
 
-      group_href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
+      group_href = 'groups/E_D6HFfxSFmP0wIRvvvMUA'
       group = @data_store.get_resource group_href, Group
 
-      account_href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
+      account_href = 'accounts/RpB0hBFVSTmoLZTqHlwBRg'
       account = @data_store.get_resource account_href, Account
 
       group.add_account account
@@ -375,10 +375,10 @@ describe "WRITE Operations" do
 
     if (@update_group_membership_with_deletion)
 
-      group_href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
+      group_href = 'groups/0I5wmUILTvqHraXLERE9fw'
       group = @data_store.get_resource group_href, Group
 
-      account_href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
+      account_href = 'accounts/RpB0hBFVSTmoLZTqHlwBRg'
       account = @data_store.get_resource account_href, Account
 
       group_linked = false
