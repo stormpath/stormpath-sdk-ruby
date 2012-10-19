@@ -20,14 +20,14 @@ describe "WRITE Operations" do
     @send_password_reset_email = false
     @verify_password_reset_token = false
     @create_account_with_group_membership = false
-    @create_group_membership_from_account = true
-    @create_group_membership_from_group = true
-    @update_group_membership_with_deletion = true
+    @create_group_membership_from_account = false
+    @create_group_membership_from_group = false
+    @update_group_membership_with_deletion = false
   end
 
   it "application should be able to authenticate" do
 
-    href = 'applications/A0atUpZARYGApaN5f88O3A'
+    href = 'applications/uGBNDZ7TRhm_tahanqvn9A'
     application = @data_store.get_resource href, Application
 
     result = application.authenticate_account UsernamePasswordRequest.new 'kentucky', 'super_P4ss'
@@ -41,7 +41,7 @@ describe "WRITE Operations" do
 
     begin
 
-      href = 'applications/A0atUpZARYGApaN5f88O3A'
+      href = 'applications/uGBNDZ7TRhm_tahanqvn9A'
       application = @data_store.get_resource href, Application
       result = application.authenticate_account UsernamePasswordRequest.new 'kentucky', 'WRONG_PASS'
 
@@ -61,7 +61,7 @@ describe "WRITE Operations" do
 
     if (@create_account)
 
-      href = 'directories/_oIg8zU5QWyiz22DcVYVLg'
+      href = 'directories/jDd1xnMYTdqP-L-m6UD1Vg'
       directory = @data_store.get_resource href, Directory
 
       account = @data_store.instantiate Account
@@ -83,7 +83,7 @@ describe "WRITE Operations" do
 
     if (@update_account)
 
-      href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
+      href = 'accounts/RpB0hBFVSTmoLZTqHlwBRg'
       account = @data_store.get_resource href, Account
 
       mod_value = 'Modified at: ' + Time.now.to_s
@@ -214,7 +214,7 @@ describe "WRITE Operations" do
 
     if (@send_password_reset_email)
 
-      href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
+      href = 'applications/uGBNDZ7TRhm_tahanqvn9A'
       application = @data_store.get_resource href, Application
 
       result = application.send_password_reset_email 'rubysdk@email.com'

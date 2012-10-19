@@ -4,13 +4,18 @@ stormpath-sdk-ruby Changelog
 Version 0.4.0
 -------------
 
-Released on October 16, 2012
+Released on October XY, 2012
 
 - The Stormpath::Resource::GroupMembership class now extends the Stormpath::Resource::Resource class. It is no longer possible to call 'save' on an instance of this class.
 - The 'create' method of the Stormpath::Resource::GroupMembership class is now a class method and receives an instance of Stormpath::DataStore::DataStore.
 - The 'add_group' method implementation of the Stormpath::Resource::Account class was updated to reflect the previously mentioned changes.
 - The 'add_account' method implementation of the Stormpath::Resource::Group class was updated to reflect the previously mentioned changes.
 - The 'set_account' and 'set_group' methods were removed from the Stormpath::Resource::GroupMembership class.
+- The 'get_account' method implementation of Stormpath::Authentication::AuthenticationResult changed to use the Account's fully qualified name.
+- The 'build' method implementation of Stormpath::Client::ClientApplicationBuilder changed to use the Application's fully qualified name.
+- The 'save', 'delete' and 'save_resource' methods implementations of Stormpath::DataStore::DataStore were changed to receive the Resource's fully qualified name in the 'assert_kind_of' method calls.
+- The 'authenticate' method implementation of Stormpath::Authentication::BasicAuthenticator was changed to replace 'password' variable's Array to String conversion from 'to_s' to 'join'.
+- The 'to_class_from_instance' method implementation was completely changed to use activesupport's 'constantize' method, and to enable caching of the already "constantized" values.
 
 
 Version 0.3.0

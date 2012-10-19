@@ -34,7 +34,7 @@ module Stormpath
         username = (username != nil) ? username : ''
 
         password = request.get_credentials
-        pw_string = password.to_s
+        pw_string = password.join
 
         value = username + ':' + pw_string
 

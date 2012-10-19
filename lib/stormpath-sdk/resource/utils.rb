@@ -19,12 +19,23 @@ module Stormpath
 
     module Utils
 
+      include ActiveSupport::Inflector
+      include Stormpath::Util::Assert
+
+      @@resources_hash = Hash.new
+
       def to_class_from_instance resource
 
-        if resource.kind_of? Resource
-          clazz = Kernel.const_get resource.class.name.split('::').last
+        assert_kind_of Resource, resource, "resource argument must be instance of Stormpath::Resource::Resource"
+
+        if !@@resources_hash.has_key? resource.class.name
+
+          @@resources_hash[resource.class.name] = constantize resource.class.name
+
         end
-        clazz
+
+        @@resources_hash[resource.class.name]
+
       end
     end
   end

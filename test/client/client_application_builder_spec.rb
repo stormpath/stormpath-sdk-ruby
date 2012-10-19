@@ -7,9 +7,9 @@ describe "Client Application Builder Tests" do
   before(:all) do
     @client_file = 'test/client/client.yml'
     @client_remote_file = 'http://localhost:8081/client.yml'
-    @application_href = 'http://localhost:8080/v1/applications/A0atUpZARYGApaN5f88O3A'
+    @application_href = 'http://localhost:8080/v1/applications/uGBNDZ7TRhm_tahanqvn9A'
     @http_prefix = 'http://'
-    @app_href_without_http = '@localhost:8080/v1/applications/A0atUpZARYGApaN5f88O3A'
+    @app_href_without_http = '@localhost:8080/v1/applications/uGBNDZ7TRhm_tahanqvn9A'
     @client_builder = ClientBuilder.new.set_base_url 'http://localhost:8080/v1'
     @test_remote_file = false
   end

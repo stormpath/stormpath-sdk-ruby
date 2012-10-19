@@ -62,7 +62,7 @@ describe "READ Operations" do
 
   it "application's properties must come complete'" do
 
-    href = 'applications/fzyWJ5V_SDORGPk4fT2jhA'
+    href = 'applications/uGBNDZ7TRhm_tahanqvn9A'
     application = @data_store.get_resource href, Application
 
     application.should be_kind_of Application
@@ -72,14 +72,12 @@ describe "READ Operations" do
     description = application.get_description
     tenant = application.get_tenant
     accounts = application.get_accounts
-    password_reset_tokens = application.get_password_reset_token
 
     name.should be_kind_of String
     status.should be_kind_of String
     description.should be_kind_of String
     tenant.should be_kind_of Tenant
     accounts.should be_kind_of AccountList
-    password_reset_tokens.should be_kind_of PasswordResetToken
 
     accounts.each { |acc|
 
@@ -97,7 +95,7 @@ describe "READ Operations" do
 
   it "directory's properties must come complete'" do
 
-    href = 'directories/wDTY5jppTLS2uZEAcqaL5A'
+    href = 'directories/jDd1xnMYTdqP-L-m6UD1Vg'
     directory = @data_store.get_resource href, Directory
 
     directory.should be_kind_of Directory
@@ -143,7 +141,7 @@ describe "READ Operations" do
 
   it "group's properties must come complete'" do
 
-    href = 'groups/mCidbrAcSF-VpkNfOVvJkQ'
+    href = 'groups/E_D6HFfxSFmP0wIRvvvMUA'
     group = @data_store.get_resource href, Group
 
     group.should be_kind_of Group
@@ -178,7 +176,7 @@ describe "READ Operations" do
 
   it "account's properties must come complete'" do
 
-    href = 'accounts/ije9hUEKTZ29YcGhdG5s2A'
+    href = 'accounts/AnUd9aE_RKq-v8QJfrjq0A'
     account = @data_store.get_resource href, Account
 
     account.should be_kind_of Account
@@ -203,7 +201,8 @@ describe "READ Operations" do
     surname.should be_kind_of String
     groups.should be_kind_of GroupList
     directory.should be_kind_of Directory
-    email_verification_token.should be_kind_of EmailVerificationToken
+    # email_verification_token may not be present
+    #email_verification_token.should be_kind_of EmailVerificationToken
     group_memberships.should be_kind_of GroupMembershipList
 
     groups.each { |group|
@@ -239,7 +238,7 @@ describe "READ Operations" do
 
   it "dirty properties must be retained after materialization" do
 
-    account = @data_store.instantiate Account, {'href' => 'accounts/gJH4bh6QQKK0awRmwD72Cg'}
+    account = @data_store.instantiate Account, {'href' => 'accounts/AnUd9aE_RKq-v8QJfrjq0A'}
 
     name = 'Name Before Materialization'
 

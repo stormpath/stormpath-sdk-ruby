@@ -6,6 +6,7 @@ require "open-uri"
 require "uri"
 require "uuidtools"
 require "yaml"
+require "active_support"
 
 require "stormpath-sdk/version" unless defined? Stormpath::VERSION
 require "stormpath-sdk/util/assert"

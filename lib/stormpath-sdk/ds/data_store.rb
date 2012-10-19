@@ -70,7 +70,7 @@ module Stormpath
 
       def save resource, *clazz
         assert_not_nil resource, "resource argument cannot be null."
-        assert_kind_of Resource, resource, "resource argument must be instance of Resource"
+        assert_kind_of Stormpath::Resource::Resource, resource, "resource argument must be instance of Stormpath::Resource::Resource"
 
         href = resource.get_href
         assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
@@ -93,7 +93,7 @@ module Stormpath
       def delete resource
 
         assert_not_nil resource, "resource argument cannot be null."
-        assert_kind_of Resource, resource, "resource argument must be instance of Resource"
+        assert_kind_of Stormpath::Resource::Resource, resource, "resource argument must be instance of Stormpath::Resource::Resource"
 
         execute_request('delete', resource.get_href, nil)
 
@@ -148,7 +148,7 @@ module Stormpath
 
         assert_not_nil resource, "resource argument cannot be null."
         assert_not_nil return_type, "returnType class cannot be null."
-        assert_kind_of Resource, resource, "resource argument must be instance of Resource"
+        assert_kind_of Stormpath::Resource::Resource, resource, "resource argument must be instance of Stormpath::Resource::Resource"
 
         q_href = href
 
