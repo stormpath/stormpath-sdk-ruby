@@ -22,7 +22,7 @@ describe "WRITE Operations" do
     @create_account_with_group_membership = false
     @create_group_membership_from_account = false
     @create_group_membership_from_group = false
-    @update_group_membership_with_deletion = true
+    @update_group_membership_with_deletion = false
   end
 
   it "application should be able to authenticate" do
