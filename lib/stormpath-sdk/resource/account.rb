@@ -109,7 +109,7 @@ module Stormpath
 
       def add_group group
 
-        GroupMembership::create self, group, data_store
+        GroupMembership::_create self, group, data_store
 
       end
 

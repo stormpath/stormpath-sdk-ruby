@@ -22,7 +22,7 @@ describe "WRITE Operations" do
     @create_account_with_group_membership = false
     @create_group_membership_from_account = false
     @create_group_membership_from_group = false
-    @update_group_membership_with_deletion = false
+    @update_group_membership_with_deletion = true
   end
 
   it "application should be able to authenticate" do
@@ -381,7 +381,6 @@ describe "WRITE Operations" do
       account_href = 'accounts/RpB0hBFVSTmoLZTqHlwBRg'
       account = @data_store.get_resource account_href, Account
 
-      group_linked = false
       group_membership = nil
       account.get_group_memberships.each { |tmp_group_membership|
 
@@ -389,15 +388,17 @@ describe "WRITE Operations" do
         tmp_group = group_membership.get_group
 
         if (!tmp_group.nil? and tmp_group.get_href.include? group_href)
-          group_linked = true
           break
         end
       }
 
-      if (!group_linked)
-        group_membership.delete
-        group.add_account account
+      if (group_membership.nil?)
+        group_membership = account.add_group group
       end
+
+      group_membership.delete
+      group.add_account account
+
 
       account.get_group_memberships.each { |tmp_group_membership|
 
