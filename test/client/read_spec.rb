@@ -6,8 +6,7 @@ include Stormpath::Resource
 describe "READ Operations" do
 
   before(:all) do
-    apiKey = ApiKey.new 'myApkiKeyId', 'myApkiKeySecret'
-    @client = Client.new apiKey
+    @client = ClientBuilder.new.set_base_url('http://localhost:8080/v1').set_api_key_file_location(Dir.home + '/.stormpath/apiKey.yml').build
     @tenant = @client.current_tenant
     @data_store = @client.data_store
   end
