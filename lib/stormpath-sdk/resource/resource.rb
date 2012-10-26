@@ -49,7 +49,7 @@ module Stormpath
 
             # Don't consider this resource materialized if it is only a reference.  A reference is any object that
             # has only one 'href' property.
-            href_only = @properties.size == 1 and @properties.has_key? HREF_PROP_NAME
+            href_only = (@properties.size == 1 and @properties.has_key? HREF_PROP_NAME)
             @materialized = !href_only
 
           else

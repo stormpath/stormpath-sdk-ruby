@@ -37,6 +37,7 @@ module Stormpath
         SAUTHC1_SIGNATURE = "sauthc1Signature"
         DATE_FORMAT = "%Y%m%d"
         TIMESTAMP_FORMAT = "%Y%m%dT%H%M%SZ"
+        #noinspection RubyConstantNamingConvention
         NL = "\n"
 
         def sign_request request, api_key

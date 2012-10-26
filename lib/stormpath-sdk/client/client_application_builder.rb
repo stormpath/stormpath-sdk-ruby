@@ -319,7 +319,7 @@ module Stormpath
         parts = Array.new 3
 
         parts[0] = href[0..double_slash_index + 1] #up to and including the double slash
-        parts[1] = href[double_slash_index + DOUBLE_SLASH.length..at_sign_index -1] #raw user info
+        parts[1] = href[double_slash_index + DOUBLE_SLASH.length..at_sign_index - 1] #raw user info
         parts[2] = href[at_sign_index + 1..href.length - 1] #after the @ character
 
         parts
