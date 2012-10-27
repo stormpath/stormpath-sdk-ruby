@@ -4,7 +4,7 @@ stormpath-sdk-ruby Changelog
 Version 0.4.0
 -------------
 
-Released on October XY, 2012
+Released on October 26, 2012
 
 - The Stormpath::Resource::GroupMembership class now extends the Stormpath::Resource::Resource class. It is no longer possible to call 'save' on an instance of this class.
 - The 'create' method of the Stormpath::Resource::GroupMembership class is now a class method and receives an instance of Stormpath::DataStore::DataStore; it was renamed from 'create' to '_create'.

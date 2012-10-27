@@ -15,5 +15,5 @@
 #
 module Stormpath
   VERSION = '0.4.0'
-  VERSION_DATE = '2012-10-16'
+  VERSION_DATE = '2012-10-26'
 end
