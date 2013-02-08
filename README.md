@@ -1,3 +1,4 @@
+[![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-ruby.png?branch=master)](https://travis-ci.org/stormpath/stormpath-sdk-ruby)
 # Stormpath Ruby SDK
 Copyright &copy; 2012 Stormpath, Inc. and contributors.
 
