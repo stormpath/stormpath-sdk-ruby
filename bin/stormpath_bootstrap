@@ -10,7 +10,11 @@ require "properties-ruby"
 options = {}
 
 optparse = OptionParser.new do |opts|
-  opts.on("--properties_file_location [LOCATION]") do |s|
+  opts.on("--output_config_location LOCATION") do |s|
+    options[:output_config_location] = s
+  end
+
+  opts.on("--properties_file_location LOCATION") do |s|
     options[:properties_file_location] = s
   end
 
@@ -30,6 +34,7 @@ raise(ArgumentError, "At least one directory name is required.") unless options[
 
 # load the api id and secret from .properties file
 properties_file_location = options[:properties_file_location] || File.join(Dir.home, '.stormpath', 'apiKey.properties')
+output_config_location = options[:output_config_location] || File.join(Dir.pwd, 'stormpath.yml')
 
 api_key_properties = Utils::Properties.load_from_file(properties_file_location, true)
 api_key = {
@@ -43,7 +48,8 @@ directory_names = options[:directory_names]
 Stormpath::Util::Bootstrapper.bootstrap({
   api_key: api_key,
   application_name: application_name,
-  directory_names: directory_names
+  directory_names: directory_names,
+  output_configuration_file: output_config_location
 })
 
 puts "Successfully created application '#{application_name}' and directories '#{directory_names.join("', '")}'."

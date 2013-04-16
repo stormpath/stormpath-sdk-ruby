@@ -42,13 +42,13 @@ module Stormpath
         bundle.application = application
         bundle.directories = directories
 
-        write_bundle bundle
+        write_bundle bundle, options[:output_configuration_file]
 
         return bundle
       end
 
-      def self.write_bundle(bundle)
-        File.open(File.join(Dir.pwd, "stormpath.yml"), 'w+') {|f| f.write(bundle.to_yaml) }
+      def self.write_bundle(bundle, output_configuration_file)
+        File.open(output_configuration_file, 'w+') {|f| f.write(bundle.to_yaml) }
       end
 
       def self.provision_directory(client, directory_name)
@@ -67,7 +67,7 @@ module Stormpath
         return application
       end
 
-      private_class_method :provision_application, :provision_directory
+      private_class_method :provision_application, :provision_directory, :write_bundle
     end
   end
 end
