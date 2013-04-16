@@ -9,17 +9,17 @@ application.
 
 1. Install the <code>stormpath-sdk</code> gem, either via the command line:
 
-```
-$ gem install stormpath-sdk
-```
+    ```
+    $ gem install stormpath-sdk
+    ```
 
-or adding the gem to your [Bundler][bundler] Gemspec:
+  or adding the gem to your [Bundler][bundler] Gemspec:
 
-```
-gem 'stormpath-sdk'
-```
+    ```
+    gem 'stormpath-sdk'
+    ```
 
-or any other preferred dependency.
+  or any other preferred dependency.
 
 2. Create a [Stormpath][stormpath] developer account and [create your API Keys][create-api-keys]
    downloading the <code>apiKey.properties</code> file into a <code>.stormpath</code>
@@ -61,7 +61,7 @@ To build and install the development branch yourself from the latest source:
 $ git clone git@github.com:stormpath/stormpath-sdk-ruby.git
 $ cd stormpath-sdk-ruby
 $ rake gem
-$ gem install pkg/stormpath-sdk-{version}
+$ gem install pkg/stormpath-sdk-{version}.gem
 ```
 
 ## Copyright & Licensing
