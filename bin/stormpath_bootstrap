@@ -30,20 +30,25 @@ end
 optparse.parse!
 
 raise(ArgumentError, "An application name is required.") unless options[:application_name]
-raise(ArgumentError, "At least one directory name is required.") unless options[:directory_names]
+
+application_name = options[:application_name]
+directory_names = options[:directory_names]
+
+# if no directory names provided, use the application's name as default
+unless directory_names
+  directory_names = [ application_name ]
+end
 
 # load the api id and secret from .properties file
 properties_file_location = options[:properties_file_location] || File.join(Dir.home, '.stormpath', 'apiKey.properties')
-output_config_location = options[:output_config_location] || File.join(Dir.pwd, 'stormpath.yml')
-
 api_key_properties = Utils::Properties.load_from_file(properties_file_location, true)
 api_key = {
   id: api_key_properties.get('apiKey.id'.to_sym),
   secret: api_key_properties.get('apiKey.secret'.to_sym)
 }
 
-application_name = options[:application_name]
-directory_names = options[:directory_names]
+# use specified output location, if provided
+output_config_location = options[:output_config_location] || File.join(Dir.pwd, 'stormpath.yml')
 
 Stormpath::Util::Bootstrapper.bootstrap({
   api_key: api_key,
