@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.require_paths = %w[lib]
   s.files = `git ls-files`.split("\n")
   s.test_files = Dir['test/**/*.rb']
+  s.executables = ['bin/stormpath_bootstrap']
 
   s.add_dependency('multi_json', '>= 1.3.6')
   s.add_dependency('httpclient', '>= 2.2.5')
