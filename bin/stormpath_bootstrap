@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+
+$: << File.join(File.dirname(__FILE__), "..", "lib")
+
+require "stormpath-sdk"
+require "optparse"
+require "pp"
+require "properties-ruby"
+
+options = {}
+
+optparse = OptionParser.new do |opts|
+  opts.on("--properties_file_location [LOCATION]") do |s|
+    options[:properties_file_location] = s
+  end
+
+  opts.on("--application_name APPLICATION", "Specify the application name") do |s|
+    options[:application_name] = s
+  end
+
+  opts.on("--directory_names dirName1,dirName2,dirNameN", Array, "Comma-separated list of directory names") do |a|
+    options[:directory_names] = a
+  end
+end
+
+optparse.parse!
+
+raise(ArgumentError, "An application name is required.") unless options[:application_name]
+raise(ArgumentError, "At least one directory name is required.") unless options[:directory_names]
+
+# load the api id and secret from .properties file
+properties_file_location = options[:properties_file_location] || File.join(Dir.home, '.stormpath', 'apiKey.properties')
+
+api_key_properties = Utils::Properties.load_from_file(properties_file_location, true)
+api_key = {
+  id: api_key_properties.get('apiKey.id'.to_sym),
+  secret: api_key_properties.get('apiKey.secret'.to_sym)
+}
+
+application_name = options[:application_name]
+directory_names = options[:directory_names]
+
+Stormpath::Util::Bootstrapper.bootstrap({
+  api_key: api_key,
+  application_name: application_name,
+  directory_names: directory_names
+})
+
+puts "Successfully created application '#{application_name}' and directories '#{directory_names.join("', '")}'."
