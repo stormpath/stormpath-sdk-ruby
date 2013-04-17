@@ -14,11 +14,13 @@ Gem::Specification.new do |s|
   s.require_paths = %w[lib]
   s.files = `git ls-files`.split("\n")
   s.test_files = Dir['test/**/*.rb']
+  s.executables = ['stormpath_bootstrap']
 
   s.add_dependency('multi_json', '>= 1.3.6')
   s.add_dependency('httpclient', '>= 2.2.5')
   s.add_dependency('uuidtools', '>= 2.1.3')
   s.add_dependency('activesupport', '>= 3.2.8')
+  s.add_dependency('properties-ruby', "~> 0.0.4")
 
   s.add_development_dependency 'rake', '~> 0.9.2'
   s.add_development_dependency 'rspec-core', '~> 2.10.1'
