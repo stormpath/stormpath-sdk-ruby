@@ -1,41 +1,75 @@
-require "test/resource/test_resource"
+require 'stormpath-sdk'
 
 describe "Resource Tests" do
 
-  it "non materialized resource get dirty property without materializing" do
+  context "given something rudy will type" do
+    class TestResource < Stormpath::Resource::Resource
 
-    props = {'href' => 'http://foo.com/test/123'}
-    data_store = Stormpath::DataStore::DataStore.new '', ''
+      def get_name
+        get_property 'name'
+      end
 
-    test_resource = TestResource.new data_store, props
-    name = 'New Name'
-    test_resource.set_name name
+      def set_name name
+        set_property 'name', name
+      end
 
-    begin
+      def get_description
+        get_property 'description'
+      end
 
-      name.should == test_resource.get_name
+      def set_description description
+        set_property 'description', description
+      end
 
-    rescue Exception => e
+      def set_password password
+        set_property 'password', password
+      end
 
-      true.should be false
+      protected
+      def printable_property? property_name
+        'password' != property_name
+      end
 
     end
 
+    context 'when the resource is non-materialized' do
+      it "gets dirty property without materializing" do
+        props = {'href' => 'http://foo.com/test/123'}
+        data_store = Stormpath::DataStore::DataStore.new '', ''
+
+        test_resource = TestResource.new data_store, props
+        name = 'New Name'
+        test_resource.set_name name
+
+        begin
+
+          name.should == test_resource.get_name
+
+        rescue Exception => e
+
+          true.should be false
+
+        end
+
+      end
+    end
+
+    context 'when inspecting a resource' do
+      it "does NOT show the password property" do
+
+        props = {'href' => 'http://foo.com/test/123'}
+        data_store = Stormpath::DataStore::DataStore.new '', ''
+
+        test_resource = TestResource.new data_store, props
+        name = 'New Name'
+        test_resource.set_name name
+
+        test_resource.set_password 'my_password'
+
+        test_resource.inspect.should_not include 'password'
+
+      end
+    end
+
   end
-
-  it "password property must not show up on inspect" do
-
-    props = {'href' => 'http://foo.com/test/123'}
-    data_store = Stormpath::DataStore::DataStore.new '', ''
-
-    test_resource = TestResource.new data_store, props
-    name = 'New Name'
-    test_resource.set_name name
-
-    test_resource.set_password 'my_password'
-
-    test_resource.inspect.should_not include 'password'
-
-  end
-
 end
