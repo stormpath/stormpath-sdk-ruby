@@ -17,7 +17,7 @@ module Stormpath
 
   module Authentication
 
-    class BasicLoginAttempt < Stormpath::Resource::Resource
+    class BasicLoginAttempt < Stormpath::Resource
 
       TYPE = "type"
       VALUE = "value"

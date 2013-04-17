@@ -13,16 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::InstanceResource < Stormpath::Resource
 
-  module Resource
+  def save
+    data_store.save self
+  end
 
-    class InstanceResource < Resource
-
-      def save
-        data_store.save self
-      end
-    end
+  def delete
+    data_store.delete self
   end
 
 end

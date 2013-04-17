@@ -13,18 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::DirectoryList < Stormpath::CollectionResource
 
-  module Resource
-
-    class DirectoryList < CollectionResource
-
-      def get_item_type
-        Directory
-      end
-
-    end
-
+  def get_item_type
+    Stormpath::Directory
   end
-end
 
+end

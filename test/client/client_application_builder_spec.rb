@@ -1,7 +1,5 @@
 require "stormpath-sdk"
 
-include Stormpath::Client
-
 describe "Client Application Builder Tests" do
 
   before(:all) do
@@ -10,19 +8,19 @@ describe "Client Application Builder Tests" do
     @application_href = 'http://localhost:8080/v1/applications/uGBNDZ7TRhm_tahanqvn9A'
     @http_prefix = 'http://'
     @app_href_without_http = '@localhost:8080/v1/applications/uGBNDZ7TRhm_tahanqvn9A'
-    @client_builder = ClientBuilder.new.set_base_url 'http://localhost:8080/v1'
+    @client_builder = Stormpath::ClientBuilder.new.set_base_url 'http://localhost:8080/v1'
     @test_remote_file = false
   end
 
 
   it 'Builder should read default properties from YAML file location with application href' do
 
-    result = ClientApplicationBuilder.new(@client_builder).
+    result = Stormpath::ClientApplicationBuilder.new(@client_builder).
         set_api_key_file_location(@client_file).
         set_application_href(@application_href).
         build
 
-    result.should be_kind_of ClientApplication
+    result.should be_kind_of Stormpath::ClientApplication
 
   end
 
@@ -44,25 +42,25 @@ describe "Client Application Builder Tests" do
         properties[api_key_secret_keyword] +
         @app_href_without_http
 
-    result = ClientApplicationBuilder.new(@client_builder).
+    result = Stormpath::ClientApplicationBuilder.new(@client_builder).
         set_application_href(application_href).
         build
 
-    result.should be_kind_of ClientApplication
+    result.should be_kind_of Stormpath::ClientApplication
 
   end
 
   it 'Builder should read custom complex properties from YAML file locatio with application href' do
 
-    @client_builder = ClientBuilder.new.set_base_url 'http://localhost:8080/v1'
-    result = ClientApplicationBuilder.new(@client_builder).
+    @client_builder = Stormpath::ClientBuilder.new.set_base_url 'http://localhost:8080/v1'
+    result = Stormpath::ClientApplicationBuilder.new(@client_builder).
         set_api_key_file_location(@client_file).
         set_api_key_id_property_name('stormpath', 'apiKey', 'id').
         set_api_key_secret_property_name('stormpath', 'apiKey', 'secret').
         set_application_href(@application_href).
         build
 
-    result.should be_kind_of ClientApplication
+    result.should be_kind_of Stormpath::ClientApplication
 
   end
 
@@ -78,32 +76,32 @@ describe "Client Application Builder Tests" do
     properties = {api_key_id_keyword => yml_obj[api_key_id_keyword],
                   api_key_secret_keyword => yml_obj[api_key_secret_keyword]}
 
-    result = ClientApplicationBuilder.new(@client_builder).
+    result = Stormpath::ClientApplicationBuilder.new(@client_builder).
         set_api_key_properties(properties.to_yaml).
         set_api_key_id_property_name(api_key_id_keyword).
         set_api_key_secret_property_name(api_key_secret_keyword).
         set_application_href(@application_href).
         build
 
-    result.should be_kind_of ClientApplication
+    result.should be_kind_of Stormpath::ClientApplication
 
   end
 
   it 'Builder should throw exception when creating it with wrong argument' do
 
-    expect { ClientApplicationBuilder.new 'WRONG' }.to raise_error ArgumentError
+    expect { Stormpath::ClientApplicationBuilder.new 'WRONG' }.to raise_error ArgumentError
 
   end
 
   it 'Builder should throw exception when trying to build without application href' do
 
-    expect { ClientApplicationBuilder.new(@client_builder).build }.to raise_error ArgumentError
+    expect { Stormpath::ClientApplicationBuilder.new(@client_builder).build }.to raise_error ArgumentError
 
   end
 
   it 'Builder should throw exception when trying to build with an invalid application href' do
 
-    expect { ClientApplicationBuilder.new(@client_builder).
+    expect { Stormpath::ClientApplicationBuilder.new(@client_builder).
         set_api_key_file_location(@client_file).
         set_application_href('id:secret@stormpath.com/v1').
         build }.

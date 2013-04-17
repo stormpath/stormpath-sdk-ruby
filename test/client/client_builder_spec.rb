@@ -1,7 +1,5 @@
 require "stormpath-sdk"
 
-include Stormpath::Client
-
 describe "Client Builder Tests" do
 
   before(:all) do
@@ -13,33 +11,33 @@ describe "Client Builder Tests" do
 
   it 'Builder should read default properties from YAML file location' do
 
-    result = ClientBuilder.new.
+    result = Stormpath::ClientBuilder.new.
         set_api_key_file_location(@client_file).
         build
 
-    result.should be_kind_of Client
+    result.should be_kind_of Stormpath::Client
 
   end
 
   it 'Builder should read default properties from YAML FILE object' do
 
-    result = ClientBuilder.new.
+    result = Stormpath::ClientBuilder.new.
         set_api_key_file(File.open(@client_file)).
         build
 
-    result.should be_kind_of Client
+    result.should be_kind_of Stormpath::Client
 
   end
 
   it 'Builder should read custom simple properties from YAML file location' do
 
-    result = ClientBuilder.new.
+    result = Stormpath::ClientBuilder.new.
         set_api_key_file_location(@client_file).
         set_api_key_id_property_name('different.apiKey.id').
         set_api_key_secret_property_name('different.apiKey.secret').
         build
 
-    result.should be_kind_of Client
+    result.should be_kind_of Stormpath::Client
 
   end
 
@@ -55,11 +53,11 @@ describe "Client Builder Tests" do
     properties = {api_key_id_keyword => yml_obj[api_key_id_keyword],
                   api_key_secret_keyword => yml_obj[api_key_secret_keyword]}
 
-    result = ClientBuilder.new.
+    result = Stormpath::ClientBuilder.new.
         set_api_key_properties(properties.to_yaml).
         build
 
-    result.should be_kind_of Client
+    result.should be_kind_of Stormpath::Client
 
   end
 
@@ -75,25 +73,25 @@ describe "Client Builder Tests" do
     properties = {api_key_id_keyword => yml_obj[api_key_id_keyword],
                   api_key_secret_keyword => yml_obj[api_key_secret_keyword]}
 
-    result = ClientBuilder.new.
+    result = Stormpath::ClientBuilder.new.
         set_api_key_properties(properties.to_yaml).
         set_api_key_id_property_name(api_key_id_keyword).
         set_api_key_secret_property_name(api_key_secret_keyword).
         build
 
-    result.should be_kind_of Client
+    result.should be_kind_of Stormpath::Client
 
   end
 
   it 'Builder should read custom complex properties from YAML file location' do
 
-    result = ClientBuilder.new.
+    result = Stormpath::ClientBuilder.new.
         set_api_key_file_location(@client_file).
         set_api_key_id_property_name('stormpath', 'apiKey', 'id').
         set_api_key_secret_property_name('stormpath', 'apiKey', 'secret').
         build
 
-    result.should be_kind_of Client
+    result.should be_kind_of Stormpath::Client
 
   end
 
@@ -113,20 +111,20 @@ describe "Client Builder Tests" do
     api_key_data = {api_key => data}
     stormpath_data = {stormpath => api_key_data}
 
-    result = ClientBuilder.new.
+    result = Stormpath::ClientBuilder.new.
         set_api_key_properties(stormpath_data.to_yaml).
         set_api_key_id_property_name(stormpath, api_key, id).
         set_api_key_secret_property_name(stormpath, api_key, secret).
         build
 
-    result.should be_kind_of Client
+    result.should be_kind_of Stormpath::Client
 
   end
 
   it 'Builder should read custom complex properties from YAML file location
       and retrieve a Tenant from the Stormpath REST API' do
 
-    client = ClientBuilder.new.
+    client = Stormpath::ClientBuilder.new.
         set_api_key_file_location(@client_file).
         set_api_key_id_property_name('stormpath', 'apiKey', 'id').
         set_api_key_secret_property_name('stormpath', 'apiKey', 'secret').
@@ -135,7 +133,7 @@ describe "Client Builder Tests" do
 
     result = client.current_tenant
 
-    result.should be_kind_of Tenant
+    result.should be_kind_of Stormpath::Tenant
 
   end
 
@@ -144,7 +142,7 @@ describe "Client Builder Tests" do
 
     if @test_remote_file
 
-      client = ClientBuilder.new.
+      client = Stormpath::ClientBuilder.new.
           set_api_key_file_location(@client_remote_file).
           #set_base_url('http://localhost:8080/v1').
           build
@@ -160,7 +158,7 @@ describe "Client Builder Tests" do
   it 'Builder should read custom complex properties from YAML file URL location
       and retrieve a Tenant from the Stormpath REST API' do
 
-    client = ClientBuilder.new.
+    client = Stormpath::ClientBuilder.new.
         set_api_key_file_location(@client_remote_file).
         set_api_key_id_property_name('stormpath', 'apiKey', 'id').
         set_api_key_secret_property_name('stormpath', 'apiKey', 'secret').

@@ -15,22 +15,18 @@
 #
 module Stormpath
 
-  module Client
+  # A ClientApplication is a simple wrapper around a {@link Stormpath::Client} and
+  # {@link Stormpath::Resource::Application} instance, returned from
+  # the {@code ClientApplicationBuilder}.{@link Stormpath::ClientApplicationBuilder#build_application}
+  # method.
+  # @since 0.3.0
+  class ClientApplication
 
-    # A ClientApplication is a simple wrapper around a {@link Stormpath::Client::Client} and
-    # {@link Stormpath::Resource::Application} instance, returned from
-    # the {@code ClientApplicationBuilder}.{@link Stormpath::Client::ClientApplicationBuilder#build_application}
-    # method.
-    # @since 0.3.0
-    class ClientApplication
+    attr_reader :client, :application
 
-      attr_reader :client, :application
-
-      def initialize client, application
-        @client = client
-        @application = application
-      end
-
+    def initialize client, application
+      @client = client
+      @application = application
     end
 
   end

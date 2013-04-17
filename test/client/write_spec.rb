@@ -1,13 +1,12 @@
 require "stormpath-sdk"
 
-include Stormpath::Client
 include Stormpath::Resource
 include Stormpath::Authentication
 
 describe "WRITE Operations" do
 
   before(:all) do
-    @client = ClientBuilder.new.set_base_url('http://localhost:8080/v1').set_api_key_file_location(Dir.home + '/.stormpath/apiKey.yml').build
+    @client = Stormpath::ClientBuilder.new.set_base_url('http://localhost:8080/v1').set_api_key_file_location(Dir.home + '/.stormpath/apiKey.yml').build
     @data_store = @client.data_store
     @create_account = false
     @update_account = false

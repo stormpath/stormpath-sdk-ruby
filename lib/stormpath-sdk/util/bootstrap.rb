@@ -1,8 +1,5 @@
 require "stormpath-sdk"
 
-include Stormpath::Client
-include Stormpath::Resource
-
 module Stormpath
   module Util
     class BootstrappedBundle
@@ -29,7 +26,7 @@ module Stormpath
           'apiKey.secret' => options[:api_key][:secret]
         }
 
-        client = ClientBuilder.new.set_api_key_properties(api_key.to_yaml).build
+        client = Stormpath::ClientBuilder.new.set_api_key_properties(api_key.to_yaml).build
 
         application = provision_application client, options[:application_name]
         directories = {}.tap do |directories|
@@ -52,15 +49,15 @@ module Stormpath
       end
 
       def self.provision_directory(client, directory_name)
-        directory = client.data_store.instantiate Directory
+        directory = client.data_store.instantiate Stormpath::Directory
         directory.set_name directory_name
-        directory = client.data_store.create '/directories', directory, Directory
+        directory = client.data_store.create '/directories', directory, Stormpath::Directory
 
         return directory
       end
 
       def self.provision_application(client, application_name)
-        application = client.data_store.instantiate Application
+        application = client.data_store.instantiate Stormpath::Application
         application.set_name application_name
         application = client.current_tenant.create_application application
 
