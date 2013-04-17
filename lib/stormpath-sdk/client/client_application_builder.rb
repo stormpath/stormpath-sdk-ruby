@@ -18,9 +18,9 @@ module Stormpath
 
   ##
   # A <a href="http://en.wikipedia.org/wiki/Builder_pattern">Builder design pattern</a> implementation similar to
-  # the {@link Stormpath::Client::ClientBuilder}, but focused on single-application interaction with Stormpath.
+  # the {@link Stormpath::ClientBuilder}, but focused on single-application interaction with Stormpath.
   # <h2>Description</h2>
-  # The {@code ClientBuilder} produces a {@link Stormpath::Client::Client} instance useful for interacting with any aspect
+  # The {@code ClientBuilder} produces a {@link Stormpath::Client} instance useful for interacting with any aspect
   # of an entire Stormpath Tenant's data space.  However, a software application may only be interested in its own
   # functionality and not the entire Stormpath Tenant data space.
   # <p/>
@@ -85,7 +85,7 @@ module Stormpath
 
     def initialize client_builder = ClientBuilder.new
 
-      assert_kind_of ClientBuilder, client_builder, 'client_builder must be kind of Stormpath::Client::ClientBuilder'
+      assert_kind_of ClientBuilder, client_builder, 'client_builder must be kind of Stormpath::ClientBuilder'
       @client_builder = client_builder
 
     end

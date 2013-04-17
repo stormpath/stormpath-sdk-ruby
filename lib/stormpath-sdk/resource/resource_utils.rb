@@ -23,7 +23,7 @@ module Stormpath
 
     def to_class_from_instance resource
 
-      assert_kind_of Resource, resource, "resource argument must be instance of Stormpath::Resource::Resource"
+      assert_kind_of Resource, resource, "resource argument must be instance of Stormpath::Resource"
 
       if !@@resources_hash.has_key? resource.class.name
 
