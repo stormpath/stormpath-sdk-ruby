@@ -13,79 +13,70 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::CollectionResource < Stormpath::Resource
 
-  module Resource
+  OFFSET = "offset"
+  LIMIT = "limit"
+  ITEMS = "items"
 
-    class CollectionResource < Resource
+  def each(&block)
+    get_current_page.items.each(&block)
+  end
 
-      OFFSET = "offset"
-      LIMIT = "limit"
-      ITEMS = "items"
+  protected
 
-      def each(&block)
-        get_current_page.items.each(&block)
-      end
+  def get_offset
+    get_property OFFSET
+  end
 
-      protected
+  def get_limit
+    get_property LIMIT
+  end
 
-      def get_offset
-        get_property OFFSET
-      end
+  def get_current_page
 
-      def get_limit
-        get_property LIMIT
-      end
+    value = get_property ITEMS
+    items = to_resource_array value
 
-      def get_current_page
+    Page.new get_offset, get_limit, items
+  end
 
-        value = get_property ITEMS
-        items = to_resource_array value
+  def to_resource clazz, properties
+    self.data_store.instantiate clazz, properties
+  end
 
-        Page.new get_offset, get_limit, items
-      end
+  private
 
-      def to_resource clazz, properties
-        self.data_store.instantiate clazz, properties
-      end
+  class Page
 
-      private
+    attr_reader :offset, :limit, :items
 
-      def to_resource_array vals
-
-        clazz = get_item_type
-        items = Array.new
-
-        if vals.is_a? Array
-
-          i = 0
-          vals.each { |val|
-            resource = to_resource clazz, val
-            items[i] = resource
-            i = i + 1
-          }
-
-        end
-
-        items
-
-      end
-
-    end
-
-
-    class Page
-
-      attr_reader :offset, :limit, :items
-
-      def initialize offset, limit, items
-        @offset = offset
-        @limit = limit
-        @items = items
-      end
-
+    def initialize offset, limit, items
+      @offset = offset
+      @limit = limit
+      @items = items
     end
 
   end
-end
 
+  def to_resource_array vals
+
+    clazz = get_item_type
+    items = Array.new
+
+    if vals.is_a? Array
+
+      i = 0
+      vals.each { |val|
+        resource = to_resource clazz, val
+        items[i] = resource
+        i = i + 1
+      }
+
+    end
+
+    items
+
+  end
+
+end

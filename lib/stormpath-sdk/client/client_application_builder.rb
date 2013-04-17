@@ -293,7 +293,7 @@ module Stormpath
 
       client = build_client
 
-      application = client.data_store.get_resource cleaned_href, Stormpath::Resource::Application
+      application = client.data_store.get_resource cleaned_href, Stormpath::Application
 
       ClientApplication.new client, application
 

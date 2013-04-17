@@ -21,12 +21,12 @@ module Stormpath
 
     def initialize(api_key, *base_url)
       request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key)
-      @data_store = Stormpath::DataStore::DataStore.new(request_executor, *base_url)
+      @data_store = Stormpath::DataStore.new(request_executor, *base_url)
     end
 
 
     def current_tenant
-      @data_store.get_resource("/tenants/current", Stormpath::Resource::Tenant)
+      @data_store.get_resource("/tenants/current", Stormpath::Tenant)
     end
   end
 

@@ -13,59 +13,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::GroupMembership < Stormpath::Resource
 
-  module Resource
+  ACCOUNT = "account"
+  GROUP = "group"
 
-    class GroupMembership < Resource
+  def get_account
+    get_resource_property ACCOUNT, Stormpath::Account
+  end
 
-      ACCOUNT = "account"
-      GROUP = "group"
+  def get_group
+    get_resource_property GROUP, Stormpath::Group
+  end
 
-      def get_account
-        get_resource_property ACCOUNT, Account
-      end
+  def delete
+    data_store.delete self
+  end
 
-      def get_group
-        get_resource_property GROUP, Group
-      end
+  #
+  # THIS IS NOT PART OF THE STORMPATH PUBLIC API.  SDK end-users should not call it - it could be removed or
+  # changed at any time.  It is publicly accessible only as an implementation technique to be used by other
+  # resource classes.
+  #
+  # @param account the account to associate with the group.
+  # @param group the group which will contain the account.
+  # @param data_store the datastore used to create the membership
+  # @return the created GroupMembership instance.
+  #
+  def self._create account, group, data_store
 
-      def delete
-        data_store.delete self
-      end
+    #TODO: enable auto discovery
+    href = "/groupMemberships"
 
-      #
-      # THIS IS NOT PART OF THE STORMPATH PUBLIC API.  SDK end-users should not call it - it could be removed or
-      # changed at any time.  It is publicly accessible only as an implementation technique to be used by other
-      # resource classes.
-      #
-      # @param account the account to associate with the group.
-      # @param group the group which will contain the account.
-      # @param data_store the datastore used to create the membership
-      # @return the created GroupMembership instance.
-      #
-      def self._create account, group, data_store
+    account_props = Hash.new
+    account_props.store Stormpath::HREF_PROP_NAME, account.get_href
 
-        #TODO: enable auto discovery
-        href = "/groupMemberships"
+    group_props = Hash.new
+    group_props.store Stormpath::HREF_PROP_NAME, group.get_href
 
-        account_props = Hash.new
-        account_props.store HREF_PROP_NAME, account.get_href
+    props = Hash.new
+    props.store ACCOUNT, account_props
+    props.store GROUP, group_props
 
-        group_props = Hash.new
-        group_props.store HREF_PROP_NAME, group.get_href
+    group_membership = data_store.instantiate Stormpath::GroupMembership, props
 
-        props = Hash.new
-        props.store ACCOUNT, account_props
-        props.store GROUP, group_props
-
-        group_membership = data_store.instantiate GroupMembership, props
-
-        data_store.create href, group_membership, GroupMembership
-
-      end
-
-    end
+    data_store.create href, group_membership, Stormpath::GroupMembership
 
   end
 
