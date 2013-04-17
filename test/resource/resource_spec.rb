@@ -3,7 +3,7 @@ require 'stormpath-sdk'
 describe "Resource Tests" do
 
   context "given something rudy will type" do
-    class TestResource < Stormpath::Resource::Resource
+    class TestResource < Stormpath::Resource
 
       def get_name
         get_property 'name'
@@ -35,7 +35,7 @@ describe "Resource Tests" do
     context 'when the resource is non-materialized' do
       it "gets dirty property without materializing" do
         props = {'href' => 'http://foo.com/test/123'}
-        data_store = Stormpath::DataStore::DataStore.new '', ''
+        data_store = Stormpath::DataStore.new '', ''
 
         test_resource = TestResource.new data_store, props
         name = 'New Name'
@@ -58,7 +58,7 @@ describe "Resource Tests" do
       it "does NOT show the password property" do
 
         props = {'href' => 'http://foo.com/test/123'}
-        data_store = Stormpath::DataStore::DataStore.new '', ''
+        data_store = Stormpath::DataStore.new '', ''
 
         test_resource = TestResource.new data_store, props
         name = 'New Name'

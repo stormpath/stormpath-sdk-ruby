@@ -133,7 +133,7 @@ describe "Client Builder Tests" do
 
     result = client.current_tenant
 
-    result.should be_kind_of Tenant
+    result.should be_kind_of Stormpath::Tenant
 
   end
 
