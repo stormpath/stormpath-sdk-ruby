@@ -13,25 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::ResourceFactory
 
-  module DataStore
+  def initialize(data_store)
 
-    class ResourceFactory
+    @data_store = data_store
+  end
 
-      def initialize(data_store)
+  def instantiate(clazz, constructor_args = {})
 
-        @data_store = data_store
-      end
-
-      def instantiate(clazz, constructor_args = {})
-
-        clazz.new @data_store, constructor_args
-      end
-
-    end
-
+    clazz.new @data_store, constructor_args
   end
 
 end
-

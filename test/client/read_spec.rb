@@ -1,18 +1,17 @@
 require "stormpath-sdk"
 
-include Stormpath::Client
 include Stormpath::Resource
 
 describe "READ Operations" do
 
   before(:all) do
-    @client = ClientBuilder.new.set_base_url('http://localhost:8080/v1').set_api_key_file_location(Dir.home + '/.stormpath/apiKey.yml').build
+    @client = Stormpath::ClientBuilder.new.set_base_url('http://localhost:8080/v1').set_api_key_file_location(Dir.home + '/.stormpath/apiKey.yml').build
     @tenant = @client.current_tenant
     @data_store = @client.data_store
   end
 
   it "client should be created from api_key" do
-    @client.should be_instance_of Client
+    @client.should be_instance_of Stormpath::Client
   end
 
   it "tenant's properties must come complete'" do

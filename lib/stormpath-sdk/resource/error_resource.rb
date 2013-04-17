@@ -13,30 +13,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::ErrorResource < Stormpath::Resource
 
-  module Resource
+  STATUS = "status"
+  CODE = "code"
+  MESSAGE = "message"
+  DEV_MESSAGE = "developerMessage"
+  MORE_INFO = "moreInfo"
 
-    module Utils
-
-      include ActiveSupport::Inflector
-      include Stormpath::Util::Assert
-
-      @@resources_hash = Hash.new
-
-      def to_class_from_instance resource
-
-        assert_kind_of Resource, resource, "resource argument must be instance of Stormpath::Resource::Resource"
-
-        if !@@resources_hash.has_key? resource.class.name
-
-          @@resources_hash[resource.class.name] = constantize resource.class.name
-
-        end
-
-        @@resources_hash[resource.class.name]
-
-      end
-    end
+  def initialize body
+    super nil, body
   end
+
+  def get_status
+    get_property STATUS
+  end
+
+  def get_code
+    get_property CODE
+  end
+
+  def get_message
+    get_property MESSAGE
+  end
+
+  def get_developer_message
+    get_property DEV_MESSAGE
+  end
+
+  def get_more_info
+    get_property MORE_INFO
+  end
+
 end

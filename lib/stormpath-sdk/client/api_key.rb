@@ -15,18 +15,14 @@
 #
 module Stormpath
 
-  module Client
+  class ApiKey
 
-    class ApiKey
+    attr_accessor :id, :secret
 
-      attr_accessor :id, :secret
-
-      def initialize(id, secret)
-        @id = id
-        @secret = secret
-      end
+    def initialize(id, secret)
+      @id = id
+      @secret = secret
     end
-
   end
 
 end

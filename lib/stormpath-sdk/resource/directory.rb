@@ -13,79 +13,71 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::Directory < Stormpath::InstanceResource
 
-  module Resource
+  include Stormpath::Status
 
-    class Directory < InstanceResource
+  NAME = "name"
+  DESCRIPTION = "description"
+  STATUS = "status"
+  ACCOUNTS = "accounts"
+  GROUPS = "groups"
+  TENANT = "tenant"
 
-      include Status
+  def get_name
+    get_property NAME
+  end
 
-      NAME = "name"
-      DESCRIPTION = "description"
-      STATUS = "status"
-      ACCOUNTS = "accounts"
-      GROUPS = "groups"
-      TENANT = "tenant"
+  def set_name name
+    set_property NAME, name
+  end
 
-      def get_name
-        get_property NAME
-      end
+  def get_description
+    get_property DESCRIPTION
+  end
 
-      def set_name name
-        set_property NAME, name
-      end
+  def set_description description
+    set_property DESCRIPTION, description
+  end
 
-      def get_description
-        get_property DESCRIPTION
-      end
+  def get_status
+    value = get_property STATUS
 
-      def set_description description
-        set_property DESCRIPTION, description
-      end
+    if !value.nil?
+      value = value.upcase
+    end
 
-      def get_status
-        value = get_property STATUS
+    value
+  end
 
-        if !value.nil?
-          value = value.upcase
-        end
+  def set_status status
 
-        value
-      end
-
-      def set_status status
-
-        if get_status_hash.has_key? status
-          set_property STATUS, get_status_hash[status]
-        end
-
-      end
-
-      def create_account account, *registration_workflow_enabled
-        accounts = get_accounts
-        href = accounts.get_href
-        if !registration_workflow_enabled.nil? and !registration_workflow_enabled.empty?
-          href += '?registrationWorkflowEnabled=' + registration_workflow_enabled[0].to_s
-        end
-
-        data_store.create href, account, Account
-      end
-
-      def get_accounts
-        get_resource_property ACCOUNTS, AccountList
-      end
-
-      def get_groups
-        get_resource_property GROUPS, GroupList
-      end
-
-      def get_tenant
-        get_resource_property TENANT, Tenant
-      end
-
+    if get_status_hash.has_key? status
+      set_property STATUS, get_status_hash[status]
     end
 
   end
-end
 
+  def create_account account, *registration_workflow_enabled
+    accounts = get_accounts
+    href = accounts.get_href
+    if !registration_workflow_enabled.nil? and !registration_workflow_enabled.empty?
+      href += '?registrationWorkflowEnabled=' + registration_workflow_enabled[0].to_s
+    end
+
+    data_store.create href, account, Stormpath::Account
+  end
+
+  def get_accounts
+    get_resource_property ACCOUNTS, Stormpath::AccountList
+  end
+
+  def get_groups
+    get_resource_property GROUPS, Stormpath::GroupList
+  end
+
+  def get_tenant
+    get_resource_property TENANT, Stormpath::Tenant
+  end
+
+end

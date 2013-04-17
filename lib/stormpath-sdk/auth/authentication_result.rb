@@ -17,7 +17,7 @@ module Stormpath
 
   module Authentication
 
-    class AuthenticationResult < Stormpath::Resource::Resource
+    class AuthenticationResult < Stormpath::Resource
 
       ACCOUNT = "account"
 

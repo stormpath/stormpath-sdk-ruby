@@ -13,20 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::GroupMembershipList < Stormpath::CollectionResource
 
-  module Resource
-
-    class GroupMembershipList < CollectionResource
-
-      def get_item_type
-
-        GroupMembership
-
-      end
-
-    end
-
+  def get_item_type
+    Stormpath::GroupMembership
   end
 
 end

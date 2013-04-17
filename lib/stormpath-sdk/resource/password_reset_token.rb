@@ -13,30 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::PasswordResetToken < Stormpath::Resource
 
-  module Resource
+  EMAIL = "email"
+  ACCOUNT = "account"
 
-    class PasswordResetToken < Resource
+  def get_email
+    get_property EMAIL
+  end
 
+  def set_email email
+    set_property EMAIL, email
+  end
 
-      EMAIL = "email"
-      ACCOUNT = "account"
-
-      def get_email
-        get_property EMAIL
-      end
-
-      def set_email email
-        set_property EMAIL, email
-      end
-
-      def get_account
-        get_resource_property ACCOUNT, Account
-      end
-
-    end
-
+  def get_account
+    get_resource_property ACCOUNT, Stormpath::Account
   end
 
 end

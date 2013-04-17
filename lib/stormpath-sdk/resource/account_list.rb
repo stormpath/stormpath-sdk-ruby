@@ -13,20 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::AccountList < Stormpath::CollectionResource
 
-  module Resource
-
-    class AccountList < CollectionResource
-
-      def get_item_type
-
-        Account
-
-      end
-    end
-
+  def get_item_type
+    Stormpath::Account
   end
 
 end
-
