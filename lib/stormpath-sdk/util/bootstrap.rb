@@ -1,6 +1,5 @@
 require "stormpath-sdk"
 
-include Stormpath::Client
 include Stormpath::Resource
 
 module Stormpath
@@ -29,7 +28,7 @@ module Stormpath
           'apiKey.secret' => options[:api_key][:secret]
         }
 
-        client = ClientBuilder.new.set_api_key_properties(api_key.to_yaml).build
+        client = Stormpath::ClientBuilder.new.set_api_key_properties(api_key.to_yaml).build
 
         application = provision_application client, options[:application_name]
         directories = {}.tap do |directories|
