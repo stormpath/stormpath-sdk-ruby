@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-mocks', '~> 2.10.1'
   s.add_development_dependency 'rack', '~> 1.4.1'
   s.add_development_dependency 'webmock', '~> 1.11.0'
+  s.add_development_dependency 'simplecov', '~> 0.7.1'
 
   s.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'stormpath-sdk', '--main']
 end
