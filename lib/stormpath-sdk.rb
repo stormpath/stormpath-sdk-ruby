@@ -10,11 +10,9 @@ require "active_support"
 
 require "stormpath-sdk/version" unless defined? Stormpath::VERSION
 require "stormpath-sdk/util/assert"
-require "stormpath-sdk/client/api_key"
-require "stormpath-sdk/client/client"
+require "stormpath-sdk/api_key"
+require "stormpath-sdk/client"
 require "stormpath-sdk/util/hash"
-require "stormpath-sdk/client/client_application"
-require "stormpath-sdk/client/client_application_builder"
 require "stormpath-sdk/auth/username_password_request"
 require "stormpath-sdk/resource/status"
 require "stormpath-sdk/resource/resource_utils"

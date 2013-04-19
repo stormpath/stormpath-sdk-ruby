@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pp'
 
 describe Stormpath::Client do
   describe '.new' do
@@ -213,13 +214,78 @@ properties
             /^No API key has been provided\./
         end
       end
-    end
 
-    context 'given a Stormpath Application URL' do
-      context 'with an embedded API credentials' do
-      end
+      context 'with an application url' do
+        let(:application_name) { 'an application name' }
+        let(:application) do
+          client = Stormpath::Client.new({
+            api_key: Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret)
+          })
+          application = client.data_store.instantiate Stormpath::Application
+          application.set_name application_name
+          client.current_tenant.create_application application
+        end
 
-      context 'with no embedded API credentials' do
+        after do
+          application.delete if application
+        end
+
+        context 'with embedded API credentials' do
+          let(:application_href) do
+            uri = URI(application.get_href)
+            credentialed_uri = URI::HTTPS.new(
+              uri.scheme, "#{test_api_key_id}:#{test_api_key_secret}", uri.host,
+              uri.port, uri.registry, uri.path, uri.query, uri.opaque, uri.fragment
+            )
+            credentialed_uri.to_s
+          end
+
+          let(:client) do
+            Stormpath::Client.new({
+              application_url: application_href
+            })
+          end
+
+          it_behaves_like 'a valid client'
+
+          it 'provides access to the application' do
+            client.application.should be
+            client.application.should be_kind_of Stormpath::Application
+            client.application.get_name.should == application_name
+          end
+        end
+
+        context 'without embedded API credentials' do
+          context 'and an API key' do
+            let(:client) do
+              Stormpath::Client.new({
+                application_url: application.get_href,
+                api_key: Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret)
+              })
+            end
+
+            it_behaves_like 'a valid client'
+
+            it 'provides access to the application' do
+              client.application.should be
+              client.application.should be_kind_of Stormpath::Application
+              client.application.get_name.should == application_name
+            end
+          end
+
+          context 'but no API key' do
+            let(:client) do
+              Stormpath::Client.new({
+                application_url: application.get_href
+              })
+
+              it 'raises an error' do
+                expect { client }.to raise_error ArgumentError,
+                  /^No API key has been provided\./
+              end
+            end
+          end
+        end
       end
     end
   end

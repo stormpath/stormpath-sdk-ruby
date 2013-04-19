@@ -20,24 +20,44 @@ module Stormpath
   class Client
     include Stormpath::Util::Assert
 
-    attr_reader :data_store
+    attr_reader :data_store, :application
 
-    def initialize(options, *base_url)
-      api_key = if options[:api_key]
-                  case options[:api_key]
-                  when ApiKey then options[:api_key]
-                  when Hash then ApiKey.new options[:api_key][:id], options[:api_key][:secret]
+    def initialize(options)
+      application_url = options[:application_url]
+      api_key = options[:api_key]
+      application_path = nil
+      base_url = options[:base_url]
+
+      if application_url
+        uri = URI(options[:application_url])
+        if uri.userinfo
+          api_key_id, api_key_secret = uri.userinfo.split(":")
+          api_key = ApiKey.new api_key_id, api_key_secret
+        end
+        application_path = uri.path.slice(/\/applications(.)*$/)
+      end
+
+      api_key = if api_key
+                  case api_key
+                  when ApiKey then api_key
+                  when Hash then ApiKey.new api_key[:id], api_key[:secret]
                   end
                 elsif options[:api_key_file_location]
                   load_api_key_file options[:api_key_file_location],
                     options[:api_key_id_property_name],
                     options[:api_key_secret_property_name]
                 end
+
       assert_not_nil api_key, "No API key has been provided.  Please " +
           "pass an 'api_key' or 'api_key_file_location' to the " +
           "Stormpath::Client constructor."
+
       request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key)
-      @data_store = Stormpath::DataStore.new(request_executor, *base_url)
+      @data_store = Stormpath::DataStore.new(request_executor, base_url)
+
+      if application_path
+        @application = @data_store.get_resource(application_path, Stormpath::Application)
+      end
     end
 
     def current_tenant
