@@ -216,18 +216,23 @@ properties
       end
 
       context 'with an application url' do
-        let(:application_name) { 'an application name' }
+        let(:application_name) { 'TestApplicationName001' }
+        let(:api_key) { Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret) }
         let(:application) do
           client = Stormpath::Client.new({
-            api_key: Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret)
+            api_key: api_key
           })
           application = client.data_store.instantiate Stormpath::Application
           application.set_name application_name
           client.current_tenant.create_application application
         end
 
+        before do
+          destroy_all_stormpath_test_resources api_key
+        end
+
         after do
-          application.delete if application
+          destroy_all_stormpath_test_resources api_key
         end
 
         context 'with embedded API credentials' do
