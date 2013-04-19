@@ -21,18 +21,14 @@ module Stormpath
     class Bootstrapper
 
       def self.bootstrap(options = {})
-        api_key = {
-          'apiKey.id' => options[:api_key][:id],
-          'apiKey.secret' => options[:api_key][:secret]
-        }
-
-        client = Stormpath::ClientBuilder.new.set_api_key_properties(api_key.to_yaml).build
+        client = Stormpath::Client.new({
+          api_key: options[:api_key]
+        })
 
         application = provision_application client, options[:application_name]
-        directories = {}.tap do |directories|
-          options[:directory_names].each do |directory_name|
-            directories[directory_name] = provision_directory client, directory_name
-          end
+        directories = {}
+        options[:directory_names].each do |directory_name|
+          directories[directory_name] = provision_directory client, directory_name
         end
 
         bundle = BootstrappedBundle.new

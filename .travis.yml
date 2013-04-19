@@ -1,0 +1,13 @@
+---
+env:
+  global:
+  - secure: ! 'aas613AH0fJeit9cwxbgiwPzEFuMC5smjBQ+0mZe2BON/ujhzemuo5GhIUK6
+
+      nTnsfzt7s9R3+jJH9kaLpRuVYlR4laKqH0FlrX2uzkKXWs68+rhHoHrn58P8
+
+      zjizTmjNGY2UCbGyJ841b1SrqRyMIPq6iT783WexJTJFcDFrukQ='
+  - secure: ! 'YATBeAo5KaG0Qf0/ItbGWOQJ9fy3DDkXPYltZPEkjhVb08LDuETESupe0WX9
+
+      QFxHvxf40ZIr3r1ZjjKp220RRZ3y2W1lzAoLK67sYvqiDapfcmhhF9VveyBl
+
+      h3Bxy8HWMRAgeujHhyAKQDBxVuWuW7G3IZfWBYdEoksK8/mAnSQ='
