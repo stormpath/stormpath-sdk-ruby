@@ -15,7 +15,7 @@
 #
 class Stormpath::GroupMembershipList < Stormpath::CollectionResource
 
-  def get_item_type
+  def item_type
     Stormpath::GroupMembership
   end
 

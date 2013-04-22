@@ -18,15 +18,15 @@ class Stormpath::PasswordResetToken < Stormpath::Resource
   EMAIL = "email"
   ACCOUNT = "account"
 
-  def get_email
+  def email
     get_property EMAIL
   end
 
-  def set_email email
+  def email=(email)
     set_property EMAIL, email
   end
 
-  def get_account
+  def account
     get_resource_property ACCOUNT, Stormpath::Account
   end
 

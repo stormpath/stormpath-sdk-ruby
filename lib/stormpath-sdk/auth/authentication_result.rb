@@ -21,7 +21,7 @@ module Stormpath
 
       ACCOUNT = "account"
 
-      def get_account
+      def account
         get_resource_property ACCOUNT, Stormpath::Account
       end
 

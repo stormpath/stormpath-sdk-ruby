@@ -20,25 +20,25 @@ class Stormpath::CollectionResource < Stormpath::Resource
   ITEMS = "items"
 
   def each(&block)
-    get_current_page.items.each(&block)
+    current_page.items.each(&block)
   end
 
   protected
 
-  def get_offset
+  def offset
     get_property OFFSET
   end
 
-  def get_limit
+  def limit
     get_property LIMIT
   end
 
-  def get_current_page
+  def current_page
 
     value = get_property ITEMS
     items = to_resource_array value
 
-    Page.new get_offset, get_limit, items
+    Page.new offset, limit, items
   end
 
   def to_resource clazz, properties
@@ -61,7 +61,7 @@ class Stormpath::CollectionResource < Stormpath::Resource
 
   def to_resource_array vals
 
-    clazz = get_item_type
+    clazz = item_type
     items = Array.new
 
     if vals.is_a? Array

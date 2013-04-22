@@ -20,11 +20,11 @@ class Stormpath::Tenant < Stormpath::InstanceResource
   APPLICATIONS = "applications"
   DIRECTORIES = "directories"
 
-  def get_name
+  def name
     get_property NAME
   end
 
-  def get_key
+  def key
     get_property KEY
   end
 
@@ -35,16 +35,12 @@ class Stormpath::Tenant < Stormpath::InstanceResource
 
   end
 
-  def get_applications
-
+  def applications
     get_resource_property APPLICATIONS, Stormpath::ApplicationList
-
   end
 
-  def get_directories
-
+  def directories
     get_resource_property DIRECTORIES, Stormpath::DirectoryList
-
   end
 
   def verify_account_email token

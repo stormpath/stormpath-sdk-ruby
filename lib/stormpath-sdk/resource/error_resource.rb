@@ -25,23 +25,23 @@ class Stormpath::ErrorResource < Stormpath::Resource
     super nil, body
   end
 
-  def get_status
+  def status
     get_property STATUS
   end
 
-  def get_code
+  def code
     get_property CODE
   end
 
-  def get_message
+  def message
     get_property MESSAGE
   end
 
-  def get_developer_message
+  def developer_message
     get_property DEV_MESSAGE
   end
 
-  def get_more_info
+  def more_info
     get_property MORE_INFO
   end
 

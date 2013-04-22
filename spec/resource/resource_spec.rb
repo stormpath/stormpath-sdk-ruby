@@ -5,23 +5,23 @@ describe "Resource Tests" do
   context "given something rudy will type" do
     class TestResource < Stormpath::Resource
 
-      def get_name
+      def name
         get_property 'name'
       end
 
-      def set_name name
+      def name=(name)
         set_property 'name', name
       end
 
-      def get_description
+      def description
         get_property 'description'
       end
 
-      def set_description description
+      def description=(description)
         set_property 'description', description
       end
 
-      def set_password password
+      def password=(password)
         set_property 'password', password
       end
 
@@ -39,11 +39,11 @@ describe "Resource Tests" do
 
         test_resource = TestResource.new data_store, props
         name = 'New Name'
-        test_resource.set_name name
+        test_resource.name = name
 
         begin
 
-          name.should == test_resource.get_name
+          name.should == test_resource.name
 
         rescue Exception => e
 
@@ -62,9 +62,9 @@ describe "Resource Tests" do
 
         test_resource = TestResource.new data_store, props
         name = 'New Name'
-        test_resource.set_name name
+        test_resource.name = name
 
-        test_resource.set_password 'my_password'
+        test_resource.password = 'my_password'
 
         test_resource.inspect.should_not include 'password'
 
