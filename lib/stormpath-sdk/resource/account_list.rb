@@ -15,7 +15,7 @@
 #
 class Stormpath::AccountList < Stormpath::CollectionResource
 
-  def get_item_type
+  def item_type
     Stormpath::Account
   end
 

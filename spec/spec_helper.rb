@@ -17,15 +17,15 @@ def destroy_all_stormpath_test_resources api_key
 
   tenant = client.current_tenant
 
-  directories = tenant.get_directories
+  directories = tenant.directories
 
   directories.each do |dir|
-    dir.delete if dir.get_name.start_with? 'TestDirectory'
+    dir.delete if dir.name.start_with? 'TestDirectory'
   end
 
-  applications = tenant.get_applications
+  applications = tenant.applications
 
   applications.each do |app|
-    app.delete if app.get_name.start_with? 'TestApplication'
+    app.delete if app.name.start_with? 'TestApplication'
   end
 end

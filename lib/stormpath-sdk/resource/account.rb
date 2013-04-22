@@ -28,51 +28,51 @@ class  Stormpath::Account < Stormpath::InstanceResource
   EMAIL_VERIFICATION_TOKEN = "emailVerificationToken"
   GROUP_MEMBERSHIPS = "groupMemberships"
 
-  def get_username
+  def username
     get_property USERNAME
   end
 
-  def set_username username
+  def username=(username)
     set_property USERNAME, username
   end
 
-  def get_email
+  def email
     get_property EMAIL
   end
 
-  def set_email email
+  def email=(email)
     set_property EMAIL, email
   end
 
-  def set_password password
+  def password=(password)
     set_property PASSWORD, password
   end
 
-  def get_given_name
+  def given_name
     get_property GIVEN_NAME
   end
 
-  def set_given_name given_name
+  def given_name=(given_name)
     set_property GIVEN_NAME, given_name
   end
 
-  def get_middle_name
+  def middle_name
     get_property MIDDLE_NAME
   end
 
-  def set_middle_name middle_name
+  def middle_name=(middle_name)
     set_property MIDDLE_NAME, middle_name
   end
 
-  def get_surname
+  def surname
     get_property SURNAME
   end
 
-  def set_surname surname
+  def surname=(surname)
     set_property SURNAME, surname
   end
 
-  def get_status
+  def status
     value = get_property STATUS
 
     if !value.nil?
@@ -82,23 +82,23 @@ class  Stormpath::Account < Stormpath::InstanceResource
     value
   end
 
-  def set_status status
+  def status=(status)
 
-    if get_status_hash.has_key? status
-      set_property STATUS, get_status_hash[status]
+    if status_hash.has_key? status
+      set_property STATUS, status_hash[status]
     end
 
   end
 
-  def get_groups
+  def groups
     get_resource_property GROUPS, Stormpath::GroupList
   end
 
-  def get_directory
+  def directory
     get_resource_property DIRECTORY, Stormpath::Directory
   end
 
-  def get_email_verification_token
+  def email_verification_token
     get_resource_property EMAIL_VERIFICATION_TOKEN, Stormpath::EmailVerificationToken
   end
 
@@ -108,7 +108,7 @@ class  Stormpath::Account < Stormpath::InstanceResource
 
   end
 
-  def get_group_memberships
+  def group_memberships
     get_resource_property GROUP_MEMBERSHIPS, Stormpath::GroupMembershipList
   end
 

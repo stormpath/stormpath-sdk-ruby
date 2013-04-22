@@ -7,11 +7,11 @@ module Stormpath
 
       def to_yaml
         {
-          'common' => { 'stormpath_url' => application.get_href }
+          'common' => { 'stormpath_url' => application.href }
         }.tap do |stormpath_config|
           directories.each do |directory_name, directory|
             stormpath_config[directory_name] = {
-              'root' => directory.get_href
+              'root' => directory.href
             }
           end
         end.to_yaml
@@ -46,7 +46,7 @@ module Stormpath
 
       def self.provision_directory(client, directory_name)
         directory = client.data_store.instantiate Stormpath::Directory
-        directory.set_name directory_name
+        directory.name = directory_name
         directory = client.data_store.create '/directories', directory, Stormpath::Directory
 
         return directory
@@ -54,7 +54,7 @@ module Stormpath
 
       def self.provision_application(client, application_name)
         application = client.data_store.instantiate Stormpath::Application
-        application.set_name application_name
+        application.name = application_name
         application = client.current_tenant.create_application application
 
         return application

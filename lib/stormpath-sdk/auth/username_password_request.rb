@@ -27,11 +27,11 @@ module Stormpath
         @host = host
       end
 
-      def get_principals
+      def principals
         @username
       end
 
-      def get_credentials
+      def credentials
         @password
       end
 

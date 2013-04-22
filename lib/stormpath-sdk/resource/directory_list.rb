@@ -15,7 +15,7 @@
 #
 class Stormpath::DirectoryList < Stormpath::CollectionResource
 
-  def get_item_type
+  def item_type
     Stormpath::Directory
   end
 

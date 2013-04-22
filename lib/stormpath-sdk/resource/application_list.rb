@@ -15,7 +15,7 @@
 #
 class Stormpath::ApplicationList < Stormpath::CollectionResource
 
-  def get_item_type
+  def item_type
     Stormpath::Application
   end
 
