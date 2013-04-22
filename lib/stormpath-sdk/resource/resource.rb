@@ -100,7 +100,7 @@ class Stormpath::Resource
 
   end
 
-  def get_href
+  def href
     get_property HREF_PROP_NAME
   end
 
@@ -227,7 +227,7 @@ class Stormpath::Resource
   # @return {@code true} if the resource doesn't yet have an assigned 'href' property, {@code false} otherwise.
   def is_new
 
-    #we can't call get_href in here, otherwise we'll have an infinite loop:
+    #we can't call href in here, otherwise we'll have an infinite loop:
 
     prop = read_property HREF_PROP_NAME
 
@@ -261,7 +261,7 @@ class Stormpath::Resource
 
     begin
 
-      resource = @data_store.get_resource get_href, clazz
+      resource = @data_store.get_resource href, clazz
       @properties.replace resource.properties
 
       #retain dirty properties:

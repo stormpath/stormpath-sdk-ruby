@@ -23,23 +23,23 @@ class Stormpath::Group < Stormpath::InstanceResource
   DIRECTORY = "directory"
   ACCOUNTS = "accounts"
 
-  def get_name
+  def name
     get_property NAME
   end
 
-  def set_name name
+  def name=(name)
     set_property NAME, name
   end
 
-  def get_description
+  def description
     get_property DESCRIPTION
   end
 
-  def set_description description
+  def description=(description)
     set_property DESCRIPTION, description
   end
 
-  def get_status
+  def status
     value = get_property STATUS
 
     if !value.nil?
@@ -49,23 +49,23 @@ class Stormpath::Group < Stormpath::InstanceResource
     value
   end
 
-  def set_status status
+  def status=(status)
 
-    if get_status_hash.has_key? status
-      set_property STATUS, get_status_hash[status]
+    if status_hash.has_key? status
+      set_property STATUS, status_hash[status]
     end
 
   end
 
-  def get_tenant
+  def tenant
     get_resource_property TENANT, Stormpath::Tenant
   end
 
-  def get_directory
+  def directory
     get_resource_property DIRECTORY, Stormpath::Directory
   end
 
-  def get_accounts
+  def accounts
     get_resource_property ACCOUNTS, Stormpath::AccountList
   end
 

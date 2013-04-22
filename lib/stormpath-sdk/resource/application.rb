@@ -23,23 +23,23 @@ class Stormpath::Application < Stormpath::InstanceResource
   ACCOUNTS = "accounts"
   PASSWORD_RESET_TOKENS = "passwordResetTokens"
 
-  def get_name
+  def name
     get_property NAME
   end
 
-  def set_name name
+  def name=(name)
     set_property NAME, name
   end
 
-  def get_description
+  def description
     get_property DESCRIPTION
   end
 
-  def set_description description
+  def description=(description)
     set_property DESCRIPTION, description
   end
 
-  def get_status
+  def status
     value = get_property STATUS
 
     if !value.nil?
@@ -49,20 +49,19 @@ class Stormpath::Application < Stormpath::InstanceResource
     value
   end
 
-  def set_status status
+  def status=(status)
 
-    if get_status_hash.has_key? status
-      set_property STATUS, get_status_hash[status]
+    if status_hash.has_key? status
+      set_property STATUS, status_hash[status]
     end
 
   end
 
-  def get_tenant
+  def tenant
     get_resource_property TENANT, Stormpath::Tenant
   end
 
-  def get_accounts
-
+  def accounts
     get_resource_property ACCOUNTS, Stormpath::AccountList
   end
 
@@ -82,7 +81,7 @@ class Stormpath::Application < Stormpath::InstanceResource
   def send_password_reset_email account_username_or_email
 
     password_reset_token = create_password_reset_token account_username_or_email;
-    password_reset_token.get_account
+    password_reset_token.account
 
   end
 
@@ -112,7 +111,7 @@ class Stormpath::Application < Stormpath::InstanceResource
   # account = application.verify_password_reset_token token
   #
   # //token has been verified - now set the new password with what the end-user submits:
-  # account.set_password user_submitted_new_password
+  # account.password = user_submitted_new_password
   # account.save
   # </pre>
   #
@@ -120,7 +119,7 @@ class Stormpath::Application < Stormpath::InstanceResource
   # @return the Account matching the specified token.
   def verify_password_reset_token token
 
-    href = get_password_reset_token_href
+    href = password_reset_token_href
     href += '/' + token
 
     password_reset_props = Hash.new
@@ -128,7 +127,7 @@ class Stormpath::Application < Stormpath::InstanceResource
 
     password_reset_token = data_store.instantiate Stormpath::PasswordResetToken, password_reset_props
 
-    password_reset_token.get_account
+    password_reset_token.account
 
   end
 
@@ -142,25 +141,25 @@ class Stormpath::Application < Stormpath::InstanceResource
   # <p/>
   # <pre>
   # request = UsernamePasswordRequest.new username, submittedRawPlaintextPassword, nil
-  # account = appToTest.authenticate_account(request).get_account
+  # account = appToTest.authenticate_account(request).account
   # </pre>
   #
   # @param request the authentication request representing an account's principals and credentials (e.g.
   #                username/password) used to verify their identity.
   # @return the result of the authentication.  The authenticated account can be obtained from
-  #         {@code result.}{@link Stormpath::Authentication::AuthenticationResult#get_account}.
+  #         {@code result.}{@link Stormpath::Authentication::AuthenticationResult#account}.
   # @throws ResourceError if the authentication attempt fails.
   #
   def authenticate_account request
     response = Stormpath::Authentication::BasicAuthenticator.new data_store
-    response.authenticate get_href, request
+    response.authenticate href, request
   end
 
   private
 
   def create_password_reset_token email
 
-    href = get_password_reset_token_href
+    href = password_reset_token_href
 
     password_reset_props = Hash.new
     password_reset_props.store 'email', email
@@ -171,7 +170,7 @@ class Stormpath::Application < Stormpath::InstanceResource
 
   end
 
-  def get_password_reset_token_href
+  def password_reset_token_href
 
     password_reset_tokens_href = get_property PASSWORD_RESET_TOKENS
 

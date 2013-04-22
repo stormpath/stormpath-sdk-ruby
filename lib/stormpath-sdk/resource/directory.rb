@@ -24,23 +24,23 @@ class Stormpath::Directory < Stormpath::InstanceResource
   GROUPS = "groups"
   TENANT = "tenant"
 
-  def get_name
+  def name
     get_property NAME
   end
 
-  def set_name name
+  def name=(name)
     set_property NAME, name
   end
 
-  def get_description
+  def description
     get_property DESCRIPTION
   end
 
-  def set_description description
+  def description=(description)
     set_property DESCRIPTION, description
   end
 
-  def get_status
+  def status
     value = get_property STATUS
 
     if !value.nil?
@@ -50,17 +50,17 @@ class Stormpath::Directory < Stormpath::InstanceResource
     value
   end
 
-  def set_status status
+  def status=(status)
 
-    if get_status_hash.has_key? status
-      set_property STATUS, get_status_hash[status]
+    if status_hash.has_key? status
+      set_property STATUS, status_hash[status]
     end
 
   end
 
   def create_account account, *registration_workflow_enabled
-    accounts = get_accounts
-    href = accounts.get_href
+    accounts = accounts
+    href = accounts.href
     if !registration_workflow_enabled.nil? and !registration_workflow_enabled.empty?
       href += '?registrationWorkflowEnabled=' + registration_workflow_enabled[0].to_s
     end
@@ -68,15 +68,15 @@ class Stormpath::Directory < Stormpath::InstanceResource
     data_store.create href, account, Stormpath::Account
   end
 
-  def get_accounts
+  def accounts
     get_resource_property ACCOUNTS, Stormpath::AccountList
   end
 
-  def get_groups
+  def groups
     get_resource_property GROUPS, Stormpath::GroupList
   end
 
-  def get_tenant
+  def tenant
     get_resource_property TENANT, Stormpath::Tenant
   end
 

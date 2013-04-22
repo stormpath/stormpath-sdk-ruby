@@ -16,24 +16,24 @@
 class Stormpath::ResourceError < RuntimeError
 
   def initialize error
-    super !error.nil? ? error.get_message : ''
+    super !error.nil? ? error.message : ''
     @error = error
   end
 
-  def get_status
-    !@error.nil? ? @error.get_status : -1
+  def status
+    !@error.nil? ? @error.status : -1
   end
 
-  def get_code
-    !@error.nil? ? @error.get_code : -1
+  def code
+    !@error.nil? ? @error.code : -1
   end
 
-  def get_developer_message
-    !@error.nil? ? @error.get_developer_message : nil
+  def developer_message
+    !@error.nil? ? @error.developer_message : nil
   end
 
-  def get_more_info
-    !@error.nil? ? @error.get_more_info : nil
+  def more_info
+    !@error.nil? ? @error.more_info : nil
   end
 
 end

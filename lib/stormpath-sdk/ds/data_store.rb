@@ -67,7 +67,7 @@ class Stormpath::DataStore
     assert_not_nil resource, "resource argument cannot be null."
     assert_kind_of Stormpath::Resource, resource, "resource argument must be instance of Stormpath::Resource"
 
-    href = resource.get_href
+    href = resource.href
     assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
 
     if needs_to_be_fully_qualified(href)
@@ -90,7 +90,7 @@ class Stormpath::DataStore
     assert_not_nil resource, "resource argument cannot be null."
     assert_kind_of Stormpath::Resource, resource, "resource argument must be instance of Stormpath::Resource"
 
-    execute_request('delete', resource.get_href, nil)
+    execute_request('delete', resource.href, nil)
 
   end
 
