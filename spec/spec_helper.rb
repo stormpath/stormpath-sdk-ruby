@@ -5,7 +5,7 @@ require 'simplecov'
 SimpleCov.start
 
 require 'stormpath-sdk'
-
+require 'pry'
 require 'webmock/rspec'
 
 WebMock.allow_net_connect!
