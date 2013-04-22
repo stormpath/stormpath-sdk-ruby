@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'webmock', '~> 1.11.0'
   s.add_development_dependency 'simplecov', '~> 0.7.1'
   s.add_development_dependency 'pry', '~> 0.9.12.1'
+  s.add_development_dependency 'pry-stack_explorer', '~> 0.4.9'
 
   s.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'stormpath-sdk', '--main']
 end
