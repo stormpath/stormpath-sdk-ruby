@@ -39,19 +39,27 @@ application.
 
   You can alterantively create your application and directory manually.
 
+## Testing
+
+To run the test suite, simply run the command:
+
+```sh
+$ rake spec
+```
+
+note that this will make requests to the Stormpath API; you'll need to have
+set environment variables (STORMPATH\_TEST\_API\_KEY\_ID and
+STORMPATH\_TEST\_API\_KEY SECRET) enabling the client to interact with your
+Stormpath account.
+
+The test run will also generate a code-coverage report, viewable in the
+coverage subdirectory.
+
 ## Contributing
 
 You can make your own contributions by forking the <code>development</code>
 branch, making your changes, and issuing pull-requests on the
 <code>development</code> branch.
-
-### Running Specs
-
-You can run all the tests via Rake:
-
-```sh
-rake spec
-```
 
 ### Building the Gem
 
