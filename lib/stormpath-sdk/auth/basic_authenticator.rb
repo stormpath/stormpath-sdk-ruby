@@ -26,7 +26,6 @@ module Stormpath
       end
 
       def authenticate parent_href, request
-
         assert_not_nil parent_href, "parentHref argument must be specified"
         assert_kind_of UsernamePasswordRequest, request, "Only UsernamePasswordRequest instances are supported."
 

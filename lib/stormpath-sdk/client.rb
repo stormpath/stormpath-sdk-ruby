@@ -56,7 +56,7 @@ module Stormpath
       @data_store = Stormpath::DataStore.new(request_executor, base_url)
 
       if application_path
-        @application = @data_store.get_resource(application_path, Stormpath::Application)
+        @application = Stormpath::Application.get @data_store, application_path
       end
     end
 

@@ -49,7 +49,7 @@ class Stormpath::Tenant < Stormpath::InstanceResource
     href = "/accounts/emailVerificationTokens/" + token
 
     token_hash = Hash.new
-    token_hash.store Stormpath::HREF_PROP_NAME, href
+    token_hash.store Stormpath::Resource::HREF_PROP_NAME, href
 
     ev_token = data_store.instantiate Stormpath::EmailVerificationToken, token_hash
 

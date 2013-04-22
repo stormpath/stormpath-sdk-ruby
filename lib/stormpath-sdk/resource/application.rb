@@ -123,7 +123,7 @@ class Stormpath::Application < Stormpath::InstanceResource
     href += '/' + token
 
     password_reset_props = Hash.new
-    password_reset_props.store Stormpath::HREF_PROP_NAME, href
+    password_reset_props.store Stormpath::Resource::HREF_PROP_NAME, href
 
     password_reset_token = data_store.instantiate Stormpath::PasswordResetToken, password_reset_props
 
@@ -178,7 +178,7 @@ class Stormpath::Application < Stormpath::InstanceResource
       password_reset_tokens_href.respond_to? 'empty?' and
       !password_reset_tokens_href.empty?
 
-      return password_reset_tokens_href[Stormpath::HREF_PROP_NAME]
+      return password_reset_tokens_href[Stormpath::Resource::HREF_PROP_NAME]
     end
 
     nil

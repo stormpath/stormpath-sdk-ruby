@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Stormpath::Util::Bootstrapper do
   describe '.bootstrap' do
     context 'given the location of a properties file' do
-      let(:application_name) { "TestApplication#{Time.now.to_i}" }
-      let(:directory_name) { "TestDirectory#{Time.now.to_i}" }
+      let(:application_name) { generate_resource_name }
+      let(:directory_name) { generate_resource_name }
       let(:output_configuration_file) { File.join(File.dirname(__FILE__), 'stormpath.yml') }
       let!(:bundle) do
         Stormpath::Util::Bootstrapper.bootstrap({
@@ -15,13 +15,8 @@ describe Stormpath::Util::Bootstrapper do
         })
       end
 
-      before do
-        destroy_all_stormpath_test_resources test_api_key
-      end
-
       after do
         File.delete(output_configuration_file) if File.exists? output_configuration_file
-        destroy_all_stormpath_test_resources test_api_key
       end
 
       it "creates an application for the API key's tenant" do

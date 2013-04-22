@@ -6,28 +6,9 @@ SimpleCov.start
 
 require 'stormpath-sdk'
 require 'pry'
+require 'pry-debugger'
 require 'webmock/rspec'
 WebMock.allow_net_connect!
-
-def destroy_all_stormpath_test_resources api_key
-  client = Stormpath::Client.new({
-    api_key: api_key
-  })
-
-  tenant = client.current_tenant
-
-  directories = tenant.directories
-
-  directories.each do |dir|
-    dir.delete if dir.name.start_with? 'TestDirectory'
-  end
-
-  applications = tenant.applications
-
-  applications.each do |app|
-    app.delete if app.name.start_with? 'TestApplication'
-  end
-end
 
 module Stormpath
   module TestApiKeyHelpers
@@ -44,14 +25,52 @@ module Stormpath
         test_api_key_secret
     end
 
+    def test_api_client
+      Stormpath::Client.new api_key: test_api_key
+    end
+
     def tests_runnable?
       test_api_key_id and test_api_key_secret
+    end
+  end
+
+  module TestResourceHelpers
+    def generate_resource_name
+      "Test#{SecureRandom.uuid}"
+    end
+
+    def destroy_all_stormpath_test_resources api_key
+      client = Stormpath::Client.new({
+        api_key: api_key
+      })
+
+      tenant = client.current_tenant
+
+      directories = tenant.directories
+
+      directories.each do |dir|
+        if dir.name.start_with? 'Test'
+          accounts = dir.accounts
+          accounts.each do |account|
+            account.delete
+          end
+          dir.delete
+        end
+      end
+
+      applications = tenant.applications
+
+      applications.each do |app|
+        app.delete if app.name.start_with? 'Test'
+      end
     end
   end
 end
 
 RSpec.configure do |c|
   c.include Stormpath::TestApiKeyHelpers
+  c.include Stormpath::TestResourceHelpers
+
   c.before(:all) do
     unless tests_runnable?
       raise <<needs_setup
@@ -59,5 +78,11 @@ RSpec.configure do |c|
     STORMPATH_TEST_API_KEY_ID and STORMPATH_TEST_API_KEY_SECRET
 needs_setup
     end
+
+    destroy_all_stormpath_test_resources test_api_key
+  end
+
+  c.after(:all) do
+    destroy_all_stormpath_test_resources test_api_key
   end
 end
