@@ -3,18 +3,6 @@ require 'pp'
 
 describe Stormpath::Client do
   describe '.new' do
-    let(:test_api_key_id) { ENV['STORMPATH_TEST_API_KEY_ID'] }
-    let(:test_api_key_secret) { ENV['STORMPATH_TEST_API_KEY_SECRET'] }
-
-    before do
-      unless test_api_key_id and test_api_key_secret
-        raise <<needs_setup
-In order to run these tests, you need to define the
-STORMPATH_TEST_API_KEY_ID and STORMPATH_TEST_API_KEY_SECRET
-needs_setup
-      end
-    end
-
     shared_examples 'a valid client' do
       it 'can connect successfully' do
         client.should be
@@ -216,7 +204,7 @@ properties
       end
 
       context 'with an application url' do
-        let(:application_name) { 'TestApplicationName001' }
+        let(:application_name) { generate_resource_name }
         let(:api_key) { Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret) }
         let(:application) do
           client = Stormpath::Client.new({
@@ -225,14 +213,6 @@ properties
           application = client.data_store.instantiate Stormpath::Application
           application.name = application_name
           client.current_tenant.create_application application
-        end
-
-        before do
-          destroy_all_stormpath_test_resources api_key
-        end
-
-        after do
-          destroy_all_stormpath_test_resources api_key
         end
 
         context 'with embedded API credentials' do

@@ -46,10 +46,10 @@ class Stormpath::GroupMembership < Stormpath::Resource
     href = "/groupMemberships"
 
     account_props = Hash.new
-    account_props.store Stormpath::HREF_PROP_NAME, account.href
+    account_props.store Stormpath::Resource::HREF_PROP_NAME, account.href
 
     group_props = Hash.new
-    group_props.store Stormpath::HREF_PROP_NAME, group.href
+    group_props.store Stormpath::Resource::HREF_PROP_NAME, group.href
 
     props = Hash.new
     props.store ACCOUNT, account_props
