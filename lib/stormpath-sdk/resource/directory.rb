@@ -17,6 +17,10 @@ class Stormpath::Directory < Stormpath::InstanceResource
 
   include Stormpath::Status
 
+  def self.parent_uri
+    '/directories'
+  end
+
   NAME = "name"
   DESCRIPTION = "description"
   STATUS = "status"
@@ -59,8 +63,8 @@ class Stormpath::Directory < Stormpath::InstanceResource
   end
 
   def create_account account, *registration_workflow_enabled
-    accounts = accounts
-    href = accounts.href
+    dir_accounts = accounts
+    href = dir_accounts.href
     if !registration_workflow_enabled.nil? and !registration_workflow_enabled.empty?
       href += '?registrationWorkflowEnabled=' + registration_workflow_enabled[0].to_s
     end
