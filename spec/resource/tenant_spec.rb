@@ -27,11 +27,11 @@ describe Stormpath::Tenant do
       end
       let(:account) do
         account = Stormpath::Account.new test_api_client,
-          email: 'rubysdk@email.com',
+          email: "#{generate_resource_name}@example.com",
           givenName: 'Ruby SDK',
           password: 'P@$$w0rd',
           surname: 'SDK',
-          username: 'rubysdk'
+          username: "#{generate_resource_name}username"
         directory.create_account account
       end
       let(:verification_token) do

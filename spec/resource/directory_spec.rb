@@ -8,11 +8,11 @@ describe Stormpath::Directory do
     context 'given a valid account' do
       let(:account) do
         account = Stormpath::Account.new test_api_client
-        account.email = 'rubysdk@email.com'
+        account.email = "#{generate_resource_name}@example.com"
         account.given_name = 'Ruby SDK'
         account.password = 'P@$$w0rd'
         account.surname = 'SDK'
-        account.username = 'rubysdk'
+        account.username = "#{generate_resource_name}username"
         account
       end
       let(:created_account) { directory.create_account account, false }
