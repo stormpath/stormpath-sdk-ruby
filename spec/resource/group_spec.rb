@@ -1,8 +1,9 @@
+
 require 'spec_helper'
 
-describe Stormpath::Account do
-  describe "#add_group" do
-    context "given a group" do
+describe Stormpath::Group do
+  describe '#add_account' do
+    context "given an account" do
       let(:directory) do
         directory = test_api_client.data_store.instantiate Stormpath::Directory
         directory.name = generate_resource_name
@@ -29,36 +30,20 @@ describe Stormpath::Account do
         Stormpath::Account.get test_api_client, account.href
       end
 
-      before do
-        account.add_group group
+      let(:reloaded_group) do
+        Stormpath::Group.get test_api_client, group.href
       end
 
-      it 'adds the group to the account' do
-        group_added = false
-        reloaded_account.groups.each do |g|
-          group_added = true if g.href == group.href
+      before do
+        group.add_account account
+      end
+
+      it "adds the account to the group" do
+        account_added = false
+        reloaded_group.accounts.each do |a|
+          account_added = true if a.href == account.href
         end
-        group_added.should be_true
-      end
-    end
-  end
-
-  describe '#save' do
-    context 'when property values have changed' do
-      let(:account_uri) { '/accounts/3Osia7j72CU2j5I5UwJUjj' }
-      let(:new_surname) do
-        "NewSurname#{SecureRandom.uuid}"
-      end
-      let(:reloaded_account) { Stormpath::Account.get test_api_client, account_uri }
-
-      before do
-        account = Stormpath::Account.get test_api_client, account_uri
-        account.surname = new_surname
-        account.save
-      end
-
-      it 'saves changes to the account' do
-        reloaded_account.surname.should == new_surname
+        account_added.should be_true
       end
     end
   end
