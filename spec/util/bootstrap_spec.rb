@@ -1,23 +1,10 @@
 require 'spec_helper'
 
 describe Stormpath::Util::Bootstrapper do
-  let(:test_api_key_id) { ENV['STORMPATH_TEST_API_KEY_ID'] }
-  let(:test_api_key_secret) { ENV['STORMPATH_TEST_API_KEY_SECRET'] }
-  let(:test_api_key) { Stormpath::ApiKey.new test_api_key_id, test_api_key_secret }
-
-  before do
-    unless test_api_key_id and test_api_key_secret
-      raise <<needs_setup
-In order to run these tests, you need to define the
-STORMPATH_TEST_API_KEY_ID and STORMPATH_TEST_API_KEY_SECRET
-needs_setup
-    end
-  end
-
   describe '.bootstrap' do
     context 'given the location of a properties file' do
-      let(:application_name) { "TestApplication#{Time.now.to_i}" }
-      let(:directory_name) { "TestDirectory#{Time.now.to_i}" }
+      let(:application_name) { generate_resource_name }
+      let(:directory_name) { generate_resource_name }
       let(:output_configuration_file) { File.join(File.dirname(__FILE__), 'stormpath.yml') }
       let!(:bundle) do
         Stormpath::Util::Bootstrapper.bootstrap({
@@ -28,13 +15,8 @@ needs_setup
         })
       end
 
-      before do
-        destroy_all_stormpath_test_resources test_api_key
-      end
-
       after do
         File.delete(output_configuration_file) if File.exists? output_configuration_file
-        destroy_all_stormpath_test_resources test_api_key
       end
 
       it "creates an application for the API key's tenant" do
