@@ -16,12 +16,12 @@ describe Stormpath::Account do
       end
 
       let(:account) do
-        account = Stormpath::Account.new test_api_client
-        account.email = 'rubysdk@email.com'
-        account.given_name = 'Ruby SDK'
-        account.password = 'P@$$w0rd'
-        account.surname = 'SDK'
-        account.username = 'rubysdk'
+        account = Stormpath::Account.new test_api_client,
+          email: 'rubysdk@email.com',
+          givenName: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK',
+          username: 'rubysdk'
         directory.create_account account, false
       end
 
