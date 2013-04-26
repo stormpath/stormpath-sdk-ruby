@@ -8,6 +8,7 @@ require 'stormpath-sdk'
 require 'pry'
 require 'pry-debugger'
 require 'webmock/rspec'
+
 WebMock.allow_net_connect!
 
 module Stormpath
@@ -44,7 +45,7 @@ module Stormpath
         api_key: api_key
       })
 
-      tenant = client.current_tenant
+      tenant = client.tenant
 
       directories = tenant.directories
 

@@ -14,12 +14,9 @@
 # limitations under the License.
 #
 module Stormpath
-
   module Http
-
     class Request
-
-      include Stormpath::Util
+      include Stormpath::Http::Utils
 
       attr_accessor :http_method, :href, :query_string, :http_headers, :body
 
@@ -75,8 +72,8 @@ module Stormpath
 
           @query_string.each do |key, value|
 
-            enc_key = RequestUtils.encode_url key, false, canonical
-            enc_value = RequestUtils.encode_url value, false, canonical
+            enc_key = encode_url key, false, canonical
+            enc_value = encode_url value, false, canonical
 
             if !result.empty?
               result << '&'

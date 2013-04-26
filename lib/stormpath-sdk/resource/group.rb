@@ -13,66 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Group < Stormpath::InstanceResource
-  include Stormpath::Status
+class Stormpath::Resource::Group < Stormpath::Resource::Instance
+  include Stormpath::Resource::Status
 
-  NAME = "name"
-  DESCRIPTION = "description"
-  STATUS = "status"
-  TENANT = "tenant"
-  DIRECTORY = "directory"
-  ACCOUNTS = "accounts"
-
-  def name
-    get_property NAME
-  end
-
-  def name=(name)
-    set_property NAME, name
-  end
-
-  def description
-    get_property DESCRIPTION
-  end
-
-  def description=(description)
-    set_property DESCRIPTION, description
-  end
-
-  def status
-    value = get_property STATUS
-
-    if !value.nil?
-      value = value.upcase
-    end
-
-    value
-  end
-
-  def status=(status)
-
-    if status_hash.has_key? status
-      set_property STATUS, status_hash[status]
-    end
-
-  end
-
-  def tenant
-    get_resource_property TENANT, Stormpath::Tenant
-  end
-
-  def directory
-    get_resource_property DIRECTORY, Stormpath::Directory
-  end
-
-  def accounts
-    get_resource_property ACCOUNTS, Stormpath::AccountList
-  end
+  prop_accessor :name, :description
+  resource_prop_reader :tenant, :directory, :accounts
 
   def add_account account
-
-    Stormpath::GroupMembership::_create account, self, data_store
-
+    client.group_memberships.create self, account
   end
-
 end

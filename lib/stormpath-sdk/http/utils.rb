@@ -14,10 +14,8 @@
 # limitations under the License.
 #
 module Stormpath
-
-  module Util
-
-    class RequestUtils
+  module Http
+    module Utils
 
       ##
       # Returns true if the specified URI uses a standard port (i.e. http == 80 or https == 443),
@@ -26,47 +24,35 @@ module Stormpath
       # param uri
       # return true if the specified URI is using a non-standard port, false otherwise
       #
-      def self.default_port? uri
+      def default_port?(uri)
         scheme = uri.scheme.downcase
         port = uri.port
         port <= 0 || (port == 80 && scheme.eql?("http")) || (port == 443 && scheme.eql?("https"))
       end
 
-      def self.encode_url value, path, canonical
+      def encode_url(value, path, canonical)
+        URI.escape(value).tap do |encoded|
+          if canonical
+            str_map = {'+' => '%20', '*' => '%2A', '%7E' => '~'}
 
-        encoded = URI.escape value
-
-        if canonical
-
-          str_map = {'+' => '%20', '*' => '%2A', '%7E' => '~'}
-
-          str_map.each do |key, str_value|
-
-            if encoded.include? key
-              encoded[key] = str_value
+            str_map.each do |key, str_value|
+              if encoded.include? key
+                encoded[key] = str_value
+              end
             end
 
-          end
+            # encoded['%7E'] = '~'  --> yes, this is reversed (compared to the other two) intentionally
 
-          # encoded['%7E'] = '~'  --> yes, this is reversed (compared to the other two) intentionally
-
-          if path
-
-            str = '%2F'
-            if encoded.include? str
-              encoded[str] = '/'
+            if path
+              str = '%2F'
+              if encoded.include? str
+                encoded[str] = '/'
+              end
             end
-
           end
-
         end
-
-        encoded
-
       end
 
     end
-
   end
-
 end

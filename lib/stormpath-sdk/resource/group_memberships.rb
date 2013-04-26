@@ -13,10 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::GroupMembershipList < Stormpath::CollectionResource
+class Stormpath::Resource::GroupMemberships < Stormpath::Resource::Collection
 
   def item_type
-    Stormpath::GroupMembership
+    Stormpath::Resource::GroupMembership
+  end
+
+  def create(group, account)
+    account_props = Hash.new
+    account_props.store Stormpath::Resource::Base::HREF_PROP_NAME, account.href
+
+    group_props = Hash.new
+    group_props.store Stormpath::Resource::Base::HREF_PROP_NAME, group.href
+
+    props = Hash.new
+    props.store 'account', account_props
+    props.store 'group', group_props
+
+    group_membership = Stormpath::Resource::GroupMembership.new props, client
+    data_store.create href, group_membership, item_type
   end
 
 end

@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::DirectoryList < Stormpath::CollectionResource
-
-  def item_type
-    Stormpath::Directory
+class Stormpath::Resource::Instance < Stormpath::Resource::Base
+  def save
+    data_store.save self
   end
 
+  def delete
+    unless new?
+      data_store.delete self
+    end
+  end
 end

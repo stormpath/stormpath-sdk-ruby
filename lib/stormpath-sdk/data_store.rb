@@ -14,94 +14,79 @@
 # limitations under the License.
 #
 class Stormpath::DataStore
-
   include Stormpath::Http
-  include Stormpath::ResourceUtils
   include Stormpath::Util::Assert
 
   DEFAULT_SERVER_HOST = "api.stormpath.com"
-
   DEFAULT_API_VERSION = 1
 
-  def initialize(request_executor, *base_url)
+  attr_reader :client
 
+  def initialize(request_executor, client, *base_url)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
-    @base_url = get_base_url *base_url
+
+    @client = client
+    @base_url = get_base_url(*base_url)
     @request_executor = request_executor
-    @resource_factory = Stormpath::ResourceFactory.new(self)
   end
 
   def instantiate(clazz, properties = {})
-
-    @resource_factory.instantiate(clazz, properties)
+    clazz.new properties, client
   end
 
   def get_resource(href, clazz)
-
-    q_href = href
-
-    if needs_to_be_fully_qualified q_href
-      q_href = qualify q_href
-    end
+    q_href = if needs_to_be_fully_qualified href
+               qualify href
+             else
+               href
+             end
 
     data = execute_request('get', q_href, nil)
-    @resource_factory.instantiate(clazz, data.to_hash)
-
+    instantiate clazz, data.to_hash
   end
 
-  def create parent_href, resource, return_type
-
-    returned_resource = save_resource parent_href, resource, return_type
-
-    if resource.kind_of? return_type
-
-      resource.set_properties to_hash(returned_resource)
-
+  def create(parent_href, resource, return_type)
+    save_resource(parent_href, resource, return_type).tap do |returned_resource|
+      if resource.kind_of? return_type
+        resource.set_properties to_hash(returned_resource)
+      end
     end
-
-    returned_resource
-
   end
 
-  def save resource, *clazz
+  def save(resource, clazz = nil)
     assert_not_nil resource, "resource argument cannot be null."
-    assert_kind_of Stormpath::Resource, resource, "resource argument must be instance of Stormpath::Resource"
+    assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
     href = resource.href
     assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
 
-    if needs_to_be_fully_qualified(href)
-      href = qualify(href)
+    href = if needs_to_be_fully_qualified(href)
+             qualify(href)
+           else
+             href
+           end
+
+    clazz ||= resource.class
+
+    save_resource(href, resource, clazz).tap do |return_value|
+      resource.set_properties return_value
     end
-
-    clazz = (clazz.nil? or clazz.length == 0) ? to_class_from_instance(resource) : clazz[0]
-
-    return_value = save_resource href, resource, clazz
-
-    #ensure the caller's argument is updated with what is returned from the server:
-    resource.set_properties to_hash(return_value)
-
-    return_value
-
   end
 
-  def delete resource
-
+  def delete(resource)
     assert_not_nil resource, "resource argument cannot be null."
-    assert_kind_of Stormpath::Resource, resource, "resource argument must be instance of Stormpath::Resource"
+    assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
     execute_request('delete', resource.href, nil)
-
   end
 
   protected
 
-  def needs_to_be_fully_qualified href
+  def needs_to_be_fully_qualified(href)
     !href.downcase.start_with? 'http'
   end
 
-  def qualify href
-
+  def qualify(href)
     slash_added = ''
 
     if !href.start_with? '/'
@@ -114,7 +99,6 @@ class Stormpath::DataStore
   private
 
   def execute_request(http_method, href, body)
-
     request = Request.new(http_method, href, nil, Hash.new, body)
     apply_default_request_headers request
     response = @request_executor.execute_request request
@@ -122,15 +106,14 @@ class Stormpath::DataStore
     result = response.body.length > 0 ? MultiJson.load(response.body) : ''
 
     if response.error?
-      error = Stormpath::ErrorResource.new result
-      raise Stormpath::ResourceError.new error
+      error = Stormpath::Resource::Error.new result
+      raise Stormpath::Error.new error
     end
 
     result
   end
 
-  def apply_default_request_headers request
-
+  def apply_default_request_headers(request)
     request.http_headers.store 'Accept', 'application/json'
     request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
 
@@ -139,62 +122,50 @@ class Stormpath::DataStore
     end
   end
 
-  def save_resource href, resource, return_type
-
+  def save_resource(href, resource, return_type)
     assert_not_nil resource, "resource argument cannot be null."
     assert_not_nil return_type, "returnType class cannot be null."
-    assert_kind_of Stormpath::Resource, resource, "resource argument must be instance of Stormpath::Resource"
+    assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
-    q_href = href
-
-    if needs_to_be_fully_qualified q_href
-      q_href = qualify q_href
-    end
+    q_href = if needs_to_be_fully_qualified href
+               qualify href
+             else
+               href
+             end
 
     response = execute_request('post', q_href, MultiJson.dump(to_hash(resource)))
-    @resource_factory.instantiate(return_type, response.to_hash)
-
+    instantiate return_type, response.to_hash
   end
 
-  def get_base_url *base_url
+  def get_base_url(*base_url)
     (!base_url.empty? and !base_url[0].nil?) ?
       base_url[0] :
       "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
   end
 
-  def to_hash resource
+  def to_hash(resource)
+    Hash.new.tap do |properties|
+      resource.get_property_names.each do |name|
+        property = resource.get_property name
 
-    property_names = resource.get_property_names
-    properties = Hash.new
+        if property.kind_of? Hash
+          property = to_simple_reference name, property
+        end
 
-    property_names.each do |name|
-
-      property = resource.get_property name
-
-      if property.kind_of? Hash
-
-        property = to_simple_reference name, property
-
+        properties.store name, property
       end
-
-      properties.store name, property
-
     end
-
-    properties
-
   end
 
-  def to_simple_reference property_name, hash
-
-    href_prop_name = Stormpath::Resource::HREF_PROP_NAME
-    assert_true (hash.kind_of? Hash and !hash.empty? and hash.has_key? href_prop_name), "Nested resource " +
-      "'#{property_name}' must have an 'href' property."
+  def to_simple_reference(property_name, hash)
+    href_prop_name = Stormpath::Resource::Base::HREF_PROP_NAME
+    assert_true(
+      (hash.kind_of?(Hash) and !hash.empty? and hash.has_key?(href_prop_name)),
+      "Nested resource '#{property_name}' must have an 'href' property."
+    )
 
     href = hash[href_prop_name]
 
     {href_prop_name => href}
-
   end
-
 end

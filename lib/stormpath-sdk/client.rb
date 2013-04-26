@@ -53,15 +53,35 @@ module Stormpath
           "Stormpath::Client constructor."
 
       request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key)
-      @data_store = Stormpath::DataStore.new(request_executor, base_url)
+      @data_store = Stormpath::DataStore.new(request_executor, self, base_url)
 
       if application_path
-        @application = Stormpath::Application.get @data_store, application_path
+        @application = self.applications.get application_path
       end
     end
 
-    def current_tenant
-      @data_store.get_resource("/tenants/current", Stormpath::Tenant)
+    def tenant
+      Stormpath::Resource::Tenant.new '/tenants/current', self
+    end
+
+    def applications
+      Stormpath::Resource::Applications.new '/applications', self
+    end
+
+    def directories
+      Stormpath::Resource::Directories.new '/directories', self
+    end
+
+    def group_memberships
+      Stormpath::Resource::GroupMemberships.new '/groupMemberships', self
+    end
+
+    def accounts
+      Stormpath::Resource::Accounts.new '/accounts', self
+    end
+
+    def groups
+      Stormpath::Resource::Groups.new '/groups', self
     end
 
     private
@@ -97,6 +117,4 @@ module Stormpath
     end
 
   end
-
 end
-

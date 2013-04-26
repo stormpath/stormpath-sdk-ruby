@@ -13,10 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::AccountList < Stormpath::CollectionResource
-
+class Stormpath::Resource::PasswordResetTokens < Stormpath::Resource::Collection
   def item_type
-    Stormpath::Account
+    Stormpath::Resource::PasswordResetToken
   end
-
 end

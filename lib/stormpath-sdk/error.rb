@@ -13,26 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
-  module ResourceUtils
+class Stormpath::Error < RuntimeError
 
-    include ActiveSupport::Inflector
-    include Stormpath::Util::Assert
-
-    @@resources_hash = Hash.new
-
-    def to_class_from_instance resource
-
-      assert_kind_of Resource, resource, "resource argument must be instance of Stormpath::Resource"
-
-      if !@@resources_hash.has_key? resource.class.name
-
-        @@resources_hash[resource.class.name] = constantize resource.class.name
-
-      end
-
-      @@resources_hash[resource.class.name]
-
-    end
+  def initialize error = nil
+    super !error.nil? ? error.message : ''
+    @error = error
   end
+
+  def status
+    !@error.nil? ? @error.status : -1
+  end
+
+  def code
+    !@error.nil? ? @error.code : -1
+  end
+
+  def developer_message
+    !@error.nil? ? @error.developer_message : nil
+  end
+
+  def more_info
+    !@error.nil? ? @error.more_info : nil
+  end
+
 end

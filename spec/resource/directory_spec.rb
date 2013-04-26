@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-describe Stormpath::Directory do
+describe Stormpath::Resource::Directory do
   describe '#create_account' do
     # Refers to a directory on the test Stormpath login named FixtureApplicationA Directory
-    let(:directory) { Stormpath::Directory.get test_api_client, '/directories/xYzxowbFhG9vPAb6fkqAt' }
+    let(:directory) { test_api_client.directories.get '/directories/xYzxowbFhG9vPAb6fkqAt' }
 
     context 'given a valid account' do
       let(:account) do
-        account = Stormpath::Account.new test_api_client
-        account.email = "#{generate_resource_name}@example.com"
-        account.given_name = 'Ruby SDK'
-        account.password = 'P@$$w0rd'
-        account.surname = 'SDK'
-        account.username = "#{generate_resource_name}username"
-        account
+        Stormpath::Resource::Account.new({
+          email: "#{generate_resource_name}@example.com",
+          given_name: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK',
+          username: "#{generate_resource_name}username"
+        })
       end
       let(:created_account) { directory.create_account account, false }
 

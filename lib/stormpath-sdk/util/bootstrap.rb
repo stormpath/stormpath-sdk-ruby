@@ -45,19 +45,11 @@ module Stormpath
       end
 
       def self.provision_directory(client, directory_name)
-        directory = client.data_store.instantiate Stormpath::Directory
-        directory.name = directory_name
-        directory = client.data_store.create '/directories', directory, Stormpath::Directory
-
-        return directory
+        client.directories.create name: directory_name
       end
 
       def self.provision_application(client, application_name)
-        application = client.data_store.instantiate Stormpath::Application
-        application.name = application_name
-        application = client.current_tenant.create_application application
-
-        return application
+        client.applications.create name: application_name
       end
 
       private_class_method :provision_application, :provision_directory, :write_bundle

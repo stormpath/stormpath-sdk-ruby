@@ -13,16 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::ResourceFactory
+class Stormpath::Resource::Accounts < Stormpath::Resource::Collection
 
-  def initialize(data_store)
-
-    @data_store = data_store
-  end
-
-  def instantiate(clazz, constructor_args = {})
-
-    clazz.new @data_store, constructor_args
+  def item_type
+    Stormpath::Resource::Account
   end
 
 end
