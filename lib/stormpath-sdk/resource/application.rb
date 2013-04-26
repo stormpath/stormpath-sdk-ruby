@@ -102,30 +102,6 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   private
 
   def create_password_reset_token email
-
-    href = password_reset_token_href
-
-    password_reset_props = Hash.new
-    password_reset_props.store 'email', email
-
-    password_reset_token = data_store.instantiate Stormpath::PasswordResetToken, password_reset_props
-
-    data_store.create href, password_reset_token, Stormpath::PasswordResetToken
-
+    password_reset_tokens.create email: email
   end
-
-  def password_reset_token_href
-
-    password_reset_tokens_href = get_property PASSWORD_RESET_TOKENS
-
-    if !password_reset_tokens_href.nil? and
-      password_reset_tokens_href.respond_to? 'empty?' and
-      !password_reset_tokens_href.empty?
-
-      return password_reset_tokens_href[Stormpath::Resource::HREF_PROP_NAME]
-    end
-
-    nil
-  end
-
 end

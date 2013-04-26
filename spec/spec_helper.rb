@@ -65,6 +65,16 @@ module Stormpath
         app.delete if app.name.start_with? 'Test'
       end
     end
+
+    def build_account(opts={})
+      opts.tap do |o|
+        o["surname"]    = (!opts["surname"].blank? && opts["surname"]) || generate_resource_name
+        o["given_name"] = (!opts["given_name"].blank? && opts["given_name"]) || generate_resource_name
+        o["username"]   = (!opts["username"].blank? && opts["username"]) || generate_resource_name
+        o["password"]   = (!opts["password"].blank? && opts["password"]) || generate_resource_name
+        o["email"]      = (!opts["email"].blank? && opts["email"]) || "#{generate_resource_name}@example.com"
+      end
+    end
   end
 end
 
