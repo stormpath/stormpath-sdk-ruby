@@ -35,11 +35,9 @@ describe Stormpath::Resource::Group do
       end
 
       it "adds the account to the group" do
-        account_added = false
-        reloaded_group.accounts.each do |a|
-          account_added = true if a.href == account.href
-        end
-        account_added.should be_true
+        reloaded_group.accounts.find do |a|
+          a.href == account.href
+        end.should be
       end
     end
   end

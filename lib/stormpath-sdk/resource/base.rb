@@ -68,19 +68,20 @@ class Stormpath::Resource::Base
     end
 
     def non_printable_properties
+      @non_printable_properties ||= []
       Array.new @non_printable_properties
     end
   end
 
   def initialize properties_or_url, client=nil
-    properties ||= case properties_or_url
-                   when String
-                     { HREF_PROP_NAME => properties_or_url }
-                   when Hash
-                     properties_or_url
-                   else
-                     {}
-                   end
+    properties = case properties_or_url
+                 when String
+                   { HREF_PROP_NAME => properties_or_url }
+                 when Hash
+                   properties_or_url
+                 else
+                   {}
+                 end
 
     @client = client
     @read_lock = Mutex.new

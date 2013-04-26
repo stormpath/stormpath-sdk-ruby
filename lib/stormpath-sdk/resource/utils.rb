@@ -26,8 +26,8 @@ module Stormpath
           begin
             str << properties.map do |key, value|
               if printable_property? key
-                if value.kind_of? Hash and value.has_key? HREF_PROP_NAME
-                  value = %Q[{ "#{HREF_PROP_NAME}" => "#{value[HREF_PROP_NAME]}" }]
+                if value.kind_of? Hash and value.has_key? Stormpath::Resource::Base::HREF_PROP_NAME
+                  value = %Q[{ "#{Stormpath::Resource::Base::HREF_PROP_NAME}" => "#{value[Stormpath::Resource::Base::HREF_PROP_NAME]}" }]
                 end
                 %Q["#{key} => #{value}"]
               end
