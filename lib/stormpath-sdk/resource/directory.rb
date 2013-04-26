@@ -13,75 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Directory < Stormpath::InstanceResource
+class Stormpath::Resource::Directory < Stormpath::Resource::Instance
+  include Stormpath::Resource::Status
 
-  include Stormpath::Status
+  prop_accessor :name, :description
+  resource_prop_reader :accounts, :groups, :tenant
 
-  def self.parent_uri
-    '/directories'
-  end
-
-  NAME = "name"
-  DESCRIPTION = "description"
-  STATUS = "status"
-  ACCOUNTS = "accounts"
-  GROUPS = "groups"
-  TENANT = "tenant"
-
-  def name
-    get_property NAME
-  end
-
-  def name=(name)
-    set_property NAME, name
-  end
-
-  def description
-    get_property DESCRIPTION
-  end
-
-  def description=(description)
-    set_property DESCRIPTION, description
-  end
-
-  def status
-    value = get_property STATUS
-
-    if !value.nil?
-      value = value.upcase
+  def create_account account, registration_workflow_enabled=nil
+    href = accounts.href
+    unless registration_workflow_enabled.nil?
+      href += "?registrationWorkflowEnabled=#{registration_workflow_enabled.to_s}"
     end
 
-    value
+    data_store.create href, account, Stormpath::Resource::Account
   end
-
-  def status=(status)
-
-    if status_hash.has_key? status
-      set_property STATUS, status_hash[status]
-    end
-
-  end
-
-  def create_account account, *registration_workflow_enabled
-    dir_accounts = accounts
-    href = dir_accounts.href
-    if !registration_workflow_enabled.nil? and !registration_workflow_enabled.empty?
-      href += '?registrationWorkflowEnabled=' + registration_workflow_enabled[0].to_s
-    end
-
-    data_store.create href, account, Stormpath::Account
-  end
-
-  def accounts
-    get_resource_property ACCOUNTS, Stormpath::AccountList
-  end
-
-  def groups
-    get_resource_property GROUPS, Stormpath::GroupList
-  end
-
-  def tenant
-    get_resource_property TENANT, Stormpath::Tenant
-  end
-
 end

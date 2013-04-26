@@ -13,36 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::ErrorResource < Stormpath::Resource
+class Stormpath::Resource::Groups < Stormpath::Resource::Collection
 
-  STATUS = "status"
-  CODE = "code"
-  MESSAGE = "message"
-  DEV_MESSAGE = "developerMessage"
-  MORE_INFO = "moreInfo"
-
-  def initialize body
-    super nil, body
-  end
-
-  def status
-    get_property STATUS
-  end
-
-  def code
-    get_property CODE
-  end
-
-  def message
-    get_property MESSAGE
-  end
-
-  def developer_message
-    get_property DEV_MESSAGE
-  end
-
-  def more_info
-    get_property MORE_INFO
+  def item_type
+    Stormpath::Resource::Group
   end
 
 end

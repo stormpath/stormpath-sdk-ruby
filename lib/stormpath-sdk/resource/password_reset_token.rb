@@ -13,21 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::PasswordResetToken < Stormpath::Resource
+class Stormpath::Resource::PasswordResetToken < Stormpath::Resource::Base
+  prop_reader :email, :account
+  resource_prop_reader :account
 
-  EMAIL = "email"
-  ACCOUNT = "account"
-
-  def email
-    get_property EMAIL
+  def token
+    href.split('/').last
   end
-
-  def email=(email)
-    set_property EMAIL, email
-  end
-
-  def account
-    get_resource_property ACCOUNT, Stormpath::Account
-  end
-
 end

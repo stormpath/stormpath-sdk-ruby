@@ -14,10 +14,8 @@
 # limitations under the License.
 #
 module Stormpath
-
   module Authentication
-
-    class BasicLoginAttempt < Stormpath::Resource
+    class BasicLoginAttempt < Stormpath::Resource::Base
 
       TYPE = "type"
       VALUE = "value"

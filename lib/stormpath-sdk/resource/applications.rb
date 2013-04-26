@@ -13,10 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::ApplicationList < Stormpath::CollectionResource
-
+class Stormpath::Resource::Applications < Stormpath::Resource::Collection
   def item_type
-    Stormpath::Application
+    Stormpath::Resource::Application
   end
-
 end

@@ -13,58 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Application < Stormpath::InstanceResource
-  include Stormpath::Status
+class Stormpath::Resource::Application < Stormpath::Resource::Instance
+  include Stormpath::Resource::Status
 
-  NAME = "name"
-  DESCRIPTION = "description"
-  STATUS = "status"
-  TENANT = "tenant"
-  ACCOUNTS = "accounts"
-  PASSWORD_RESET_TOKENS = "passwordResetTokens"
+  prop_accessor :name, :description
 
-  def name
-    get_property NAME
-  end
-
-  def name=(name)
-    set_property NAME, name
-  end
-
-  def description
-    get_property DESCRIPTION
-  end
-
-  def description=(description)
-    set_property DESCRIPTION, description
-  end
-
-  def status
-    value = get_property STATUS
-
-    if !value.nil?
-      value = value.upcase
-    end
-
-    value
-  end
-
-  def status=(status)
-
-    if status_hash.has_key? status
-      set_property STATUS, status_hash[status]
-    end
-
-  end
-
-  def tenant
-    get_resource_property TENANT, Stormpath::Tenant
-  end
-
-  def accounts
-    get_resource_property ACCOUNTS, Stormpath::AccountList
-  end
-
+  resource_prop_reader :tenant, :accounts, :password_reset_tokens
 
   #
   # Sends a password reset email for the specified account username or email address.  The email will contain
@@ -118,17 +72,7 @@ class Stormpath::Application < Stormpath::InstanceResource
   # @param token the verification token, usually obtained as a request parameter by your application.
   # @return the Account matching the specified token.
   def verify_password_reset_token token
-
-    href = password_reset_token_href
-    href += '/' + token
-
-    password_reset_props = Hash.new
-    password_reset_props.store Stormpath::Resource::HREF_PROP_NAME, href
-
-    password_reset_token = data_store.instantiate Stormpath::PasswordResetToken, password_reset_props
-
-    password_reset_token.account
-
+    password_reset_tokens.get(token).account
   end
 
   #

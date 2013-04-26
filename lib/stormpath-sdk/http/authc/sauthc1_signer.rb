@@ -23,7 +23,7 @@ module Stormpath
 
         include OpenSSL
         include UUIDTools
-        include Stormpath::Util
+        include Stormpath::Http::Utils
 
         DEFAULT_ALGORITHM = "SHA256"
         HOST_HEADER = "Host"
@@ -53,7 +53,7 @@ module Stormpath
           # SAuthc1 requires that we sign the Host header so we
           # have to have it in the request by the time we sign.
           host_header = uri.host
-          if !RequestUtils.default_port?(uri)
+          if !default_port?(uri)
 
             host_header << ":" << uri.port.to_s
           end
@@ -180,7 +180,7 @@ module Stormpath
           if resource_path.nil? or resource_path.empty?
             '/'
           else
-            RequestUtils.encode_url resource_path, true, true
+            encode_url resource_path, true, true
           end
         end
 

@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-describe Stormpath::Tenant do
+describe Stormpath::Resource::Tenant do
   describe '#create_account' do
     context 'given an application instance' do
-      let(:client) { Stormpath::Client.new api_key: test_api_key }
-      let(:tenant) { client.current_tenant }
+      let(:tenant) { test_api_client.tenant }
       let(:application) do
-        Stormpath::Application.new client,
+        Stormpath::Resource::Application.new({
           name: generate_resource_name,
           description: 'A test description'
+        })
       end
-      let(:created_application) { tenant.create_application application }
+      let(:created_application) { test_api_client.applications.create application }
 
       it 'creates that appication' do
         created_application.should be
@@ -23,22 +23,23 @@ describe Stormpath::Tenant do
   describe '#verify_account_email' do
     context 'given a verfication token of an account' do
       let(:directory) do
-        Stormpath::Directory.get test_api_client, '/directories/1tQTWUpMHyNSHxK8WIry2l'
+        test_api_client.directories.get '/directories/1tQTWUpMHyNSHxK8WIry2l'
       end
       let(:account) do
-        account = Stormpath::Account.new test_api_client,
+        account = Stormpath::Resource::Account.new({
           email: "#{generate_resource_name}@example.com",
           givenName: 'Ruby SDK',
           password: 'P@$$w0rd',
           surname: 'SDK',
           username: "#{generate_resource_name}username"
+        })
         directory.create_account account
       end
       let(:verification_token) do
-        account.email_verification_token.href.split('/').last
+        account.email_verification_token.token
       end
       let(:verified_account) do
-        test_api_client.current_tenant.verify_account_email verification_token
+        test_api_client.tenant.verify_account_email verification_token
       end
 
       after do
@@ -47,7 +48,7 @@ describe Stormpath::Tenant do
 
       it 'returns the account' do
         verified_account.should be
-        verified_account.should be_kind_of Stormpath::Account
+        verified_account.should be_kind_of Stormpath::Resource::Account
         verified_account.username.should == account.username
       end
     end

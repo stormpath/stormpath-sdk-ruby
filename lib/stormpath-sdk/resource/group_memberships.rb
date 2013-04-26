@@ -13,26 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
-  module ResourceUtils
+class Stormpath::Resource::GroupMemberships < Stormpath::Resource::Collection
 
-    include ActiveSupport::Inflector
-    include Stormpath::Util::Assert
-
-    @@resources_hash = Hash.new
-
-    def to_class_from_instance resource
-
-      assert_kind_of Resource, resource, "resource argument must be instance of Stormpath::Resource"
-
-      if !@@resources_hash.has_key? resource.class.name
-
-        @@resources_hash[resource.class.name] = constantize resource.class.name
-
-      end
-
-      @@resources_hash[resource.class.name]
-
-    end
+  def item_type
+    Stormpath::Resource::GroupMembership
   end
+
+  def create(group, account)
+    props = { group: { 'href' => group.href }, account: { 'href' => account.href } }
+
+    group_membership = Stormpath::Resource::GroupMembership.new props, client
+    data_store.create href, group_membership, item_type
+  end
+
 end

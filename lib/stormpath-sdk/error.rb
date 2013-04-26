@@ -13,16 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::ResourceFactory
+class Stormpath::Error < RuntimeError
 
-  def initialize(data_store)
-
-    @data_store = data_store
+  def initialize error = nil
+    super !error.nil? ? error.message : ''
+    @error = error
   end
 
-  def instantiate(clazz, constructor_args = {})
+  def status
+    !@error.nil? ? @error.status : -1
+  end
 
-    clazz.new @data_store, constructor_args
+  def code
+    !@error.nil? ? @error.code : -1
+  end
+
+  def developer_message
+    !@error.nil? ? @error.developer_message : nil
+  end
+
+  def more_info
+    !@error.nil? ? @error.more_info : nil
   end
 
 end

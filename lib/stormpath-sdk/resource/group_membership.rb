@@ -13,22 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::GroupMembership < Stormpath::Resource
+class Stormpath::Resource::GroupMembership < Stormpath::Resource::Instance
 
-  ACCOUNT = "account"
-  GROUP = "group"
-
-  def account
-    get_resource_property ACCOUNT, Stormpath::Account
-  end
-
-  def group
-    get_resource_property GROUP, Stormpath::Group
-  end
-
-  def delete
-    data_store.delete self
-  end
+  resource_prop_reader :account, :group
 
   #
   # THIS IS NOT PART OF THE STORMPATH PUBLIC API.  SDK end-users should not call it - it could be removed or

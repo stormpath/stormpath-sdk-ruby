@@ -13,10 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::GroupMembershipList < Stormpath::CollectionResource
+class Stormpath::Resource::Accounts < Stormpath::Resource::Collection
 
   def item_type
-    Stormpath::GroupMembership
+    Stormpath::Resource::Account
   end
 
 end

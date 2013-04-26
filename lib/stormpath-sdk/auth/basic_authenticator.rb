@@ -14,11 +14,8 @@
 # limitations under the License.
 #
 module Stormpath
-
   module Authentication
-
     class BasicAuthenticator
-
       include Stormpath::Util::Assert
 
       def initialize data_store
@@ -50,7 +47,5 @@ module Stormpath
       end
 
     end
-
   end
-
 end

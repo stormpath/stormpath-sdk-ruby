@@ -13,34 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Tenant < Stormpath::InstanceResource
+class Stormpath::Resource::Tenant < Stormpath::Resource::Instance
 
-  NAME = "name"
-  KEY = "key"
-  APPLICATIONS = "applications"
-  DIRECTORIES = "directories"
-
-  def name
-    get_property NAME
-  end
-
-  def key
-    get_property KEY
-  end
+  prop_reader :name, :key
+  resource_prop_reader :applications, :directories
 
   def create_application application
 
     href = "/applications"; #TODO: enable auto discovery
-    data_store.create href, application, Stormpath::Application
+    data_store.create href, application, Stormpath::Resource::Application
 
-  end
-
-  def applications
-    get_resource_property APPLICATIONS, Stormpath::ApplicationList
-  end
-
-  def directories
-    get_resource_property DIRECTORIES, Stormpath::DirectoryList
   end
 
   def verify_account_email token
@@ -49,12 +31,12 @@ class Stormpath::Tenant < Stormpath::InstanceResource
     href = "/accounts/emailVerificationTokens/" + token
 
     token_hash = Hash.new
-    token_hash.store Stormpath::Resource::HREF_PROP_NAME, href
+    token_hash.store Stormpath::Resource::Base::HREF_PROP_NAME, href
 
-    ev_token = data_store.instantiate Stormpath::EmailVerificationToken, token_hash
+    ev_token = data_store.instantiate Stormpath::Resource::EmailVerificationToken, token_hash
 
     #execute a POST (should clean this up / make it more obvious)
-    data_store.save ev_token, Stormpath::Account
+    data_store.save ev_token, Stormpath::Resource::Account
   end
 
 end

@@ -13,27 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::ResourceError < RuntimeError
+class Stormpath::Resource::Error < Stormpath::Resource::Base
 
-  def initialize error
-    super !error.nil? ? error.message : ''
-    @error = error
+  prop_reader :status, :code, :message, :developer_message, :more_info
+
+  def initialize body
+    super body, nil
   end
-
-  def status
-    !@error.nil? ? @error.status : -1
-  end
-
-  def code
-    !@error.nil? ? @error.code : -1
-  end
-
-  def developer_message
-    !@error.nil? ? @error.developer_message : nil
-  end
-
-  def more_info
-    !@error.nil? ? @error.more_info : nil
-  end
-
 end

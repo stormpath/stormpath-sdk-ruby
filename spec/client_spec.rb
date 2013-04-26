@@ -7,8 +7,8 @@ describe Stormpath::Client do
       it 'can connect successfully' do
         client.should be
         client.should be_kind_of Stormpath::Client
-        client.current_tenant.should be
-        client.current_tenant.should be_kind_of Stormpath::Tenant
+        client.tenant.should be
+        client.tenant.should be_kind_of Stormpath::Resource::Tenant
       end
     end
 
@@ -210,9 +210,7 @@ properties
           client = Stormpath::Client.new({
             api_key: api_key
           })
-          application = client.data_store.instantiate Stormpath::Application
-          application.name = application_name
-          client.current_tenant.create_application application
+          client.applications.create 'name' => application_name
         end
 
         context 'with embedded API credentials' do
@@ -235,7 +233,7 @@ properties
 
           it 'provides access to the application' do
             client.application.should be
-            client.application.should be_kind_of Stormpath::Application
+            client.application.should be_kind_of Stormpath::Resource::Application
             client.application.name.should == application_name
           end
         end
@@ -253,7 +251,7 @@ properties
 
             it 'provides access to the application' do
               client.application.should be
-              client.application.should be_kind_of Stormpath::Application
+              client.application.should be_kind_of Stormpath::Resource::Application
               client.application.name.should == application_name
             end
           end
