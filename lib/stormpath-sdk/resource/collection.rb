@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Collection < Stormpath::Resource::Base
+  include Enumerable
 
   def each(&block)
     offset = 0
