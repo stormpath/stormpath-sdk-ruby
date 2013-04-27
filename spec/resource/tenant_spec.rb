@@ -22,9 +22,7 @@ describe Stormpath::Resource::Tenant do
 
   describe '#verify_account_email' do
     context 'given a verfication token of an account' do
-      let(:directory) do
-        test_api_client.directories.get '/directories/1tQTWUpMHyNSHxK8WIry2l'
-      end
+      let(:directory) { test_directory_with_verification }
       let(:account) do
         account = Stormpath::Resource::Account.new({
           email: "#{generate_resource_name}@example.com",

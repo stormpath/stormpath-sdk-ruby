@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Directory do
   describe '#create_account' do
-    # Refers to a directory on the test Stormpath login named FixtureApplicationA Directory
-    let(:directory) { test_api_client.directories.get '/directories/xYzxowbFhG9vPAb6fkqAt' }
+    let(:directory) { test_directory }
 
     context 'given a valid account' do
       let(:account) do

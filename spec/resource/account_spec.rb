@@ -39,7 +39,9 @@ describe Stormpath::Resource::Account do
 
   describe '#save' do
     context 'when property values have changed' do
-      let(:account_uri) { '/accounts/3Osia7j72CU2j5I5UwJUjj' }
+      let(:account_uri) do
+        test_directory.accounts.create(build_account).href
+      end
       let(:new_surname) do
         "NewSurname#{SecureRandom.uuid}"
       end

@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Application do
-  let(:application) do
-    test_api_client.applications.get '/applications/xYIjI0liaY4AAxFP1iUz5'
-  end
+  let(:application) { test_application }
+  let(:directory) { test_directory }
 
   describe '#authenticate_account' do
-    let(:user_name) { 'FixtureUser1' }
-    let(:login_request) do
-      Stormpath::Authentication::UsernamePasswordRequest.new user_name, password
+    let(:account) do
+      directory.accounts.create build_account(password: 'P@$$w0rd')
     end
-    let(:expected_email) { 'rudy+fixtureuser1@carbonfive.com' }
+    let(:login_request) do
+      Stormpath::Authentication::UsernamePasswordRequest.new account.username, password
+    end
     let(:authentication_result) do
       application.authenticate_account login_request
     end
@@ -22,7 +22,7 @@ describe Stormpath::Resource::Application do
         authentication_result.should be
         authentication_result.account.should be
         authentication_result.account.should be_kind_of Stormpath::Resource::Account
-        authentication_result.account.email.should == expected_email
+        authentication_result.account.email.should == account.email
       end
     end
 
@@ -35,10 +35,34 @@ describe Stormpath::Resource::Application do
     end
   end
 
-  describe '.verify_password_reset_token' do
-    let(:directory) do
-      test_api_client.directories.get '/directories/xYzxowbFhG9vPAb6fkqAt'
+  describe '#send_password_reset_email' do
+    context 'given an email' do
+      context 'of an exisiting account on the application' do
+        let(:account) { directory.accounts.create build_account  }
+        let(:sent_to_account) { application.send_password_reset_email account.email }
+
+        after do
+          account.delete if account
+        end
+
+        it 'sends a password reset request of the account' do
+          sent_to_account.should be
+          sent_to_account.should be_kind_of Stormpath::Resource::Account
+          sent_to_account.email.should == account.email
+        end
+      end
+
+      context 'of a non exisitng account' do
+        it 'raises an exception' do
+          expect do
+            application.send_password_reset_email "#{generate_resource_name}bad@thebone.com"
+          end.to raise_error Stormpath::Error
+        end
+      end
     end
+  end
+
+  describe '#verify_password_reset_token' do
     let(:account) do
       directory.accounts.create({
         email: 'rubysdk@email.com',
