@@ -32,9 +32,9 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   # @return the account corresponding to the specified username or email address.
   # @see #account_username_or_email
   #
-  def send_password_reset_email account_username_or_email
+  def send_password_reset_email email
 
-    password_reset_token = create_password_reset_token account_username_or_email;
+    password_reset_token = create_password_reset_token email;
     password_reset_token.account
 
   end
