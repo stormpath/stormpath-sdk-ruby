@@ -91,10 +91,6 @@ class Stormpath::Resource::Base
     set_properties properties
   end
 
-  ##
-  # Returns {@code true} if the resource doesn't yet have an assigned 'href' property, {@code false} otherwise.
-  #
-  # @return {@code true} if the resource doesn't yet have an assigned 'href' property, {@code false} otherwise.
   def new?
     prop = read_property HREF_PROP_NAME
 

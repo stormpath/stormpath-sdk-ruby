@@ -35,9 +35,6 @@ module Stormpath
         @password
       end
 
-      ##
-      # Clears out (nulls) the username, password, and host.  The password bytes are explicitly set to
-      # <tt>0x00</tt> to eliminate the possibility of memory access at a later time.
       def clear
         @username = nil
         @host = nil

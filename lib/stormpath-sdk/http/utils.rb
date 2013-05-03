@@ -17,13 +17,6 @@ module Stormpath
   module Http
     module Utils
 
-      ##
-      # Returns true if the specified URI uses a standard port (i.e. http == 80 or https == 443),
-      # false otherwise.
-      #
-      # param uri
-      # return true if the specified URI is using a non-standard port, false otherwise
-      #
       def default_port?(uri)
         scheme = uri.scheme.downcase
         port = uri.port
