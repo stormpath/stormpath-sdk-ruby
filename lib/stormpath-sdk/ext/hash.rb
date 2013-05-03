@@ -15,8 +15,6 @@
 #
 class Hash
 
-  # implementation borrowed from the vine project at
-  # https://github.com/guangnan/vine/blob/master/lib/vine.rb
   def access(path, separator)
     ret = self
     path.split(separator).each do |p|
@@ -29,4 +27,5 @@ class Hash
     end
     ret
   end
+
 end

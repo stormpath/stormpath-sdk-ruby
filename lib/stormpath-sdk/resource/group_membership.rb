@@ -17,18 +17,7 @@ class Stormpath::Resource::GroupMembership < Stormpath::Resource::Instance
 
   resource_prop_reader :account, :group
 
-  #
-  # THIS IS NOT PART OF THE STORMPATH PUBLIC API.  SDK end-users should not call it - it could be removed or
-  # changed at any time.  It is publicly accessible only as an implementation technique to be used by other
-  # resource classes.
-  #
-  # @param account the account to associate with the group.
-  # @param group the group which will contain the account.
-  # @param data_store the datastore used to create the membership
-  # @return the created GroupMembership instance.
-  #
   def self._create account, group, data_store
-
     #TODO: enable auto discovery
     href = "/groupMemberships"
 
@@ -45,7 +34,6 @@ class Stormpath::Resource::GroupMembership < Stormpath::Resource::Instance
     group_membership = data_store.instantiate Stormpath::GroupMembership, props
 
     data_store.create href, group_membership, Stormpath::GroupMembership
-
   end
 
 end
