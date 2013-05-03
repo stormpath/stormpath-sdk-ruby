@@ -8,11 +8,9 @@ application.
 
 ## Install
 
-1.  Install the gem:
-
-    ```sh
-    $ gem install stormpath-sdk
-    ```
+```sh
+$ gem install stormpath-sdk
+```
 
 ## Quickstart Guide
 
@@ -23,8 +21,9 @@ application.
         downloading the <code>apiKey.properties</code> file into a <code>.stormpath</code>
         folder under your local home directory.
         
-    1.  Create an application an a directory to store your users'
-        accounts.
+    1.  Create an application and a directory to store your users'
+        accounts. Make sure the directory is assigned as a login source
+        to the application.
 
     1.  Take note of the _REST URL_ of the application and of directory
         you just created.
@@ -35,7 +34,7 @@ application.
     require 'stormpath-sdk'
     ```
 
-1.  **Create a client** using the API key file or through other ways
+1.  **Create a client** using the API key properties file
 
     ```ruby
     client = Stormpath::Client.new api_key_file_location: File.join(ENV['HOME']), '.stormpath', 'apiKey.properties')
@@ -49,7 +48,7 @@ application.
     end
 
     client.directories.each do |directory|
-      p 'Directory: #{directory.name}"
+      p "Directory: #{directory.name}"
     end
     ```
 
@@ -69,7 +68,7 @@ application.
       given_name: 'John',
       surname: 'Smith',
       email: 'john.smith@example.com',
-      username = 'johnsmith'
+      username: 'johnsmith',
       password: '4P@$$w0rd!'
     })
     ```
@@ -123,27 +122,250 @@ application.
 
 ## General Usage
 
-### Creating a client:
+### Creating a client
 
-With an API key properties file:
+All Stormpath features are accessed through a
+<code>Stormpath::Client</code> instance, or a resource
+created from one. A client needs an API key (made up of an _id_ and a
+_secret_) from your Stormpath developer account to manage resources 
+on that account. That API key can be specified any number of ways 
+in the hash of values passed on Client initialization:
 
-With an APIKey instance:
+* The location of API key properties file:
 
-By explicitly setting the API key id and secret:
+  ```ruby
+  client = Stormpath::Client.new
+    api_key_file_location: '/some/path/to/apiKey.properties'
+  ```
 
-With credentials embedded in an application URL:
+  You can even identify the names of the properties to use as the API
+  key id and secret. For example, suppose your properties was:
 
-### Working trough an Application and Directory
+  ```
+  foo=APIKEYID
+  bar=APIKEYSECRET
+  ``` 
+
+  You could load it with the following:
+
+  ```ruby
+  client = Stormpath::Client.new
+    api_key_file_location: '/some/path/to/apiKey.properties',
+    api_key_id_property_name: 'foo',
+    api_key_secret_property_name: 'bar'
+  ```
+
+* Passing in a Stormpath::APIKey instance:
+
+  ```ruby
+  api_key = Stormpath::APIKey.new api_id, api_secret
+  client = Stormpath::Client.new  api_key: api_key
+  ```
+
+* By explicitly setting the API key id and secret:
+
+  ```ruby
+  client = Stormpath::Client.new
+    api_key: { id: api_id, secret: api_secret }
+  ```
+
+* By passing the REST URL of a Stormpath application on your account
+  with the API id and secret embedded. For example, the URL would look
+  like:
+
+  ```
+  http://#{api_key_id}:#{api_key_secret}@api.stormpath.com/v1/applications/#{application_id}
+  ```
+
+  The client could then be created with the above URL:
+
+  ```ruby
+  client = Stormpath::Client.new application_url: application_url
+  ```
+
+  This method will also provide a <code>application</code> property on
+  on the client to directly access that resource.
+
+### Accessing Resources
+
+Most of the work you do with Stormpath is done through the applications
+and directories you have registered. You use the client to access them
+with their REST URL:
+
+```ruby
+application = client.applications.get application_url
+
+directory = client.directories.get directory_url
+```
+
+The <code>applications</code> and <code>directories</code> property on a
+client instance are also <code>Enumerable</code> allowing you to iterate
+and scan for resources via that interface.
+
+Additional resources are <code>accounts</code>, <code>groups</code>,
+<code>group_membership</code>, and the single reference to your
+<code>tenant</code>.
 
 ### Registering Accounts
 
+Accounts are created on a directory instance. They can be created in two
+ways:
+
+* With the <code>create_account</code> method:
+
+  ```ruby
+  account = directory.create_account({
+    given_name: 'John',
+    surname: 'Smith',
+    email: 'john.smith@example.com',
+    username: 'johnsmith',
+    password: '4P@$$w0rd!'
+  })
+  ```
+
+  This metod can take an additional flag to indicate if the account
+  can skip any registration workflow configured on the directory.
+
+  ```ruby
+  ## Will skip workflow, if any
+  account = directory.create_account account_props, false
+  ```
+
+* Creating it directly on the <code>accounts</code> collection property
+  on the directory:
+
+  ```ruby
+  account = directory.accounts.create({
+    given_name: 'John',
+    surname: 'Smith',
+    email: 'john.smith@example.com',
+    username: 'johnsmith',
+    password: '4P@$$w0rd!'
+  })
+  ```
+
+Both these methods can take either a <code>Hash</code> of the account
+properties, or a <code>Stormpath::Account</code>.
+
+If the directory has been configured with an email verification workflow
+and a non-Stormpath URL, you have to pass the verification token sent to
+the URL in a <code>sptoken</code> query parameter back to Stormpath to
+complete the workflow. This is done through the
+<code>verify_account_email</code>:
+
+For example, suppose you have a Sinatra application
+that is handling the email verification at the path
+<code>/users/verify</code>. You could use the following code:
+
+```ruby
+get '/users/verify' do
+  token = params[:sptoken]
+  account = client.tenant.verify_account_email token
+  #proceed to update session, display account, etc
+end
+```
+
 ### Authentication
+
+Authentication is accomplished by passing a username or an email and a
+password to <code>authenticate_account</code> of an application we've
+registered on Stormpath. This will either return a
+<code>Stormpath::Authentication::AuthenticationResult</code> instance if
+the credentials are valid, or raise a <code>Stormpath::Error</code>
+otherwise. In the former case, you can get the <code>account</code>
+associated with the credentials.
+
+```ruby 
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!'
+
+begin
+  auth_result = application.authenticate_account auth_request
+  account = auth_result.account
+rescue Stormpath::Error => e
+  #If credentials are invalid or account doesn't exist
+end
+```
 
 ### Password Reset
 
+A password reset workflow, if configured on the directory the account is
+registered on, can be kicked off with the
+<code>send_password_reset_email</code> method on an application:
+
+```ruby
+application.send_password_reset_email 'john.smith@example.com'
+```
+
+If the workflow has been configured to verify through a non-Stormpath
+URL, you can verify the token sent in the query parameter
+<code>sptoken</code> with the <code>verify_password_reset_token</code>
+method on the application.
+
+For example, suppose you have a Sinatra application that is verifying
+the tokens. You use the following to carry it out:
+
+```ruby
+get '/users/verify' do
+  token = params[:sptoken]
+  account = application.verify_password_reset_token token
+  #proceed to update session, display account, etc
+end
+```
+
+With the account acquired you can then update the password:
+
+```ruby
+  account.password = new_password
+  account.save
+```
+
+_NOTE :_ Confirming a new password is left up to the web application
+code calling the Stormpath SDK. The SDK does not require confirmation.
+
 ### ACL through Groups
 
-## Resource Management
+Memberships of accounts in certain groups can be used as an
+authorization mechanism. As the <code>groups</code> collection property
+on an account instance is <code>Enumerable</code>, you can use any of
+that module's methods to determine if an account belongs to a specific
+group:
+
+```ruby
+account.groups.any?{|group| group.name == 'administrators'
+```
+
+You can create groups and assign them to accounts using the Stormpath
+web console, or programmatically. Groups are created on directories:
+
+```ruby
+group = directory.groups.create name: 'administrators'
+```
+
+Group membership can be created by:
+
+* Explicitly creating a group membership resource with your client:
+
+  ```ruby
+  group_memebership = client.group_memberships.create group, account
+  ```
+
+* Using the <code>add_group</code> method on the account instance:
+
+  ```ruby
+  account.add_group group
+  ```
+
+* Using the <code>add_account</code> method on the group instance:
+
+  ```ruby
+  group.add_group account
+  ```
+
+You will need to reload the account or group resource after these
+operations to ensure they've picked up the changes.
+
+## Resources
 
 ### Applications
 
@@ -230,7 +452,7 @@ The following environment variables need will then need to be set:
 * <code>STORMPATH_SDK_TEST_DIRECTORY_WITH_VERIFICATION_URL</code> - The
   URL to the second directory created above.
 
-## Running
+### Running
 
 Once properly configured, the tests can be run as the default
 <code>Rake<code> task:
