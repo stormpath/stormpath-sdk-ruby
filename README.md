@@ -120,7 +120,7 @@ $ gem install stormpath-sdk
     is_admin = account.groups.any? { |group| group.name == 'Admins' }
     ```
 
-## General Usage
+## Common Uses
 
 ### Creating a client
 
@@ -364,66 +364,6 @@ Group membership can be created by:
 
 You will need to reload the account or group resource after these
 operations to ensure they've picked up the changes.
-
-## Resources
-
-### Applications
-
-Listing applications:
-
-Getting an application:
-
-Creating an application:
-
-Updating an application:
-
-Deleting an application:
-
-Authenticating an account:
-
-### Directories
-
-Listing directories:
-
-Getting a directory:
-
-Creating a directory:
-
-Updating a directory:
-
-Deleting a directory
-
-### Accounts
-
-Listing Accounts:
-
-Getting an account:
-
-Creating an account:
-
-Updating an account:
-
-Deleting an account:
-
-### Groups
-
-Listing groups:
-
-Get a group:
-
-Create a group:
-
-Update a group:
-
-### Group Memberships
-
-Listing group memberships:
-
-Creating a group membership:
-
-Get a group membership:
-
-Delete a group membership:
 
 ## Testing
 
