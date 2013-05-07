@@ -16,7 +16,7 @@
 module Stormpath
   module Authentication
     class AuthenticationResult < Stormpath::Resource::Base
-      resource_prop_reader :account
+      has_one :account
     end
   end
 end

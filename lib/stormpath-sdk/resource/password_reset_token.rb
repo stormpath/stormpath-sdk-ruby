@@ -15,7 +15,8 @@
 #
 class Stormpath::Resource::PasswordResetToken < Stormpath::Resource::Base
   prop_reader :email, :account
-  resource_prop_reader :account
+
+  belongs_to :account
 
   def token
     href.split('/').last

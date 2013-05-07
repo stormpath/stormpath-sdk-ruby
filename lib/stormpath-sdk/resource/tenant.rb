@@ -16,7 +16,9 @@
 class Stormpath::Resource::Tenant < Stormpath::Resource::Instance
 
   prop_reader :name, :key
-  resource_prop_reader :applications, :directories
+
+  has_many :applications
+  has_many :directories
 
   def create_application application
 

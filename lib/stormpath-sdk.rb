@@ -7,6 +7,7 @@ require "uri"
 require "uuidtools"
 require "yaml"
 require "active_support/core_ext"
+require 'active_support/core_ext/module/delegation'
 
 require "stormpath-sdk/version" unless defined? Stormpath::VERSION
 
@@ -22,6 +23,7 @@ module Stormpath
   module Resource
     autoload :Status, 'stormpath-sdk/resource/status'
     autoload :Utils, 'stormpath-sdk/resource/utils'
+    autoload :Associations, 'stormpath-sdk/resource/associations'
     autoload :Base, 'stormpath-sdk/resource/base'
     autoload :Error, 'stormpath-sdk/resource/error'
     autoload :Instance, 'stormpath-sdk/resource/instance'

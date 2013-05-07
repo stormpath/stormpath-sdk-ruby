@@ -15,7 +15,8 @@
 #
 class Stormpath::Resource::GroupMembership < Stormpath::Resource::Instance
 
-  resource_prop_reader :account, :group
+  has_one :account
+  has_one :group
 
   def self._create account, group, data_store
     #TODO: enable auto discovery

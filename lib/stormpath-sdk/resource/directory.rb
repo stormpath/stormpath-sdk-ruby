@@ -17,7 +17,11 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
 
   prop_accessor :name, :description
-  resource_prop_reader :accounts, :groups, :tenant
+
+  belongs_to :tenant
+
+  has_many :accounts
+  has_many :groups
 
   def create_account account, registration_workflow_enabled=nil
     href = accounts.href

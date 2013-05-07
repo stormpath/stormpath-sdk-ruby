@@ -121,7 +121,7 @@ properties
               "No API id in properties. Please provide a 'apiKey.id' property in '" +
               api_key_file_location +
               "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " +
-              "constructor to specify an alternative propeety."
+              "constructor to specify an alternative property."
           end
         end
 
@@ -148,7 +148,7 @@ properties
               "No API secret in properties. Please provide a 'apiKey.secret' property in '" +
               api_key_file_location +
               "' or pass in an 'api_key_secret_property_name' to the Stormpath::Client " +
-              "constructor to specify an alternative propeety."
+              "constructor to specify an alternative property."
           end
         end
 
