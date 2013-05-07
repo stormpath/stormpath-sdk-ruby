@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
   s.require_paths = %w[lib]
   s.files = `git ls-files`.split("\n")
   s.test_files = Dir['test/**/*.rb']
-  s.executables = ['stormpath_bootstrap']
 
   s.add_dependency('multi_json', '>= 1.3.6')
   s.add_dependency('httpclient', '>= 2.2.5')
@@ -33,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry', '~> 0.9.12.1'
   s.add_development_dependency 'pry-debugger', '~> 0.2.2'
   s.add_development_dependency 'pry-stack_explorer', '~> 0.4.9'
+  s.add_development_dependency 'vcr', '~> 2.4.0'
 
   s.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'stormpath-sdk', '--main']
 end

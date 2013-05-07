@@ -8,8 +8,18 @@ require 'stormpath-sdk'
 require 'pry'
 require 'pry-debugger'
 require 'webmock/rspec'
+require 'vcr'
+
+HIJACK_HTTP_REQUESTS_WITH_VCR = ENV['STORMPATH_SDK_TEST_ENVIRONMENT'] != 'CI'
 
 WebMock.allow_net_connect!
+
+VCR.configure do |c|
+  c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
+  c.hook_into :webmock
+  c.configure_rspec_metadata!
+  c.ignore_request { |r| HIJACK_HTTP_REQUESTS_WITH_VCR != true }
+end
 
 module Stormpath
   module TestApiKeyHelpers
@@ -70,9 +80,6 @@ module Stormpath
   end
 
   module TestResourceHelpers
-    def generate_resource_name
-      "Test#{SecureRandom.uuid}"
-    end
 
     def destroy_all_stormpath_test_resources api_key
       client = Stormpath::Client.new({
@@ -84,7 +91,7 @@ module Stormpath
       directories = tenant.directories
 
       directories.each do |dir|
-        if dir.name.start_with? 'Test'
+        if dir.name.downcase.start_with? 'test'
           accounts = dir.accounts
           accounts.each do |account|
             account.delete
@@ -99,17 +106,17 @@ module Stormpath
       applications = tenant.applications
 
       applications.each do |app|
-        app.delete if app.name.start_with? 'Test'
+        app.delete if app.name.downcase.start_with? 'test'
       end
     end
 
     def build_account(opts={})
       opts.tap do |o|
-        o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || generate_resource_name
-        o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || generate_resource_name
-        o[:username]   = (!opts[:username].blank? && opts[:username]) || generate_resource_name
-        o[:password]   = (!opts[:password].blank? && opts[:password]) || generate_resource_name
-        o[:email]      = (!opts[:email].blank? && opts[:email]) || "#{generate_resource_name}@example.com"
+        o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'surname'
+        o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || 'givenname'
+        o[:username]   = (!opts[:username].blank? && opts[:username]) || 'username'
+        o[:password]   = (!opts[:password].blank? && opts[:password]) || 'P@$$w0rd'
+        o[:email]      = (!opts[:email].blank? && opts[:email]) || 'test@example.com'
       end
     end
   end
@@ -119,20 +126,22 @@ RSpec.configure do |c|
   c.include Stormpath::TestApiKeyHelpers
   c.include Stormpath::TestResourceHelpers
 
+  c.treat_symbols_as_metadata_keys_with_true_values = true
+
   c.before(:all) do
     unless test_missing_env_vars.empty?
       set_up_message = "In order to run the specs of the Stormpath SDK you need to setup the following environment variables:\n\t"
-      set_up_message << test_missing_env_vars.map do |var, message| 
+      set_up_message << test_missing_env_vars.map do |var, message|
         "#{var.to_s} : #{message}"
       end.join("\n\t")
       set_up_message << "\nBe sure to configure these before running the specs again."
       raise set_up_message
     end
 
-    destroy_all_stormpath_test_resources test_api_key
+    destroy_all_stormpath_test_resources(test_api_key) unless HIJACK_HTTP_REQUESTS_WITH_VCR
   end
 
   c.after(:all) do
-    destroy_all_stormpath_test_resources test_api_key
+    destroy_all_stormpath_test_resources(test_api_key) unless HIJACK_HTTP_REQUESTS_WITH_VCR
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'pp'
 
-describe Stormpath::Client do
+describe Stormpath::Client, :vcr do
   describe '.new' do
     shared_examples 'a valid client' do
       it 'can connect successfully' do
@@ -204,13 +204,19 @@ properties
       end
 
       context 'with an application url' do
-        let(:application_name) { generate_resource_name }
+        let(:application_name) { 'myApplication' }
         let(:api_key) { Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret) }
         let(:application) do
           client = Stormpath::Client.new({
             api_key: api_key
           })
           client.applications.create 'name' => application_name
+        end
+
+        after do
+          if application
+            application.delete
+          end
         end
 
         context 'with embedded API credentials' do
