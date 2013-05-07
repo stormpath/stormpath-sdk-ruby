@@ -1,18 +1,25 @@
 require 'spec_helper'
 
-describe Stormpath::Resource::Application do
+describe Stormpath::Resource::Application, :vcr do
   let(:application) { test_application }
+
   let(:directory) { test_directory }
 
   describe '#authenticate_account' do
     let(:account) do
       directory.accounts.create build_account(password: 'P@$$w0rd')
     end
+
     let(:login_request) do
       Stormpath::Authentication::UsernamePasswordRequest.new account.username, password
     end
+
     let(:authentication_result) do
       application.authenticate_account login_request
+    end
+
+    after do
+      account.delete if account
     end
 
     context 'given a valid username and password' do
@@ -39,6 +46,7 @@ describe Stormpath::Resource::Application do
     context 'given an email' do
       context 'of an exisiting account on the application' do
         let(:account) { directory.accounts.create build_account  }
+
         let(:sent_to_account) { application.send_password_reset_email account.email }
 
         after do
@@ -55,7 +63,7 @@ describe Stormpath::Resource::Application do
       context 'of a non exisitng account' do
         it 'raises an exception' do
           expect do
-            application.send_password_reset_email "#{generate_resource_name}bad@thebone.com"
+            application.send_password_reset_email "test@example.com"
           end.to raise_error Stormpath::Error
         end
       end
@@ -65,16 +73,18 @@ describe Stormpath::Resource::Application do
   describe '#verify_password_reset_token' do
     let(:account) do
       directory.accounts.create({
-        email: 'rubysdk@email.com',
+        email: 'test@example.com',
         given_name: 'Ruby SDK',
         password: 'P@$$w0rd',
         surname: 'SDK',
         username: 'rubysdk'
       })
     end
+
     let(:password_reset_token) do
       application.password_reset_tokens.create(email: account.email).token
     end
+
     let(:reset_password_account) do
       application.verify_password_reset_token password_reset_token
     end
@@ -90,10 +100,13 @@ describe Stormpath::Resource::Application do
 
     context 'and if the password is changed' do
       let(:new_password) { 'N3wP@$$w0rd' }
+
       let(:login_request) do
         Stormpath::Authentication::UsernamePasswordRequest.new account.username, new_password
       end
-      let(:expected_email) { 'rudy+fixtureuser1@carbonfive.com' }
+
+      let(:expected_email) { 'test2@example.com' }
+
       let(:authentication_result) do
         application.authenticate_account login_request
       end

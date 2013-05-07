@@ -1,19 +1,20 @@
 require 'spec_helper'
 
-describe Stormpath::Resource::Directory do
+describe Stormpath::Resource::Directory, :vcr do
   describe '#create_account' do
     let(:directory) { test_directory }
 
     context 'given a valid account' do
       let(:account) do
         Stormpath::Resource::Account.new({
-          email: "#{generate_resource_name}@example.com",
+          email: "test@example.com",
           given_name: 'Ruby SDK',
           password: 'P@$$w0rd',
           surname: 'SDK',
-          username: "#{generate_resource_name}username"
+          username: "username"
         })
       end
+
       let(:created_account) { directory.create_account account, false }
 
       after do

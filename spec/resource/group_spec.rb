@@ -1,20 +1,20 @@
 
 require 'spec_helper'
 
-describe Stormpath::Resource::Group do
+describe Stormpath::Resource::Group, :vcr do
   describe '#add_account' do
     context "given an account" do
       let(:directory) do
-        test_api_client.directories.create name: generate_resource_name
+        test_api_client.directories.create name: 'testDirectory'
       end
 
       let(:group) do
-        directory.groups.create name: generate_resource_name
+        directory.groups.create name: 'someGroup'
       end
 
       let(:account) do
         directory.accounts.create({
-          email: 'rubysdk@email.com',
+          email: 'rubysdk@example.com',
           given_name: 'Ruby SDK',
           password: 'P@$$w0rd',
           surname: 'SDK',
@@ -32,6 +32,12 @@ describe Stormpath::Resource::Group do
 
       before do
         group.add_account account
+      end
+
+      after do
+        group.delete if group
+        directory.delete if directory
+        account.delete if account
       end
 
       it "adds the account to the group" do
