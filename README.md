@@ -20,7 +20,7 @@ $ gem install stormpath-sdk
     1.  Create a [Stormpath][stormpath] developer account and [create your API Keys][create-api-keys]
         downloading the <code>apiKey.properties</code> file into a <code>.stormpath</code>
         folder under your local home directory.
-        
+
     1.  Create an application and a directory to store your users'
         accounts. Make sure the directory is assigned as a login source
         to the application.
@@ -83,7 +83,7 @@ $ gem install stormpath-sdk
 
 1.  **Authenticate the Account** for use with an application:
 
-    ```ruby 
+    ```ruby
     auth_request =
       Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!'
 
@@ -127,8 +127,8 @@ $ gem install stormpath-sdk
 All Stormpath features are accessed through a
 <code>Stormpath::Client</code> instance, or a resource
 created from one. A client needs an API key (made up of an _id_ and a
-_secret_) from your Stormpath developer account to manage resources 
-on that account. That API key can be specified any number of ways 
+_secret_) from your Stormpath developer account to manage resources
+on that account. That API key can be specified any number of ways
 in the hash of values passed on Client initialization:
 
 * The location of API key properties file:
@@ -144,7 +144,7 @@ in the hash of values passed on Client initialization:
   ```
   foo=APIKEYID
   bar=APIKEYSECRET
-  ``` 
+  ```
 
   You could load it with the following:
 
@@ -275,7 +275,7 @@ the credentials are valid, or raise a <code>Stormpath::Error</code>
 otherwise. In the former case, you can get the <code>account</code>
 associated with the credentials.
 
-```ruby 
+```ruby
 auth_request =
   Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!'
 
@@ -424,6 +424,39 @@ $ git clone git@github.com:stormpath/stormpath-sdk-ruby.git
 $ cd stormpath-sdk-ruby
 $ rake gem
 $ gem install pkg/stormpath-sdk-{version}.gem
+```
+
+## Quick Class Diagram
+
+```
++-------------+
+| Application |
+|             |
++-------------+
+       + 1
+       |
+       |           +-------------+
+       |           | LoginSource |
+       o- - - - - -|             |
+       |           +-------------+
+       |
+       v 0..*
++--------------+            +--------------+
+|  Directory   | 1        1 |   Account    |1
+|              |<----------+|              |+----------+
+|              |            |              |           |
+|              | 1     0..* |              |0..*       |
+|              |+---------->|              |+-----+    |
+|              |            +--------------+      |    |         +-----------------+
+|              |                                  |    |         | GroupMembership |
+|              |                                  o- - o - - - - |                 |
+|              |            +--------------+      |    |         +-----------------+
+|              | 1     0..* |    Group     |1     |    |
+|              |+---------->|              |<-----+    |
+|              |            |              |           |
+|              | 1        1 |              |0..*       |
+|              |<----------+|              |<----------+
++--------------+            +--------------+
 ```
 
 ## Copyright & Licensing
