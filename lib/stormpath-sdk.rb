@@ -8,6 +8,8 @@ require "uuidtools"
 require "yaml"
 require "active_support/core_ext"
 require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/kernel/singleton_class'
+require 'active_support/core_ext/array/wrap'
 
 require "stormpath-sdk/version" unless defined? Stormpath::VERSION
 

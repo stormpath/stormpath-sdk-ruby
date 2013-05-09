@@ -21,7 +21,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   belongs_to :tenant
 
   has_many :accounts
-  has_many :password_reset_tokens
+  has_many :password_reset_tokens, can: [:get, :create]
 
   def send_password_reset_email email
     password_reset_token = create_password_reset_token email;

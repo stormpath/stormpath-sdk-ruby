@@ -40,25 +40,6 @@ class Stormpath::Resource::Collection
     end
   end
 
-  def create properties_or_resource
-    resource = case properties_or_resource
-               when Stormpath::Resource::Base
-                 properties_or_resource
-               else
-                 item_class.new properties_or_resource, client
-               end
-    data_store.create href, resource, item_class
-  end
-
-  def get id_or_href
-    item_href = if id_or_href.index '/'
-                  id_or_href
-                else
-                  "#{href}/#{id_or_href}"
-                end
-    data_store.get_resource item_href, item_class
-  end
-
   private
 
   class CollectionPage < Stormpath::Resource::Base

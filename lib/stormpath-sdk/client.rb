@@ -64,25 +64,17 @@ module Stormpath
       Stormpath::Resource::Tenant.new '/tenants/current', self
     end
 
-    def applications
-      Stormpath::Resource::Collection.new '/applications', Stormpath::Resource::Application, self
+    def client
+      self
     end
 
-    def directories
-      Stormpath::Resource::Collection.new '/directories', Stormpath::Resource::Directory, self
-    end
+    include Stormpath::Resource::Associations
 
-    def group_memberships
-      Stormpath::Resource::Collection.new '/groupMemberships', Stormpath::Resource::GroupMembership, self
-    end
-
-    def accounts
-      Stormpath::Resource::Collection.new '/accounts', Stormpath::Resource::Account, self
-    end
-
-    def groups
-      Stormpath::Resource::Collection.new '/groups', Stormpath::Resource::Group, self
-    end
+    has_many :applications, href: '/applications', can: [:get, :create]
+    has_many :directories, href: '/directories', can: [:get, :create]
+    has_many :accounts, href: '/accounts', can: :get
+    has_many :groups, href: '/groups', can: :get
+    has_many :group_memberships, href: '/groupMemberships', can: [:get, :create]
 
     private
 

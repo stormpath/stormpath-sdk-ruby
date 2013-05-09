@@ -20,8 +20,8 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
 
   belongs_to :tenant
 
-  has_many :accounts
-  has_many :groups
+  has_many :accounts, can: :create
+  has_many :groups, can: :create
 
   def create_account account, registration_workflow_enabled=nil
     href = accounts.href
