@@ -16,12 +16,30 @@
 class Stormpath::Resource::Application < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
 
+  class LoadError < Stormpath::Error; end
+
   prop_accessor :name, :description
 
   belongs_to :tenant
-
   has_many :accounts
   has_many :password_reset_tokens, can: [:get, :create]
+
+  def self.load composite_url
+    begin
+      uri = URI(composite_url)
+      api_key_id, api_key_secret = uri.userinfo.split(':')
+
+      client = Stormpath::Client.new api_key: {
+        id: api_key_id,
+        secret: api_key_secret
+      }
+
+      application_path = uri.path.slice(/\/applications(.)*$/)
+      client.applications.get(application_path)
+    rescue
+      raise LoadError
+    end
+  end
 
   def send_password_reset_email email
     password_reset_token = create_password_reset_token email;

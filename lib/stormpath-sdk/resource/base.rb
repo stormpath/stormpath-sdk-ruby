@@ -170,6 +170,14 @@ class Stormpath::Resource::Base
     end
   end
 
+  def == other
+    if other.is_a?(self.class)
+      href == other.href
+    else
+      super
+    end
+  end
+
   protected
 
   def data_store

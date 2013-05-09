@@ -2,8 +2,29 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Application, :vcr do
   let(:application) { test_application }
-
   let(:directory) { test_directory }
+
+  describe '.load' do
+    let(:url) do
+      uri = URI(application.href)
+      credentialed_uri = URI::HTTPS.new(
+        uri.scheme, "#{test_api_key_id}:#{test_api_key_secret}", uri.host,
+        uri.port, uri.registry, uri.path, uri.query, uri.opaque, uri.fragment
+      )
+      credentialed_uri.to_s
+    end
+
+    it "raises a LoadError with an invalid url" do
+      expect {
+        Stormpath::Resource::Application.load 'this is an invalid url'
+      }.to raise_error(Stormpath::Resource::Application::LoadError)
+    end
+
+    it "instantiates client and application objects from a composite URL" do
+      loaded_application = Stormpath::Resource::Application.load(url)
+      loaded_application.should == application
+    end
+  end
 
   describe '#authenticate_account' do
     let(:account) do
