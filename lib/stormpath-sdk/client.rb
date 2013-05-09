@@ -64,25 +64,26 @@ module Stormpath
       Stormpath::Resource::Tenant.new '/tenants/current', self
     end
 
-    def applications
-      Stormpath::Resource::Applications.new '/applications', self
+    def client
+      self
     end
 
-    def directories
-      Stormpath::Resource::Directories.new '/directories', self
-    end
+    include Stormpath::Resource::Associations
 
-    def group_memberships
-      Stormpath::Resource::GroupMemberships.new '/groupMemberships', self
+    has_many :applications, href: '/applications', can: [:get, :create]
+    has_many :directories, href: '/directories', can: [:get, :create]
+    has_many(:accounts, href: '/accounts', can: :get) do
+      def verify_email_token(token)
+        token_href = "#{href}/emailVerificationTokens/#{token}"
+        token = Stormpath::Resource::EmailVerificationToken.new(
+          token_href,
+          client
+        )
+        data_store.save token, Stormpath::Resource::Account
+      end
     end
-
-    def accounts
-      Stormpath::Resource::Accounts.new '/accounts', self
-    end
-
-    def groups
-      Stormpath::Resource::Groups.new '/groups', self
-    end
+    has_many :groups, href: '/groups', can: :get
+    has_many :group_memberships, href: '/groupMemberships', can: [:get, :create]
 
     private
 
@@ -104,14 +105,14 @@ module Stormpath
         "No API id in properties. Please provide a 'apiKey.id' property in '" +
         api_key_file_location +
         "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " +
-        "constructor to specify an alternative propeety."
+        "constructor to specify an alternative property."
 
       api_key_secret = api_key_properties[secret_property_name]
       assert_not_nil api_key_secret,
         "No API secret in properties. Please provide a 'apiKey.secret' property in '" +
         api_key_file_location +
         "' or pass in an 'api_key_secret_property_name' to the Stormpath::Client " +
-        "constructor to specify an alternative propeety."
+        "constructor to specify an alternative property."
 
       ApiKey.new api_key_id, api_key_secret
     end

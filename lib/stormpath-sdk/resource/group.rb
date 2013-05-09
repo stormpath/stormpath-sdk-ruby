@@ -17,9 +17,13 @@ class Stormpath::Resource::Group < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
 
   prop_accessor :name, :description
-  resource_prop_reader :tenant, :directory, :accounts
+
+  belongs_to :tenant
+  belongs_to :directory
+
+  has_many :accounts
 
   def add_account account
-    client.group_memberships.create self, account
+    client.group_memberships.create group: self, account: account
   end
 end

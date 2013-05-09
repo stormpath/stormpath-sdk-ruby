@@ -20,10 +20,14 @@ class  Stormpath::Resource::Account < Stormpath::Resource::Instance
     :surname
   prop_writer :password
   prop_non_printable :password
-  resource_prop_reader :groups, :directory,
-    :email_verification_token, :group_memberships
+
+  belongs_to :directory
+  has_one :email_verification_token
+
+  has_many :groups
+  has_many :group_memberships
 
   def add_group group
-    client.group_memberships.create group, self
+    client.group_memberships.create group: group, account: self
   end
 end

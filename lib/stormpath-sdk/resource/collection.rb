@@ -13,38 +13,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Collection < Stormpath::Resource::Base
+class Stormpath::Resource::Collection
   include Enumerable
+
+  attr_reader :href, :client, :item_class
+
+  def initialize(href, item_class, client)
+    @client = client
+    @href = href
+    @item_class = item_class
+  end
+
+  def data_store
+    client.data_store
+  end
 
   def each(&block)
     offset = 0
     while true
       page = CollectionPage.new "#{href}?offset=#{offset}", client
-      page.item_type = item_type
+      page.item_type = item_class
       items = page.items
       items.each(&block)
       break if items.length < page.limit
       offset += page.limit
     end
-  end
-
-  def create properties_or_resource
-    resource = case properties_or_resource
-               when Stormpath::Resource::Base
-                 properties_or_resource
-               else
-                 item_type.new properties_or_resource, client
-               end
-    data_store.create href, resource, item_type
-  end
-
-  def get id_or_href
-    item_href = if id_or_href.index '/'
-                  id_or_href
-                else
-                  "#{href}/#{id_or_href}"
-                end
-    data_store.get_resource item_href, item_type
   end
 
   private

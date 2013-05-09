@@ -15,6 +15,7 @@
 #
 class Stormpath::Resource::Base
   include Stormpath::Resource::Utils
+  include Stormpath::Resource::Associations
 
   HREF_PROP_NAME = "href"
 
@@ -45,17 +46,6 @@ class Stormpath::Resource::Base
       args.each do |name|
         prop_reader name
         prop_writer name
-      end
-    end
-
-    def resource_prop_reader(*args)
-      args.each do |name|
-        resource_class = "Stormpath::Resource::#{name.to_s.camelize}".constantize
-        property_name = name.to_s.camelize :lower
-
-        define_method(name) do
-          get_resource_property property_name, resource_class
-        end
       end
     end
 
@@ -123,11 +113,8 @@ class Stormpath::Resource::Base
       @dirty_properties.clear
       @dirty = false
 
-      if !properties.nil? and properties.is_a? Hash
-        properties.map do |key, value|
-          property_name = key.to_s.camelize :lower
-          @properties.store property_name, value
-        end
+      unless properties.nil?
+        @properties = deep_sanitize properties
 
         # Don't consider this resource materialized if it is only a reference.  A reference is any object that
         # has only one 'href' property.
@@ -143,7 +130,9 @@ class Stormpath::Resource::Base
   end
 
   def get_property name
-    if !HREF_PROP_NAME.eql? name
+    property_name = name.to_s.camelize :lower
+
+    if !HREF_PROP_NAME.eql? property_name
       #not the href/id, must be a property that requires materialization:
       unless new? or materialized?
 
@@ -153,7 +142,7 @@ class Stormpath::Resource::Base
 
         @read_lock.lock
         begin
-          present = @dirty_properties.has_key? name
+          present = @dirty_properties.has_key? property_name
         ensure
           @read_lock.unlock
         end
@@ -168,24 +157,13 @@ class Stormpath::Resource::Base
     read_property name
   end
 
-  def get_resource_property key, clazz
-    value = get_property key
-
-    if value.is_a? Hash
-      href = get_href_from_hash value
-    end
-
-    unless href.nil?
-      data_store.instantiate clazz, value
-    end
-  end
-
   def set_property name, value
+    property_name = name.to_s.camelize :lower
     @write_lock.lock
 
     begin
-      @properties.store name, value
-      @dirty_properties.store name, value
+      @properties.store property_name, value
+      @dirty_properties.store property_name, value
       @dirty = true
     ensure
       @write_lock.unlock
@@ -239,6 +217,31 @@ class Stormpath::Resource::Base
       @properties[name]
     ensure
       @read_lock.unlock
+    end
+  end
+
+  def sanitize(properties)
+    {}.tap do |sanitized_properties|
+      properties.map do |key, value|
+        property_name = key.to_s.camelize :lower
+
+        sanitized_properties[property_name] =
+          if (value.kind_of? Hash) or
+            (value.kind_of? Stormpath::Resource::Base)
+            deep_sanitize value
+          else
+            value
+          end
+      end
+    end
+  end
+
+  def deep_sanitize(hash_or_resource)
+    case hash_or_resource
+    when Stormpath::Resource::Base
+      deep_sanitize hash_or_resource.properties
+    when Hash
+      sanitize hash_or_resource
     end
   end
 end
