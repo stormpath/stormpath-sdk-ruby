@@ -72,7 +72,16 @@ module Stormpath
 
     has_many :applications, href: '/applications', can: [:get, :create]
     has_many :directories, href: '/directories', can: [:get, :create]
-    has_many :accounts, href: '/accounts', can: :get
+    has_many(:accounts, href: '/accounts', can: :get) do
+      def verify_email_token(token)
+        token_href = "#{href}/emailVerificationTokens/#{token}"
+        token = Stormpath::Resource::EmailVerificationToken.new(
+          token_href,
+          client
+        )
+        data_store.save token, Stormpath::Resource::Account
+      end
+    end
     has_many :groups, href: '/groups', can: :get
     has_many :group_memberships, href: '/groupMemberships', can: [:get, :create]
 

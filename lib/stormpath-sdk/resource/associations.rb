@@ -19,7 +19,7 @@ module Stormpath
         alias_method :has_one, :resource_prop_reader
         alias_method :belongs_to, :resource_prop_reader
 
-        def has_many(name, options={})
+        def has_many(name, options={}, &block)
           item_class = options[:class] || "Stormpath::Resource::#{name.to_s.singularize.camelize}".constantize
           property_name = name.to_s.camelize :lower
           can = Array.wrap(options[:can]) || []
@@ -51,6 +51,8 @@ module Stormpath
                   end
                 end
               end
+
+              collection.class_eval(&block) if block
             end
           end
         end

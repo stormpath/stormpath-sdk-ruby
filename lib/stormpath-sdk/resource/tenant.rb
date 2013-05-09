@@ -20,25 +20,4 @@ class Stormpath::Resource::Tenant < Stormpath::Resource::Instance
   has_many :applications
   has_many :directories
 
-  def create_application application
-
-    href = "/applications"; #TODO: enable auto discovery
-    data_store.create href, application, Stormpath::Resource::Application
-
-  end
-
-  def verify_account_email token
-
-    #TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
-    href = "/accounts/emailVerificationTokens/" + token
-
-    token_hash = Hash.new
-    token_hash.store Stormpath::Resource::Base::HREF_PROP_NAME, href
-
-    ev_token = data_store.instantiate Stormpath::Resource::EmailVerificationToken, token_hash
-
-    #execute a POST (should clean this up / make it more obvious)
-    data_store.save ev_token, Stormpath::Resource::Account
-  end
-
 end
