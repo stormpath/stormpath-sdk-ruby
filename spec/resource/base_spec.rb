@@ -67,4 +67,50 @@ describe Stormpath::Resource::Base do
       end
     end
   end
+
+  describe '#==' do
+    class TestResource < Stormpath::Resource::Base; end
+
+    context 'compared against an object of the same class' do
+      let(:resource) do
+        TestResource.new('http://foo.com/test/123')
+      end
+
+      context 'href matches' do
+        let(:other) do
+          TestResource.new('http://foo.com/test/123')
+        end
+
+        it 'passes' do
+          resource.should == other
+        end
+      end
+
+      context 'href does not match' do
+        let(:other) do
+          TestResource.new('http://foo.com/test/456')
+        end
+
+        it 'fails' do
+          resource.should_not == other
+        end
+      end
+    end
+
+    context 'compared against an object of another class' do
+      class NotAResource; end
+
+      let(:resource) do
+        TestResource.new('http://foo.com/test/123')
+      end
+
+      let(:other) do
+        NotAResource.new
+      end
+
+      it 'fails' do
+        resource.should_not == other
+      end
+    end
+  end
 end
