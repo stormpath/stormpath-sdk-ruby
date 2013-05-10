@@ -18,23 +18,4 @@ class Stormpath::Resource::GroupMembership < Stormpath::Resource::Instance
   has_one :account
   has_one :group
 
-  def self._create account, group, data_store
-    #TODO: enable auto discovery
-    href = "/groupMemberships"
-
-    account_props = Hash.new
-    account_props.store Stormpath::Resource::HREF_PROP_NAME, account.href
-
-    group_props = Hash.new
-    group_props.store Stormpath::Resource::HREF_PROP_NAME, group.href
-
-    props = Hash.new
-    props.store ACCOUNT, account_props
-    props.store GROUP, group_props
-
-    group_membership = data_store.instantiate Stormpath::GroupMembership, props
-
-    data_store.create href, group_membership, Stormpath::GroupMembership
-  end
-
 end
