@@ -251,7 +251,7 @@ If the directory has been configured with an email verification workflow
 and a non-Stormpath URL, you have to pass the verification token sent to
 the URL in a <code>sptoken</code> query parameter back to Stormpath to
 complete the workflow. This is done through the
-<code>verify_account_email</code>:
+<code>verify_email_token</code> on the <code>accounts</code> collection.
 
 For example, suppose you have a Sinatra application
 that is handling the email verification at the path
@@ -260,7 +260,7 @@ that is handling the email verification at the path
 ```ruby
 get '/users/verify' do
   token = params[:sptoken]
-  account = client.tenant.verify_account_email token
+  account = client.accounts.verify_email_token token
   #proceed to update session, display account, etc
 end
 ```
