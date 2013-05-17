@@ -21,7 +21,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   prop_accessor :name, :description
 
   belongs_to :tenant
-  has_many :accounts
+  has_many :accounts, can: [:create]
   has_many :password_reset_tokens, can: [:get, :create]
 
   def self.load composite_url
