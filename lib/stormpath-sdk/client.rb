@@ -42,7 +42,8 @@ module Stormpath
           "Stormpath::Client constructor."
 
       request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key)
-      @data_store = Stormpath::DataStore.new(request_executor, self, base_url)
+      cache_manager = Stormpath::Cache::CacheManager.new
+      @data_store = Stormpath::DataStore.new(request_executor, cache_manager, self, base_url)
     end
 
     def tenant

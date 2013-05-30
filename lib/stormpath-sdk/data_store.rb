@@ -22,12 +22,13 @@ class Stormpath::DataStore
 
   attr_reader :client
 
-  def initialize(request_executor, client, *base_url)
+  def initialize(request_executor, cache_manager, client, *base_url)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
 
     @client = client
     @base_url = get_base_url(*base_url)
     @request_executor = request_executor
+    @cache_manager = cache_manager
   end
 
   def instantiate(clazz, properties = {})
@@ -99,6 +100,14 @@ class Stormpath::DataStore
   private
 
   def execute_request(http_method, href, body)
+    if http_method == 'get'
+      cache = cache_for href
+      if cache
+        cached_result = cache.get href
+        return cached_result if cached_result
+      end
+    end
+
     request = Request.new(http_method, href, nil, Hash.new, body)
     apply_default_request_headers request
     response = @request_executor.execute_request request
@@ -110,7 +119,21 @@ class Stormpath::DataStore
       raise Stormpath::Error.new error
     end
 
+    if http_method == 'delete'
+      cache = cache_for href
+      cache.delete href
+    else
+      result_href = result['href']
+      cache = cache_for result_href
+      cache.put result_href, result if cache
+    end
+
     result
+  end
+
+  def cache_for(href)
+    region = @cache_manager.region_for href
+    @cache_manager.get_cache region
   end
 
   def apply_default_request_headers(request)
