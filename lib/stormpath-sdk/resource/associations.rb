@@ -26,16 +26,22 @@ module Stormpath
 
           define_method(name) do
             href = options[:href] || get_resource_href_property(property_name)
-            Stormpath::Resource::Collection.new(href, item_class, client).tap do |collection|
+            collection_href = if options[:delegate]
+              "#{tenant.applications.first.tenant.href}/#{name.to_s}"
+            end
+
+            Stormpath::Resource::Collection.new(href, item_class, client,
+              collection_href: collection_href).tap do |collection|
+
               collection.class_eval do
                 if can.include? :create
                   def create(properties_or_resource)
                     resource = case properties_or_resource
-                               when Stormpath::Resource::Base
-                                 properties_or_resource
-                               else
-                                 item_class.new properties_or_resource, client
-                               end
+                      when Stormpath::Resource::Base
+                        properties_or_resource
+                      else
+                        item_class.new properties_or_resource, client
+                      end
                     data_store.create href, resource, item_class
                   end
                 end
@@ -43,10 +49,10 @@ module Stormpath
                 if can.include? :get
                   def get(id_or_href)
                     item_href = if id_or_href.index '/'
-                                  id_or_href
-                                else
-                                  "#{href}/#{id_or_href}"
-                                end
+                      id_or_href
+                    else
+                      "#{href}/#{id_or_href}"
+                    end
                     data_store.get_resource item_href, item_class
                   end
                 end
