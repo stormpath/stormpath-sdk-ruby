@@ -205,18 +205,80 @@ properties
     end
   end
 
-  describe '#applications.create' do
-    context 'given valid application properties' do
-      let(:application) do
-        { name: 'Test Application',
-          description: 'A test description' }
+  describe '#applications' do
+    context 'given a collection' do
+      let(:applications) do
+        test_api_client.applications
       end
-      let(:created_application) { test_api_client.applications.create application }
+
+      before do
+        applications.create(
+          name: 'Client Applications Test',
+          description: 'A test description'
+        )
+      end
+
+      it 'returns the collection' do
+        applications.should be_kind_of(Stormpath::Resource::Collection)
+        applications.count.should have_at_least(1).item
+      end
+    end
+
+    describe '.create' do
+      let(:application_attributes) do
+        {
+          name: 'Client Application Create Test',
+          description: 'A test description'
+        }
+      end
+
+      let(:created_application) do
+        test_api_client.applications.create application_attributes
+      end
 
       it 'creates that application' do
         created_application.should be
-        created_application.name.should == application[:name]
-        created_application.description.should == application[:description]
+        created_application.name.should == application_attributes[:name]
+        created_application.description.should == application_attributes[:description]
+      end
+    end
+  end
+
+  describe '#directories' do
+    context 'given a collection' do
+      let(:directories) do
+        test_api_client.directories
+      end
+
+      before do
+        directories.create(
+          name: 'Client Directories Test',
+          description: 'A test description'
+        )
+      end
+
+      it 'returns the collection' do
+        directories.should be_kind_of(Stormpath::Resource::Collection)
+        directories.count.should have_at_least(1).item
+      end
+    end
+
+    describe '.create' do
+      let(:directory_attributes) do
+        {
+          name: 'Client Directory Create Test',
+          description: 'A test description'
+        }
+      end
+
+      let(:created_directory) do
+        test_api_client.directories.create directory_attributes
+      end
+
+      it 'creates that application' do
+        created_directory.should be
+        created_directory.name.should == directory_attributes[:name]
+        created_directory.description.should == directory_attributes[:description]
       end
     end
   end

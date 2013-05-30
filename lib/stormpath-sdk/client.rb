@@ -55,8 +55,8 @@ module Stormpath
 
     include Stormpath::Resource::Associations
 
-    has_many :applications, href: '/applications', can: [:get, :create]
-    has_many :directories, href: '/directories', can: [:get, :create]
+    has_many :applications, href: '/applications', can: [:get, :create], delegate: true
+    has_many :directories, href: '/directories', can: [:get, :create], delegate: true
     has_many(:accounts, href: '/accounts', can: :get) do
       def verify_email_token(token)
         token_href = "#{href}/emailVerificationTokens/#{token}"

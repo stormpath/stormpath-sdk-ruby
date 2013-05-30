@@ -16,12 +16,13 @@
 class Stormpath::Resource::Collection
   include Enumerable
 
-  attr_reader :href, :client, :item_class
+  attr_reader :href, :client, :item_class, :collection_href
 
-  def initialize(href, item_class, client)
+  def initialize(href, item_class, client, options={})
     @client = client
     @href = href
     @item_class = item_class
+    @collection_href = options[:collection_href] || @href
   end
 
   def data_store
@@ -31,7 +32,7 @@ class Stormpath::Resource::Collection
   def each(&block)
     offset = 0
     while true
-      page = CollectionPage.new "#{href}?offset=#{offset}", client
+      page = CollectionPage.new "#{collection_href}?offset=#{offset}", client
       page.item_type = item_class
       items = page.items
       items.each(&block)
