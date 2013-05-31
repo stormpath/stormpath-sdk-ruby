@@ -6,7 +6,7 @@ describe Stormpath::Cache::CacheManager do
   describe '#region_for' do
     let(:region) { cache_manager.region_for 'https://api.stormpath.com/v1/directories/4NykYrYH0OBiOOVOg8LXQ5' }
     it 'pulls resource name from href' do
-      region.should == 'directories'
+      expect(region).to eq('directories')
     end
   end
 end

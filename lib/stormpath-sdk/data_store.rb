@@ -81,6 +81,10 @@ class Stormpath::DataStore
     execute_request('delete', resource.href, nil)
   end
 
+  def cache_stats
+    @cache_manager.stats
+  end
+
   protected
 
   def needs_to_be_fully_qualified(href)

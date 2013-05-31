@@ -37,6 +37,10 @@ module Stormpath
         @stats.put
       end
 
+      def delete(k)
+        @store.delete k
+      end
+
       def size
         @store.size
       end

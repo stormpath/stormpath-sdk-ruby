@@ -3,9 +3,15 @@ module Stormpath
     class CacheManager
       REGIONS = %w( applications directories accounts groups groupMemberships tenants )
 
-      def initialize(opts = {})
+      def initialize(opts = nil)
         @caches = {}
-        REGIONS.each { |r| @caches[r] = MemoryStore.new }
+        opts ||= {}
+        regions = opts[:regions] || {}
+        REGIONS.each do |r|
+          cache_opts = regions[r] || regions[r.to_sym] || {}
+          cache_opts[:store] = opts[:store]
+          @caches[r] = Cache.new cache_opts
+        end
       end
 
       def region_for(href)
@@ -15,6 +21,10 @@ module Stormpath
 
       def get_cache(region)
         @caches[region]
+      end
+
+      def stats
+        Hash[ @caches.map { |region, cache| [region, cache.stats] } ]
       end
     end
   end
