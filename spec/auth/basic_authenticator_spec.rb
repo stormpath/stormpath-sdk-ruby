@@ -5,9 +5,9 @@ describe "BasicAuthenticator" do
 
     before do
       ds = Stormpath::DataStore.new "", ""
-      test_api_client.stub(:data_store).and_return(ds)
+      allow(test_api_client).to receive(:data_store).and_return(ds)
       auth_result = Stormpath::Authentication::AuthenticationResult.new({}, test_api_client)
-      ds.stub(:create).and_return(auth_result)
+      allow(ds).to receive(:create).and_return(auth_result)
 
       @ba = Stormpath::Authentication::BasicAuthenticator.new ds
     end
@@ -18,7 +18,7 @@ describe "BasicAuthenticator" do
       end
 
       it "an AuthenticationResult is returned" do
-        @response.should be_a Stormpath::Authentication::AuthenticationResult
+        expect(@response).to be_a Stormpath::Authentication::AuthenticationResult
       end
     end
   end

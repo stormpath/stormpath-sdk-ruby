@@ -22,7 +22,7 @@ describe Stormpath::Resource::Application, :vcr do
 
     it "instantiates client and application objects from a composite URL" do
       loaded_application = Stormpath::Resource::Application.load(url)
-      loaded_application.should == application
+      expect(loaded_application).to eq(application)
     end
   end
 
@@ -47,10 +47,10 @@ describe Stormpath::Resource::Application, :vcr do
       let(:password) {'P@$$w0rd' }
 
       it 'returns an authentication result' do
-        authentication_result.should be
-        authentication_result.account.should be
-        authentication_result.account.should be_kind_of Stormpath::Resource::Account
-        authentication_result.account.email.should == account.email
+        expect(authentication_result).to be
+        expect(authentication_result.account).to be
+        expect(authentication_result.account).to be_kind_of Stormpath::Resource::Account
+        expect(authentication_result.account.email).to eq(account.email)
       end
     end
 
@@ -75,9 +75,9 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         it 'sends a password reset request of the account' do
-          sent_to_account.should be
-          sent_to_account.should be_kind_of Stormpath::Resource::Account
-          sent_to_account.email.should == account.email
+          expect(sent_to_account).to be
+          expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
+          expect(sent_to_account.email).to eq(account.email)
         end
       end
 
@@ -115,8 +115,8 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     it 'retrieves the account with the reset password' do
-      reset_password_account.should be
-      reset_password_account.email.should == account.email
+      expect(reset_password_account).to be
+      expect(reset_password_account.email).to eq(account.email)
     end
 
     context 'and if the password is changed' do
@@ -138,10 +138,10 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'can be successfully authenticated' do
-        authentication_result.should be
-        authentication_result.account.should be
-        authentication_result.account.should be_kind_of Stormpath::Resource::Account
-        authentication_result.account.email.should == account.email
+        expect(authentication_result).to be
+        expect(authentication_result.account).to be
+        expect(authentication_result.account).to be_kind_of Stormpath::Resource::Account
+        expect(authentication_result.account.email).to eq(account.email)
       end
     end
   end

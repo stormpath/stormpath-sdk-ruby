@@ -5,10 +5,10 @@ describe Stormpath::Client, :vcr do
   describe '.new' do
     shared_examples 'a valid client' do
       it 'can connect successfully' do
-        client.should be
-        client.should be_kind_of Stormpath::Client
-        client.tenant.should be
-        client.tenant.should be_kind_of Stormpath::Resource::Tenant
+        expect(client).to be
+        expect(client).to be_kind_of Stormpath::Client
+        expect(client.tenant).to be
+        expect(client.tenant).to be_kind_of Stormpath::Resource::Tenant
       end
     end
 
@@ -219,8 +219,8 @@ properties
       end
 
       it 'returns the collection' do
-        applications.should be_kind_of(Stormpath::Resource::Collection)
-        applications.count.should have_at_least(1).item
+        expect(applications).to be_kind_of(Stormpath::Resource::Collection)
+        expect(applications.count).to have_at_least(1).item
       end
 
       after do
@@ -241,9 +241,9 @@ properties
       end
 
       it 'creates that application' do
-        application.should be
-        application.name.should == application_attributes[:name]
-        application.description.should == application_attributes[:description]
+        expect(application).to be
+        expect(application.name).to eq(application_attributes[:name])
+        expect(application.description).to eq(application_attributes[:description])
       end
     end
   end
@@ -262,8 +262,8 @@ properties
       end
 
       it 'returns the collection' do
-        directories.should be_kind_of(Stormpath::Resource::Collection)
-        directories.count.should have_at_least(1).item
+        expect(directories).to be_kind_of(Stormpath::Resource::Collection)
+        expect(directories.count).to have_at_least(1).item
       end
 
       after do
@@ -284,9 +284,9 @@ properties
       end
 
       it 'creates that application' do
-        directory.should be
-        directory.name.should == directory_attributes[:name]
-        directory.description.should == directory_attributes[:description]
+        expect(directory).to be
+        expect(directory.name).to eq(directory_attributes[:name])
+        expect(directory.description).to eq(directory_attributes[:description])
       end
 
       after do
@@ -320,9 +320,9 @@ properties
       end
 
       it 'returns the account' do
-        verified_account.should be
-        verified_account.should be_kind_of Stormpath::Resource::Account
-        verified_account.username.should == account.username
+        expect(verified_account).to be
+        expect(verified_account).to be_kind_of Stormpath::Resource::Account
+        expect(verified_account.username).to eq(account.username)
       end
     end
   end

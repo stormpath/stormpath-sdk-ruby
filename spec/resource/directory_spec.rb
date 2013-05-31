@@ -22,8 +22,8 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'creates an account' do
-        created_account.should be
-        created_account.username.should == account.username
+        expect(created_account).to be
+        expect(created_account.username).to eq(account.username)
       end
     end
   end

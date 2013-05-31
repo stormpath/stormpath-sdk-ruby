@@ -123,6 +123,14 @@ module Stormpath
 end
 
 RSpec.configure do |c|
+  c.mock_with :rspec do |c|
+    c.syntax = :expect
+  end
+
+  c.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
+
   c.include Stormpath::TestApiKeyHelpers
   c.include Stormpath::TestResourceHelpers
 
