@@ -211,7 +211,7 @@ properties
         test_api_client.applications
       end
 
-      before do
+      let(:application) do
         applications.create(
           name: 'Client Applications Test',
           description: 'A test description'
@@ -221,6 +221,10 @@ properties
       it 'returns the collection' do
         applications.should be_kind_of(Stormpath::Resource::Collection)
         applications.count.should have_at_least(1).item
+      end
+
+      after do
+        application.delete
       end
     end
 
@@ -232,14 +236,14 @@ properties
         }
       end
 
-      let(:created_application) do
+      let(:application) do
         test_api_client.applications.create application_attributes
       end
 
       it 'creates that application' do
-        created_application.should be
-        created_application.name.should == application_attributes[:name]
-        created_application.description.should == application_attributes[:description]
+        application.should be
+        application.name.should == application_attributes[:name]
+        application.description.should == application_attributes[:description]
       end
     end
   end
@@ -250,7 +254,7 @@ properties
         test_api_client.directories
       end
 
-      before do
+      let(:directory) do
         directories.create(
           name: 'Client Directories Test',
           description: 'A test description'
@@ -260,6 +264,10 @@ properties
       it 'returns the collection' do
         directories.should be_kind_of(Stormpath::Resource::Collection)
         directories.count.should have_at_least(1).item
+      end
+
+      after do
+        directory.delete
       end
     end
 
@@ -271,14 +279,18 @@ properties
         }
       end
 
-      let(:created_directory) do
+      let(:directory) do
         test_api_client.directories.create directory_attributes
       end
 
       it 'creates that application' do
-        created_directory.should be
-        created_directory.name.should == directory_attributes[:name]
-        created_directory.description.should == directory_attributes[:description]
+        directory.should be
+        directory.name.should == directory_attributes[:name]
+        directory.description.should == directory_attributes[:description]
+      end
+
+      after do
+        directory.delete
       end
     end
   end
