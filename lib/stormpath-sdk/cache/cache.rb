@@ -52,7 +52,7 @@ module Stormpath
           @cache = cache
           @value = value
           @created_at = Time.now
-          @last_accessed_at = Time.now
+          @last_accessed_at = @created_at
         end
 
         def touch

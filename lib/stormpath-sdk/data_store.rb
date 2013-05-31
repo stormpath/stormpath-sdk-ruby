@@ -104,12 +104,9 @@ class Stormpath::DataStore
   private
 
   def execute_request(http_method, href, body)
-    if http_method == 'get'
-      cache = cache_for href
-      if cache
-        cached_result = cache.get href
-        return cached_result if cached_result
-      end
+    if http_method == 'get' && (cache = cache_for href)
+      cached_result = cache.get href
+      return cached_result if cached_result
     end
 
     request = Request.new(http_method, href, nil, Hash.new, body)
@@ -125,7 +122,7 @@ class Stormpath::DataStore
 
     if http_method == 'delete'
       cache = cache_for href
-      cache.delete href
+      cache.delete href if cache
     else
       result_href = result['href']
       cache = cache_for result_href
