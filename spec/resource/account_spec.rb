@@ -38,7 +38,7 @@ describe Stormpath::Resource::Account, :vcr do
         reloaded_account.groups.each do |g|
           group_added = true if g.href == group.href
         end
-        group_added.should be_true
+        expect(group_added).to be_true
       end
     end
   end
@@ -67,7 +67,7 @@ describe Stormpath::Resource::Account, :vcr do
       end
 
       it 'saves changes to the account' do
-        reloaded_account.surname.should == new_surname
+        expect(reloaded_account.surname).to eq(new_surname)
       end
     end
   end

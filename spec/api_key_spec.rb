@@ -8,11 +8,11 @@ describe Stormpath::ApiKey do
       let(:apiKey) { Stormpath::ApiKey.new(id, secret) }
 
       it 'sets the id' do
-        apiKey.id.should == id
+        expect(apiKey.id).to eq(id)
       end
 
       it 'sets the secret' do
-        apiKey.secret.should == secret
+        expect(apiKey.secret).to eq(secret)
       end
     end
   end

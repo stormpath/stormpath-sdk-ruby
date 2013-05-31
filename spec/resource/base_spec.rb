@@ -15,15 +15,15 @@ describe Stormpath::Resource::Base do
       end
 
       it 'generates a getter method for each property' do
-        resource.username.should == 'bar'
-        resource.given_name.should == 'foo'
+        expect(resource.username).to eq('bar')
+        expect(resource.given_name).to eq('foo')
       end
 
       it 'generates a setter for each property' do
         resource.username = 'foo'
         resource.given_name = 'bar'
-        resource.properties.should include('username' => 'foo')
-        resource.properties.should include('givenName' => 'bar')
+        expect(resource.properties).to include('username' => 'foo')
+        expect(resource.properties).to include('givenName' => 'bar')
       end
     end
   end
@@ -42,8 +42,8 @@ describe Stormpath::Resource::Base do
       end
 
       it 'marks that property as not being printable' do
-        resource.inspect.should include('username')
-        resource.inspect.should_not include('password')
+        expect(resource.inspect).to include('username')
+        expect(resource.inspect).to_not include('password')
       end
     end
   end
@@ -61,9 +61,7 @@ describe Stormpath::Resource::Base do
       end
 
       it 'does NOT attempt to materialize the entire resource' do
-        expect do
-         resource.username.should == 'foo'
-        end.to_not raise_exception
+        expect(resource.username).to eq('foo')
       end
     end
   end
@@ -82,7 +80,7 @@ describe Stormpath::Resource::Base do
         end
 
         it 'passes' do
-          resource.should == other
+          expect(resource).to eq(other)
         end
       end
 
@@ -92,7 +90,7 @@ describe Stormpath::Resource::Base do
         end
 
         it 'fails' do
-          resource.should_not == other
+          expect(resource).to_not eq(other)
         end
       end
     end
@@ -109,7 +107,7 @@ describe Stormpath::Resource::Base do
       end
 
       it 'fails' do
-        resource.should_not == other
+        expect(resource).to_not eq(other)
       end
     end
   end
