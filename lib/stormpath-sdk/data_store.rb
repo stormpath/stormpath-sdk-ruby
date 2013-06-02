@@ -20,15 +20,27 @@ class Stormpath::DataStore
   DEFAULT_SERVER_HOST = "api.stormpath.com"
   DEFAULT_API_VERSION = 1
 
+  CACHE_REGIONS = %w( applications directories accounts groups groupMemberships tenants )
+
   attr_reader :client
 
-  def initialize(request_executor, cache_manager, client, *base_url)
+  def initialize(request_executor, cache_opts, client, *base_url)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
 
     @client = client
     @base_url = get_base_url(*base_url)
     @request_executor = request_executor
-    @cache_manager = cache_manager
+    initialize_cache cache_opts
+  end
+
+  def initialize_cache(cache_opts)
+    @cache_manager = Stormpath::Cache::CacheManager.new
+    regions_opts = cache_opts[:regions] || {}
+    CACHE_REGIONS.each do |region|
+      region_opts = regions_opts[region.to_sym] || {}
+      region_opts[:store] ||= cache_opts[:store]
+      @cache_manager.create_cache region, region_opts
+    end
   end
 
   def instantiate(clazz, properties = {})
@@ -81,8 +93,8 @@ class Stormpath::DataStore
     execute_request('delete', resource.href, nil)
   end
 
-  def cache_stats
-    @cache_manager.stats
+  def cache_manager
+    @cache_manager
   end
 
   protected
@@ -123,13 +135,44 @@ class Stormpath::DataStore
     if http_method == 'delete'
       cache = cache_for href
       cache.delete href if cache
-    else
-      result_href = result['href']
-      cache = cache_for result_href
-      cache.put result_href, result if cache
+      return nil
     end
 
+    CACHE_REGIONS.each do |collection_attr|
+      collection = result[collection_attr]
+
+      single_attr = collection_attr.sub(/s$/, '')
+      single = result[single_attr]
+
+      if single
+        assert_not_nil single['href'], "#{single_attr} resource must have 'href' property"
+        if single.length > 1 # deep
+          cache single
+          result[single_attr] = { 'href' => single['href'] }
+        end
+      end
+
+      if collection
+        assert_not_nil collection['href'], "#{collection_attr} collection resource must have 'href' property"
+
+        items = collection['items']
+        if items
+          collection['items'] = items.map do |item|
+            assert_not_nil item['href'], 'resource in collection must have \'href\' property'
+            cache item if item.length > 1 # deep
+            { 'href' => item['href'] }
+          end
+        end
+      end
+    end
+
+    cache result
     result
+  end
+
+  def cache(resource)
+    cache = cache_for resource['href']
+    cache.put resource['href'], resource if cache
   end
 
   def cache_for(href)

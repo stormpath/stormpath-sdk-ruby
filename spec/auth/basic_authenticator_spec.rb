@@ -4,7 +4,7 @@ describe "BasicAuthenticator" do
   context "given an instance of BasicAuthenticator" do
 
     before do
-      ds = Stormpath::DataStore.new "", ""
+      ds = Stormpath::DataStore.new "", {}, ""
       allow(test_api_client).to receive(:data_store).and_return(ds)
       auth_result = Stormpath::Authentication::AuthenticationResult.new({}, test_api_client)
       allow(ds).to receive(:create).and_return(auth_result)

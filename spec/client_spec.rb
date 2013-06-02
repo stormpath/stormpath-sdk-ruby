@@ -209,9 +209,10 @@ properties
           Stormpath::Client.new( {
             api_key_file_location: api_key_file_location,
             cache: {
+              store: Stormpath::Test::FakeStore1,
               regions: {
                 directories: { ttl_seconds: 40, tti_seconds: 20 },
-                groups:      { ttl_seconds: 80, tti_seconds: 40 }
+                groups:      { ttl_seconds: 80, tti_seconds: 40, store: Stormpath::Test::FakeStore2 }
               }
             }
           })
@@ -224,7 +225,7 @@ apiKey.secret=#{test_api_key_secret}
 properties
 )
           data_store = client.instance_variable_get '@data_store'
-          cache_manager = data_store.instance_variable_get '@cache_manager'
+          cache_manager = data_store.cache_manager
           @directories_cache = cache_manager.get_cache 'directories'
           @groups_cache = cache_manager.get_cache 'groups'
         end
@@ -232,8 +233,10 @@ properties
         it 'passes those params down to the caches' do
           expect(@directories_cache.instance_variable_get('@ttl_seconds')).to eq(40)
           expect(@directories_cache.instance_variable_get('@tti_seconds')).to eq(20)
+          expect(@directories_cache.instance_variable_get('@store')).to be_a(Stormpath::Test::FakeStore1)
           expect(@groups_cache.instance_variable_get('@ttl_seconds')).to eq(80)
           expect(@groups_cache.instance_variable_get('@tti_seconds')).to eq(40)
+          expect(@groups_cache.instance_variable_get('@store')).to be_a(Stormpath::Test::FakeStore2)
         end
       end
     end
