@@ -10,6 +10,8 @@ require 'pry-debugger'
 require 'webmock/rspec'
 require 'vcr'
 
+Dir['./spec/support/*.rb'].each { |file| require file }
+
 HIJACK_HTTP_REQUESTS_WITH_VCR = ENV['STORMPATH_SDK_TEST_ENVIRONMENT'] != 'CI'
 
 WebMock.allow_net_connect!
