@@ -40,13 +40,17 @@ module Stormpath
         #noinspection RubyConstantNamingConvention
         NL = "\n"
 
+        def initialize(uuid_generator=UUID.method(:random_create))
+          @uuid_generator = uuid_generator
+        end
+
         def sign_request request, api_key
 
           time = Time.now
           time_stamp = time.utc.strftime TIMESTAMP_FORMAT
           date_stamp = time.utc.strftime DATE_FORMAT
 
-          nonce = UUID.random_create.to_s
+          nonce = @uuid_generator.call.to_s
 
           uri = request.resource_uri
 
