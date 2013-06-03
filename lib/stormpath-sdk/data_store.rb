@@ -129,6 +129,7 @@ class Stormpath::DataStore
 
     if response.error?
       error = Stormpath::Resource::Error.new result
+      #puts "Error with request: #{http_method.upcase}: #{href}"
       raise Stormpath::Error.new error
     end
 
@@ -138,7 +139,11 @@ class Stormpath::DataStore
       return nil
     end
 
-    cache_walk result
+    if result['href']
+      cache_walk result
+    else
+      result
+    end
   end
 
   def cache_walk(resource)
