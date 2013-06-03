@@ -25,6 +25,7 @@ module Stormpath
     def initialize(options)
       api_key = options[:api_key]
       base_url = options[:base_url]
+      cache_opts = options[:cache] || {}
 
       api_key = if api_key
         case api_key
@@ -42,7 +43,7 @@ module Stormpath
           "Stormpath::Client constructor."
 
       request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key)
-      @data_store = Stormpath::DataStore.new(request_executor, self, base_url)
+      @data_store = Stormpath::DataStore.new(request_executor, cache_opts, self, base_url)
     end
 
     def tenant
@@ -51,6 +52,10 @@ module Stormpath
 
     def client
       self
+    end
+
+    def cache_stats
+      @data_source.cache_stats
     end
 
     include Stormpath::Resource::Associations

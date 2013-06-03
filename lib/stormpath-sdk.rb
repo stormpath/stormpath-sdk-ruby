@@ -46,6 +46,13 @@ module Stormpath
     autoload :PasswordResetTokens, 'stormpath-sdk/resource/password_reset_tokens'
   end
 
+  module Cache
+    autoload :CacheManager, 'stormpath-sdk/cache/cache_manager'
+    autoload :Cache, 'stormpath-sdk/cache/cache'
+    autoload :CacheStats, 'stormpath-sdk/cache/cache_stats'
+    autoload :MemoryStore, 'stormpath-sdk/cache/memory_store'
+  end
+
   module Authentication
   end
 end

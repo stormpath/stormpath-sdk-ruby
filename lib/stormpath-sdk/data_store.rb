@@ -20,14 +20,27 @@ class Stormpath::DataStore
   DEFAULT_SERVER_HOST = "api.stormpath.com"
   DEFAULT_API_VERSION = 1
 
+  CACHE_REGIONS = %w( applications directories accounts groups groupMemberships tenants )
+
   attr_reader :client
 
-  def initialize(request_executor, client, *base_url)
+  def initialize(request_executor, cache_opts, client, *base_url)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
 
     @client = client
     @base_url = get_base_url(*base_url)
     @request_executor = request_executor
+    initialize_cache cache_opts
+  end
+
+  def initialize_cache(cache_opts)
+    @cache_manager = Stormpath::Cache::CacheManager.new
+    regions_opts = cache_opts[:regions] || {}
+    CACHE_REGIONS.each do |region|
+      region_opts = regions_opts[region.to_sym] || {}
+      region_opts[:store] ||= cache_opts[:store]
+      @cache_manager.create_cache region, region_opts
+    end
   end
 
   def instantiate(clazz, properties = {})
@@ -80,6 +93,10 @@ class Stormpath::DataStore
     execute_request('delete', resource.href, nil)
   end
 
+  def cache_manager
+    @cache_manager
+  end
+
   protected
 
   def needs_to_be_fully_qualified(href)
@@ -99,6 +116,11 @@ class Stormpath::DataStore
   private
 
   def execute_request(http_method, href, body)
+    if http_method == 'get' && (cache = cache_for href)
+      cached_result = cache.get href
+      return cached_result if cached_result
+    end
+
     request = Request.new(http_method, href, nil, Hash.new, body)
     apply_default_request_headers request
     response = @request_executor.execute_request request
@@ -110,7 +132,50 @@ class Stormpath::DataStore
       raise Stormpath::Error.new error
     end
 
-    result
+    if http_method == 'delete'
+      cache = cache_for href
+      cache.delete href if cache
+      return nil
+    end
+
+    cache_walk result
+  end
+
+  def cache_walk(resource)
+    assert_not_nil resource['href'], "resource must have 'href' property"
+    items = resource['items']
+
+    if items # collection resource
+      resource['items'] = items.map do |item|
+        cache_walk item
+        { 'href' => item['href'] }
+      end
+    else     # single resource
+      resource.each do |attr, value|
+        if value.is_a? Hash
+          walked = cache_walk value
+          resource[attr] = { 'href' => value['href'] }
+          resource[attr]['items'] = walked['items'] if walked['items']
+        end
+      end
+      cache resource if resource.length > 1
+    end
+    resource
+  end
+
+  def cache(resource)
+    cache = cache_for resource['href']
+    cache.put resource['href'], resource if cache
+  end
+
+  def cache_for(href)
+    @cache_manager.get_cache(region_for href)
+  end
+
+  def region_for(href)
+    return nil unless href
+    region = href.split('/')[-2]
+    CACHE_REGIONS.include?(region) ? region : nil
   end
 
   def apply_default_request_headers(request)
