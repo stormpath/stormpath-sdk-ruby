@@ -15,6 +15,21 @@ describe Stormpath::DataStore do
     end
   end
 
+  describe '#delete' do
+    before do
+      resource = factory.resource 'application', 1, %w(tenant groups)
+      href = resource['href']
+      request_executor.response = MultiJson.dump resource
+      application = data_store.get_resource href, Stormpath::Resource::Application
+      expect(application_cache.size).to eq(1)
+      data_store.delete application
+    end
+
+    it 'removes the resource from the cache' do
+      expect(application_cache.size).to be(0)
+    end
+  end
+
   describe '#get_resource' do
     context 'shallow resource' do
       before do
@@ -35,6 +50,22 @@ describe Stormpath::DataStore do
       it 'caches no associations' do
         expect(tenant_cache.size).to eq(0)
         expect(group_cache.size).to eq(0)
+      end
+
+      it 'misses the cache on the get' do
+        expect(application_cache.stats.hits).to eq(1)  # this hit is when we grab @cached
+        expect(application_cache.stats.misses).to eq(1)
+      end
+
+      context 'retrieved twice' do
+        before do
+          data_store.get_resource @cached['href'], Stormpath::Resource::Application
+        end
+
+        it 'hits the cache on the get' do
+          expect(application_cache.stats.hits).to eq(2)
+          expect(application_cache.stats.misses).to eq(1)
+        end
       end
     end
 
