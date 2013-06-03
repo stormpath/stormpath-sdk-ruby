@@ -138,36 +138,29 @@ class Stormpath::DataStore
       return nil
     end
 
-    CACHE_REGIONS.each do |collection_attr|
-      collection = result[collection_attr]
+    cache_walk result
+  end
 
-      single_attr = collection_attr.sub(/s$/, '')
-      single = result[single_attr]
+  def cache_walk(resource)
+    assert_not_nil resource['href'], "resource must have 'href' property"
+    items = resource['items']
 
-      if single
-        assert_not_nil single['href'], "#{single_attr} resource must have 'href' property"
-        if single.length > 1 # deep
-          cache single
-          result[single_attr] = { 'href' => single['href'] }
+    if items # collection resource
+      resource['items'] = items.map do |item|
+        cache_walk item
+        { 'href' => item['href'] }
+      end
+    else     # single resource
+      resource.each do |attr, value|
+        if value.is_a? Hash
+          walked = cache_walk value
+          resource[attr] = { 'href' => value['href'] }
+          resource[attr]['items'] = walked['items'] if walked['items']
         end
       end
-
-      if collection
-        assert_not_nil collection['href'], "#{collection_attr} collection resource must have 'href' property"
-
-        items = collection['items']
-        if items
-          collection['items'] = items.map do |item|
-            assert_not_nil item['href'], 'resource in collection must have \'href\' property'
-            cache item if item.length > 1 # deep
-            { 'href' => item['href'] }
-          end
-        end
-      end
+      cache resource if resource.length > 1
     end
-
-    cache result
-    result
+    resource
   end
 
   def cache(resource)
@@ -176,8 +169,13 @@ class Stormpath::DataStore
   end
 
   def cache_for(href)
-    region = @cache_manager.region_for href
-    @cache_manager.get_cache region
+    @cache_manager.get_cache(region_for href)
+  end
+
+  def region_for(href)
+    return nil unless href
+    region = href.split('/')[-2]
+    CACHE_REGIONS.include?(region) ? region : nil
   end
 
   def apply_default_request_headers(request)

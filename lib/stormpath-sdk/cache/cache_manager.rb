@@ -6,11 +6,6 @@ module Stormpath
         @caches = {}
       end
 
-      def region_for(href)
-        return nil unless href
-        href.split('/')[-2]
-      end
-
       def create_cache(region, opts)
         @caches[region] = Cache.new opts
       end

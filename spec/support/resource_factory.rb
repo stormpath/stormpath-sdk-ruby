@@ -26,13 +26,13 @@ module Stormpath
         resource
       end
 
-      def collection(parent, type, depth = 1)
+      def collection(parent, type, depth = 1, associations = [])
         id = id_for parent
         collection = {
           'href' => "#{URL_PREFIX}/#{parent}s/#{id}/#{type}s",
           'items' => [
-            resource(type, depth),
-            resource(type, depth)
+            resource(type, depth, associations),
+            resource(type, depth, associations)
           ]
         }
 
