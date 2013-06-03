@@ -16,32 +16,64 @@
 class Stormpath::Resource::Collection
   include Enumerable
 
-  attr_reader :href, :client, :item_class, :collection_href
+  attr_reader :href, :client, :item_class, :collection_href, :criteria
 
   def initialize(href, item_class, client, options={})
     @client = client
     @href = href
     @item_class = item_class
     @collection_href = options[:collection_href] || @href
+    @criteria ||= {}
   end
 
   def data_store
     client.data_store
   end
 
-  def each(&block)
-    offset = 0
-    while true
-      page = CollectionPage.new "#{collection_href}?offset=#{offset}", client
-      page.item_type = item_class
-      items = page.items
-      items.each(&block)
-      break if items.length < page.limit
-      offset += page.limit
+  def search query
+    query_hash = if query.is_a? String
+      { q: query }
+    elsif query.is_a? Hash
+      query
     end
+
+    criteria.merge! query_hash
+    self
+  end
+
+  def offset offset
+    criteria.merge! offset: offset
+    self
+  end
+
+  def limit limit
+    criteria.merge! limit: limit
+    self
+  end
+
+  def order statement
+    criteria.merge! order_by: statement
+    self
+  end
+
+  def each(&block)
+    page = CollectionPage.new fetch_href, client
+    page.item_type = item_class
+    items = page.items
+    items.each(&block)
   end
 
   private
+
+  def fetch_href
+    [collection_href, query_string.presence].compact.join '?'
+  end
+
+  def query_string
+    Hash[
+      @criteria.map {|k, v| [k.to_s.camelize(:lower), v] }
+    ].to_query
+  end
 
   class CollectionPage < Stormpath::Resource::Base
     ITEMS = 'items'

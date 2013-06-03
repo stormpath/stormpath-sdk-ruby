@@ -243,7 +243,7 @@ properties
   end
 
   describe '#applications' do
-    context 'given a collection' do
+    context 'by default' do
       let(:applications) do
         test_api_client.applications
       end
@@ -265,6 +265,48 @@ properties
       end
     end
 
+    context 'pagination' do
+      let(:applications) do
+        (0..2).to_a.map do |index|
+          test_api_client.applications.create name: "Pagination Test #{index + 1}", description: 'foo'
+        end
+      end
+
+      it 'accepts offset and limit' do
+        expect(test_api_client.applications.limit(2).count).to eq 2
+        expect(test_api_client.applications.offset(2).limit(2).count).to have_at_least(1).item
+      end
+
+      after do
+        applications.each do |application|
+          application.delete
+        end
+      end
+    end
+
+    context 'search' do
+      let!(:applications) do
+        [
+          test_api_client.applications.create(name: 'Query1', description: 'foo'),
+          test_api_client.applications.create(name: 'Query2', description: 'foo')
+        ]
+      end
+
+      it 'finds by any attribute' do
+        expect(test_api_client.applications.search('Query1').count).to eq(1)
+      end
+
+      it 'finds by an explicit attribute' do
+        expect(test_api_client.applications.search(name: 'Query1').count).to eq(1)
+      end
+
+      after do
+        applications.each do |application|
+          application.delete
+        end
+      end
+    end
+
     describe '.create' do
       let(:application_attributes) do
         {
@@ -281,6 +323,10 @@ properties
         expect(application).to be
         expect(application.name).to eq(application_attributes[:name])
         expect(application.description).to eq(application_attributes[:description])
+      end
+
+      after do
+        application.delete
       end
     end
   end
