@@ -63,7 +63,7 @@ class Stormpath::Resource::Base
     end
   end
 
-  def initialize properties_or_url, client=nil
+  def initialize properties_or_url, client=nil, query=nil
     properties = case properties_or_url
                  when String
                    { HREF_PROP_NAME => properties_or_url }
@@ -74,6 +74,7 @@ class Stormpath::Resource::Base
                  end
 
     @client = client
+    @query = query
     @read_lock = Mutex.new
     @write_lock = Mutex.new
     @properties = Hash.new
@@ -194,7 +195,7 @@ class Stormpath::Resource::Base
     @write_lock.lock
 
     begin
-      resource = data_store.get_resource href, clazz
+      resource = data_store.get_resource href, clazz, @query
       @properties.replace resource.properties
 
       #retain dirty properties:

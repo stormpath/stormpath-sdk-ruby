@@ -287,17 +287,17 @@ properties
     context 'search' do
       let!(:applications) do
         [
-          test_api_client.applications.create(name: 'Query1', description: 'foo'),
-          test_api_client.applications.create(name: 'Query2', description: 'foo')
+          test_api_client.applications.create(name: 'Test Alpha', description: 'foo'),
+          test_api_client.applications.create(name: 'Test Beta', description: 'foo')
         ]
       end
 
       it 'finds by any attribute' do
-        expect(test_api_client.applications.search('Query1').count).to eq(1)
+        expect(test_api_client.applications.search('Test Alpha').count).to eq(1)
       end
 
       it 'finds by an explicit attribute' do
-        expect(test_api_client.applications.search(name: 'Query1').count).to eq(1)
+        expect(test_api_client.applications.search(name: 'Test Alpha').count).to eq(1)
       end
 
       after do

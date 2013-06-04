@@ -24,7 +24,7 @@ module Stormpath
       end
 
       def encode_url(value, path, canonical)
-        URI.escape(value).tap do |encoded|
+        URI.escape(value.to_s).tap do |encoded|
           if canonical
             str_map = {'+' => '%20', '*' => '%2A', '%7E' => '~'}
 

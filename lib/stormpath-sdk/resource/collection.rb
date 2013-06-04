@@ -57,23 +57,13 @@ class Stormpath::Resource::Collection
   end
 
   def each(&block)
-    page = CollectionPage.new fetch_href, client
+    page = CollectionPage.new collection_href, client, @criteria
     page.item_type = item_class
     items = page.items
     items.each(&block)
   end
 
   private
-
-  def fetch_href
-    [collection_href, query_string.presence].compact.join '?'
-  end
-
-  def query_string
-    Hash[
-      @criteria.map {|k, v| [k.to_s.camelize(:lower), v] }
-    ].to_query
-  end
 
   class CollectionPage < Stormpath::Resource::Base
     ITEMS = 'items'
