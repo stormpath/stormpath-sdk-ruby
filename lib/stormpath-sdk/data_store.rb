@@ -22,7 +22,7 @@ class Stormpath::DataStore
 
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships tenants )
 
-  attr_reader :client
+  attr_reader :client, :request_executor
 
   def initialize(request_executor, cache_opts, client, *base_url)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
@@ -47,14 +47,14 @@ class Stormpath::DataStore
     clazz.new properties, client
   end
 
-  def get_resource(href, clazz)
+  def get_resource(href, clazz, query=nil)
     q_href = if needs_to_be_fully_qualified href
                qualify href
              else
                href
              end
 
-    data = execute_request('get', q_href, nil)
+    data = execute_request('get', q_href, nil, query)
     instantiate clazz, data.to_hash
   end
 
@@ -90,7 +90,7 @@ class Stormpath::DataStore
     assert_not_nil resource, "resource argument cannot be null."
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
-    execute_request('delete', resource.href, nil)
+    execute_request('delete', resource.href)
   end
 
   def cache_manager
@@ -115,13 +115,13 @@ class Stormpath::DataStore
 
   private
 
-  def execute_request(http_method, href, body)
+  def execute_request(http_method, href, body=nil, query=nil)
     if http_method == 'get' && (cache = cache_for href)
       cached_result = cache.get href
       return cached_result if cached_result
     end
 
-    request = Request.new(http_method, href, nil, Hash.new, body)
+    request = Request.new(http_method, href, query, Hash.new, body)
     apply_default_request_headers request
     response = @request_executor.execute_request request
 

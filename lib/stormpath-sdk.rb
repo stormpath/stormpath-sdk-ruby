@@ -23,6 +23,7 @@ module Stormpath
   autoload :DataStore, 'stormpath-sdk/data_store'
 
   module Resource
+    autoload :Expansion, 'stormpath-sdk/resource/expansion'
     autoload :Status, 'stormpath-sdk/resource/status'
     autoload :Utils, 'stormpath-sdk/resource/utils'
     autoload :Associations, 'stormpath-sdk/resource/associations'
