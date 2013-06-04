@@ -161,44 +161,24 @@ describe Stormpath::Resource::Collection do
     end
   end
 
-  describe '#fetch_href' do
+  describe '#criteria' do
     let(:collection) do
       Stormpath::Resource::Collection.new href, item_class, client
     end
 
-    context 'when a query string is not present' do
-      it 'returns the collection href only' do
-        expect(collection.send(:fetch_href)).to eq 'http://example.com'
+    context 'when no fetch criteria present' do
+      it 'returns an empty hash for criteria' do
+        expect(collection.criteria).to eq({})
       end
     end
 
-    context 'when a query string is present' do
+    context 'when fetch criteria has been specified' do
       before do
         collection.search('Big up to Brooklyn').order('lastName asc').offset(15).limit 50
       end
 
-      it 'returns the collection href with params' do
-        expect(collection.send(:fetch_href)).to eq(
-          'http://example.com?limit=50&offset=15&orderBy=lastName+asc&q=Big+up+to+Brooklyn'
-        )
-      end
-    end
-  end
-
-  describe '#query_string' do
-    let(:collection) do
-      Stormpath::Resource::Collection.new href, item_class, client
-    end
-
-    context 'when search, offset, limit and order by are chained' do
-      before do
-        collection.search('Big up to Brooklyn').order('lastName asc').offset(15).limit 50
-      end
-
-      it 'has the query string' do
-        expect(collection.send(:query_string)).to eq(
-          'limit=50&offset=15&orderBy=lastName+asc&q=Big+up+to+Brooklyn'
-        )
+      it 'returns the populated criteria hash' do
+        expect(collection.criteria).to eq({:q=>"Big up to Brooklyn", :order_by=>"lastName asc", :offset=>15, :limit=>50})
       end
     end
   end
