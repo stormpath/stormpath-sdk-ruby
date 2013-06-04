@@ -47,13 +47,13 @@ module Stormpath
                 end
 
                 if can.include? :get
-                  def get(id_or_href)
+                  def get(id_or_href, expansions=nil)
                     item_href = if id_or_href.index '/'
                       id_or_href
                     else
                       "#{href}/#{id_or_href}"
                     end
-                    data_store.get_resource item_href, item_class
+                    data_store.get_resource item_href, item_class, expansions
                   end
                 end
               end

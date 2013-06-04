@@ -22,7 +22,7 @@ class Stormpath::DataStore
 
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships tenants )
 
-  attr_reader :client
+  attr_reader :client, :request_executor
 
   def initialize(request_executor, cache_opts, client, *base_url)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
