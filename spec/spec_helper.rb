@@ -9,6 +9,7 @@ require 'pry'
 require 'pry-debugger'
 require 'webmock/rspec'
 require 'vcr'
+require_relative '../support/api.rb'
 
 Dir['./spec/support/*.rb'].each { |file| require file }
 
@@ -82,47 +83,11 @@ module Stormpath
   end
 
   module TestResourceHelpers
-
-    def destroy_all_stormpath_test_resources api_key
-      client = Stormpath::Client.new({
-        api_key: api_key
-      })
-
-      tenant = client.tenant
-
-      directories = tenant.directories
-
-      directories.each do |dir|
-        unless [test_directory_url, test_directory_with_verification_url].include? dir.href
-          accounts = dir.accounts
-          accounts.each do |account|
-            begin
-              account.delete
-            rescue Stormpath::Error => e
-              raise e if e.message != "The account cannot be deleted because the account is marked as not deletable."
-            end
-          end
-
-          begin
-            dir.delete
-          rescue Stormpath::Error => e
-            raise e if e.message != "System Directory cannot be deleted!"
-          end
-        end
-      end
-
-      test_directory.accounts.each { |account| account.delete }
-      test_directory_with_verification.accounts.each { |account| account.delete }
-
-      applications = tenant.applications
-
-      applications.each do |app|
-        begin
-          app.delete if app.href != test_application_url
-        rescue Stormpath::Error => e
-          raise e if e.message != "System Application cannot be deleted!!!"
-        end
-      end
+    def destroy_all_stormpath_test_resources
+      Stormpath::Support::Api.destroy_resources(
+        test_api_key_id, test_api_key_secret, test_application_url,
+        test_directory_url, test_directory_with_verification_url
+      )
     end
 
     def build_account(opts={})
@@ -161,10 +126,10 @@ RSpec.configure do |c|
       raise set_up_message
     end
 
-    destroy_all_stormpath_test_resources(test_api_key) unless HIJACK_HTTP_REQUESTS_WITH_VCR
+    destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
   end
 
   c.after(:all) do
-    destroy_all_stormpath_test_resources(test_api_key) unless HIJACK_HTTP_REQUESTS_WITH_VCR
+    destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
   end
 end
