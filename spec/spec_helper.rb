@@ -93,12 +93,21 @@ module Stormpath
       directories = tenant.directories
 
       directories.each do |dir|
-        if dir.name.downcase.start_with? 'test'
+        unless [test_directory_url, test_directory_with_verification_url].include? dir.href
           accounts = dir.accounts
           accounts.each do |account|
-            account.delete
+            begin
+              account.delete
+            rescue Stormpath::Error => e
+              raise e if e.message != "The account cannot be deleted because the account is marked as not deletable."
+            end
           end
-          dir.delete
+
+          begin
+            dir.delete
+          rescue Stormpath::Error => e
+            raise e if e.message != "System Directory cannot be deleted!"
+          end
         end
       end
 
@@ -108,7 +117,11 @@ module Stormpath
       applications = tenant.applications
 
       applications.each do |app|
-        app.delete if app.name.downcase.start_with? 'test'
+        begin
+          app.delete if app.href != test_application_url
+        rescue Stormpath::Error => e
+          raise e if e.message != "System Application cannot be deleted!!!"
+        end
       end
     end
 
