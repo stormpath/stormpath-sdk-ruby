@@ -28,7 +28,7 @@ module Stormpath
       end
 
       def summary
-        [@puts, @hits, @misses, @expirations]
+        [@puts, @hits, @misses, @expirations, @size]
       end
     end
   end

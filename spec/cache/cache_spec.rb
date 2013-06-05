@@ -16,7 +16,7 @@ describe Stormpath::Cache::Cache do
   describe '#put' do
     it 'adds entry to the cache' do
       expect(cache.size).to eq(1)
-      expect(cache.stats.summary).to eq([1, 0, 0, 0])
+      expect(cache.stats.summary).to eq [1, 0, 0, 0, 1]
     end
   end
 
@@ -28,7 +28,7 @@ describe Stormpath::Cache::Cache do
 
       it 'gets nil' do
         expect(@foo).not_to be
-        expect(cache.stats.summary).to eq([1, 0, 1, 0])
+        expect(cache.stats.summary).to eq [1, 0, 1, 0, 1]
       end
     end
 
@@ -40,7 +40,7 @@ describe Stormpath::Cache::Cache do
 
       it 'gets bar' do
         expect(@foo).to eq('bar')
-        expect(cache.stats.summary).to eq([1, 1, 0, 0])
+        expect(cache.stats.summary).to eq [1, 1, 0, 0, 1]
       end
     end
 
@@ -54,7 +54,7 @@ describe Stormpath::Cache::Cache do
 
       it 'gets bar' do
         expect(@foo).to eq('bar')
-        expect(cache.stats.summary).to eq([1, 2, 0, 0])
+        expect(cache.stats.summary).to eq [1, 2, 0, 0, 1]
       end
     end
 
@@ -66,7 +66,7 @@ describe Stormpath::Cache::Cache do
 
       it 'gets nil' do
         expect(@foo).not_to be
-        expect(cache.stats.summary).to eq([1, 0, 1, 1])
+        expect(cache.stats.summary).to eq [1, 0, 1, 1, 1]
       end
     end
 
@@ -82,7 +82,7 @@ describe Stormpath::Cache::Cache do
 
       it 'gets nil' do
         expect(@foo).not_to be
-        expect(cache.stats.summary).to eq([1, 2, 1, 1])
+        expect(cache.stats.summary).to eq [1, 2, 1, 1, 1]
       end
     end
   end

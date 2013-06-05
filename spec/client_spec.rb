@@ -347,7 +347,7 @@ properties
 
         it 'caches the nested resource' do
           expect(cached_account.directory.name).to be
-          expect(directories_cache_summary).to eq([1, 1, 0, 0])
+          expect(directories_cache_summary).to eq [1, 1, 0, 0, 1]
         end
       end
 
@@ -366,7 +366,7 @@ properties
 
         it 'caches the nested resource' do
           expect(cached_account.groups.first.name).to eq(group.name)
-          expect(groups_cache_summary).to eq([2, 1, 0, 0])
+          expect(groups_cache_summary).to eq [2, 1, 0, 0, 2]
         end
       end
 

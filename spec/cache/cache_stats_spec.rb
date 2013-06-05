@@ -25,6 +25,10 @@ describe Stormpath::Cache::CacheStats do
     it 'increments size' do
       expect(cache_stats.puts).to eq 1
     end
+
+    it 'updates summary' do
+      expect(cache_stats.summary).to eq [1, 0, 0, 0, 1]
+    end
   end
 
   describe '#hit' do
@@ -32,6 +36,10 @@ describe Stormpath::Cache::CacheStats do
 
     it 'increments hits' do
       expect(cache_stats.hits).to eq 1
+    end
+
+    it 'updates summary' do
+      expect(cache_stats.summary).to eq [0, 1, 0, 0, 0]
     end
   end
 
@@ -46,6 +54,10 @@ describe Stormpath::Cache::CacheStats do
       it 'increments expirations' do
         expect(cache_stats.expirations).to eq 1
       end
+
+      it 'updates summary' do
+        expect(cache_stats.summary).to eq [0, 0, 1, 1, 0]
+      end
     end
 
     context 'expired is true' do
@@ -57,6 +69,10 @@ describe Stormpath::Cache::CacheStats do
 
       it 'does not increment expirations' do
         expect(cache_stats.expirations).to eq 0
+      end
+
+      it 'updates summary' do
+        expect(cache_stats.summary).to eq [0, 0, 1, 0, 0]
       end
     end
   end
@@ -70,6 +86,10 @@ describe Stormpath::Cache::CacheStats do
 
       it 'decrements size' do
         expect(cache_stats.size).to eq 2
+      end
+
+      it 'updates summary' do
+        expect(cache_stats.summary).to eq [3, 0, 0, 0, 2]
       end
     end
 
