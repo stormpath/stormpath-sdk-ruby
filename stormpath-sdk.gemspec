@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry-stack_explorer', '~> 0.4.9'
   s.add_development_dependency 'vcr', '~> 2.4.0'
   s.add_development_dependency 'timecop', '~> 0.6.1'
+  s.add_development_dependency 'redis', '~> 3.0.4'
 
   s.rdoc_options = ['--line-numbers', '--inline-source', '--title', 'stormpath-sdk', '--main']
 end

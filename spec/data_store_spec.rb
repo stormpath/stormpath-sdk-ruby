@@ -3,10 +3,15 @@ require 'spec_helper'
 describe Stormpath::DataStore do
   let(:factory)           { Stormpath::Test::ResourceFactory.new }
   let(:request_executor)  { Stormpath::Test::TestRequestExecutor.new }
-  let(:data_store)        { Stormpath::DataStore.new request_executor, {}, nil, nil }
+  let(:store)             { Stormpath::Cache::RedisStore }
+  let(:data_store)        { Stormpath::DataStore.new request_executor, {store: store}, nil, nil }
   let(:application_cache) { data_store.cache_manager.get_cache 'applications' }
   let(:tenant_cache)      { data_store.cache_manager.get_cache 'tenants' }
   let(:group_cache)       { data_store.cache_manager.get_cache 'groups' }
+
+  after do
+    application_cache.clear
+ end
 
   describe '.region_for' do
     let(:region) { data_store.send(:region_for, 'https://api.stormpath.com/v1/directories/4NykYrYH0OBiOOVOg8LXQ5') }

@@ -1,20 +1,24 @@
 module Stormpath
   module Cache
     class MemoryStore
-      def initialize
+      def initialize(opts = nil)
         @store = {}
       end
 
-      def get(k)
-        @store[k]
+      def get(key)
+        @store[key]
       end
 
-      def put(k, v)
-        @store[k] = v
+      def put(key, entry)
+        @store[key] = entry
       end
 
-      def delete(k)
-        @store.delete k
+      def delete(key)
+        @store.delete key
+      end
+
+      def clear
+        @store.clear
       end
 
       def size

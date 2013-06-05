@@ -4,6 +4,7 @@ require 'timecop'
 describe Stormpath::Cache::Cache do
   let(:cache) { Stormpath::Cache::Cache.new ttl_seconds: 7, tti_seconds: 3 }
   let(:now)   { Time.now }
+
   before do
     cache.put 'foo', 'bar'
   end
