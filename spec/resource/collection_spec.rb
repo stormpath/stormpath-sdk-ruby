@@ -147,6 +147,12 @@ describe Stormpath::Resource::Collection do
       Stormpath::Resource::Collection.new href, item_class, client
     end
 
+    context 'when no fetch criteria present' do
+      it 'returns an empty hash for criteria' do
+        expect(collection.criteria).to be_empty
+      end
+    end
+
     context 'when search, offset, limit and order by are chained' do
       before do
         collection.search('Big up to Brooklyn').order('lastName asc').offset(15).limit 50
@@ -157,28 +163,6 @@ describe Stormpath::Resource::Collection do
         expect(collection.criteria).to include offset: 15
         expect(collection.criteria).to include limit: 50
         expect(collection.criteria).to include order_by: 'lastName asc'
-      end
-    end
-  end
-
-  describe '#criteria' do
-    let(:collection) do
-      Stormpath::Resource::Collection.new href, item_class, client
-    end
-
-    context 'when no fetch criteria present' do
-      it 'returns an empty hash for criteria' do
-        expect(collection.criteria).to eq({})
-      end
-    end
-
-    context 'when fetch criteria has been specified' do
-      before do
-        collection.search('Big up to Brooklyn').order('lastName asc').offset(15).limit 50
-      end
-
-      it 'returns the populated criteria hash' do
-        expect(collection.criteria).to eq({:q=>"Big up to Brooklyn", :order_by=>"lastName asc", :offset=>15, :limit=>50})
       end
     end
   end
