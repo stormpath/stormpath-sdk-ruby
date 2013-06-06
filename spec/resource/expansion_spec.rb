@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Stormpath::Resource::Expansion, :vcr do
   describe '#initialize' do
     context 'given a single property name' do
-      let (:expansion) do
+      let(:expansion) do
         Stormpath::Resource::Expansion.new 'foo'
       end
 
@@ -12,7 +12,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
     end
     context 'given a list of property names' do
-      let (:expansion) do
+      let(:expansion) do
         Stormpath::Resource::Expansion.new 'foo', 'bar'
       end
 
@@ -22,7 +22,7 @@ describe Stormpath::Resource::Expansion, :vcr do
     end
 
     context 'given no arguments are passed to constructor' do
-      let (:expansion) do
+      let(:expansion) do
         Stormpath::Resource::Expansion.new
       end
 
@@ -34,7 +34,7 @@ describe Stormpath::Resource::Expansion, :vcr do
 
   describe "#add_property" do
     context 'given a simple property name' do
-      let (:expansion) { Stormpath::Resource::Expansion.new }
+      let(:expansion) { Stormpath::Resource::Expansion.new }
 
       before do
         expansion.add_property :foo
@@ -46,7 +46,7 @@ describe Stormpath::Resource::Expansion, :vcr do
     end
 
     context 'given two simple property names' do
-      let (:expansion) { Stormpath::Resource::Expansion.new }
+      let(:expansion) { Stormpath::Resource::Expansion.new }
 
       before do
         expansion.add_property :foo
@@ -59,7 +59,7 @@ describe Stormpath::Resource::Expansion, :vcr do
     end
 
     context 'given a duplicate property name' do
-      let (:expansion) { Stormpath::Resource::Expansion.new }
+      let(:expansion) { Stormpath::Resource::Expansion.new }
 
       before do
         expansion.add_property :foo
@@ -73,7 +73,7 @@ describe Stormpath::Resource::Expansion, :vcr do
     end
 
     context 'given a property name, offset, and limit' do
-      let (:expansion) { Stormpath::Resource::Expansion.new }
+      let(:expansion) { Stormpath::Resource::Expansion.new }
 
       before do
         expansion.add_property :foo, offset: 5, limit: 100
@@ -85,7 +85,7 @@ describe Stormpath::Resource::Expansion, :vcr do
     end
 
     context 'given two calls to add the same property' do
-      let (:expansion) { Stormpath::Resource::Expansion.new }
+      let(:expansion) { Stormpath::Resource::Expansion.new }
 
       before do
         expansion.add_property :foo, offset: 5, limit: 100
@@ -96,6 +96,5 @@ describe Stormpath::Resource::Expansion, :vcr do
         expect(expansion.to_query).to eq({ expand: 'foo(offset:25)' })
       end
     end
-
   end
 end
