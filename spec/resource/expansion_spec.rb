@@ -8,16 +8,16 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ 'expand' => 'foo'})
+        expect(expansion.to_query).to eq({ expand: 'foo' })
       end
     end
     context 'given a list of property names' do
       let (:expansion) do
-        Stormpath::Resource::Expansion.new(['foo', 'bar'])
+        Stormpath::Resource::Expansion.new 'foo', 'bar'
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ 'expand' => 'foo,bar'})
+        expect(expansion.to_query).to eq({ expand: 'foo,bar' })
       end
     end
 
@@ -27,7 +27,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'will transmute to an empty hash' do
-        expect(expansion.to_query).to eq(nil)
+        expect(expansion.to_query).to be_nil
       end
     end
   end
@@ -41,7 +41,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ 'expand' => 'foo'})
+        expect(expansion.to_query).to eq({ expand: 'foo' })
       end
     end
 
@@ -54,7 +54,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ 'expand' => 'foo,bar'})
+        expect(expansion.to_query).to eq({ expand: 'foo,bar' })
       end
     end
 
@@ -68,7 +68,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'will not duplicate the property' do
-        expect(expansion.to_query).to eq({ 'expand' => 'foo,bar'})
+        expect(expansion.to_query).to eq({ expand: 'foo,bar' })
       end
     end
 
@@ -76,11 +76,11 @@ describe Stormpath::Resource::Expansion, :vcr do
       let (:expansion) { Stormpath::Resource::Expansion.new }
 
       before do
-        expansion.add_property :foo, 5, 100
+        expansion.add_property :foo, offset: 5, limit: 100
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ 'expand' => 'foo(offset:5,limit:100)'})
+        expect(expansion.to_query).to eq({ expand: 'foo(offset:5,limit:100)' })
       end
     end
 
@@ -88,12 +88,12 @@ describe Stormpath::Resource::Expansion, :vcr do
       let (:expansion) { Stormpath::Resource::Expansion.new }
 
       before do
-        expansion.add_property :foo, 5, 100
-        expansion.add_property :foo, 25
+        expansion.add_property :foo, offset: 5, limit: 100
+        expansion.add_property :foo, offset: 25
       end
 
       it 'allows the last call to win out over the first' do
-        expect(expansion.to_query).to eq({ 'expand' => 'foo(offset:25)'})
+        expect(expansion.to_query).to eq({ expand: 'foo(offset:25)' })
       end
     end
 
