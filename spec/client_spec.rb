@@ -380,12 +380,24 @@ properties
         ]
       end
 
-      it 'finds by any attribute' do
-        expect(test_api_client.applications.search('Test Alpha').count).to eq(1)
+      context 'by any attribute' do
+        let(:search_results) do
+          test_api_client.applications.search('Test Alpha')
+        end
+
+        it 'returns the application' do
+          expect(search_results.count).to eq 1
+        end
       end
 
-      it 'finds by an explicit attribute' do
-        expect(test_api_client.applications.search(name: 'Test Alpha').count).to eq(1)
+      context 'by an explicit attribute' do
+        let(:search_results) do
+          test_api_client.applications.search(name: 'Test Alpha')
+        end
+
+        it 'returns the application' do
+          expect(search_results.count).to eq 1
+        end
       end
 
       after do
@@ -469,6 +481,7 @@ properties
   describe '#accounts.verify_account_email' do
     context 'given a verfication token of an account' do
       let(:directory) { test_directory_with_verification }
+
       let(:account) do
         account = Stormpath::Resource::Account.new({
           email: "test@example.com",
@@ -479,9 +492,11 @@ properties
         })
         directory.create_account account
       end
+
       let(:verification_token) do
         account.email_verification_token.token
       end
+
       let(:verified_account) do
         test_api_client.accounts.verify_email_token verification_token
       end
