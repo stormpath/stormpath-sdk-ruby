@@ -257,7 +257,7 @@ properties
 
       it 'returns the collection' do
         expect(applications).to be_kind_of(Stormpath::Resource::Collection)
-        expect(applications.count).to have_at_least(1).item
+        expect(applications).to have_at_least(1).item
       end
 
       after do
@@ -266,15 +266,15 @@ properties
     end
 
     context 'pagination' do
-      let(:applications) do
+      let!(:applications) do
         (0..2).to_a.map do |index|
           test_api_client.applications.create name: "Pagination Test #{index + 1}", description: 'foo'
         end
       end
 
       it 'accepts offset and limit' do
-        expect(test_api_client.applications.limit(2).count).to eq 2
-        expect(test_api_client.applications.offset(2).limit(2).count).to have_at_least(1).item
+        expect(test_api_client.applications.limit(2)).to have(2).items
+        expect(test_api_client.applications.offset(1).limit(2)).to have_at_least(2).items
       end
 
       after do
@@ -446,7 +446,7 @@ properties
 
       it 'returns the collection' do
         expect(directories).to be_kind_of(Stormpath::Resource::Collection)
-        expect(directories.count).to have_at_least(1).item
+        expect(directories).to have_at_least(1).item
       end
 
       after do

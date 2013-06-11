@@ -69,8 +69,7 @@ module Stormpath
         result = ''
 
         if !@query_string.empty?
-
-          @query_string.each do |key, value|
+          Hash[@query_string.sort].each do |key, value|
 
             enc_key = encode_url key, false, canonical
             enc_value = encode_url value, false, canonical
