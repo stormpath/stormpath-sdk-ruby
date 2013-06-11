@@ -22,11 +22,10 @@ module Stormpath
       include Stormpath::Http::Authc
       include Stormpath::Util::Assert
 
-      def initialize(api_key)
+      def initialize(api_key, options = {})
         @signer = Sauthc1Signer.new
         @api_key = api_key
-        @http_client = HTTPClient.new
-
+        @http_client = HTTPClient.new options[:proxy]
       end
 
       def execute_request(request)
@@ -35,17 +34,19 @@ module Stormpath
 
         @signer.sign_request request, @api_key
 
-        domain = request.href
+        domain = if request.query_string.present?
+          [request.href, request.to_s_query_string(true)].join '?'
+        else
+          request.href
+        end
 
         method = @http_client.method(request.http_method.downcase)
 
         if request.body.nil?
 
-          response = method.call domain, request.query_string, request.http_headers
+          response = method.call domain, nil, request.http_headers
 
         else
-
-          add_query_string domain, request.query_string
 
           response = method.call domain, request.body, request.http_headers
 

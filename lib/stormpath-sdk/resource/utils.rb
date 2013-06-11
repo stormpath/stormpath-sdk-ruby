@@ -14,28 +14,58 @@
 # limitations under the License.
 #
 module Stormpath
-
   module Resource
-
     module Utils
-
       include ActiveSupport::Inflector
       include Stormpath::Util::Assert
 
-      @@resources_hash = Hash.new
-
-      def to_class_from_instance resource
-
-        assert_kind_of Resource, resource, "resource argument must be instance of Stormpath::Resource::Resource"
-
-        if !@@resources_hash.has_key? resource.class.name
-
-          @@resources_hash[resource.class.name] = constantize resource.class.name
-
+      def inspect
+        ''.tap do |str|
+          str << %Q[#<#{class_name_with_id} @properties={]
+          @read_lock.lock
+          begin
+            str << properties.map do |key, value|
+              if printable_property? key
+                if value.kind_of? Hash and value.has_key? Stormpath::Resource::Base::HREF_PROP_NAME
+                  value = %Q[{ "#{Stormpath::Resource::Base::HREF_PROP_NAME}" => "#{value[Stormpath::Resource::Base::HREF_PROP_NAME]}" }]
+                end
+                %Q["#{key} => #{value}"]
+              end
+            end.compact.join(',')
+          ensure
+            @read_lock.unlock
+          end
+          str << '}>'
         end
+      end
 
-        @@resources_hash[resource.class.name]
+      def to_s
+        "#<#{class_name_with_id}>"
+      end
 
+      def to_yaml
+        "--- !ruby/object: #{self.class.name}\n".tap do |yaml|
+          @read_lock.lock
+
+          begin
+            properties_yaml = properties.each do |key, value|
+              if printable_property? key
+                " #{key}: #{value} \n"
+              end
+            end.compact.join("\n")
+            unless properties_yaml.empty?
+              yaml << " properties\n "
+              yaml << properties_yaml
+            end
+          ensure
+            @read_lock.unlock
+          end
+        end
+      end
+
+      def class_name_with_id
+        object_id_hex = '%x' % (self.object_id << 1)
+        "#{self.class.name}:0x#{object_id_hex}"
       end
     end
   end

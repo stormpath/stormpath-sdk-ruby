@@ -23,7 +23,7 @@ module Stormpath
 
         include OpenSSL
         include UUIDTools
-        include Stormpath::Util
+        include Stormpath::Http::Utils
 
         DEFAULT_ALGORITHM = "SHA256"
         HOST_HEADER = "Host"
@@ -40,20 +40,24 @@ module Stormpath
         #noinspection RubyConstantNamingConvention
         NL = "\n"
 
+        def initialize(uuid_generator=UUID.method(:random_create))
+          @uuid_generator = uuid_generator
+        end
+
         def sign_request request, api_key
 
           time = Time.now
           time_stamp = time.utc.strftime TIMESTAMP_FORMAT
           date_stamp = time.utc.strftime DATE_FORMAT
 
-          nonce = UUID.random_create.to_s
+          nonce = @uuid_generator.call.to_s
 
           uri = request.resource_uri
 
           # SAuthc1 requires that we sign the Host header so we
           # have to have it in the request by the time we sign.
           host_header = uri.host
-          if !RequestUtils.default_port?(uri)
+          if !default_port?(uri)
 
             host_header << ":" << uri.port.to_s
           end
@@ -180,7 +184,7 @@ module Stormpath
           if resource_path.nil? or resource_path.empty?
             '/'
           else
-            RequestUtils.encode_url resource_path, true, true
+            encode_url resource_path, true, true
           end
         end
 

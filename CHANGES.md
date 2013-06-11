@@ -1,6 +1,19 @@
 stormpath-sdk-ruby Changelog
 ====================
 
+Version 1.0.0.alpha
+-------------
+
+Released on June 11, 2013
+
+- Added a new API on client for accessing applications and directories
+- Added a new API on directories for accessing and creating accounts and groups
+- Added account authentication by application
+- Added the ability to load an application by credentialed uri
+- Added caching, with Redis default
+- Added pagination and querying to collections
+- Added entity expansion
+
 Version 0.4.0
 -------------
 

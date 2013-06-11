@@ -1,0 +1,111 @@
+#
+# Copyright 2012 Stormpath, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+require 'java_properties'
+
+module Stormpath
+
+  class Client
+    include Stormpath::Util::Assert
+
+    attr_reader :data_store, :application
+
+    def initialize(options)
+      api_key = options[:api_key]
+      base_url = options[:base_url]
+      cache_opts = options[:cache] || {}
+
+      api_key = if api_key
+        case api_key
+        when ApiKey then api_key
+        when Hash then ApiKey.new api_key[:id], api_key[:secret]
+        end
+      elsif options[:api_key_file_location]
+        load_api_key_file options[:api_key_file_location],
+          options[:api_key_id_property_name],
+          options[:api_key_secret_property_name]
+      end
+
+      assert_not_nil api_key, "No API key has been provided.  Please " +
+          "pass an 'api_key' or 'api_key_file_location' to the " +
+          "Stormpath::Client constructor."
+
+      request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key, proxy: options[:proxy])
+      @data_store = Stormpath::DataStore.new(request_executor, cache_opts, self, base_url)
+    end
+
+    def tenant
+      Stormpath::Resource::Tenant.new '/tenants/current', self
+    end
+
+    def client
+      self
+    end
+
+    def cache_stats
+      @data_source.cache_stats
+    end
+
+    include Stormpath::Resource::Associations
+
+    has_many :applications, href: '/applications', can: [:get, :create], delegate: true
+    has_many :directories, href: '/directories', can: [:get, :create], delegate: true
+    has_many(:accounts, href: '/accounts', can: :get) do
+      def verify_email_token(token)
+        token_href = "#{href}/emailVerificationTokens/#{token}"
+        token = Stormpath::Resource::EmailVerificationToken.new(
+          token_href,
+          client
+        )
+        data_store.save token, Stormpath::Resource::Account
+      end
+    end
+    has_many :groups, href: '/groups', can: :get
+    has_many :group_memberships, href: '/groupMemberships', can: [:get, :create]
+
+    private
+
+    def load_api_key_file(api_key_file_location, id_property_name, secret_property_name)
+      begin
+        api_key_properties = JavaProperties::Properties.new api_key_file_location
+      rescue
+        raise ArgumentError,
+          "No API Key file could be found or loaded from '" +
+          api_key_file_location +
+          "'."
+      end
+
+      id_property_name ||= 'apiKey.id'
+      secret_property_name ||= 'apiKey.secret'
+
+      api_key_id = api_key_properties[id_property_name]
+      assert_not_nil api_key_id,
+        "No API id in properties. Please provide a 'apiKey.id' property in '" +
+        api_key_file_location +
+        "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " +
+        "constructor to specify an alternative property."
+
+      api_key_secret = api_key_properties[secret_property_name]
+      assert_not_nil api_key_secret,
+        "No API secret in properties. Please provide a 'apiKey.secret' property in '" +
+        api_key_file_location +
+        "' or pass in an 'api_key_secret_property_name' to the Stormpath::Client " +
+        "constructor to specify an alternative property."
+
+      ApiKey.new api_key_id, api_key_secret
+    end
+
+  end
+end

@@ -1,4 +1,6 @@
 *~
-.*
+!.travis.yml
 pkg/*
 Gemfile.lock
+coverage
+spec/fixtures/vcr_cassettes

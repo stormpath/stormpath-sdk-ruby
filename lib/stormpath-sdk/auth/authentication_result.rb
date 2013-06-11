@@ -14,19 +14,9 @@
 # limitations under the License.
 #
 module Stormpath
-
   module Authentication
-
-    class AuthenticationResult < Stormpath::Resource::Resource
-
-      ACCOUNT = "account"
-
-      def get_account
-        get_resource_property ACCOUNT, Stormpath::Resource::Account
-      end
-
+    class AuthenticationResult < Stormpath::Resource::Base
+      has_one :account
     end
-
   end
-
 end

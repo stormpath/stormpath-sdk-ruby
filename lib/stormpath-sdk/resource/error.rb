@@ -13,45 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
+class Stormpath::Resource::Error < Stormpath::Resource::Base
 
-  module Resource
+  prop_reader :status, :code, :message, :developer_message, :more_info
 
-    class Error < Resource
-
-      STATUS = "status"
-      CODE = "code"
-      MESSAGE = "message"
-      DEV_MESSAGE = "developerMessage"
-      MORE_INFO = "moreInfo"
-
-      def initialize body
-        super nil, body
-      end
-
-      def get_status
-        get_property STATUS
-      end
-
-      def get_code
-        get_property CODE
-      end
-
-      def get_message
-        get_property MESSAGE
-      end
-
-      def get_developer_message
-        get_property DEV_MESSAGE
-      end
-
-      def get_more_info
-        get_property MORE_INFO
-      end
-
-    end
-
+  def initialize body
+    super body, nil
   end
-
 end
-

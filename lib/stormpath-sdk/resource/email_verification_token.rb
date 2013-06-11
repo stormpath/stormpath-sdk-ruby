@@ -13,14 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
-
-  module Resource
-
-    class EmailVerificationToken < InstanceResource
-    end
-
+class Stormpath::Resource::EmailVerificationToken < Stormpath::Resource::Instance
+  def token
+    href.split('/').last
   end
-
 end
-
