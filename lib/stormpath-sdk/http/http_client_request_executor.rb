@@ -22,11 +22,10 @@ module Stormpath
       include Stormpath::Http::Authc
       include Stormpath::Util::Assert
 
-      def initialize(api_key)
+      def initialize(api_key, options = {})
         @signer = Sauthc1Signer.new
         @api_key = api_key
-        @http_client = HTTPClient.new
-
+        @http_client = HTTPClient.new options[:proxy]
       end
 
       def execute_request(request)

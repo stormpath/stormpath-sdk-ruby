@@ -240,6 +240,29 @@ properties
         end
       end
     end
+
+    context 'with an http proxy specified' do
+      let(:http_proxy) do
+        'http://exampleproxy.com:8080'
+      end
+
+      let(:request_executor) do
+        Stormpath::Test::TestRequestExecutor.new
+      end
+
+      let(:api_key) do
+        Stormpath::ApiKey.new test_api_key_id, test_api_key_secret
+      end
+
+      it 'initializes the request executor with the proxy' do
+        expect(Stormpath::Http::HttpClientRequestExecutor)
+          .to receive(:new)
+          .with(api_key, proxy: http_proxy)
+          .and_return request_executor
+
+        Stormpath::Client.new api_key: api_key, proxy: http_proxy
+      end
+    end
   end
 
   describe '#applications' do
