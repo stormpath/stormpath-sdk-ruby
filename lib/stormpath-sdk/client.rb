@@ -42,7 +42,7 @@ module Stormpath
           "pass an 'api_key' or 'api_key_file_location' to the " +
           "Stormpath::Client constructor."
 
-      request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key)
+      request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key, proxy: options[:proxy])
       @data_store = Stormpath::DataStore.new(request_executor, cache_opts, self, base_url)
     end
 
