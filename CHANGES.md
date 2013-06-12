@@ -1,6 +1,13 @@
 stormpath-sdk-ruby Changelog
 ====================
 
+Version 1.0.0.beta
+------------------
+
+Released on June 12, 2013
+
+- Bumping version to reflect stability
+
 Version 1.0.0.alpha
 -------------
 
