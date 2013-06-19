@@ -58,7 +58,7 @@ $ gem install stormpath-sdk
     ```ruby
     application = client.applications.get application_url
 
-    directory = client.directories.get application_url
+    directory = client.directories.get directory_url
     ```
 
 1.  **Create an account for a user** on the directory.
