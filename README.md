@@ -37,7 +37,7 @@ $ gem install stormpath-sdk
 1.  **Create a client** using the API key properties file
 
     ```ruby
-    client = Stormpath::Client.new api_key_file_location: File.join(ENV['HOME']), '.stormpath', 'apiKey.properties')
+    client = Stormpath::Client.new api_key_file_location: File.join(ENV['HOME'], '.stormpath', 'apiKey.properties')
     ```
 
 1.  **List all your applications and directories**
@@ -332,7 +332,7 @@ that module's methods to determine if an account belongs to a specific
 group:
 
 ```ruby
-account.groups.any?{|group| group.name == 'administrators'
+account.groups.any? {|group| group.name == 'administrators'}
 ```
 
 You can create groups and assign them to accounts using the Stormpath
@@ -461,7 +461,7 @@ $ gem install pkg/stormpath-sdk-{version}.gem
 
 ## Copyright & Licensing
 
-Copyright &copy; 2012 Stormpath, Inc. and contributors.
+Copyright &copy; 2013 Stormpath, Inc. and contributors.
 
 This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).
 
