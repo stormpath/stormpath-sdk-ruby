@@ -159,7 +159,7 @@ in the hash of values passed on Client initialization:
 
   ```ruby
   api_key = Stormpath::APIKey.new api_id, api_secret
-  client = Stormpath::Client.new  api_key: api_key
+  client = Stormpath::Client.new api_key: api_key
   ```
 
 * By explicitly setting the API key id and secret:
@@ -169,22 +169,14 @@ in the hash of values passed on Client initialization:
     api_key: { id: api_id, secret: api_secret }
   ```
 
-* By passing the REST URL of a Stormpath application on your account
-  with the API id and secret embedded. For example, the URL would look
-  like:
-
-  ```
-  http://#{api_key_id}:#{api_key_secret}@api.stormpath.com/v1/applications/#{application_id}
-  ```
-
-  The client could then be created with the above URL:
+* By passing a composite application url to `Application.load`:
 
   ```ruby
-  client = Stormpath::Client.new application_url: application_url
-  ```
+  composite_url = "http://#{api_key_id}:#{api_key_secret}@api.stormpath.com/v1/applications/#{application_id}"
 
-  This method will also provide a <code>application</code> property on
-  on the client to directly access that resource.
+  application = Stormpath::Resource::Application.load composite_url
+  client = application.client
+  ```
 
 ### Accessing Resources
 
