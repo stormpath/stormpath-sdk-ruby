@@ -158,7 +158,7 @@ in the hash of values passed on Client initialization:
 * Passing in a Stormpath::APIKey instance:
 
   ```ruby
-  api_key = Stormpath::APIKey.new api_id, api_secret
+  api_key = Stormpath::ApiKey.new api_id, api_secret
   client = Stormpath::Client.new api_key: api_key
   ```
 
