@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Stormpath, Inc.
+# Copyright 2013 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,6 +45,9 @@ module Stormpath
         end
 
         def sign_request request, api_key
+
+          request.http_headers.delete(Sauthc1Signer::AUTHORIZATION_HEADER)
+          request.http_headers.delete(Sauthc1Signer::STORMPATH_DATE_HEADER)
 
           time = Time.now
           time_stamp = time.utc.strftime TIMESTAMP_FORMAT

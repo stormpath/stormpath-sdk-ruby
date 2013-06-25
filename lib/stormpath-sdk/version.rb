@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Stormpath, Inc.
+# Copyright 2013 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,6 @@
 # limitations under the License.
 #
 module Stormpath
-  VERSION = '1.0.0.beta'
-  VERSION_DATE = '2013-06-12'
+  VERSION = '1.0.0.beta.2'
+  VERSION_DATE = '2013-06-25'
 end

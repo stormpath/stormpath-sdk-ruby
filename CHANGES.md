@@ -1,5 +1,15 @@
 stormpath-sdk-ruby Changelog
-====================
+============================
+
+Version 1.0.0.beta.2
+--------------------
+
+Released on June 25, 2013
+
+- Fixed current tenant redirection handling.
+- Added expansion functionality to tenant retrieval from client.
+- Added tenant retrieval by HREF functionality.
+- Fixed tenant collection retrieval implementation in 'associations.rb'.
 
 Version 1.0.0.beta
 ------------------
@@ -9,7 +19,7 @@ Released on June 12, 2013
 - Bumping version to reflect stability
 
 Version 1.0.0.alpha
--------------
+-------------------
 
 Released on June 11, 2013
 
