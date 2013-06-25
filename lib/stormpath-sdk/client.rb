@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Stormpath, Inc.
+# Copyright 2013 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,8 +46,8 @@ module Stormpath
       @data_store = Stormpath::DataStore.new(request_executor, cache_opts, self, base_url)
     end
 
-    def tenant
-      Stormpath::Resource::Tenant.new '/tenants/current', self
+    def tenant(expansion = nil)
+      tenants.get 'current', expansion
     end
 
     def client
@@ -60,6 +60,7 @@ module Stormpath
 
     include Stormpath::Resource::Associations
 
+    has_many :tenants, href: '/tenants', can: :get
     has_many :applications, href: '/applications', can: [:get, :create], delegate: true
     has_many :directories, href: '/directories', can: [:get, :create], delegate: true
     has_many(:accounts, href: '/accounts', can: :get) do
