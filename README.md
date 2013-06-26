@@ -399,7 +399,7 @@ Or by specifying the <code>spec</code> task:
 $ rake spec
 ```
 
-Or through <code>rspec</code>.
+Or through <code>rspec</code>
 
 ## Contributing
 
