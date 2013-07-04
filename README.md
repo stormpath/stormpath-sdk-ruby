@@ -9,7 +9,7 @@ application.
 ## Install
 
 ```sh
-$ gem install stormpath-sdk
+$ gem install stormpath-sdk --pre
 ```
 
 ## Quickstart Guide
