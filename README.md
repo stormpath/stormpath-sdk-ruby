@@ -132,7 +132,7 @@ If you have not already done so, register as a developer on
 1. **Check for account inclusion in group** by reloading the account
 
     ```ruby
-    account = clients.accounts.get account.href
+    account = client.accounts.get account.href
     is_admin = account.groups.any? { |group| group.name == 'Admins' }
     ```
 
