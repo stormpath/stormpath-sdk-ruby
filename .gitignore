@@ -4,3 +4,6 @@ pkg/*
 Gemfile.lock
 coverage
 spec/fixtures/vcr_cassettes
+*.ipr
+*.iws
+*.iml
