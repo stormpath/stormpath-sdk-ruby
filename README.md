@@ -12,21 +12,35 @@ application.
 $ gem install stormpath-sdk --pre
 ```
 
-## Quickstart Guide
+## Provision Your Stormpath Account
 
-1.  If you have not already done so, register as a developer on
-    [Stormpath][stormpath] and set up your API credentials and resources:
+If you have not already done so, register as a developer on
+[Stormpath][stormpath] and set up your API credentials and resources:
 
-    1.  Create a [Stormpath][stormpath] developer account and [create your API Keys][create-api-keys]
-        downloading the <code>apiKey.properties</code> file into a <code>.stormpath</code>
-        folder under your local home directory.
+1. Create a [Stormpath][stormpath] developer account and
+   [create your API Keys][create-api-keys] downloading the
+   <code>apiKey.properties</code> file into a <code>.stormpath</code>
+   folder under your local home directory.
 
-    1.  Create an application and a directory to store your users'
-        accounts. Make sure the directory is assigned as a login source
-        to the application.
+1. Through the [Stormpath Admin UI][stormpath-admin-login], create yourself
+   an [Application Resource][concepts]. On the Create New Application
+   screen, make sure the "Create a new directory with this application" box
+   is checked. This will provision a [Directory Resource][concepts] along
+   with your new Application Resource and link the Directory to the
+   Application as a [Login Source][concepts]. This will allow users
+   associated with that Directory Resource to authenticate and have access
+   to that Application Resource.
 
-    1.  Take note of the _REST URL_ of the application and of directory
-        you just created.
+   It is important to note that although your developer account comes with
+   a built-in Application Resource (called "Stormpath") - you will still
+   need to provision a separate Application Resource.
+
+1. Take note of the _REST URL_ of the Application you just created. Your
+   web application will communicate with the Stormpath API in the context
+   of this one Application Resource (operations such as: user-creation,
+   authentication, etc.)
+
+## Getting Started
 
 1.  **Require the Stormpath Ruby SDK**
 
@@ -37,7 +51,9 @@ $ gem install stormpath-sdk --pre
 1.  **Create a client** using the API key properties file
 
     ```ruby
-    client = Stormpath::Client.new api_key_file_location: File.join(ENV['HOME'], '.stormpath', 'apiKey.properties')
+    client = Stormpath::Client.new(
+      api_key_file_location: '/path/to/home/.stormpath/apiKey.properties'
+    )
     ```
 
 1.  **List all your applications and directories**
@@ -116,7 +132,7 @@ $ gem install stormpath-sdk --pre
 1. **Check for account inclusion in group** by reloading the account
 
     ```ruby
-    account = clients.accounts.get account.href
+    account = client.accounts.get account.href
     is_admin = account.groups.any? { |group| group.name == 'Admins' }
     ```
 
@@ -197,6 +213,69 @@ and scan for resources via that interface.
 Additional resources are <code>accounts</code>, <code>groups</code>,
 <code>group_membership</code>, and the single reference to your
 <code>tenant</code>.
+
+### Creating Resources
+
+Applications and directories can be created directly off the client.
+
+```ruby
+application = client.applications.create name: 'foo', description: 'bar'
+
+directory = client.directories.create name: 'foo', description: 'bar'
+```
+
+### Collections
+#### Search
+
+Resource collections can be searched by a general query string or by attribute.
+
+Passing a string to the search method will filter by any attribute on the collection:
+
+```ruby
+client.applications.search 'foo'
+```
+
+To search a specific attribute or attributes, pass a hash:
+
+```ruby
+client.applications.search name: 'foo', description: 'bar'
+```
+
+#### Pagination
+
+Collections can be paginated using chainable Arel-like methods. <code>offset</code> is the zero-based starting index in the entire collection of the first item to return. Default is 0. <code>limit</code> is the maximum number of collection items to return for a single request. Minimum value is 1. Maximum value is 100. Default is 25.
+
+```ruby
+client.applications.offset(10).limit(100).each do |application|
+  # do something
+end
+```
+
+#### Order
+
+Collections can be ordered. In the following example, a paginated collection is ordered.
+
+```ruby
+client.applications.offset(10).limit(100).order('name asc,description desc')
+```
+
+#### Entity Expansion
+
+A resource's children can be eager loaded by passing the entity expansion object as the second argument to a call to <code>get</code>.
+
+```ruby
+expansion = Stormpath::Resource::Expansion.new 'groups', 'group_memberships'
+client.accounts.get account.href, expansion
+```
+
+<code>limit</code> and <code>offset</code> can be specified for each child resource by calling <code>add_property</code>.
+
+```ruby
+expansion = Stormpath::Resource::Expansion.new
+expansion.add_property 'groups', offset: 5, limit: 10
+
+client.accounts.get account.href, expansion
+```
 
 ### Registering Accounts
 
@@ -463,3 +542,7 @@ For additional information, please see the full [Project Documentation](https://
   [stormpath]: http://stormpath.com/
   [create-api-keys]: http://www.stormpath.com/docs/ruby/product-guide#AssignAPIkeys
   [stormpath_bootstrap]: https://github.com/stormpath/stormpath-sdk-ruby/wiki/Bootstrapping-Stormpath
+  [rubygems-installation-docs]: http://docs.rubygems.org/read/chapter/3
+  [stormpath-admin-login]: http://api.stormpath.com/login
+  [create-api-keys]: http://www.stormpath.com/docs/ruby/product-guide#AssignAPIkeys
+  [concepts]: http://www.stormpath.com/docs/stormpath-basics#keyConcepts
