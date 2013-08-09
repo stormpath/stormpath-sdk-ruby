@@ -51,9 +51,7 @@ If you have not already done so, register as a developer on
 1.  **Create a client** using the API key properties file
 
     ```ruby
-    client = Stormpath::Client.new(
-      api_key_file_location: '/path/to/home/.stormpath/apiKey.properties'
-    )
+    client = Stormpath::Client.new api_key_file_location: File.join(ENV['HOME'], '.stormpath', 'apiKey.properties')
     ```
 
 1.  **List all your applications and directories**
