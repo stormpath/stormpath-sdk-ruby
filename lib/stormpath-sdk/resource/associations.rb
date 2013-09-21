@@ -50,14 +50,14 @@ module Stormpath
 
               collection.class_eval do
                 if can.include? :create
-                  def create(properties_or_resource)
+                  def create(properties_or_resource, options = {})
                     resource = case properties_or_resource
                       when Stormpath::Resource::Base
                         properties_or_resource
                       else
                         item_class.new properties_or_resource, client
                       end
-                    data_store.create href, resource, item_class
+                    data_store.create href, resource, item_class, options
                   end
                 end
 
