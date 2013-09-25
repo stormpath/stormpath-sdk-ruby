@@ -506,11 +506,10 @@ properties
         context 'with directory: "Client Application Create Test Directory"' do
           let(:options) { { createDirectory: true } }
 
-          #before { application }
+          before { application }
 
           #fails with Stormpath::Error: Authentication required.
           it 'creates directory named "Client Application Create Test Directory"' do
-            application
             expect(directories.map(&:name)).to include("#{application_name} Directory")
           end
 
