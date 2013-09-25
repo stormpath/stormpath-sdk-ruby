@@ -7,6 +7,7 @@ Version 1.0.0.beta.3
 Released on September 25, 2013
 
 - Added support for using special characters in account resource fields (e.g., username, password, etc.) when creating or updating a resource
+- Added "createDirectory=true" option to the application.create method to allow automatic creation of a directory when creating an application. Refer to readme for more info.
 
 Version 1.0.0.beta.2
 --------------------
