@@ -431,25 +431,122 @@ properties
     end
 
     describe '.create' do
+      let(:application_name) { 'Client Application Create Test' }
+
       let(:application_attributes) do
         {
-          name: 'Client Application Create Test',
+          name: application_name,
           description: 'A test description'
         }
       end
 
-      let(:application) do
-        test_api_client.applications.create application_attributes
+      context do
+        let(:application) do
+          test_api_client.applications.create application_attributes
+        end
+
+        it 'creates that application' do
+          expect(application).to be
+          expect(application.name).to eq(application_attributes[:name])
+          expect(application.description).to eq(application_attributes[:description])
+        end
+
+        after do
+          application.delete
+        end
       end
 
-      it 'creates that application' do
-        expect(application).to be
-        expect(application.name).to eq(application_attributes[:name])
-        expect(application.description).to eq(application_attributes[:description])
-      end
+      describe 'auto directory creation' do
+        let(:application) { test_api_client.applications.create application_attributes, options }
 
-      after do
-        application.delete
+        let(:directories) do
+          test_api_client.directories
+        end
+
+        context 'login source' do
+          let(:options) { { createDirectory: true } }
+
+          let!(:account) do
+            application.accounts.create(
+                given_name: 'John',
+                surname: 'Smith 2',
+                email: 'john.smith2@example.com',
+                username: 'johnsmith2',
+                password: '4P@$$w0rd!'
+            )
+          end
+
+          before { application }
+
+          it 'serves as the accounts store and login source' do
+            auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith2', '4P@$$w0rd!'
+            auth_result = application.authenticate_account auth_request
+            expect(account).to eq(auth_result.account)
+          end
+        end
+
+        context 'with directory: true' do
+          let(:options) { { createDirectory: true } }
+
+          it 'creates directory named by appending "Directory" to app name' do
+            application
+            expect(directories.map(&:name)).to include("#{application_name} Directory")
+          end
+
+          context 'and existing directory' do
+            it 'resolves naming conflict by adding (n) to directory name' do
+              test_api_client.directories.each { |d| d.delete if "#{application_name} Directory" == d.name }
+              test_api_client.directories.create({name: "#{application_name} Directory"})
+              application
+              expect(directories.map(&:name)).to include("#{application_name} Directory (2)")
+            end
+          end
+        end
+
+        context 'with directory: "Client Application Create Test Directory"' do
+          let(:options) { { createDirectory: true } }
+
+          #before { application }
+
+          #fails with Stormpath::Error: Authentication required.
+          it 'creates directory named "Client Application Create Test Directory"' do
+            application
+            expect(directories.map(&:name)).to include("#{application_name} Directory")
+          end
+
+          it 'resolves naming conflict with existing directory throwing Stormpath::Error with status 409 and code 5010'
+        end
+
+        context 'with directory: ""' do
+          let(:options) { { createDirectory: '' } }
+
+          it 'throws Stormpath::Error with status 400 and code 2000', skip_cleanup: true do
+            expect { application }.to raise_error { |error|
+              expect(error).to be_a(Stormpath::Error)
+              expect(error.status).to eq(400)
+              expect(error.code).to eq(2000)
+            }
+          end
+        end
+
+        context 'with directory: false' do
+          let(:options) { { createDirectory: false } }
+
+          before { application }
+
+          it 'creates no directory' do
+            expect(directories.map(&:name)).not_to include("#{application_name} Directory")
+          end
+        end
+
+        after(:each) do
+          unless example.metadata[:skip_cleanup]
+            application.delete
+            test_api_client.directories.each do |d|
+              d.delete if ["#{application_name} Directory", "#{application_name} Directory (2)", "#{application_name} Directory Custom"].include?(d.name)
+            end
+          end
+        end
       end
     end
   end
