@@ -1,6 +1,13 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.0.0.beta.3
+--------------------
+
+Released on September 25, 2013
+
+- Added support for using special characters in account resource fields (e.g., username, password, etc.) when creating or updating a resource
+
 Version 1.0.0.beta.2
 --------------------
 
