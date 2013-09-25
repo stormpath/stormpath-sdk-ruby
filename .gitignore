@@ -7,3 +7,4 @@ spec/fixtures/vcr_cassettes
 *.ipr
 *.iws
 *.iml
+*.gem
