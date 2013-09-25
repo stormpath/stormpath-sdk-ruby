@@ -503,14 +503,15 @@ properties
           end
         end
 
-        context 'with directory: "Client Application Create Test Directory Custom"' do
+        context 'with directory: "Client Application Create Test Directory"' do
           let(:options) { { createDirectory: true } }
 
-          before { application }
+          #before { application }
 
           #fails with Stormpath::Error: Authentication required.
-          it 'creates directory named "Client Application Create Test Directory Custom"' do
-            expect(directories.map(&:name)).to include("#{application_name} Directory Custom")
+          it 'creates directory named "Client Application Create Test Directory"' do
+            application
+            expect(directories.map(&:name)).to include("#{application_name} Directory")
           end
 
           it 'resolves naming conflict with existing directory throwing Stormpath::Error with status 409 and code 5010'
