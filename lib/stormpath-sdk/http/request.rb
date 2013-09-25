@@ -55,7 +55,7 @@ module Stormpath
         @body = body
 
         if !body.nil?
-          @http_headers.store 'Content-Length', @body.length
+          @http_headers.store 'Content-Length', @body.bytesize
         end
 
       end
