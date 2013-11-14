@@ -23,6 +23,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   belongs_to :tenant
   has_many :accounts, can: [:create]
   has_many :password_reset_tokens, can: [:get, :create]
+  has_many :account_store_mappings, can: [:get, :create]
 
   def self.load composite_url
     begin
