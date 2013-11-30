@@ -56,17 +56,29 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     end
   end
 
-  describe "update attributes" do
+  describe "update attribute default group store" do
     let(:account_store_mapping) { create_account_store_mapping(application, directory) }
     let(:reloaded_mapping){ application.account_store_mappings.get account_store_mapping.href }
 
-    it 'blabla' do
+    it 'should go from false to true' do
       expect(account_store_mapping.is_default_group_store).to eq(false)
       account_store_mapping.default_group_store= true
       account_store_mapping.save
       expect(reloaded_mapping.is_default_group_store).to eq(true)
     end
-    
+
+  end
+
+  describe "given a mapping" do
+    let!(:account_store_mapping) { create_account_store_mapping(application, directory) }
+    let(:reloaded_application) { test_api_client.applications.get application.href}
+
+    it 'function delete should easily destroy it' do
+      expect(application.account_store_mappings.count).to eq(1)
+      account_store_mapping.delete
+      expect(reloaded_application.account_store_mappings.count).to eq(0)
+    end
+  
   end
 
 end
