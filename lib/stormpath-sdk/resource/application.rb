@@ -56,9 +56,26 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     response.authenticate href, request
   end
 
+  def default_account_store_mapping
+    account_store_mappings.get default_account_store_mapping_href
+  end
+
+  def default_group_store_mapping
+    account_store_mappings.get default_group_store_mapping_href
+  end
+
   private
 
-  def create_password_reset_token email
-    password_reset_tokens.create email: email
-  end
+    def create_password_reset_token email
+      password_reset_tokens.create email: email
+    end
+
+    def default_account_store_mapping_href
+      get_property("defaultAccountStoreMapping")["href"]
+    end
+
+    def default_group_store_mapping_href
+      get_property("defaultGroupStoreMapping")["href"]
+    end
+
 end
