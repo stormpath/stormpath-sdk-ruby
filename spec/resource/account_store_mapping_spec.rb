@@ -12,13 +12,9 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
      })
   end
 
-  let(:directory) do
-    test_api_client.directories.create name: 'testDirectory', description: 'a testDirectory for Account Store Mappings'
-  end
+  let(:directory) { test_api_client.directories.create name: 'testDirectory', description: 'testDirectory for AccountStoreMappings' }
   
-  let(:application) do
-    test_api_client.applications.create name: 'testApplication', description: 'a testApplication for Account Store Mappings'
-  end
+  let(:application) { test_api_client.applications.create name: 'testApplication', description: 'testApplication for AccountStoreMappings' }
   
   after do
     application.delete if application
@@ -45,7 +41,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
 
   describe "given a group" do
     let(:group) do
-      directory.groups.create name: 'testGroup', description: 'a testGroup for Account Store Mappings'
+      directory.groups.create name: 'testGroup', description: 'testGroup for AccountStoreMappings'
     end
 
     before { create_account_store_mapping(application, group) }
@@ -56,7 +52,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     end
   end
 
-  describe "update attribute default group store" do
+  describe "update attribute default_group_store" do
     let(:account_store_mapping) { create_account_store_mapping(application, directory) }
     let(:reloaded_mapping){ application.account_store_mappings.get account_store_mapping.href }
 
@@ -73,12 +69,21 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     let!(:account_store_mapping) { create_account_store_mapping(application, directory) }
     let(:reloaded_application) { test_api_client.applications.get application.href}
 
-    it 'function delete should easily destroy it' do
+    it 'function delete should destroy it' do
       expect(application.account_store_mappings.count).to eq(1)
       account_store_mapping.delete
       expect(reloaded_application.account_store_mappings.count).to eq(0)
     end
   
+    it 'should be able to list its attributes' do
+      reloaded_application.account_store_mappings.each do |account_store_mapping|
+        expect(account_store_mapping.account_store.name).to eq("testDirectory")
+        expect(account_store_mapping.list_index).to eq(0)
+        expect(account_store_mapping.default_account_store?).to eq(false)
+        expect(account_store_mapping.default_group_store?).to eq(false)
+      end
+    end
+
   end
 
 end
