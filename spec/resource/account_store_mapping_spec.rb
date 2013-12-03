@@ -40,9 +40,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   end
 
   describe "given a group" do
-    let(:group) do
-      directory.groups.create name: 'testGroup', description: 'testGroup for AccountStoreMappings'
-    end
+    let(:group) { directory.groups.create name: 'testGroup', description: 'testGroup for AccountStoreMappings' }
 
     before { create_account_store_mapping(application, group) }
     after { group.delete if group }
