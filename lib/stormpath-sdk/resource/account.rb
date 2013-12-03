@@ -16,8 +16,7 @@
 class  Stormpath::Resource::Account < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
 
-  prop_accessor :username, :email, :given_name, :middle_name,
-    :surname
+  prop_accessor :username, :email, :given_name, :middle_name, :surname
   prop_writer :password
   prop_non_printable :password
 
@@ -30,4 +29,5 @@ class  Stormpath::Resource::Account < Stormpath::Resource::Instance
   def add_group group
     client.group_memberships.create group: group, account: self
   end
+  
 end

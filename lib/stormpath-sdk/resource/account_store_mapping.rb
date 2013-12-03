@@ -6,12 +6,7 @@ class Stormpath::Resource::AccountStoreMapping < Stormpath::Resource::Instance
   belongs_to :application
 
   def account_store
-    directory_or_group_href = account_store_href
-    if is_directory? directory_or_group_href
-      client.directories.get directory_or_group_href
-    else
-      client.groups.get directory_or_group_href
-    end
+     account_store_is_a_directory? ? client.directories.get(account_store_href) : client.groups.get(account_store_href)
   end
 
   alias_method :default_account_store, :is_default_account_store
@@ -27,8 +22,8 @@ class Stormpath::Resource::AccountStoreMapping < Stormpath::Resource::Instance
       get_property("accountStore")["href"]
     end
     
-    def is_directory?(directory_or_group_href)
-      /directories/.match directory_or_group_href
+    def account_store_is_a_directory?
+      /directories/.match account_store_href
     end
 
 end
