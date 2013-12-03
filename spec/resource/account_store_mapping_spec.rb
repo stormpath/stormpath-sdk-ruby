@@ -7,7 +7,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
       application: application,
       account_store: account_store,
       list_index: 0,
-      is_defualt_account_store: false,
+      is_default_account_store: true,
       is_default_group_store: false
      })
   end
@@ -29,6 +29,16 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     it { should respond_to(:is_default_group_store) }
     it { should respond_to(:is_default_account_store) }
     it { should respond_to(:application) }
+  end
+
+
+  describe 'given an application' do
+    let!(:account_store_mapping) {create_account_store_mapping(application,directory)}
+    let(:reloaded_application) { test_api_client.applications.get application.href}
+    it 'should retrive a default account store mapping' do
+      expect(reloaded_application.default_account_store_mapping).to eq(account_store_mapping)
+    end
+
   end
 
   describe "given a directory" do
@@ -55,10 +65,10 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     let(:reloaded_mapping){ application.account_store_mappings.get account_store_mapping.href }
 
     it 'should go from false to true' do
-      expect(account_store_mapping.is_default_group_store).to eq(false)
-      account_store_mapping.default_group_store= true
+      expect(account_store_mapping.is_default_account_store).to eq(true)
+      account_store_mapping.default_account_store= false
       account_store_mapping.save
-      expect(reloaded_mapping.is_default_group_store).to eq(true)
+      expect(reloaded_mapping.is_default_account_store).to eq(false)
     end
 
   end
@@ -77,7 +87,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
       reloaded_application.account_store_mappings.each do |account_store_mapping|
         expect(account_store_mapping.account_store.name).to eq("testDirectory")
         expect(account_store_mapping.list_index).to eq(0)
-        expect(account_store_mapping.default_account_store?).to eq(false)
+        expect(account_store_mapping.default_account_store?).to eq(true)
         expect(account_store_mapping.default_group_store?).to eq(false)
       end
     end
