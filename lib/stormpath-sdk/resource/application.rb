@@ -25,6 +25,9 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_many :password_reset_tokens, can: [:get, :create]
   has_many :account_store_mappings, can: [:get, :create]
 
+  has_one :default_account_store_mapping, class_name: :accountStoreMapping
+  has_one :default_group_store_mapping, class_name: :accountStoreMapping
+
   def self.load composite_url
     begin
       uri = URI(composite_url)
@@ -56,26 +59,10 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     response.authenticate href, request
   end
 
-  def default_account_store_mapping
-    account_store_mappings.get default_account_store_mapping_href
-  end
-
-  def default_group_store_mapping
-    account_store_mappings.get default_group_store_mapping_href
-  end
-
   private
 
     def create_password_reset_token email
       password_reset_tokens.create email: email
-    end
-
-    def default_account_store_mapping_href
-      get_property("defaultAccountStoreMapping")["href"]
-    end
-
-    def default_group_store_mapping_href
-      get_property("defaultGroupStoreMapping")["href"]
     end
 
 end

@@ -20,14 +20,13 @@ module Stormpath
 
       module ClassMethods
 
-        def resource_prop_reader(*args)
-          args.each do |name|
-            resource_class = "Stormpath::Resource::#{name.to_s.camelize}".constantize
-            property_name = name.to_s.camelize :lower
+        def resource_prop_reader(name, options={})
+          options[:class_name] ||= name
+          resource_class = "Stormpath::Resource::#{options[:class_name].to_s.camelize}".constantize
+          property_name = name.to_s.camelize :lower
 
-            define_method(name) do
-              get_resource_property property_name, resource_class
-            end
+          define_method(name) do
+            get_resource_property property_name, resource_class
           end
         end
 
@@ -90,8 +89,8 @@ module Stormpath
             if value.is_a? Hash
               href = get_href_from_hash value
             end
-
-            unless href.nil?
+            
+            if href
               data_store.instantiate clazz, value
             end
           end
