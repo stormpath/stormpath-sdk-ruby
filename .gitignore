@@ -10,3 +10,4 @@ spec/fixtures/vcr_cassettes
 .idea
 Guardfile
 tmp/*
+*.gem

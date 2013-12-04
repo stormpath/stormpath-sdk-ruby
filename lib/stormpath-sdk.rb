@@ -38,6 +38,7 @@ module Stormpath
     autoload :Directories, 'stormpath-sdk/resource/directories'
     autoload :Account, 'stormpath-sdk/resource/account'
     autoload :Accounts, 'stormpath-sdk/resource/accounts'
+    autoload :AccountStoreMapping, 'stormpath-sdk/resource/account_store_mapping'
     autoload :Group, 'stormpath-sdk/resource/group'
     autoload :Groups, 'stormpath-sdk/resource/groups'
     autoload :EmailVerificationToken, 'stormpath-sdk/resource/email_verification_token'
