@@ -2,13 +2,13 @@ require 'spec_helper'
 
 describe Stormpath::Resource::AccountStoreMapping, :vcr do
   
-  def create_account_store_mapping(application, account_store)
+  def create_account_store_mapping(application, account_store, is_default_group_store=false)
     test_api_client.account_store_mappings.create({
       application: application,
       account_store: account_store,
       list_index: 0,
       is_default_account_store: true,
-      is_default_group_store: false
+      is_default_group_store: is_default_group_store
      })
   end
 
@@ -33,12 +33,15 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
 
 
   describe 'given an application' do
-    let!(:account_store_mapping) {create_account_store_mapping(application,directory)}
+    let!(:account_store_mapping) {create_account_store_mapping(application,directory,true)}
     let(:reloaded_application) { test_api_client.applications.get application.href}
     it 'should retrive a default account store mapping' do
       expect(reloaded_application.default_account_store_mapping).to eq(account_store_mapping)
     end
 
+    it 'should retrive a default group store mapping' do
+      expect(reloaded_application.default_group_store_mapping).to eq(account_store_mapping)
+    end
   end
 
   describe "given a directory" do
@@ -64,7 +67,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     let(:account_store_mapping) { create_account_store_mapping(application, directory) }
     let(:reloaded_mapping){ application.account_store_mappings.get account_store_mapping.href }
 
-    it 'should go from false to true' do
+    it 'should go from true to false' do
       expect(account_store_mapping.is_default_account_store).to eq(true)
       account_store_mapping.default_account_store= false
       account_store_mapping.save
