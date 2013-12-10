@@ -13,7 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
-  VERSION = '1.0.0.beta.4'
-  VERSION_DATE = '2013-11-13'
+class Stormpath::Resource::AccountStore < Stormpath::Resource::Instance
+
+
+  def self.new(*args)
+    href = args.first["href"]
+    if /directories/.match href
+      Stormpath::Resource::Directory.new(*args)
+    elsif /group/.match href
+      Stormpath::Resource::Group.new(*args)
+    else
+      raise "inapropriate type of an account store"
+    end 
+  end
+
 end

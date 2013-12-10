@@ -23,6 +23,10 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   belongs_to :tenant
   has_many :accounts, can: [:create]
   has_many :password_reset_tokens, can: [:get, :create]
+  has_many :account_store_mappings, can: [:get, :create]
+
+  has_one :default_account_store_mapping, class_name: :accountStoreMapping
+  has_one :default_group_store_mapping, class_name: :accountStoreMapping
 
   def self.load composite_url
     begin
@@ -57,7 +61,8 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   private
 
-  def create_password_reset_token email
-    password_reset_tokens.create email: email
-  end
+    def create_password_reset_token email
+      password_reset_tokens.create email: email
+    end
+
 end

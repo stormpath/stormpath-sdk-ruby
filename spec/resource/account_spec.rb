@@ -1,6 +1,28 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Account, :vcr do
+  describe "instances" do
+    let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+    subject(:account) do
+      directory.accounts.create email: 'test@example.com',
+          givenName: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK',
+          username: 'rubysdk'
+    end
+
+    it { should respond_to :given_name }
+    it { should respond_to :username }
+    it { should respond_to :surname }
+    it { should respond_to :full_name }
+
+    after do
+      account.delete if account
+      directory.delete if directory
+    end
+
+  end
+
   describe "#add_group" do
     context "given a group" do
       let(:directory) do

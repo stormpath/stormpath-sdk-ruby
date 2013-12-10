@@ -75,7 +75,9 @@ module Stormpath
     end
     has_many :groups, href: '/groups', can: :get
     has_many :group_memberships, href: '/groupMemberships', can: [:get, :create]
+    has_many :account_store_mappings, href: '/accountStoreMappings', can: [:get, :create]
 
+    
     private
 
     def load_api_key_file(api_key_file_location, id_property_name, secret_property_name)
