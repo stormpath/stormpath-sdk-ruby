@@ -25,3 +25,6 @@ env:
       cJ2ExNmmGSjBHIgjZ6zs+AUEVBSfyTj2qG9SNV0j/P9mnjg32irU/tG7f1yI
       yvaGCsPr2h6rwtiMb8QHA4tMqHsoay0e9s7jyBtn6amgUaLsV2vdhQTWDuIU
       cksOE3PMIovYl9ANLb6KrhDWt7ue/fOxEALh0a5rAu50C/tNvgo=
+
+services:
+  - redis-server
