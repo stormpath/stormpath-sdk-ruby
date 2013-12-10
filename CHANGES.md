@@ -4,7 +4,7 @@ stormpath-sdk-ruby Changelog
 Version 1.0.0.beta.4
 --------------------
 
-Released on December 7, 2013
+Released on December 10, 2013
 
 - Added the Account Store CRUD (AccountStore and AccountStoreMapping resources)
 - Added the full_name prop_reader to the Account resource
