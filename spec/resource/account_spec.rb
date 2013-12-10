@@ -15,6 +15,7 @@ describe Stormpath::Resource::Account, :vcr do
     it { should respond_to :username }
     it { should respond_to :surname }
     it { should respond_to :full_name }
+    it { should respond_to :custom_data}
 
     after do
       account.delete if account

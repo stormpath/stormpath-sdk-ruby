@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class  Stormpath::Resource::Account < Stormpath::Resource::Instance
+class Stormpath::Resource::Account < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
 
   prop_accessor :username, :email, :given_name, :middle_name, :surname
@@ -26,6 +26,8 @@ class  Stormpath::Resource::Account < Stormpath::Resource::Instance
 
   has_many :groups
   has_many :group_memberships
+
+  has_one :custom_data
 
   def add_group group
     client.group_memberships.create group: group, account: self

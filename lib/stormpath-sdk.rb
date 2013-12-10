@@ -31,6 +31,7 @@ module Stormpath
     autoload :Error, 'stormpath-sdk/resource/error'
     autoload :Instance, 'stormpath-sdk/resource/instance'
     autoload :Collection, 'stormpath-sdk/resource/collection'
+    autoload :CustomData, 'stormpath-sdk/resource/custom_data'
     autoload :Tenant, 'stormpath-sdk/resource/tenant'
     autoload :Application, 'stormpath-sdk/resource/application'
     autoload :Applications, 'stormpath-sdk/resource/applications'
