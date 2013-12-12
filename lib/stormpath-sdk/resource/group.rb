@@ -23,6 +23,8 @@ class Stormpath::Resource::Group < Stormpath::Resource::Instance
 
   has_many :accounts
 
+  has_one :custom_data
+
   def add_account account
     client.group_memberships.create group: self, account: account
   end

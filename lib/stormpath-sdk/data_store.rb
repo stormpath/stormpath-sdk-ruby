@@ -68,11 +68,11 @@ class Stormpath::DataStore
     end
   end
 
-  def save(resource, clazz = nil)
+  def save(resource, clazz = nil, href = nil)
     assert_not_nil resource, "resource argument cannot be null."
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
-    href = resource.href
+    href ||= resource.href
     assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
 
     href = if needs_to_be_fully_qualified(href)

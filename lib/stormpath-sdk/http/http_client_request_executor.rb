@@ -32,7 +32,6 @@ module Stormpath
       end
 
       def execute_request(request)
-
         assert_not_nil request, "Request argument cannot be null."
 
         @redirect_response = nil
