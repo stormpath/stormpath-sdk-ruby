@@ -17,13 +17,13 @@ class Stormpath::Resource::AccountStore < Stormpath::Resource::Instance
 
 
   def self.new(*args)
-    href = args.first["href"]
+    href = args.first[HREF_PROP_NAME]
     if /directories/.match href
       Stormpath::Resource::Directory.new(*args)
     elsif /group/.match href
       Stormpath::Resource::Group.new(*args)
     else
-      raise "inapropriate type of an account store"
+      raise "inappropriate type of an account store"
     end 
   end
 
