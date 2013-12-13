@@ -24,10 +24,12 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
     data_store.save self, nil, href
   end
 
-  def delete_reserved_fields
-    RESERVED_FIELDS.each do |reserved_method|
+  private
+    
+    def delete_reserved_fields
+      RESERVED_FIELDS.each do |reserved_method|
         self.properties.delete reserved_method
+      end
     end
-  end
 
 end
