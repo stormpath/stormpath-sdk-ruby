@@ -73,6 +73,7 @@ class Stormpath::DataStore
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
     href ||= resource.href
+    assert_not_nil href, "href or resource.href cannot be null."
     assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
 
     href = if needs_to_be_fully_qualified(href)
