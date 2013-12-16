@@ -32,5 +32,10 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   def add_group group
     client.group_memberships.create group: group, account: self
   end
+
+  def save
+    data_store.save self
+    custom_data.save
+  end
   
 end
