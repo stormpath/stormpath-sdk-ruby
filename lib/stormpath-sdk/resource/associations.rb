@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+require 'pry'
+require 'pry-debugger'
+
 module Stormpath
   module Resource
     module Associations
@@ -24,7 +28,6 @@ module Stormpath
           options[:class_name] ||= name
           resource_class = "Stormpath::Resource::#{options[:class_name].to_s.camelize}".constantize
           property_name = name.to_s.camelize :lower
-
           define_method(name) do
             get_resource_property property_name, resource_class
           end
@@ -91,7 +94,10 @@ module Stormpath
             end
             
             if href
-              data_store.instantiate clazz, value
+              if instance_variable_get("@_#{key.underscore}").nil?
+                instance_variable_set("@_#{key.underscore}", data_store.instantiate(clazz, value))
+              end
+              instance_variable_get("@_#{key.underscore}")
             end
           end
 
