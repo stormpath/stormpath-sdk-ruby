@@ -2,34 +2,45 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
 
   RESERVED_FIELDS = %w( href createdAt modifiedAt meta spMeta spmeta ionmeta ionMeta )
-  
-  def method_missing(meth, *args, &block)
-    if meth =~ /=$/
-      property_name = meth.to_s.chomp("=").camelize(:lower)
-      if RESERVED_FIELDS.include? property_name
-        super(meth, *args, &block)
-      else
-        set_property property_name, args[0]
-      end
-    else
-      property_name = meth.to_s.camelize(:lower)
-      property = get_property property_name 
-      property || super(meth, *args, &block)
-    end 
+
+  def get(property_name)
+    property_name = property_name.to_s.camelize(:lower)
+    property = get_property property_name 
+    property
   end
 
+  def put(property_name, property_value)
+    unless RESERVED_FIELDS.include? property_name
+      set_property property_name, property_value
+    end
+  end
+  
   def save
-    href = self.properties["href"]
+    href = properties[HREF_PROP_NAME]
     delete_reserved_fields
-    data_store.save self, nil, href
+    if has_any_keys_to_save
+      data_store.save self, nil, href
+    end
+  end
+
+  def delete(property_name = nil)
+    unless new?
+      deletion_href = href 
+      deletion_href += "/#{property_name.to_s.camelize(:lower)}" if property_name
+      data_store.delete self, deletion_href
+    end
   end
 
   private
     
     def delete_reserved_fields
-      RESERVED_FIELDS.each do |reserved_method|
-        self.properties.delete reserved_method
+      RESERVED_FIELDS.each do |reserved_field|
+        self.properties.delete reserved_field
       end
+    end
+
+    def has_any_keys_to_save
+      self.properties.size > 0
     end
 
 end
