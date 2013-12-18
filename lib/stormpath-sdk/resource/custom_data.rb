@@ -1,5 +1,4 @@
 class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
 
   RESERVED_FIELDS = %w( href createdAt modifiedAt meta spMeta spmeta ionmeta ionMeta )
 

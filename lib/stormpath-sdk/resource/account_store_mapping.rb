@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 class Stormpath::Resource::AccountStoreMapping < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
 
   prop_accessor :list_index, :is_default_account_store, :is_default_group_store
 
