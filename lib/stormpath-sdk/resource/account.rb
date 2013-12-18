@@ -38,4 +38,11 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
     custom_data.save
   end
   
+  UNVERIFIED = 'UNVERIFIED'
+  LOCKED = 'LOCKED'
+
+  def status_hash
+    super.merge UNVERIFIED => UNVERIFIED, LOCKED => LOCKED
+  end
+
 end

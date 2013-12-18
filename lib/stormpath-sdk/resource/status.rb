@@ -26,9 +26,7 @@ module Stormpath::Resource::Status
 
   def status
     value = get_property STATUS
-
     value.upcase! if value
-
     value
   end
 
