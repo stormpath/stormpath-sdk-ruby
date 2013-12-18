@@ -6,11 +6,11 @@ describe Stormpath::Resource::CustomData, :vcr do
     let(:directory) { test_api_client.directories.create name: 'test_directory' }
 
     let(:account) do
-      directory.accounts.create email: 'jabba.hutt@example.com',
-        givenName: 'Jabba',
-        password: 'Jabba123!',
-        surname: 'The Hutt',
-        username: 'Jabba The Hutt'
+      directory.accounts.create username: "jlpicard",
+         email: "capt@enterprise.com",
+         givenName: "Jean-Luc",
+         surname: "Picard",
+         password: "uGhd%a8Kl!"
     end
 
     let(:reloaded_account) { test_api_client.accounts.get account.href }
@@ -27,10 +27,10 @@ describe Stormpath::Resource::CustomData, :vcr do
     end
 
     it 'set custom data' do
-      account.custom_data.put(:vehicle, "Sail barge")
-      expect(account.custom_data.get(:vehicle)).to eq("Sail barge")
+      account.custom_data.put(:rank, "Captain")
+      expect(account.custom_data.get(:rank)).to eq("Captain")
       account.custom_data.save
-      expect(reloaded_account.custom_data.get(:vehicle)).to eq("Sail barge")
+      expect(reloaded_account.custom_data.get(:rank)).to eq("Captain")
     end
 
     it 'not raise errors when saving a empty properties array' do
@@ -38,36 +38,36 @@ describe Stormpath::Resource::CustomData, :vcr do
     end
 
     it 'trigger custom data saving on account.save' do
-      account.custom_data.put(:vehicle, "Sail barge")
-      account.surname = "Hutt"
+      account.custom_data.put(:rank, "Captain")
+      account.surname = "Picard!"
       account.save
-      expect(reloaded_account.surname).to eq("Hutt")
-      expect(reloaded_account.custom_data.get(:vehicle)).to eq("Sail barge")
+      expect(reloaded_account.surname).to eq("Picard!")
+      expect(reloaded_account.custom_data.get(:rank)).to eq("Captain")
     end
 
     it 'delete all custom data' do
-      account.custom_data.put("vehicle", "Sail barge")
+      account.custom_data.put(:rank, "Captain")
       account.custom_data.save
-      expect(account.custom_data.get("vehicle")).to eq("Sail barge")
+      expect(account.custom_data.get(:rank)).to eq("Captain")
       account.custom_data.delete
-      expect(reloaded_account.custom_data.get("vehicle")).to eq(nil)
+      expect(reloaded_account.custom_data.get(:rank)).to eq(nil)
     end
 
     it 'delete a specific custom data field' do
-      account.custom_data.put("vehicle", "Sail barge")
-      account.custom_data.put("homeworld", "Tatooine")
+      account.custom_data.put(:rank, "Captain")
+      account.custom_data.put("favorite_drink", "Earl Grey Tea")
       account.custom_data.save
       
-      account.custom_data.delete("vehicle")
-      expect(reloaded_account.custom_data.get("vehicle")).to eq(nil)
-      expect(reloaded_account.custom_data.get("homeworld")).to eq("Tatooine")
+      account.custom_data.delete(:rank)
+      expect(reloaded_account.custom_data.get(:rank)).to eq(nil)
+      expect(reloaded_account.custom_data.get("favorite_drink")).to eq("Earl Grey Tea")
     end
   end
 
   describe "#for groups" do
     let(:directory) { test_api_client.directories.create name: 'test_directory' }
 
-    let(:group) { directory.groups.create name: 'Duality' }
+    let(:group) { directory.groups.create name: 'test_group' }
 
     let(:reloaded_group) { test_api_client.groups.get group.href }
 
@@ -83,10 +83,10 @@ describe Stormpath::Resource::CustomData, :vcr do
     end
 
     it 'set custom data' do
-      group.custom_data.put(:cult, "Tarrack")
-      expect(group.custom_data.get(:cult)).to eq("Tarrack")
+      group.custom_data.put(:series, "Enterprise")
+      expect(group.custom_data.get(:series)).to eq("Enterprise")
       group.custom_data.save
-      expect(reloaded_group.custom_data.get(:cult)).to eq("Tarrack")
+      expect(reloaded_group.custom_data.get(:series)).to eq("Enterprise")
     end
 
     it 'not raise errors when saving a empty properties array' do
@@ -94,29 +94,29 @@ describe Stormpath::Resource::CustomData, :vcr do
     end
 
     it 'trigger custom data saving on group.save' do
-      group.custom_data.put(:cult, "Tarrack")
+      group.custom_data.put(:series, "Enterprise")
       group.description = "founded on the twin principles of joy and service"
       group.save
       expect(reloaded_group.description).to eq("founded on the twin principles of joy and service")
-      expect(reloaded_group.custom_data.get(:cult)).to eq("Tarrack")
+      expect(reloaded_group.custom_data.get(:series)).to eq("Enterprise")
     end
 
     it 'delete all custom data' do
-      group.custom_data.put("cult", "Tarrack")
+      group.custom_data.put("series", "Enterprise")
       group.custom_data.save
-      expect(group.custom_data.get("cult")).to eq("Tarrack")
+      expect(group.custom_data.get("series")).to eq("Enterprise")
       group.custom_data.delete
-      expect(reloaded_group.custom_data.get("cult")).to eq(nil)
+      expect(reloaded_group.custom_data.get("series")).to eq(nil)
     end
 
     it 'delete a specific custom data field' do
-      group.custom_data.put("cult", "Tarrack")
-      group.custom_data.put("homeworld", "Tatooine")
+      group.custom_data.put("series", "Enterprise")
+      group.custom_data.put("favorite_drink", "Earl Grey Tea")
       group.custom_data.save
       
-      group.custom_data.delete("cult")
-      expect(reloaded_group.custom_data.get("cult")).to eq(nil)
-      expect(reloaded_group.custom_data.get("homeworld")).to eq("Tatooine")
+      group.custom_data.delete("series")
+      expect(reloaded_group.custom_data.get("series")).to eq(nil)
+      expect(reloaded_group.custom_data.get("favorite_drink")).to eq("Earl Grey Tea")
     end
   end
 
