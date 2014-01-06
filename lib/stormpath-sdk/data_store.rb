@@ -19,6 +19,7 @@ class Stormpath::DataStore
 
   DEFAULT_SERVER_HOST = "api.stormpath.com"
   DEFAULT_API_VERSION = 1
+  HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships tenants )
 
@@ -114,12 +115,7 @@ class Stormpath::DataStore
   end
 
   def qualify(href)
-    slash_added = ''
-
-    if !href.start_with? '/'
-      slash_added = '/'
-    end
-
+    slash_added = href.start_with?('/') ? '' : '/'
     @base_url + slash_added + href
   end
 
@@ -134,7 +130,6 @@ class Stormpath::DataStore
     request = Request.new(http_method, href, query, Hash.new, body)
     apply_default_request_headers request
     response = @request_executor.execute_request request
-
     result = response.body.length > 0 ? MultiJson.load(response.body) : ''
 
     if response.error?
@@ -157,7 +152,7 @@ class Stormpath::DataStore
   end
 
   def cache_walk(resource)
-    assert_not_nil resource['href'], "resource must have 'href' property"
+    # assert_not_nil resource['href'], "resource must have 'href' property"
     items = resource['items']
 
     if items # collection resource
@@ -169,7 +164,7 @@ class Stormpath::DataStore
       resource.each do |attr, value|
         if value.is_a? Hash
           walked = cache_walk value
-          resource[attr] = { 'href' => value['href'] }
+          resource[attr] = { 'href' => value['href'] } if value["href"]
           resource[attr]['items'] = walked['items'] if walked['items']
         end
       end
@@ -214,6 +209,7 @@ class Stormpath::DataStore
              end
 
     response = execute_request('post', q_href, MultiJson.dump(to_hash(resource)))
+
     instantiate return_type, response.to_hash
   end
 
@@ -228,7 +224,7 @@ class Stormpath::DataStore
       resource.get_property_names.each do |name|
         property = resource.get_property name
 
-        if property.kind_of? Hash
+        if property.kind_of?(Hash) && an_association_reference?(property, name)
           property = to_simple_reference name, property
         end
 
@@ -238,14 +234,19 @@ class Stormpath::DataStore
   end
 
   def to_simple_reference(property_name, hash)
-    href_prop_name = Stormpath::Resource::Base::HREF_PROP_NAME
     assert_true(
-      (hash.kind_of?(Hash) and !hash.empty? and hash.has_key?(href_prop_name)),
+      (hash.kind_of?(Hash) and !hash.empty? and hash.has_key?(HREF_PROP_NAME)),
       "Nested resource '#{property_name}' must have an 'href' property."
     )
 
-    href = hash[href_prop_name]
+    href = hash[HREF_PROP_NAME]
 
-    {href_prop_name => href}
+    {HREF_PROP_NAME => href}
   end
+
+  #PREVENT ADDITIONAL CUSTOM DATA TRANSFORMATIONS 
+  def an_association_reference?(value, name)
+    value.size == 1 && value[HREF_PROP_NAME] && value[HREF_PROP_NAME].match(DEFAULT_SERVER_HOST) && value[HREF_PROP_NAME].match(name)
+  end
+
 end

@@ -18,7 +18,7 @@ class Stormpath::Resource::Base
   include Stormpath::Resource::Associations
 
   HREF_PROP_NAME = "href"
-
+  DEFAULT_SERVER_HOST = Stormpath::DataStore::DEFAULT_SERVER_HOST
   attr_reader :client, :properties
 
   class << self
@@ -233,10 +233,8 @@ class Stormpath::Resource::Base
     {}.tap do |sanitized_properties|
       properties.map do |key, value|
         property_name = key.to_s.camelize :lower
-
         sanitized_properties[property_name] =
-          if (value.kind_of? Hash) or
-            (value.kind_of? Stormpath::Resource::Base)
+          if (value.kind_of? Hash and an_association_reference?(value, property_name)) or (value.kind_of? Stormpath::Resource::Base)
             deep_sanitize value
           else
             value
@@ -252,5 +250,10 @@ class Stormpath::Resource::Base
     when Hash
       sanitize hash_or_resource
     end
+  end
+
+  #PREVENT ADDITIONAL CUSTOM DATA TRANSFORMATIONS
+  def an_association_reference?(value, name)
+    value.size == 1 && value[HREF_PROP_NAME] && value[HREF_PROP_NAME].match(DEFAULT_SERVER_HOST) && value[HREF_PROP_NAME].match(name)
   end
 end
