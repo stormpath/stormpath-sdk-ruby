@@ -33,6 +33,15 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(reloaded_account.custom_data.get(:rank)).to eq("Captain")
     end
 
+    it 'set nested custom data' do
+      account.custom_data.put(:special_rank, "Captain")
+      account.custom_data.put(:permissions, {"crew_quarters" => "93-601"})
+      expect(account.custom_data.get(:permissions)).to eq({"crew_quarters" => "93-601"})
+      account.custom_data.save
+      expect(reloaded_account.custom_data.get(:special_rank)).to eq("Captain")
+      expect(reloaded_account.custom_data.get(:permissions)).to eq({"crew_quarters" => "93-601"})
+    end
+
     it 'not raise errors when saving a empty properties array' do
       account.custom_data.save
     end
@@ -87,6 +96,15 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(group.custom_data.get(:series)).to eq("Enterprise")
       group.custom_data.save
       expect(reloaded_group.custom_data.get(:series)).to eq("Enterprise")
+    end
+
+    it 'set nested custom data' do
+      group.custom_data.put(:special_rank, "Captain")
+      group.custom_data.put(:permissions, {"crew_quarters" => "93-601"})
+      expect(group.custom_data.get(:permissions)).to eq({"crew_quarters" => "93-601"})
+      group.custom_data.save
+      expect(reloaded_group.custom_data.get(:special_rank)).to eq("Captain")
+      expect(reloaded_group.custom_data.get(:permissions)).to eq({"crew_quarters" => "93-601"})
     end
 
     it 'not raise errors when saving a empty properties array' do
