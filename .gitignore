@@ -11,3 +11,4 @@ spec/fixtures/vcr_cassettes
 Guardfile
 tmp/*
 *.gem
+.bundle/
