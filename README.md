@@ -416,7 +416,7 @@ Group membership can be created by:
 * Explicitly creating a group membership resource with your client:
 
   ```ruby
-  group_memebership = client.group_memberships.create group: group, account: account
+  group_membership = client.group_memberships.create group: group, account: account
   ```
 
 * Using the <code>add_group</code> method on the account instance:
