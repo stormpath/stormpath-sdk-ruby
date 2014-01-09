@@ -57,11 +57,7 @@ describe Stormpath::Resource::Account, :vcr do
       end
 
       it 'adds the group to the account' do
-        group_added = false
-        reloaded_account.groups.each do |g|
-          group_added = true if g.href == group.href
-        end
-        expect(group_added).to be_true
+        expect(reloaded_account.groups).to include(group)
       end
     end
   end
