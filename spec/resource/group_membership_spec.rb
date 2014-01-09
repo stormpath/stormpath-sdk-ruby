@@ -27,12 +27,12 @@ describe Stormpath::Resource::GroupMembership, :vcr do
       end
 
       it "group and account memberships should correspond to each other" do
-        expect(reloaded_group.accounts).to include(account)
-        expect(reloaded_account.groups).to include(group)
         expect(reloaded_group.account_memberships).to have(1).item
         expect(reloaded_account.group_memberships).to have(1).item
-        expect(reloaded_group.account_memberships.first.group).to eq(reloaded_account.group_memberships.first.group)
-        expect(reloaded_group.account_memberships.first.account).to eq(reloaded_account.group_memberships.first.account)
+        expect(reloaded_group.accounts).to include(account)
+        expect(reloaded_account.groups).to include(group)
+        expect(reloaded_group.account_memberships.first).to be_a(Stormpath::Resource::GroupMembership)
+        expect(reloaded_account.group_memberships.first).to be_a(Stormpath::Resource::GroupMembership)
       end
     end
   end
