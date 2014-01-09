@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Stormpath, Inc.
+# Copyright 2014 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,26 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Group < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
-
-  prop_accessor :name, :description
-
-  belongs_to :tenant
-  belongs_to :directory
-
-  has_many :accounts
-  has_many :account_memberships
-
-  has_one :custom_data
-
-  def add_account account
-    client.group_memberships.create group: self, account: account
-  end
-
-  def save
-    data_store.save self
-    custom_data.save
-  end
-  
-end
+Stormpath::Resource::AccountMembership = Stormpath::Resource::GroupMembership

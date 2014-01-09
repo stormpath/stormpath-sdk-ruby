@@ -43,6 +43,10 @@ describe Stormpath::Resource::Group, :vcr do
       it "adds the account to the group" do
         expect(reloaded_group.accounts).to include(account)
       end
+
+      it 'has one account membership resource' do
+        expect(reloaded_group.account_memberships).to have(1).item
+      end
     end
   end
 end
