@@ -2,37 +2,22 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Group, :vcr do
-  describe '#add_account' do
+  describe '#add_or_remove_account' do
     context "given an account" do
-      let(:directory) do
-        test_api_client.directories.create name: 'testDirectory'
-      end
 
-      let(:group) do
-        directory.groups.create name: 'someGroup'
-      end
+      let(:directory) { test_api_client.directories.create name: 'testDirectory' }
 
-      let(:account) do
-        directory.accounts.create({
-          email: 'rubysdk@example.com',
-          given_name: 'Ruby SDK',
-          password: 'P@$$w0rd',
-          surname: 'SDK',
-          username: 'rubysdk'
-        })
-      end
+      let(:group) { directory.groups.create name: 'someGroup' }
 
-      let(:reloaded_account) do
-        test_api_client.accounts.get account.href
-      end
+      let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
 
-      let(:reloaded_group) do
-        test_api_client.groups.get group.href
-      end
+      let(:reloaded_account) { test_api_client.accounts.get account.href }
 
-      before do
-        group.add_account account
-      end
+      let(:reloaded_group) { test_api_client.groups.get group.href }
+
+      let(:reloaded_group_2) { test_api_client.groups.get group.href }
+
+      before { group.add_account account }
 
       after do
         group.delete if group
@@ -47,6 +32,13 @@ describe Stormpath::Resource::Group, :vcr do
       it 'has one account membership resource' do
         expect(reloaded_group.account_memberships).to have(1).item
       end
+
+      it 'adds and removes the group from the account' do
+        expect(reloaded_group.accounts).to include(account)
+        reloaded_group.remove_account account
+        expect(reloaded_group_2.accounts).not_to include(account)
+      end
+
     end
   end
 end
