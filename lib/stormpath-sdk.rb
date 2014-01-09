@@ -34,20 +34,15 @@ module Stormpath
     autoload :CustomData, 'stormpath-sdk/resource/custom_data'
     autoload :Tenant, 'stormpath-sdk/resource/tenant'
     autoload :Application, 'stormpath-sdk/resource/application'
-    autoload :Applications, 'stormpath-sdk/resource/applications'
     autoload :Directory, 'stormpath-sdk/resource/directory'
-    autoload :Directories, 'stormpath-sdk/resource/directories'
     autoload :Account, 'stormpath-sdk/resource/account'
-    autoload :Accounts, 'stormpath-sdk/resource/accounts'
     autoload :AccountStore, 'stormpath-sdk/resource/account_store'
     autoload :AccountStoreMapping, 'stormpath-sdk/resource/account_store_mapping'
     autoload :Group, 'stormpath-sdk/resource/group'
-    autoload :Groups, 'stormpath-sdk/resource/groups'
     autoload :EmailVerificationToken, 'stormpath-sdk/resource/email_verification_token'
     autoload :GroupMembership, 'stormpath-sdk/resource/group_membership'
-    autoload :GroupMemberships, 'stormpath-sdk/resource/group_memberships'
+    autoload :AccountMembership, 'stormpath-sdk/resource/account_membership'
     autoload :PasswordResetToken, 'stormpath-sdk/resource/password_reset_token'
-    autoload :PasswordResetTokens, 'stormpath-sdk/resource/password_reset_tokens'
   end
 
   module Cache
