@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Account, :vcr do
+  
   describe "instances" do
     let(:directory) { test_api_client.directories.create name: 'testDirectory' }
     subject(:account) do
@@ -59,6 +60,10 @@ describe Stormpath::Resource::Account, :vcr do
       it 'adds the group to the account' do
         expect(reloaded_account.groups).to include(group)
       end
+
+      it 'has one group membership resource' do
+        expect(reloaded_account.group_memberships).to have(1).item
+      end
     end
   end
 
@@ -90,4 +95,5 @@ describe Stormpath::Resource::Account, :vcr do
       end
     end
   end
+
 end

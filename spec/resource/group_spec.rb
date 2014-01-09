@@ -41,8 +41,7 @@ describe Stormpath::Resource::Group, :vcr do
       end
 
       it "adds the account to the group" do
-        found = reloaded_group.accounts.find { |a| a.href == account.href }
-        expect(found).to be
+        expect(reloaded_group.accounts).to include(account)
       end
     end
   end
