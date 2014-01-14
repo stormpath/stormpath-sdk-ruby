@@ -63,6 +63,40 @@ describe Stormpath::Resource::Application, :vcr do
     end
   end
 
+  describe '#authenticate_account_with_an_account_store_specified' do
+    context 'given an specific account store' do
+      let(:password) {'P@$$w0rd' }
+
+      let(:login_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new account.username, password
+      end
+
+      let(:new_directory) { test_api_client.directories.create name: 'test_account_store'}
+
+      let(:authentication_result) { application.authenticate_account login_request, new_directory}
+
+      let(:account) do
+        new_directory.accounts.create build_account(password: 'P@$$w0rd')
+      end
+
+      before do
+        test_api_client.account_store_mappings.create({ application: application, account_store: new_directory })
+      end
+
+      after do
+        account.delete if account
+        new_directory.delete if new_directory
+      end
+
+      it 'should return an authentication result' do
+        expect(authentication_result).to be
+        expect(authentication_result.account).to be
+        expect(authentication_result.account).to be_kind_of Stormpath::Resource::Account
+        expect(authentication_result.account.email).to eq(account.email)
+      end
+    end
+  end
+
   describe '#send_password_reset_email' do
     context 'given an email' do
       context 'of an exisiting account on the application' do
