@@ -70,21 +70,14 @@ describe Stormpath::Resource::Application, :vcr do
       Stormpath::Authentication::UsernamePasswordRequest.new account.username, password
     end
 
-    let(:new_directory) { test_api_client.directories.create name: 'test_account_store'}
-
-    let(:authentication_result) { application.authenticate_account login_request, new_directory}
-
-    before do
-      test_api_client.account_store_mappings.create({ application: application, account_store: new_directory })
-    end
-
     after do
       account.delete if account
-      new_directory.delete if new_directory
     end
     
     context 'given a proper directory' do 
-      let(:account) { new_directory.accounts.create build_account(password: 'P@$$w0rd') }
+      let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
+
+      let(:authentication_result) { application.authenticate_account login_request, directory}
 
       it 'should return an authentication result' do
         expect(authentication_result).to be
@@ -95,10 +88,42 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'given a wrong directory' do
-      let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
+      let(:new_directory) { test_api_client.directories.create name: 'test_account_store'}
+
+      let(:account) { new_directory.accounts.create build_account(password: 'P@$$w0rd') }
+
+      let(:authentication_result) { application.authenticate_account login_request, directory}
+
+      after do
+        new_directory.delete if new_directory
+      end
 
       it 'raises and error' do
         expect { authentication_result }.to raise_error Stormpath::Error
+      end
+    end
+
+    context 'given a proper group' do
+      let(:group) {directory.groups.create name: "test_group"}
+
+      let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
+
+      let(:authentication_result) { application.authenticate_account login_request, group}
+
+      before do
+        test_api_client.account_store_mappings.create({ application: application, account_store: group })
+        group.add_account account
+      end
+
+      after do
+        group.delete if group
+      end
+
+      it 'should return a authentication result' do
+        expect(authentication_result).to be
+        expect(authentication_result.account).to be
+        expect(authentication_result.account).to be_kind_of Stormpath::Resource::Account
+        expect(authentication_result.account.email).to eq(account.email)
       end
     end
 
