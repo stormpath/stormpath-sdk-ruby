@@ -98,12 +98,12 @@ describe Stormpath::Resource::Application, :vcr do
         new_directory.delete if new_directory
       end
 
-      it 'raises and error' do
+      it 'raises an error' do
         expect { authentication_result }.to raise_error Stormpath::Error
       end
     end
 
-    context 'given a proper group' do
+    context 'given a group' do
       let(:group) {directory.groups.create name: "test_group"}
 
       let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
@@ -112,18 +112,22 @@ describe Stormpath::Resource::Application, :vcr do
 
       before do
         test_api_client.account_store_mappings.create({ application: application, account_store: group })
-        group.add_account account
       end
 
       after do
         group.delete if group
       end
 
-      it 'should return a authentication result' do
+      it 'and assigning the account to it, should return a authentication result' do
+        group.add_account account
         expect(authentication_result).to be
         expect(authentication_result.account).to be
         expect(authentication_result.account).to be_kind_of Stormpath::Resource::Account
         expect(authentication_result.account.email).to eq(account.email)
+      end
+
+      it 'but not assigning the account to, it should raise an error' do
+        expect { authentication_result }.to raise_error Stormpath::Error
       end
     end
 
