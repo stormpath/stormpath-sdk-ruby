@@ -22,7 +22,7 @@ module Stormpath
         @data_store = data_store
       end
 
-      def authenticate parent_href, request, account_store = nil
+      def authenticate parent_href, request, options = {}
         assert_not_nil parent_href, "parentHref argument must be specified"
         assert_kind_of UsernamePasswordRequest, request, "Only UsernamePasswordRequest instances are supported."
 
@@ -40,7 +40,7 @@ module Stormpath
         attempt.type = 'basic'
         attempt.value = value
 
-        attempt.account_store = account_store if account_store
+        attempt.account_store = options[:account_store] if options[:account_store]
 
         href = parent_href + '/loginAttempts'
 

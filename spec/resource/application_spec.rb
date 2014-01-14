@@ -77,7 +77,7 @@ describe Stormpath::Resource::Application, :vcr do
     context 'given a proper directory' do 
       let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
 
-      let(:authentication_result) { application.authenticate_account login_request, directory}
+      let(:authentication_result) { application.authenticate_account login_request, account_store: directory}
 
       it 'should return an authentication result' do
         expect(authentication_result).to be
@@ -92,7 +92,7 @@ describe Stormpath::Resource::Application, :vcr do
 
       let(:account) { new_directory.accounts.create build_account(password: 'P@$$w0rd') }
 
-      let(:authentication_result) { application.authenticate_account login_request, directory}
+      let(:authentication_result) { application.authenticate_account login_request, account_store: directory}
 
       after do
         new_directory.delete if new_directory
@@ -108,7 +108,7 @@ describe Stormpath::Resource::Application, :vcr do
 
       let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
 
-      let(:authentication_result) { application.authenticate_account login_request, group}
+      let(:authentication_result) { application.authenticate_account login_request, account_store: group}
 
       before do
         test_api_client.account_store_mappings.create({ application: application, account_store: group })
