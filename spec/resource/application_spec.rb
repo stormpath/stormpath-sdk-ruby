@@ -64,29 +64,27 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe '#authenticate_account_with_an_account_store_specified' do
-    context 'given an specific account store' do
-      let(:password) {'P@$$w0rd' }
+    let(:password) {'P@$$w0rd' }
 
-      let(:login_request) do
-        Stormpath::Authentication::UsernamePasswordRequest.new account.username, password
-      end
+    let(:login_request) do
+      Stormpath::Authentication::UsernamePasswordRequest.new account.username, password
+    end
 
-      let(:new_directory) { test_api_client.directories.create name: 'test_account_store'}
+    let(:new_directory) { test_api_client.directories.create name: 'test_account_store'}
 
-      let(:authentication_result) { application.authenticate_account login_request, new_directory}
+    let(:authentication_result) { application.authenticate_account login_request, new_directory}
 
-      let(:account) do
-        new_directory.accounts.create build_account(password: 'P@$$w0rd')
-      end
+    before do
+      test_api_client.account_store_mappings.create({ application: application, account_store: new_directory })
+    end
 
-      before do
-        test_api_client.account_store_mappings.create({ application: application, account_store: new_directory })
-      end
-
-      after do
-        account.delete if account
-        new_directory.delete if new_directory
-      end
+    after do
+      account.delete if account
+      new_directory.delete if new_directory
+    end
+    
+    context 'given a proper directory' do 
+      let(:account) { new_directory.accounts.create build_account(password: 'P@$$w0rd') }
 
       it 'should return an authentication result' do
         expect(authentication_result).to be
@@ -95,6 +93,15 @@ describe Stormpath::Resource::Application, :vcr do
         expect(authentication_result.account.email).to eq(account.email)
       end
     end
+
+    context 'given a wrong directory' do
+      let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
+
+      it 'raises and error' do
+        expect { authentication_result }.to raise_error Stormpath::Error
+      end
+    end
+
   end
 
   describe '#send_password_reset_email' do

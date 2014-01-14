@@ -131,7 +131,6 @@ class Stormpath::DataStore
     apply_default_request_headers request
     response = @request_executor.execute_request request
     result = response.body.length > 0 ? MultiJson.load(response.body) : ''
-    binding.pry if request.href == "https://api.stormpath.com/v1/applications/3nZlLKVMIOPu71YC7TFR0o/loginAttempts"
 
     if response.error?
       error = Stormpath::Resource::Error.new result
