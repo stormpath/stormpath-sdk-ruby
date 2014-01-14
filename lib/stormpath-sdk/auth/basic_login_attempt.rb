@@ -22,19 +22,17 @@ module Stormpath
       ACCOUNT_STORE = "account_store"
 
       def account_store
-        property_name = ACCOUNT_STORE.to_s.camelize(:lower)
-        get_property property_name
+        get_property ACCOUNT_STORE.to_s.camelize(:lower)
       end
 
       def account_store=(account_store)
         if account_store.kind_of? Stormpath::Resource::Base
-          account_store = account_store.href
+          set_property ACCOUNT_STORE, {HREF_PROP_NAME => account_store.href}
         end
-        set_property ACCOUNT_STORE, {HREF_PROP_NAME => account_store}
       end
 
       def type
-        get_property TYPE
+        get_property TYPE.to_s.camelize(:lower)
       end
 
       def type=(type)
@@ -42,7 +40,7 @@ module Stormpath
       end
 
       def value
-        get_property VALUE
+        get_property VALUE.to_s.camelize(:lower)
       end
 
       def value=(value)
