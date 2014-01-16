@@ -28,18 +28,11 @@ describe Stormpath::Resource::Directory, :vcr do
     end
   end
 
-
   describe '#delete_directory' do
 
     let(:directory) { test_api_client.directories.create name: 'test_directory' }
 
     let(:application) { test_api_client.applications.create name: 'test_application' }
-
-    let(:reloaded_directory) { test_api_client.directories.get directory.href }
-
-    let(:reloaded_application) { test_api_client.applications.get application.href }
-
-    let(:reloaded_application_2) { test_api_client.applications.get application.href }
 
     let!(:group) { directory.groups.create name: 'someGroup' }
 
@@ -54,22 +47,25 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     it 'and all of its associations' do
-      expect(reloaded_directory.groups).to have(1).item
-      expect(reloaded_directory.accounts).to have(1).item
+      expect(directory.groups).to have(1).item
+      expect(directory.accounts).to have(1).item
 
-      expect(reloaded_application.account_store_mappings.first.account_store).to eq(directory)
+      expect(application.account_store_mappings.first.account_store).to eq(directory)
 
-      expect(reloaded_application.accounts).to include(account)
-      expect(reloaded_application.groups).to include(group)
+      expect(application.accounts).to include(account)
+      expect(application.groups).to include(group)
+
+      expect(application.account_store_mappings).to have(1).item
 
       directory.delete
 
-      expect(reloaded_application_2.accounts).not_to include(account)
-      expect(reloaded_application_2.groups).not_to include(group)
+      expect(application.account_store_mappings).to have(0).item
 
-      expect(reloaded_application_2.account_store_mappings).to have(0).item
+      expect(application.accounts).not_to include(account)
+      expect(application.groups).not_to include(group)
     end
 
   end
+
 
 end
