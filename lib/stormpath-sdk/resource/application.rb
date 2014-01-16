@@ -55,9 +55,9 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     password_reset_tokens.get(token).account
   end
 
-  def authenticate_account request, options = {}
+  def authenticate_account request
     response = Stormpath::Authentication::BasicAuthenticator.new data_store
-    response.authenticate href, request, options
+    response.authenticate href, request
   end
 
   private

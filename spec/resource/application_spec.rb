@@ -66,9 +66,7 @@ describe Stormpath::Resource::Application, :vcr do
   describe '#authenticate_account_with_an_account_store_specified' do
     let(:password) {'P@$$w0rd' }
 
-    let(:login_request) do
-      Stormpath::Authentication::UsernamePasswordRequest.new account.username, password
-    end
+    let(:authentication_result) { application.authenticate_account login_request }
 
     after do
       account.delete if account
@@ -76,8 +74,10 @@ describe Stormpath::Resource::Application, :vcr do
     
     context 'given a proper directory' do 
       let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
-
-      let(:authentication_result) { application.authenticate_account login_request, account_store: directory}
+      
+      let(:login_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new account.username, password, account_store: directory
+      end
 
       it 'should return an authentication result' do
         expect(authentication_result).to be
@@ -92,7 +92,9 @@ describe Stormpath::Resource::Application, :vcr do
 
       let(:account) { new_directory.accounts.create build_account(password: 'P@$$w0rd') }
 
-      let(:authentication_result) { application.authenticate_account login_request, account_store: directory}
+      let(:login_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new account.username, password, account_store: directory
+      end
 
       after do
         new_directory.delete if new_directory
@@ -108,7 +110,9 @@ describe Stormpath::Resource::Application, :vcr do
 
       let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
 
-      let(:authentication_result) { application.authenticate_account login_request, account_store: group}
+      let(:login_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new account.username, password, account_store: group
+      end
 
       before do
         test_api_client.account_store_mappings.create({ application: application, account_store: group })
