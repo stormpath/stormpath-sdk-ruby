@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Account < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
+  include Stormpath::Resource::AccountStatus
 
   prop_accessor :username, :email, :given_name, :middle_name, :surname
   prop_writer :password
@@ -41,13 +41,6 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   def save
     data_store.save self
     custom_data.save
-  end
-  
-  UNVERIFIED = 'UNVERIFIED'
-  LOCKED = 'LOCKED'
-
-  def status_hash
-    super.merge UNVERIFIED => UNVERIFIED, LOCKED => LOCKED
   end
 
 end

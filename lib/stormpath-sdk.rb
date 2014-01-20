@@ -25,6 +25,7 @@ module Stormpath
   module Resource
     autoload :Expansion, 'stormpath-sdk/resource/expansion'
     autoload :Status, 'stormpath-sdk/resource/status'
+    autoload :AccountStatus, 'stormpath-sdk/resource/account_status'
     autoload :Utils, 'stormpath-sdk/resource/utils'
     autoload :Associations, 'stormpath-sdk/resource/associations'
     autoload :Base, 'stormpath-sdk/resource/base'
