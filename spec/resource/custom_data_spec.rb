@@ -34,7 +34,9 @@ describe Stormpath::Resource::CustomData, :vcr do
     end
 
     it 'set nested custom data' do
+      # binding.pry
       account.custom_data.put(:special_rank, "Captain")
+      # binding.pry
       account.custom_data.put(:permissions, {"crew_quarters" => "93-601"})
       expect(account.custom_data.get(:permissions)).to eq({"crew_quarters" => "93-601"})
       account.custom_data.save
@@ -67,7 +69,9 @@ describe Stormpath::Resource::CustomData, :vcr do
       account.custom_data.put("favorite_drink", "Earl Grey Tea")
       account.custom_data.save
       
-      account.custom_data.delete(:rank)
+      account.custom_data.remove(:rank)
+      account.custom_data.save
+
       expect(reloaded_account.custom_data.get(:rank)).to eq(nil)
       expect(reloaded_account.custom_data.get("favorite_drink")).to eq("Earl Grey Tea")
     end
@@ -132,7 +136,9 @@ describe Stormpath::Resource::CustomData, :vcr do
       group.custom_data.put("favorite_drink", "Earl Grey Tea")
       group.custom_data.save
       
-      group.custom_data.delete("series")
+      group.custom_data.remove("series")
+      group.custom_data.save
+
       expect(reloaded_group.custom_data.get("series")).to eq(nil)
       expect(reloaded_group.custom_data.get("favorite_drink")).to eq("Earl Grey Tea")
     end

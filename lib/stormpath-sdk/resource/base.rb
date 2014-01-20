@@ -79,6 +79,7 @@ class Stormpath::Resource::Base
     @write_lock = Mutex.new
     @properties = Hash.new
     @dirty_properties = Hash.new
+    @deleted_properties = Array.new
     set_properties properties
   end
 

@@ -15,7 +15,7 @@
 #
 class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
 
-  RESERVED_FIELDS = %w( href createdAt modifiedAt meta spMeta spmeta ionmeta ionMeta )
+  RESERVED_FIELDS = %w( createdAt modifiedAt meta spMeta spmeta ionmeta ionMeta )
 
   def get(property_name)
     property_name = property_name.to_s.camelize(:lower)
@@ -30,23 +30,57 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   end
   
   def save
-    href = properties[HREF_PROP_NAME]
-    delete_reserved_fields
-    if has_any_keys_to_save
-      data_store.save self, nil, href
+
+    if has_removed_properties?
+      delete_removed_properties
     end
+    
+    if has_new_properties?
+      delete_reserved_fields
+      data_store.save self
+    end
+    
   end
 
-  def delete(property_name = nil)
-    unless new?
-      deletion_href = href 
-      deletion_href += "/#{property_name.to_s.camelize(:lower)}" if property_name
-      data_store.delete self, deletion_href
+  def remove(name)
+    @write_lock.lock
+    property_name = name.to_s
+    begin
+      @properties.delete(property_name)
+      @dirty_properties.delete(property_name)
+      @deleted_properties << property_name
+      @dirty = true
+    ensure
+      @write_lock.unlock
     end
   end
 
   private
     
+    def has_removed_properties?
+      @read_lock.lock
+      begin
+        !@deleted_properties.empty?
+      ensure
+        @read_lock.unlock
+      end
+    end
+
+    def has_new_properties?
+      @read_lock.lock
+      begin
+        !@dirty_properties.empty?
+      ensure
+        @read_lock.unlock
+      end
+    end
+
+    def delete_removed_properties
+      @deleted_properties.each do |deleted_property_name|
+        data_store.delete self, deleted_property_name
+      end
+    end
+
     def delete_reserved_fields
       RESERVED_FIELDS.each do |reserved_field|
         self.properties.delete reserved_field
@@ -54,7 +88,11 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
     end
 
     def has_any_keys_to_save
-      self.properties.size > 0
+      if properties[HREF_PROP_NAME]
+        self.properties.size > 1
+      else
+        self.properties.size > 0
+      end
     end
 
 end
