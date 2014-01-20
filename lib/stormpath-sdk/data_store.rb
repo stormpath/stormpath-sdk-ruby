@@ -49,11 +49,7 @@ class Stormpath::DataStore
   end
 
   def get_resource(href, clazz, query=nil)
-    q_href = if needs_to_be_fully_qualified href
-               qualify href
-             else
-               href
-             end
+    q_href = qualify href
 
     data = execute_request('get', q_href, nil, query)
     instantiate clazz, data.to_hash
@@ -69,19 +65,15 @@ class Stormpath::DataStore
     end
   end
 
-  def save(resource, clazz = nil, href = nil)
+  def save(resource, clazz = nil)
     assert_not_nil resource, "resource argument cannot be null."
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
-    href ||= resource.href
+    href = resource.href
     assert_not_nil href, "href or resource.href cannot be null."
     assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
 
-    href = if needs_to_be_fully_qualified(href)
-             qualify(href)
-           else
-             href
-           end
+    href = qualify(href)
 
     clazz ||= resource.class
 
@@ -95,11 +87,7 @@ class Stormpath::DataStore
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
     href ||= resource.href
-    href = if needs_to_be_fully_qualified(href)
-         qualify(href)
-       else
-         href
-       end
+    href = qualify(href)
    
     execute_request('delete', href)
   end
@@ -115,8 +103,12 @@ class Stormpath::DataStore
   end
 
   def qualify(href)
-    slash_added = href.start_with?('/') ? '' : '/'
-    @base_url + slash_added + href
+    if needs_to_be_fully_qualified(href)
+      slash_added = href.start_with?('/') ? '' : '/'
+      @base_url + slash_added + href
+    else
+      href
+    end
   end
 
   private
@@ -202,11 +194,7 @@ class Stormpath::DataStore
     assert_not_nil return_type, "returnType class cannot be null."
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
-    q_href = if needs_to_be_fully_qualified href
-               qualify href
-             else
-               href
-             end
+    q_href = qualify href
 
     response = execute_request('post', q_href, MultiJson.dump(to_hash(resource)))
 
