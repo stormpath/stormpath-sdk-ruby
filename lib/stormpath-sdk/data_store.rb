@@ -82,11 +82,12 @@ class Stormpath::DataStore
     end
   end
 
-  def delete(resource, href = nil)
+  def delete(resource, property_name = nil)
     assert_not_nil resource, "resource argument cannot be null."
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
 
-    href ||= resource.href
+    href = resource.href
+    href += "/#{property_name}" if property_name
     href = qualify(href)
    
     execute_request('delete', href)
