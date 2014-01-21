@@ -26,6 +26,13 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(account.custom_data["modified_at"]).not_to eq(nil)
     end
 
+    Stormpath::Resource::CustomData::RESERVED_FIELDS.each do |reserved_field|
+      it "set reserved data #{reserved_field} should raise error" do
+        account.custom_data[reserved_field] = 12
+        expect{ account.custom_data.save }.to raise_error
+      end
+    end
+
     it 'set custom data' do
       account.custom_data[:rank] = "Captain"
       expect(account.custom_data[:rank]).to eq("Captain")
@@ -93,6 +100,13 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(group.custom_data["href"]).not_to eq(nil)
       expect(group.custom_data["created_at"]).not_to eq(nil)
       expect(group.custom_data["modified_at"]).not_to eq(nil)
+    end
+
+    Stormpath::Resource::CustomData::RESERVED_FIELDS.each do |reserved_field|
+      it "set reserved data #{reserved_field} should raise error" do
+        group.custom_data[reserved_field] = 12
+        expect{ group.custom_data.save }.to raise_error
+      end
     end
 
     it 'set custom data' do

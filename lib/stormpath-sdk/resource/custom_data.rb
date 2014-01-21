@@ -15,16 +15,14 @@
 #
 class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
 
-  RESERVED_FIELDS = %w( createdAt modifiedAt meta spMeta spmeta ionmeta ionMeta )
+  RESERVED_FIELDS = %w( created_at modified_at meta sp_meta spmeta ion_meta ionmeta )
 
   def [](property_name)
     get_property property_name
   end
 
   def []=(property_name, property_value)
-    unless RESERVED_FIELDS.include? property_name
-      set_property property_name, property_value
-    end
+    set_property property_name, property_value
   end
   
   def save
@@ -32,7 +30,6 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
       delete_removed_properties
     end
     if has_new_properties?
-      delete_reserved_fields
       data_store.save self
     end
   end
@@ -86,12 +83,6 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
     def delete_removed_properties
       @deleted_properties.each do |deleted_property_name|
         data_store.delete self, deleted_property_name
-      end
-    end
-
-    def delete_reserved_fields
-      RESERVED_FIELDS.each do |reserved_field|
-        self.properties.delete reserved_field
       end
     end
 
