@@ -107,6 +107,16 @@ class Stormpath::Resource::Base
     end
   end
 
+  def get_dirty_property_names
+    @read_lock.lock
+
+    begin
+      @dirty_properties.keys
+    ensure
+      @read_lock.unlock
+    end
+  end
+
   def set_properties properties
     @write_lock.lock
 
@@ -117,7 +127,7 @@ class Stormpath::Resource::Base
 
       if properties
         @properties = deep_sanitize properties
-
+        @dirty_properties = @properties if new?
         # Don't consider this resource materialized if it is only a reference.  A reference is any object that
         # has only one 'href' property.
         href_only = (@properties.size == 1 and @properties.has_key? HREF_PROP_NAME)

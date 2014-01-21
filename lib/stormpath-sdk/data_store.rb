@@ -60,7 +60,7 @@ class Stormpath::DataStore
     parent_href = "#{parent_href}?#{URI.encode_www_form(options)}" unless options.empty?
     save_resource(parent_href, resource, return_type).tap do |returned_resource|
       if resource.kind_of? return_type
-        resource.set_properties to_hash(returned_resource)
+        resource.set_properties returned_resource.properties
       end
     end
   end
@@ -210,7 +210,7 @@ class Stormpath::DataStore
 
   def to_hash(resource)
     Hash.new.tap do |properties|
-      resource.get_property_names.each do |name|
+      resource.get_dirty_property_names.each do |name|
         property = resource.get_property name
 
         # Special use case is with Custom Data, it's hashes don't hold simple references
