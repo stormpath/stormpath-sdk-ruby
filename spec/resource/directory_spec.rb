@@ -28,6 +28,25 @@ describe Stormpath::Resource::Directory, :vcr do
     end
   end
 
+  describe '#create_group' do
+    let(:directory) { test_directory }
+
+    context 'given a valid group' do
+      let(:group_name) { "valid_test_group" }
+
+      let(:created_group) { directory.groups.create name: group_name }
+
+      after do
+        created_group.delete if created_group
+      end
+
+      it 'creates a group' do
+        expect(created_group).to be
+        expect(created_group.name).to eq(group_name)
+      end
+    end
+  end
+
   describe '#delete_directory' do
 
     let(:directory) { test_api_client.directories.create name: 'test_directory' }
