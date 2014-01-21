@@ -30,16 +30,13 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   end
   
   def save
-
     if has_removed_properties?
       delete_removed_properties
     end
-    
     if has_new_properties?
       delete_reserved_fields
       data_store.save self
     end
-    
   end
 
   def remove(name)
@@ -52,6 +49,15 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
       @dirty = true
     ensure
       @write_lock.unlock
+    end
+  end
+
+  def sanitize(properties)
+    {}.tap do |sanitized_properties|
+      properties.map do |key, value|
+        property_name = key.to_s.camelize :lower
+        sanitized_properties[property_name] = value
+      end
     end
   end
 
