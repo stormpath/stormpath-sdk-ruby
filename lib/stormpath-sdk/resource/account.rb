@@ -15,6 +15,7 @@
 #
 class Stormpath::Resource::Account < Stormpath::Resource::Instance
   include Stormpath::Resource::AccountStatus
+  include Stormpath::Resource::CustomDataStorage
 
   prop_accessor :username, :email, :given_name, :middle_name, :surname
   prop_writer :password
@@ -36,11 +37,6 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   def remove_group group
     group_membership = group_memberships.find {|group_membership| group_membership.group.href == group.href }
     group_membership.delete if group_membership
-  end
-
-  def save
-    data_store.save self
-    custom_data.save
   end
 
 end

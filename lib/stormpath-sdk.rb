@@ -33,6 +33,7 @@ module Stormpath
     autoload :Instance, 'stormpath-sdk/resource/instance'
     autoload :Collection, 'stormpath-sdk/resource/collection'
     autoload :CustomData, 'stormpath-sdk/resource/custom_data'
+    autoload :CustomDataStorage, 'stormpath-sdk/resource/custom_data_storage'
     autoload :Tenant, 'stormpath-sdk/resource/tenant'
     autoload :Application, 'stormpath-sdk/resource/application'
     autoload :Directory, 'stormpath-sdk/resource/directory'
