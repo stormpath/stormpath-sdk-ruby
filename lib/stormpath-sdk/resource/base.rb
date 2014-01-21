@@ -24,20 +24,16 @@ class Stormpath::Resource::Base
   class << self
     def prop_reader(*args)
       args.each do |name|
-        property_name = name.to_s.camelize :lower
-
         define_method(name) do
-          get_property property_name
+          get_property name
         end
       end
     end
 
     def prop_writer(*args)
       args.each do |name|
-        property_name = name.to_s.camelize :lower
-
         define_method("#{name.to_s}=") do |value|
-          set_property property_name, value
+          set_property name, value
         end
       end
     end
@@ -166,7 +162,7 @@ class Stormpath::Resource::Base
       end
     end
 
-    read_property name
+    read_property property_name
   end
 
   def set_property name, value

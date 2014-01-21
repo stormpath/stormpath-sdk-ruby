@@ -18,9 +18,7 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   RESERVED_FIELDS = %w( createdAt modifiedAt meta spMeta spmeta ionmeta ionMeta )
 
   def [](property_name)
-    property_name = property_name.to_s.camelize(:lower)
-    property = get_property property_name 
-    property
+    get_property property_name
   end
 
   def []=(property_name, property_value)

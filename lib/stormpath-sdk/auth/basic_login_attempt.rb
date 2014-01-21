@@ -22,7 +22,7 @@ module Stormpath
       ACCOUNT_STORE = "account_store"
 
       def account_store
-        get_property ACCOUNT_STORE.to_s.camelize(:lower)
+        get_property ACCOUNT_STORE
       end
 
       def account_store=(account_store)
@@ -32,7 +32,7 @@ module Stormpath
       end
 
       def type
-        get_property TYPE.to_s.camelize(:lower)
+        get_property TYPE
       end
 
       def type=(type)
@@ -40,7 +40,7 @@ module Stormpath
       end
 
       def value
-        get_property VALUE.to_s.camelize(:lower)
+        get_property VALUE
       end
 
       def value=(value)
