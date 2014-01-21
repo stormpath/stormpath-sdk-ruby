@@ -213,7 +213,8 @@ class Stormpath::DataStore
       resource.get_property_names.each do |name|
         property = resource.get_property name
 
-        if property.kind_of?(Hash) && an_association_reference?(property, name)
+        # Special use case is with Custom Data, it's hashes don't hold simple references
+        if property.kind_of?(Hash) and resource_not_custom_data resource
           property = to_simple_reference name, property
         end
 
@@ -223,19 +224,16 @@ class Stormpath::DataStore
   end
 
   def to_simple_reference(property_name, hash)
-    assert_true(
-      (hash.kind_of?(Hash) and !hash.empty? and hash.has_key?(HREF_PROP_NAME)),
-      "Nested resource '#{property_name}' must have an 'href' property."
-    )
+    assert_true(hash.kind_of?(Hash) and hash.has_key?(HREF_PROP_NAME),
+      "Nested resource '#{property_name}' must have an 'href' property.")
 
     href = hash[HREF_PROP_NAME]
 
     {HREF_PROP_NAME => href}
   end
 
-  #PREVENT ADDITIONAL CUSTOM DATA TRANSFORMATIONS 
-  def an_association_reference?(value, name)
-    value.size == 1 && value[HREF_PROP_NAME] && value[HREF_PROP_NAME].match(DEFAULT_SERVER_HOST) && value[HREF_PROP_NAME].match(name)
+  def resource_not_custom_data(resource)
+    resource.class != Stormpath::Resource::CustomData
   end
 
 end
