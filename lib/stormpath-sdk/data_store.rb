@@ -224,8 +224,7 @@ class Stormpath::DataStore
   end
 
   def to_simple_reference(property_name, hash)
-    assert_true(hash.kind_of?(Hash) and hash.has_key?(HREF_PROP_NAME),
-      "Nested resource '#{property_name}' must have an 'href' property.")
+    assert_true hash.has_key?(HREF_PROP_NAME), "Nested resource '#{property_name}' must have an 'href' property."
 
     href = hash[HREF_PROP_NAME]
 

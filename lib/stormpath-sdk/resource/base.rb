@@ -115,7 +115,7 @@ class Stormpath::Resource::Base
       @dirty_properties.clear
       @dirty = false
 
-      unless properties.nil?
+      if properties
         @properties = deep_sanitize properties
 
         # Don't consider this resource materialized if it is only a reference.  A reference is any object that
@@ -134,7 +134,7 @@ class Stormpath::Resource::Base
   def get_property name
     property_name = name.to_s.camelize :lower
 
-    if !HREF_PROP_NAME.eql? property_name
+    if HREF_PROP_NAME != property_name
       #not the href/id, must be a property that requires materialization:
       unless new? or materialized?
 
@@ -215,7 +215,7 @@ class Stormpath::Resource::Base
   private
 
   def get_href_from_hash(props)
-    if !props.nil? and props.is_a? Hash
+    if props and props.is_a? Hash
       props[HREF_PROP_NAME]
     end
   end
