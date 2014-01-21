@@ -17,13 +17,13 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
 
   RESERVED_FIELDS = %w( createdAt modifiedAt meta spMeta spmeta ionmeta ionMeta )
 
-  def get(property_name)
+  def [](property_name)
     property_name = property_name.to_s.camelize(:lower)
     property = get_property property_name 
     property
   end
 
-  def put(property_name, property_value)
+  def []=(property_name, property_value)
     unless RESERVED_FIELDS.include? property_name
       set_property property_name, property_value
     end
@@ -37,6 +37,10 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
       delete_reserved_fields
       data_store.save self
     end
+  end
+
+  def delete(name = nil)
+    name.nil? ? super() : remove(name) 
   end
 
   def remove(name)
