@@ -87,12 +87,4 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
       end
     end
 
-    def has_any_keys_to_save
-      if properties[HREF_PROP_NAME]
-        self.properties.size > 1
-      else
-        self.properties.size > 0
-      end
-    end
-
 end
