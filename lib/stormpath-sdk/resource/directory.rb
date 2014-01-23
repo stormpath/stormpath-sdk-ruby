@@ -28,7 +28,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     if registration_workflow_enabled
       href += "?registrationWorkflowEnabled=#{registration_workflow_enabled.to_s}"
     end
-
+    account.apply_custom_data_updates_if_necessary
     data_store.create href, account, Stormpath::Resource::Account
   end
 end

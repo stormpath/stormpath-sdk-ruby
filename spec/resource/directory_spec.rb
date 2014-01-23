@@ -15,7 +15,7 @@ describe Stormpath::Resource::Directory, :vcr do
         })
       end
 
-      let(:created_account) { directory.create_account account, false }
+      let(:created_account) { directory.create_account account }
 
       after do
         created_account.delete if created_account
@@ -26,6 +26,30 @@ describe Stormpath::Resource::Directory, :vcr do
         expect(created_account.username).to eq(account.username)
         expect(created_account).to eq(account)
       end
+    end
+  end
+
+  describe '#create_account_with_custom_data' do
+    let(:directory) { test_directory }
+
+      it 'creates an account with custom data' do
+        account =  Stormpath::Resource::Account.new({
+          email: "test@example.com",
+          given_name: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK',
+          username: "username"
+        })
+
+        account.custom_data["birth_date"] = "2305-07-13"
+
+        created_account = directory.create_account account
+
+        expect(created_account).to be
+        expect(created_account.username).to eq(account.username)
+        expect(created_account).to eq(account)
+        expect(created_account.custom_data["birth_date"]).to eq("2305-07-13")
+        created_account.delete
     end
   end
 

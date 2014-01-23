@@ -89,12 +89,14 @@ module Stormpath
               href = get_href_from_hash value
             end
             
-            if href
-              if instance_variable_get("@_#{key.underscore}").nil?
+            if instance_variable_get("@_#{key.underscore}").nil?
+              if href
                 instance_variable_set("@_#{key.underscore}", data_store.instantiate(clazz, value))
+              else
+                instance_variable_set("@_#{key.underscore}", clazz.new(value))
               end
-              instance_variable_get("@_#{key.underscore}")
             end
+            instance_variable_get("@_#{key.underscore}")
           end
 
           def get_resource_href_property(key)
