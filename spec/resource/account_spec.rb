@@ -53,7 +53,7 @@ describe Stormpath::Resource::Account, :vcr do
         expect(reloaded_account.group_memberships).to have(1).item
       end
 
-      it 'adds and removes the group from the account' do
+      xit 'adds and removes the group from the account' do
         expect(reloaded_account.groups).to include(group)
         reloaded_account.remove_group group
         expect(reloaded_account_2.groups).not_to include(group)

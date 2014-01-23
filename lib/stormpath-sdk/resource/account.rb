@@ -34,9 +34,9 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
     client.group_memberships.create group: group, account: self
   end
 
-  def remove_group group
-    group_membership = group_memberships.find {|group_membership| group_membership.group.href == group.href }
-    group_membership.delete if group_membership
-  end
+  # def remove_group group
+  #   group_membership = group_memberships.find {|group_membership| group_membership.group.href == group.href }
+  #   group_membership.delete if group_membership
+  # end
 
 end
