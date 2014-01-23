@@ -28,7 +28,7 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
       delete_removed_properties
     end
     if has_new_properties?
-      data_store.save self
+      super
     end
   end
 
