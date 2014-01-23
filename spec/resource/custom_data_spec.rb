@@ -2,6 +2,9 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::CustomData, :vcr do
+
+  RESERVED_FIELDS = %w( created_at modified_at meta sp_meta spmeta ion_meta ionmeta )
+
   describe "#for accounts" do
     let(:directory) { test_api_client.directories.create name: 'test_directory' }
 
@@ -26,7 +29,7 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(account.custom_data["modified_at"]).not_to eq(nil)
     end
 
-    Stormpath::Resource::CustomData::RESERVED_FIELDS.each do |reserved_field|
+    RESERVED_FIELDS.each do |reserved_field|
       it "set reserved data #{reserved_field} should raise error" do
         account.custom_data[reserved_field] = 12
         expect{ account.custom_data.save }.to raise_error
@@ -41,9 +44,7 @@ describe Stormpath::Resource::CustomData, :vcr do
     end
 
     it 'set nested custom data' do
-      # binding.pry
       account.custom_data[:special_rank] = "Captain"
-      # binding.pry
       account.custom_data[:permissions] = {"crew_quarters" => "93-601"}
       expect(account.custom_data[:permissions]).to eq({"crew_quarters" => "93-601"})
       account.custom_data.save
@@ -102,7 +103,7 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(group.custom_data["modified_at"]).not_to eq(nil)
     end
 
-    Stormpath::Resource::CustomData::RESERVED_FIELDS.each do |reserved_field|
+    RESERVED_FIELDS.each do |reserved_field|
       it "set reserved data #{reserved_field} should raise error" do
         group.custom_data[reserved_field] = 12
         expect{ group.custom_data.save }.to raise_error

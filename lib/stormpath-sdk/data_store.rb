@@ -213,8 +213,8 @@ class Stormpath::DataStore
       resource.get_dirty_property_names.each do |name|
         property = resource.get_property name
 
-        # Special use case is with Custom Data, it's hashes don't hold simple references
-        if property.kind_of?(Hash) and resource_not_custom_data resource
+        # Special use case is with Custom Data, it's hashes should not be simplified
+        if property.kind_of?(Hash) and resource_not_custom_data resource, name
           property = to_simple_reference name, property
         end
 
@@ -231,8 +231,8 @@ class Stormpath::DataStore
     {HREF_PROP_NAME => href}
   end
 
-  def resource_not_custom_data(resource)
-    resource.class != Stormpath::Resource::CustomData
+  def resource_not_custom_data resource, name
+    resource.class != Stormpath::Resource::CustomData and name != "customData"
   end
 
 end

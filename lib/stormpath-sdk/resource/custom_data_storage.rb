@@ -14,10 +14,26 @@
 # limitations under the License.
 #
 module Stormpath::Resource::CustomDataStorage
+  extend ActiveSupport::Concern
 
-  def save
-    data_store.save self
-    custom_data.save
+  CUSTOM_DATA = "custom_data"
+
+  included do
+
+    def save
+      apply_custom_data_updates_if_necessary
+      super
+    end
+
+    def apply_custom_data_updates_if_necessary
+      if custom_data.has_removed_properties?
+        custom_data.delete_removed_properties
+      end
+      if custom_data.has_new_properties?
+        self.set_property CUSTOM_DATA, custom_data.properties
+      end
+    end
+
   end
 
 end

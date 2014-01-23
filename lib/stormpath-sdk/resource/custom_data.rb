@@ -15,8 +15,6 @@
 #
 class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
 
-  RESERVED_FIELDS = %w( created_at modified_at meta sp_meta spmeta ion_meta ionmeta )
-
   def [](property_name)
     get_property property_name
   end
@@ -35,10 +33,8 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   end
 
   def delete(name = nil)
-    name.nil? ? super() : remove(name) 
-  end
+    super() if name.nil?
 
-  def remove(name)
     @write_lock.lock
     property_name = name.to_s
     begin
@@ -59,31 +55,29 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
       end
     end
   end
-
-  private
     
-    def has_removed_properties?
-      @read_lock.lock
-      begin
-        !@deleted_properties.empty?
-      ensure
-        @read_lock.unlock
-      end
+  def has_removed_properties?
+    @read_lock.lock
+    begin
+      !@deleted_properties.empty?
+    ensure
+      @read_lock.unlock
     end
+  end
 
-    def has_new_properties?
-      @read_lock.lock
-      begin
-        !@dirty_properties.empty?
-      ensure
-        @read_lock.unlock
-      end
+  def has_new_properties?
+    @read_lock.lock
+    begin
+      !@dirty_properties.empty?
+    ensure
+      @read_lock.unlock
     end
+  end
 
-    def delete_removed_properties
-      @deleted_properties.each do |deleted_property_name|
-        data_store.delete self, deleted_property_name
-      end
+  def delete_removed_properties
+    @deleted_properties.each do |deleted_property_name|
+      data_store.delete self, deleted_property_name
     end
+  end
 
 end
