@@ -19,16 +19,13 @@ module Stormpath
       include Stormpath::Http::Authc
       include Stormpath::Util::Assert
 
-      REDIRECTS_LIMIT = 10
-
       def initialize(api_key, options = {})
         @signer = Sauthc1Signer.new
         @api_key = api_key
         @http_client = HTTPClient.new options[:proxy]
-        @redirects_limit = REDIRECTS_LIMIT
       end
 
-      def execute_request(request)
+      def execute_request(request, redirects_limit = 10)
         assert_not_nil request, "Request argument cannot be null."
 
         @redirect_response = nil
@@ -45,14 +42,13 @@ module Stormpath
 
         response = method.call domain, request.body, request.http_headers
 
-        if response.redirect? and @redirects_limit > 0
+        if response.redirect? and redirects_limit > 0
           request.href = response.http_header['location'][0]
-          @redirects_limit -= 1
-          @redirect_response = execute_request request
+          redirects_limit -= 1
+          @redirect_response = execute_request request, redirects_limit
           return @redirect_response
         end
 
-        @redirects_limit = REDIRECTS_LIMIT
         Response.new response.http_header.status_code,
                        response.http_header.body_type,
                        response.content,
