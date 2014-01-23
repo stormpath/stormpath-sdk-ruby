@@ -433,6 +433,38 @@ Group membership can be created by:
 
 You will need to reload the account or group resource after these
 operations to ensure they've picked up the changes.
+### Add Custom Data to Accounts or Groups
+
+Account and Group resources have predefined fields that are useful to many applications, but you are likely to have your own custom data that you need to associate with an account or group as well.
+
+For this reason, both the account and group resources support a linked custom_data resource that you can use for your own needs.
+
+*Set Custom Data*
+```ruby
+account =  Stormpath::Resource::Account.new({ email: "test@example.com", given_name: 'Ruby SDK', password: 'P@$$w0rd', surname: 'SDK',})
+
+account.custom_data["rank"] = "Captain"
+account.custom_data["birth_date"] = "2305-07-13"
+account.custom_data["birth_place"] = "La Barre, France"
+
+ directory.create_account account
+```
+
+Notice how we did not call account.custom_data.save - creating the account (or updating it later via save) will automatically persist the account's customData resource. The account 'knows' that the custom data resource has been changed and it will propogate those changes automatically when you persist the account.
+
+Groups work the same way - you can save a group and it's custom data resource will be saved as well.
+
+*Delete a specific Custom Data field*
+```ruby
+account.custom_data["birth_date"] #=> "2305-07-13"
+account.custom_data.delete("birth_date")
+account.custom_data.save
+```
+
+*Delete all Custom Data*
+```ruby
+account.custom_data.delete
+```
 
 ## Testing
 
