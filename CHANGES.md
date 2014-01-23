@@ -1,6 +1,21 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.0.0.beta.5
+--------------------
+
+Released on January 23, 2014
+
+- Added the Custom Data resource
+- Added CustomDataStorage module
+- Specify an AccountStore during authentification
+- Added AccountStatus module (specialization of the Status module)
+- Added Status spec
+- Added AccountMemberships
+- Added GroupMembersips spec
+- Send only dirty properties to the API
+- Fixed REDIRECTS_LIMIT issue
+
 Version 1.0.0.beta.4
 --------------------
 
