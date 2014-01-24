@@ -26,6 +26,40 @@ describe Stormpath::Resource::Application, :vcr do
     end
   end
 
+  describe 'group_associations' do
+    let(:group) { application.groups.create name: "test_group"}
+
+    after do
+      group.delete if group
+    end
+
+    it 'should be able to create a group' do
+      expect(application.groups).to include(group)
+      expect(application.default_group_store_mapping.account_store.groups).to include(group)
+    end
+
+    it 'should be able to create and fetch a group' do
+      expect(application.groups.get group.href).to be
+    end
+  end
+
+  describe 'account_associations' do
+    let(:account) { application.accounts.create build_account}
+
+    after do
+      account.delete if account
+    end
+
+    it 'should be able to create an account' do
+      expect(application.accounts).to include(account)
+      expect(application.default_account_store_mapping.account_store.accounts).to include(account)
+    end
+
+    it 'should be able to create and fetch the account' do
+      expect(application.accounts.get account.href).to be
+    end
+  end
+  
   describe '#authenticate_account' do
     let(:account) do
       directory.accounts.create build_account(password: 'P@$$w0rd')
