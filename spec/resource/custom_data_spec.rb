@@ -83,6 +83,42 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(reloaded_account.custom_data[:rank]).to eq(nil)
       expect(reloaded_account.custom_data["favorite_drink"]).to eq("Earl Grey Tea")
     end
+
+    context 'should respond to' do
+      it '#has_key?' do
+        expect(account.custom_data.has_key? "created_at").to be_true
+      end
+
+      it '#include?' do
+        expect(account.custom_data.include? "created_at").to be_true
+      end
+
+      it '#has_value?' do
+        account.custom_data[:rank] = "Captain"
+        account.custom_data.save
+        expect(reloaded_account.custom_data.has_value? "Captain").to be_true
+      end
+
+      it '#store' do
+        account.custom_data.store(:rank, "Captain")
+        account.custom_data.save
+        expect(reloaded_account.custom_data[:rank]).to eq("Captain")
+      end
+
+      it '#keys' do
+        expect(account.custom_data.keys).to be_kind_of(Array)
+        expect(account.custom_data.keys).to have_at_least(3).items
+        expect(account.custom_data.keys.map {|key| key.to_s.camelize :lower}).to eq(account.custom_data.properties.keys)
+      end
+
+      it '#values' do
+        account.custom_data[:permissions] = {"crew_quarters" => "93-601"}
+        account.custom_data.save
+        expect(reloaded_account.custom_data.values).to include({"crew_quarters" => "93-601"})
+        expect(reloaded_account.custom_data.values).to eq(reloaded_account.custom_data.properties.values)
+      end
+    end
+
   end
 
   describe "#for groups" do
