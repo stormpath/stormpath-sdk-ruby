@@ -34,6 +34,7 @@ module Stormpath
     autoload :Collection, 'stormpath-sdk/resource/collection'
     autoload :CustomData, 'stormpath-sdk/resource/custom_data'
     autoload :CustomDataStorage, 'stormpath-sdk/resource/custom_data_storage'
+    autoload :CustomDataHashMethods, 'stormpath-sdk/resource/custom_data_hash_methods'
     autoload :Tenant, 'stormpath-sdk/resource/tenant'
     autoload :Application, 'stormpath-sdk/resource/application'
     autoload :Directory, 'stormpath-sdk/resource/directory'
