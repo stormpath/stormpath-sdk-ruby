@@ -2,8 +2,6 @@ module Stormpath::Resource::CustomDataHashMethods
   extend ActiveSupport::Concern
 
   included do
-    DELEGATED_METHODS = [:has_key?, :has_value?, :include?, :store, :keys, :values]
-
     def has_key?(key)
       materialize unless materialized?
       properties.has_key? key.to_s.camelize(:lower)
