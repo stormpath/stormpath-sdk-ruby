@@ -26,10 +26,10 @@ module Stormpath::Resource::CustomDataStorage
     end
 
     def apply_custom_data_updates_if_necessary
-      if custom_data.has_removed_properties?
-        custom_data.delete_removed_properties
+      if custom_data.send :has_removed_properties?
+        custom_data.send :delete_removed_properties
       end
-      if custom_data.has_new_properties?
+      if custom_data.send :has_new_properties?
         self.set_property CUSTOM_DATA, custom_data.properties
       end
     end

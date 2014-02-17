@@ -48,37 +48,39 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
     end
   end
 
-  def sanitize(properties)
-    {}.tap do |sanitized_properties|
-      properties.map do |key, value|
-        property_name = key.to_s.camelize :lower
-        sanitized_properties[property_name] = value
+  private
+
+    def sanitize(properties)
+      {}.tap do |sanitized_properties|
+        properties.map do |key, value|
+          property_name = key.to_s.camelize :lower
+          sanitized_properties[property_name] = value
+        end
       end
     end
-  end
-    
-  def has_removed_properties?
-    @read_lock.lock
-    begin
-      !@deleted_properties.empty?
-    ensure
-      @read_lock.unlock
-    end
-  end
 
-  def has_new_properties?
-    @read_lock.lock
-    begin
-      !@dirty_properties.empty?
-    ensure
-      @read_lock.unlock
+    def has_removed_properties?
+      @read_lock.lock
+      begin
+        !@deleted_properties.empty?
+      ensure
+        @read_lock.unlock
+      end
     end
-  end
 
-  def delete_removed_properties
-    @deleted_properties.each do |deleted_property_name|
-      data_store.delete self, deleted_property_name
+    def has_new_properties?
+      @read_lock.lock
+      begin
+        !@dirty_properties.empty?
+      ensure
+        @read_lock.unlock
+      end
     end
-  end
+
+    def delete_removed_properties
+      @deleted_properties.each do |deleted_property_name|
+        data_store.delete self, deleted_property_name
+      end
+    end
 
 end
