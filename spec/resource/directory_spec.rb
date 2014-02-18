@@ -1,19 +1,67 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Directory, :vcr do
+
+  describe "instances should respond to attribute property methods" do
+    subject(:directory) { test_directory }
+
+    it { should respond_to(:href) }
+    it { should respond_to(:name) }
+    it { should respond_to(:description) }
+    it { should respond_to(:status) }
+  end
+
+  describe 'directory_associations' do
+    let(:directory) { test_directory }
+
+    context '#accounts' do
+      let(:account) { directory.accounts.create build_account}
+
+      after do
+        account.delete if account
+      end
+
+      it 'should be able to create an account' do
+        expect(directory.accounts).to include(account)
+      end
+
+      it 'should be able to create and fetch the account' do
+        expect(directory.accounts.get account.href).to be
+      end
+    end
+
+    context '#groups' do
+      let(:group) { directory.groups.create name: "test_group"}
+
+      after do
+        group.delete if group
+      end
+
+      it 'should be able to create a group' do
+        expect(directory.groups).to include(group)
+      end
+
+      it 'should be able to create and get a group' do
+        expect(directory.groups.get group.href).to be
+      end
+    end
+
+  end
+
   describe '#create_account' do
     let(:directory) { test_directory }
 
-    context 'given a valid account' do
-      let(:account) do
-        Stormpath::Resource::Account.new({
-          email: "test@example.com",
-          given_name: 'Ruby SDK',
-          password: 'P@$$w0rd',
-          surname: 'SDK',
-          username: "username"
-        })
-      end
+    let(:account) do
+      Stormpath::Resource::Account.new({
+        email: "test@example.com",
+        given_name: 'Ruby SDK',
+        password: 'P@$$w0rd',
+        surname: 'SDK',
+        username: "username"
+      })
+    end
+
+    context 'without registration workflow' do
 
       let(:created_account) { directory.create_account account }
 
@@ -21,12 +69,33 @@ describe Stormpath::Resource::Directory, :vcr do
         created_account.delete if created_account
       end
 
-      it 'creates an account' do
+      it 'creates an account without registration workflow' do
         expect(created_account).to be
         expect(created_account.username).to eq(account.username)
         expect(created_account).to eq(account)
+        expect(created_account.status).to eq("ENABLED")
+        expect(created_account.email_verification_token.href).not_to be
       end
     end
+
+    context 'with registration workflow' do
+
+      let(:created_account_with_reg_workflow) { test_directory_with_verification.create_account account }
+
+      after do
+        created_account_with_reg_workflow.delete if created_account_with_reg_workflow
+      end
+
+      it 'creates an account with registration workflow' do
+        expect(created_account_with_reg_workflow).to be
+        expect(created_account_with_reg_workflow.username).to eq(account.username)
+        expect(created_account_with_reg_workflow).to eq(account)
+        expect(created_account_with_reg_workflow.status).to eq("UNVERIFIED")
+        expect(created_account_with_reg_workflow.email_verification_token.href).to be
+      end
+
+    end
+
   end
 
   describe '#create_account_with_custom_data' do
