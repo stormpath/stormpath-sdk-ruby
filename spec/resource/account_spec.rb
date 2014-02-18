@@ -1,9 +1,11 @@
 require 'spec_helper'
+require 'pry-debugger'
 
 describe Stormpath::Resource::Account, :vcr do
 
   describe "instances" do
     let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+    
     subject(:account) do
       directory.accounts.create email: 'test@example.com',
           givenName: 'Ruby SDK',
@@ -15,14 +17,43 @@ describe Stormpath::Resource::Account, :vcr do
     it { should respond_to :given_name }
     it { should respond_to :username }
     it { should respond_to :surname }
+    it { should respond_to :middle_name }
     it { should respond_to :full_name }
-    it { should respond_to :custom_data}
+    it { should respond_to :status }
+
+    it { should respond_to :custom_data }
 
     after do
       account.delete if account
       directory.delete if directory
     end
 
+  end
+
+  describe 'account_associations' do
+    let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+    
+    let(:account) do
+      directory.accounts.create email: 'test@example.com',
+          givenName: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK',
+          username: 'rubysdk'
+    end
+
+    it 'should belong_to directory' do
+      expect(account.directory).to eq(directory)
+    end
+
+    it 'should belong_to tenant' do
+      expect(account.tenant).to be
+      expect(account.tenant).to eq(account.directory.tenant)
+    end
+
+    after do
+      account.delete if account
+      directory.delete if directory
+    end
   end
 
   describe "#add_or_remove_group" do
@@ -33,10 +64,6 @@ describe Stormpath::Resource::Account, :vcr do
 
       let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd', surname: 'SDK' }) }
 
-      let(:reloaded_account) { test_api_client.accounts.get account.href }
-
-      let(:reloaded_account_2) { test_api_client.accounts.get account.href }
-
       before { account.add_group group }
 
       after do
@@ -46,17 +73,19 @@ describe Stormpath::Resource::Account, :vcr do
       end
 
       it 'adds the group to the account' do
-        expect(reloaded_account.groups).to include(group)
+        expect(account.groups).to include(group)
       end
 
       it 'has one group membership resource' do
-        expect(reloaded_account.group_memberships).to have(1).item
+        expect(account.group_memberships).to have(1).item
       end
 
       it 'adds and removes the group from the account' do
-        expect(reloaded_account.groups).to include(group)
-        reloaded_account.remove_group group
-        expect(reloaded_account_2.groups).not_to include(group)
+        expect(account.groups).to include(group)
+
+        account.remove_group group
+
+        expect(account.groups).not_to include(group)
       end
 
     end
