@@ -23,6 +23,8 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   prop_non_printable :password
 
   belongs_to :directory
+  belongs_to :tenant
+
   has_one :email_verification_token
 
   has_many :groups
