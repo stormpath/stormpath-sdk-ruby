@@ -7,10 +7,21 @@ describe Stormpath::Resource::Application, :vcr do
   describe "instances should respond to attribute property methods" do
     subject(:application) { test_application }
 
-    it { should respond_to(:href) }
-    it { should respond_to(:name) }
-    it { should respond_to(:description) }
-    it { should respond_to(:status) }
+    it { should be_instance_of Stormpath::Resource::Application }
+
+    [:name, :description, :status].each do |property_accessor|
+      it { should respond_to property_accessor }
+      it { should respond_to "#{property_accessor}="}
+      its(property_accessor) { should be_instance_of String }
+    end
+
+    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
+    its(:password_reset_tokens) { should be_instance_of Stormpath::Resource::Collection }
+    its(:account_store_mappings) { should be_instance_of Stormpath::Resource::Collection }
+    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
+    its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
+    its(:default_account_store_mapping) { should be_instance_of Stormpath::Resource::AccountStoreMapping }
+    its(:default_group_store_mapping) { should be_instance_of Stormpath::Resource::AccountStoreMapping }
   end
 
   describe '.load' do

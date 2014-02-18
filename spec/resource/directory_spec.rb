@@ -5,10 +5,17 @@ describe Stormpath::Resource::Directory, :vcr do
   describe "instances should respond to attribute property methods" do
     subject(:directory) { test_directory }
 
-    it { should respond_to(:href) }
-    it { should respond_to(:name) }
-    it { should respond_to(:description) }
-    it { should respond_to(:status) }
+    it { should be_instance_of Stormpath::Resource::Directory }
+
+    [:name, :description, :status].each do |property_accessor|
+      it { should respond_to property_accessor }
+      it { should respond_to "#{property_accessor}="}
+      its(property_accessor) { should be_instance_of String }
+    end
+
+    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
+    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
+    its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
   end
 
   describe 'directory_associations' do

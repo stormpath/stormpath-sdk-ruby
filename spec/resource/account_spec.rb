@@ -6,22 +6,37 @@ describe Stormpath::Resource::Account, :vcr do
   describe "instances" do
     let(:directory) { test_api_client.directories.create name: 'testDirectory' }
     
+    let(:given_name) { 'Ruby SDK' }
+    let(:middle_name) { 'Gruby' }
+    let(:surname) { 'SDK' }
+
     subject(:account) do
       directory.accounts.create email: 'test@example.com',
-          givenName: 'Ruby SDK',
+          given_name: given_name,
           password: 'P@$$w0rd',
-          surname: 'SDK',
+          middle_name: middle_name,
+          surname: surname,
           username: 'rubysdk'
     end
 
-    it { should respond_to :given_name }
-    it { should respond_to :username }
-    it { should respond_to :surname }
-    it { should respond_to :middle_name }
-    it { should respond_to :full_name }
-    it { should respond_to :status }
+    [:given_name, :username, :middle_name, :surname, :email, :status].each do |property_accessor|
+      it { should respond_to property_accessor }
+      it { should respond_to "#{property_accessor}=" }
+      its(property_accessor) { should be_instance_of String }
+    end
 
-    it { should respond_to :custom_data }
+    it {should respond_to :full_name}
+    its(:full_name) { should be_instance_of String}
+    its(:full_name) { should eq("#{given_name} #{middle_name} #{surname}")}
+
+    it {should respond_to "password="}
+
+    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
+    its(:directory) { should be_instance_of Stormpath::Resource::Directory } 
+    its(:custom_data) { should be_instance_of Stormpath::Resource::CustomData }
+    its(:email_verification_token) { should be_instance_of Stormpath::Resource::EmailVerificationToken }
+    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
+    its(:group_memberships) { should be_instance_of Stormpath::Resource::Collection }
 
     after do
       account.delete if account
