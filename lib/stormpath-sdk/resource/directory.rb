@@ -25,7 +25,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
 
   def create_account account, registration_workflow_enabled=nil
     href = accounts.href
-    if registration_workflow_enabled
+    if registration_workflow_enabled == false
       href += "?registrationWorkflowEnabled=#{registration_workflow_enabled.to_s}"
     end
     account.apply_custom_data_updates_if_necessary

@@ -69,7 +69,7 @@ describe Stormpath::Resource::Directory, :vcr do
         created_account.delete if created_account
       end
 
-      it 'creates an account without registration workflow' do
+      it 'creates an account with status ENABLED' do
         expect(created_account).to be
         expect(created_account.username).to eq(account.username)
         expect(created_account).to eq(account)
@@ -86,12 +86,30 @@ describe Stormpath::Resource::Directory, :vcr do
         created_account_with_reg_workflow.delete if created_account_with_reg_workflow
       end
 
-      it 'creates an account with registration workflow' do
+      it 'creates an account with status UNVERIFIED' do
         expect(created_account_with_reg_workflow).to be
         expect(created_account_with_reg_workflow.username).to eq(account.username)
         expect(created_account_with_reg_workflow).to eq(account)
         expect(created_account_with_reg_workflow.status).to eq("UNVERIFIED")
         expect(created_account_with_reg_workflow.email_verification_token.href).to be
+      end
+
+    end
+
+    context 'with registration workflow but set it to false on account creation' do
+
+      let(:created_account_with_reg_workflow) { test_directory_with_verification.create_account account, false }
+
+      after do
+        created_account_with_reg_workflow.delete if created_account_with_reg_workflow
+      end
+
+      it 'creates an account with status ENABLED' do
+        expect(created_account_with_reg_workflow).to be
+        expect(created_account_with_reg_workflow.username).to eq(account.username)
+        expect(created_account_with_reg_workflow).to eq(account)
+        expect(created_account_with_reg_workflow.status).to eq("ENABLED")
+        expect(created_account_with_reg_workflow.email_verification_token.href).not_to be
       end
 
     end
