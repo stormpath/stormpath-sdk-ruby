@@ -1,6 +1,23 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Group, :vcr do
+
+  describe "instances should respond to attribute property methods" do
+    let(:directory) { test_directory }
+
+    subject(:group) { directory.groups.create name: 'someTestGroup' }
+
+    it { should respond_to(:href) }
+    it { should respond_to(:name) }
+    it { should respond_to(:description) }
+    it { should respond_to(:status) }
+
+    after do
+      group.delete if group
+    end
+
+  end
+
   describe '#add_or_remove_account' do
     context "given an account" do
 
@@ -10,13 +27,9 @@ describe Stormpath::Resource::Group, :vcr do
 
       let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
 
-      let(:reloaded_account) { test_api_client.accounts.get account.href }
-
-      let(:reloaded_group) { test_api_client.groups.get group.href }
-
-      let(:reloaded_group_2) { test_api_client.groups.get group.href }
-
-      before { group.add_account account }
+      before do
+        group.add_account account
+      end
 
       after do
         group.delete if group
@@ -25,17 +38,19 @@ describe Stormpath::Resource::Group, :vcr do
       end
 
       it "adds the account to the group" do
-        expect(reloaded_group.accounts).to include(account)
+        expect(group.accounts).to include(account)
       end
 
       it 'has one account membership resource' do
-        expect(reloaded_group.account_memberships).to have(1).item
+        expect(group.account_memberships).to have(1).item
       end
 
       it 'adds and removes the group from the account' do
-        expect(reloaded_group.accounts).to include(account)
-        reloaded_group.remove_account account
-        expect(reloaded_group_2.accounts).not_to include(account)
+        expect(group.accounts).to include(account)
+
+        group.remove_account account
+
+        expect(group.accounts).not_to include(account)
       end
 
     end
