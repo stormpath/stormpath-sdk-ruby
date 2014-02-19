@@ -21,7 +21,7 @@ class Stormpath::DataStore
   DEFAULT_API_VERSION = 1
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
-  CACHE_REGIONS = %w( applications directories accounts groups groupMemberships tenants )
+  CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
 
   attr_reader :client, :request_executor, :cache_manager
 
@@ -139,7 +139,7 @@ class Stormpath::DataStore
     end
 
     def cache_walk(resource)
-      # assert_not_nil resource['href'], "resource must have 'href' property"
+      assert_not_nil resource['href'], "resource must have 'href' property"
       items = resource['items']
 
       if items # collection resource
@@ -149,7 +149,7 @@ class Stormpath::DataStore
         end
       else     # single resource
         resource.each do |attr, value|
-          if value.is_a? Hash
+          if value.is_a? Hash and value['href']
             walked = cache_walk value
             resource[attr] = { 'href' => value['href'] } if value["href"]
             resource[attr]['items'] = walked['items'] if walked['items']
@@ -171,7 +171,11 @@ class Stormpath::DataStore
 
     def region_for(href)
       return nil unless href
-      region = href.split('/')[-2]
+      if href.include? "/customData"
+        region = href.split('/')[-1]
+      else
+        region = href.split('/')[-2]
+      end
       CACHE_REGIONS.include?(region) ? region : nil
     end
 
