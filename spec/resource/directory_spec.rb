@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Stormpath::Resource::Directory, :vcr do
 
   describe "instances should respond to attribute property methods" do
-    subject(:directory) { test_directory }
+    subject(:directory) { test_api_client.directories.create name: 'some_test_directory', description: 'description_for_some_test_directory' }
 
     it { should be_instance_of Stormpath::Resource::Directory }
 
@@ -16,6 +16,10 @@ describe Stormpath::Resource::Directory, :vcr do
     its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
     its(:groups) { should be_instance_of Stormpath::Resource::Collection }
     its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
+
+    after do
+      directory.delete if directory
+    end
   end
 
   describe 'directory_associations' do
