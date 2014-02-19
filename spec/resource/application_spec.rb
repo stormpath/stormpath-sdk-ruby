@@ -16,12 +16,15 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
-    its(:password_reset_tokens) { should be_instance_of Stormpath::Resource::Collection }
-    its(:account_store_mappings) { should be_instance_of Stormpath::Resource::Collection }
-    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
-    its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
     its(:default_account_store_mapping) { should be_instance_of Stormpath::Resource::AccountStoreMapping }
     its(:default_group_store_mapping) { should be_instance_of Stormpath::Resource::AccountStoreMapping }
+
+    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
+    its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
+    its(:password_reset_tokens) { should be_instance_of Stormpath::Resource::Collection }
+    its(:account_store_mappings) { should be_instance_of Stormpath::Resource::Collection }
+
+
   end
 
   describe '.load' do

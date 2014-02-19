@@ -35,6 +35,7 @@ describe Stormpath::Resource::Account, :vcr do
     its(:directory) { should be_instance_of Stormpath::Resource::Directory } 
     its(:custom_data) { should be_instance_of Stormpath::Resource::CustomData }
     its(:email_verification_token) { should be_instance_of Stormpath::Resource::EmailVerificationToken }
+
     its(:groups) { should be_instance_of Stormpath::Resource::Collection }
     its(:group_memberships) { should be_instance_of Stormpath::Resource::Collection }
 
