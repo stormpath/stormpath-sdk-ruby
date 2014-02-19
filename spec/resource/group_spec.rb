@@ -5,12 +5,21 @@ describe Stormpath::Resource::Group, :vcr do
   describe "instances should respond to attribute property methods" do
     let(:directory) { test_directory }
 
-    subject(:group) { directory.groups.create name: 'someTestGroup' }
+    subject(:group) { directory.groups.create name: 'someTestGroup', description: 'someTestDescription' }
 
-    it { should respond_to(:href) }
-    it { should respond_to(:name) }
-    it { should respond_to(:description) }
-    it { should respond_to(:status) }
+    [:name, :description, :status].each do |property_accessor|
+      it { should respond_to property_accessor }
+      it { should respond_to "#{property_accessor}="}
+      its(property_accessor) { should be_instance_of String }
+    end
+
+    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
+    its(:directory) { should be_instance_of Stormpath::Resource::Directory }
+    its(:custom_data) { should be_instance_of Stormpath::Resource::CustomData }
+
+    its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
+    its(:account_memberships) { should be_instance_of Stormpath::Resource::Collection}
+
 
     after do
       group.delete if group
