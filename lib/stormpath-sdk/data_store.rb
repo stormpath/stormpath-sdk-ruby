@@ -23,7 +23,7 @@ class Stormpath::DataStore
 
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships tenants )
 
-  attr_reader :client, :request_executor
+  attr_reader :client, :request_executor, :cache_manager
 
   def initialize(request_executor, cache_opts, client, *base_url)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
@@ -93,146 +93,140 @@ class Stormpath::DataStore
     execute_request('delete', href)
   end
 
-  def cache_manager
-    @cache_manager
-  end
-
-  protected
-
-  def needs_to_be_fully_qualified(href)
-    !href.downcase.start_with? 'http'
-  end
-
-  def qualify(href)
-    if needs_to_be_fully_qualified(href)
-      slash_added = href.start_with?('/') ? '' : '/'
-      @base_url + slash_added + href
-    else
-      href
-    end
-  end
-
   private
 
-  def execute_request(http_method, href, body=nil, query=nil)
-    if http_method == 'get' && (cache = cache_for href)
-      cached_result = cache.get href
-      return cached_result if cached_result
+    def needs_to_be_fully_qualified(href)
+      !href.downcase.start_with? 'http'
     end
 
-    request = Request.new(http_method, href, query, Hash.new, body)
-    apply_default_request_headers request
-    response = @request_executor.execute_request request
-    result = response.body.length > 0 ? MultiJson.load(response.body) : ''
-
-    if response.error?
-      error = Stormpath::Resource::Error.new result
-      #puts "Error with request: #{http_method.upcase}: #{href}"
-      raise Stormpath::Error.new error
-    end
-
-    if http_method == 'delete'
-      cache = cache_for href
-      cache.delete href if cache
-      return nil
-    end
-
-    if result['href']
-      cache_walk result
-    else
-      result
-    end
-  end
-
-  def cache_walk(resource)
-    # assert_not_nil resource['href'], "resource must have 'href' property"
-    items = resource['items']
-
-    if items # collection resource
-      resource['items'] = items.map do |item|
-        cache_walk item
-        { 'href' => item['href'] }
+    def qualify(href)
+      if needs_to_be_fully_qualified(href)
+        slash_added = href.start_with?('/') ? '' : '/'
+        @base_url + slash_added + href
+      else
+        href
       end
-    else     # single resource
-      resource.each do |attr, value|
-        if value.is_a? Hash
-          walked = cache_walk value
-          resource[attr] = { 'href' => value['href'] } if value["href"]
-          resource[attr]['items'] = walked['items'] if walked['items']
+    end
+
+    def execute_request(http_method, href, body=nil, query=nil)
+      if http_method == 'get' && (cache = cache_for href)
+        cached_result = cache.get href
+        return cached_result if cached_result
+      end
+
+      request = Request.new(http_method, href, query, Hash.new, body)
+      apply_default_request_headers request
+      response = @request_executor.execute_request request
+      result = response.body.length > 0 ? MultiJson.load(response.body) : ''
+
+      if response.error?
+        error = Stormpath::Resource::Error.new result
+        #puts "Error with request: #{http_method.upcase}: #{href}"
+        raise Stormpath::Error.new error
+      end
+
+      if http_method == 'delete'
+        cache = cache_for href
+        cache.delete href if cache
+        return nil
+      end
+
+      if result['href']
+        cache_walk result
+      else
+        result
+      end
+    end
+
+    def cache_walk(resource)
+      # assert_not_nil resource['href'], "resource must have 'href' property"
+      items = resource['items']
+
+      if items # collection resource
+        resource['items'] = items.map do |item|
+          cache_walk item
+          { 'href' => item['href'] }
+        end
+      else     # single resource
+        resource.each do |attr, value|
+          if value.is_a? Hash
+            walked = cache_walk value
+            resource[attr] = { 'href' => value['href'] } if value["href"]
+            resource[attr]['items'] = walked['items'] if walked['items']
+          end
+        end
+        cache resource if resource.length > 1
+      end
+      resource
+    end
+
+    def cache(resource)
+      cache = cache_for resource['href']
+      cache.put resource['href'], resource if cache
+    end
+
+    def cache_for(href)
+      @cache_manager.get_cache(region_for href)
+    end
+
+    def region_for(href)
+      return nil unless href
+      region = href.split('/')[-2]
+      CACHE_REGIONS.include?(region) ? region : nil
+    end
+
+    def apply_default_request_headers(request)
+      request.http_headers.store 'Accept', 'application/json'
+      request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
+
+      if !request.body.nil? and request.body.length > 0
+        request.http_headers.store 'Content-Type', 'application/json'
+      end
+    end
+
+    def save_resource(href, resource, return_type)
+      assert_not_nil resource, "resource argument cannot be null."
+      assert_not_nil return_type, "returnType class cannot be null."
+      assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
+
+      q_href = qualify href
+
+      response = execute_request('post', q_href, MultiJson.dump(to_hash(resource)))
+
+      instantiate return_type, response.to_hash
+    end
+
+    def get_base_url(*base_url)
+      (!base_url.empty? and !base_url[0].nil?) ?
+        base_url[0] :
+        "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
+    end
+
+    def to_hash(resource)
+      Hash.new.tap do |properties|
+        resource.get_dirty_property_names.each do |name|
+          property = resource.get_property name
+
+          # Special use case is with Custom Data, it's hashes should not be simplified
+          if property.kind_of?(Hash) and resource_not_custom_data resource, name
+            property = to_simple_reference name, property
+          end
+
+          properties.store name, property
         end
       end
-      cache resource if resource.length > 1
     end
-    resource
-  end
 
-  def cache(resource)
-    cache = cache_for resource['href']
-    cache.put resource['href'], resource if cache
-  end
+    def to_simple_reference(property_name, hash)
+      assert_true hash.has_key?(HREF_PROP_NAME), "Nested resource '#{property_name}' must have an 'href' property."
 
-  def cache_for(href)
-    @cache_manager.get_cache(region_for href)
-  end
+      href = hash[HREF_PROP_NAME]
 
-  def region_for(href)
-    return nil unless href
-    region = href.split('/')[-2]
-    CACHE_REGIONS.include?(region) ? region : nil
-  end
-
-  def apply_default_request_headers(request)
-    request.http_headers.store 'Accept', 'application/json'
-    request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
-
-    if !request.body.nil? and request.body.length > 0
-      request.http_headers.store 'Content-Type', 'application/json'
+      {HREF_PROP_NAME => href}
     end
-  end
 
-  def save_resource(href, resource, return_type)
-    assert_not_nil resource, "resource argument cannot be null."
-    assert_not_nil return_type, "returnType class cannot be null."
-    assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
-
-    q_href = qualify href
-
-    response = execute_request('post', q_href, MultiJson.dump(to_hash(resource)))
-
-    instantiate return_type, response.to_hash
-  end
-
-  def get_base_url(*base_url)
-    (!base_url.empty? and !base_url[0].nil?) ?
-      base_url[0] :
-      "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
-  end
-
-  def to_hash(resource)
-    Hash.new.tap do |properties|
-      resource.get_dirty_property_names.each do |name|
-        property = resource.get_property name
-
-        # Special use case is with Custom Data, it's hashes should not be simplified
-        if property.kind_of?(Hash) and resource_not_custom_data resource, name
-          property = to_simple_reference name, property
-        end
-
-        properties.store name, property
-      end
+    def resource_not_custom_data resource, name
+      resource.class != Stormpath::Resource::CustomData and name != "customData"
     end
-  end
-
-  def to_simple_reference(property_name, hash)
-    assert_true hash.has_key?(HREF_PROP_NAME), "Nested resource '#{property_name}' must have an 'href' property."
-
-    href = hash[HREF_PROP_NAME]
-
-    {HREF_PROP_NAME => href}
-  end
-
-  def resource_not_custom_data resource, name
-    resource.class != Stormpath::Resource::CustomData and name != "customData"
-  end
 
 end
