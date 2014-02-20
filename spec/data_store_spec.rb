@@ -14,9 +14,14 @@ describe Stormpath::DataStore do
  end
 
   describe '.region_for' do
-    let(:region) { data_store.send(:region_for, 'https://api.stormpath.com/v1/directories/4NykYrYH0OBiOOVOg8LXQ5') }
     it 'pulls resource name from href' do
+      region = data_store.send :region_for, 'https://api.stormpath.com/v1/directories/4NykYrYH0OBiOOVOg8LXQ5'
       expect(region).to eq('directories')
+    end
+
+    it 'pulls resource name from href if its custom data also' do
+      region = data_store.send :region_for, 'https://api.stormpath.com/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData'
+      expect(region).to eq('customData')
     end
   end
 
