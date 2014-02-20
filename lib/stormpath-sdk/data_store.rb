@@ -25,7 +25,7 @@ class Stormpath::DataStore
 
   attr_reader :client, :request_executor, :cache_manager
 
-  def initialize(request_executor, cache_opts, client, base_url)
+  def initialize(request_executor, cache_opts, client, base_url = nil)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
 
     @client = client
