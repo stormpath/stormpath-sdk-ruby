@@ -11,7 +11,7 @@ describe Stormpath::DataStore do
 
   after do
     application_cache.clear
- end
+  end
 
   describe '.region_for' do
     it 'pulls resource name from href' do

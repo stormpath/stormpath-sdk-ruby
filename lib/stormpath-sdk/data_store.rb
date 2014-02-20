@@ -25,11 +25,11 @@ class Stormpath::DataStore
 
   attr_reader :client, :request_executor, :cache_manager
 
-  def initialize(request_executor, cache_opts, client, *base_url)
+  def initialize(request_executor, cache_opts, client, base_url)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
 
     @client = client
-    @base_url = get_base_url(*base_url)
+    @base_url = get_base_url(base_url)
     @request_executor = request_executor
     initialize_cache cache_opts
   end
@@ -200,10 +200,8 @@ class Stormpath::DataStore
       instantiate return_type, response.to_hash
     end
 
-    def get_base_url(*base_url)
-      (!base_url.empty? and !base_url[0].nil?) ?
-        base_url[0] :
-        "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
+    def get_base_url(base_url)
+        base_url || "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
     end
 
     def to_hash(resource)
