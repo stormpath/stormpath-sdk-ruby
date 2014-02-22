@@ -172,7 +172,12 @@ properties
       end
 
       context 'with a base url' do
-        it 'creates a client that connects to that base'
+        context 'creates a client that connects to that base' do
+          let(:api_key) { Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret) }
+          let(:client) { Stormpath::Client.new(api_key: api_key, base_url: "https://api.stormpath.com/v1") }
+
+          it_behaves_like 'a valid client'
+        end
       end
 
       context 'with an api key' do

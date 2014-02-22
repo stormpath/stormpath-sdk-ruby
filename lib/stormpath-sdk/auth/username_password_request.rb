@@ -14,17 +14,16 @@
 # limitations under the License.
 #
 module Stormpath
-
   module Authentication
-
     class UsernamePasswordRequest
 
-      attr_reader :host
+      attr_reader :host, :account_store
 
-      def initialize username, password, host = nil
+      def initialize username, password, options = {}
         @username = username
         @password = (password != nil and password.length > 0) ? password.chars.to_a : "".chars.to_a
-        @host = host
+        @host = options[:host]
+        @account_store = options[:account_store]
       end
 
       def principals
@@ -38,18 +37,13 @@ module Stormpath
       def clear
         @username = nil
         @host = nil
+        @account_store = nil
 
-        @password.each { |pass_char|
-
-          pass_char = 0x00
-        }
-
+        @password.each { |pass_char| pass_char = 0x00 }
         @password = nil
       end
 
     end
-
   end
-
 end
 

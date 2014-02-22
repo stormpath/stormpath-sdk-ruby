@@ -18,26 +18,22 @@ class Stormpath::Resource::Base
   include Stormpath::Resource::Associations
 
   HREF_PROP_NAME = "href"
-
+  DEFAULT_SERVER_HOST = Stormpath::DataStore::DEFAULT_SERVER_HOST
   attr_reader :client, :properties
 
   class << self
     def prop_reader(*args)
       args.each do |name|
-        property_name = name.to_s.camelize :lower
-
         define_method(name) do
-          get_property property_name
+          get_property name
         end
       end
     end
 
     def prop_writer(*args)
       args.each do |name|
-        property_name = name.to_s.camelize :lower
-
         define_method("#{name.to_s}=") do |value|
-          set_property property_name, value
+          set_property name, value
         end
       end
     end
@@ -79,6 +75,7 @@ class Stormpath::Resource::Base
     @write_lock = Mutex.new
     @properties = Hash.new
     @dirty_properties = Hash.new
+    @deleted_properties = Array.new
     set_properties properties
   end
 
@@ -106,6 +103,16 @@ class Stormpath::Resource::Base
     end
   end
 
+  def get_dirty_property_names
+    @read_lock.lock
+
+    begin
+      @dirty_properties.keys
+    ensure
+      @read_lock.unlock
+    end
+  end
+
   def set_properties properties
     @write_lock.lock
 
@@ -114,9 +121,9 @@ class Stormpath::Resource::Base
       @dirty_properties.clear
       @dirty = false
 
-      unless properties.nil?
+      if properties
         @properties = deep_sanitize properties
-
+        @dirty_properties = @properties if new?
         # Don't consider this resource materialized if it is only a reference.  A reference is any object that
         # has only one 'href' property.
         href_only = (@properties.size == 1 and @properties.has_key? HREF_PROP_NAME)
@@ -133,7 +140,7 @@ class Stormpath::Resource::Base
   def get_property name
     property_name = name.to_s.camelize :lower
 
-    if !HREF_PROP_NAME.eql? property_name
+    if HREF_PROP_NAME != property_name
       #not the href/id, must be a property that requires materialization:
       unless new? or materialized?
 
@@ -155,7 +162,7 @@ class Stormpath::Resource::Base
       end
     end
 
-    read_property name
+    read_property property_name
   end
 
   def set_property name, value
@@ -214,7 +221,7 @@ class Stormpath::Resource::Base
   private
 
   def get_href_from_hash(props)
-    if !props.nil? and props.is_a? Hash
+    if props and props.is_a? Hash
       props[HREF_PROP_NAME]
     end
   end
@@ -233,10 +240,8 @@ class Stormpath::Resource::Base
     {}.tap do |sanitized_properties|
       properties.map do |key, value|
         property_name = key.to_s.camelize :lower
-
         sanitized_properties[property_name] =
-          if (value.kind_of? Hash) or
-            (value.kind_of? Stormpath::Resource::Base)
+          if value.kind_of? Hash or value.kind_of? Stormpath::Resource::Base
             deep_sanitize value
           else
             value
@@ -253,4 +258,5 @@ class Stormpath::Resource::Base
       sanitize hash_or_resource
     end
   end
+
 end

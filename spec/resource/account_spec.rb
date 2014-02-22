@@ -1,20 +1,43 @@
 require 'spec_helper'
+require 'pry-debugger'
 
 describe Stormpath::Resource::Account, :vcr do
+
   describe "instances" do
     let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+    
+    let(:given_name) { 'Ruby SDK' }
+    let(:middle_name) { 'Gruby' }
+    let(:surname) { 'SDK' }
+
     subject(:account) do
       directory.accounts.create email: 'test@example.com',
-          givenName: 'Ruby SDK',
+          given_name: given_name,
           password: 'P@$$w0rd',
-          surname: 'SDK',
+          middle_name: middle_name,
+          surname: surname,
           username: 'rubysdk'
     end
 
-    it { should respond_to :given_name }
-    it { should respond_to :username }
-    it { should respond_to :surname }
-    it { should respond_to :full_name }
+    [:given_name, :username, :middle_name, :surname, :email, :status].each do |property_accessor|
+      it { should respond_to property_accessor }
+      it { should respond_to "#{property_accessor}=" }
+      its(property_accessor) { should be_instance_of String }
+    end
+
+    it {should respond_to :full_name}
+    its(:full_name) { should be_instance_of String}
+    its(:full_name) { should eq("#{given_name} #{middle_name} #{surname}")}
+
+    it {should respond_to "password="}
+
+    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
+    its(:directory) { should be_instance_of Stormpath::Resource::Directory } 
+    its(:custom_data) { should be_instance_of Stormpath::Resource::CustomData }
+    its(:email_verification_token) { should be_instance_of Stormpath::Resource::EmailVerificationToken }
+
+    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
+    its(:group_memberships) { should be_instance_of Stormpath::Resource::Collection }
 
     after do
       account.delete if account
@@ -23,31 +46,41 @@ describe Stormpath::Resource::Account, :vcr do
 
   end
 
-  describe "#add_group" do
-    context "given a group" do
-      let(:directory) do
-        test_api_client.directories.create name: 'testDirectory'
-      end
-
-      let(:group) do
-        directory.groups.create name: 'testGroup'
-      end
-
-      let(:account) do
-        directory.accounts.create email: 'test@example.com',
+  describe 'account_associations' do
+    let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+    
+    let(:account) do
+      directory.accounts.create email: 'test@example.com',
           givenName: 'Ruby SDK',
           password: 'P@$$w0rd',
           surname: 'SDK',
           username: 'rubysdk'
-      end
+    end
 
-      let(:reloaded_account) do
-        test_api_client.accounts.get account.href
-      end
+    it 'should belong_to directory' do
+      expect(account.directory).to eq(directory)
+    end
 
-      before do
-        account.add_group group
-      end
+    it 'should belong_to tenant' do
+      expect(account.tenant).to be
+      expect(account.tenant).to eq(account.directory.tenant)
+    end
+
+    after do
+      account.delete if account
+      directory.delete if directory
+    end
+  end
+
+  describe "#add_or_remove_group" do
+    context "given a group" do
+      let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+
+      let(:group) { directory.groups.create name: 'testGroup' }
+
+      let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd', surname: 'SDK' }) }
+
+      before { account.add_group group }
 
       after do
         account.delete if account
@@ -56,12 +89,21 @@ describe Stormpath::Resource::Account, :vcr do
       end
 
       it 'adds the group to the account' do
-        group_added = false
-        reloaded_account.groups.each do |g|
-          group_added = true if g.href == group.href
-        end
-        expect(group_added).to be_true
+        expect(account.groups).to include(group)
       end
+
+      it 'has one group membership resource' do
+        expect(account.group_memberships).to have(1).item
+      end
+
+      it 'adds and removes the group from the account' do
+        expect(account.groups).to include(group)
+
+        account.remove_group group
+
+        expect(account.groups).not_to include(group)
+      end
+
     end
   end
 
@@ -93,4 +135,5 @@ describe Stormpath::Resource::Account, :vcr do
       end
     end
   end
+
 end

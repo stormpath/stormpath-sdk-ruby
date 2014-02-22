@@ -15,6 +15,7 @@
 #
 class Stormpath::Resource::Group < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
+  include Stormpath::Resource::CustomDataStorage
 
   prop_accessor :name, :description
 
@@ -22,8 +23,17 @@ class Stormpath::Resource::Group < Stormpath::Resource::Instance
   belongs_to :directory
 
   has_many :accounts
+  has_many :account_memberships
+
+  has_one :custom_data
 
   def add_account account
     client.group_memberships.create group: self, account: account
   end
+
+  def remove_account account
+    account_membership = account_memberships.find {|account_membership| account_membership.account.href == account.href }
+    account_membership.delete if account_membership
+  end
+  
 end

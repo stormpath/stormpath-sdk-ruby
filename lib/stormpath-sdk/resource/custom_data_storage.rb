@@ -1,5 +1,5 @@
 #
-# Copyright 2013 Stormpath, Inc.
+# Copyright 2014 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
-  VERSION = '1.0.0.beta.5'
-  VERSION_DATE = '2014-01-03'
+module Stormpath::Resource::CustomDataStorage
+  extend ActiveSupport::Concern
+
+  CUSTOM_DATA = "custom_data"
+
+  included do
+
+    def save
+      apply_custom_data_updates_if_necessary
+      super
+    end
+
+    def apply_custom_data_updates_if_necessary
+      if custom_data.send :has_removed_properties?
+        custom_data.send :delete_removed_properties
+      end
+      if custom_data.send :has_new_properties?
+        self.set_property CUSTOM_DATA, custom_data.properties
+      end
+    end
+
+  end
+
 end

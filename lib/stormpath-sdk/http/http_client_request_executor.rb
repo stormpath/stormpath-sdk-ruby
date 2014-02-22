@@ -14,25 +14,18 @@
 # limitations under the License.
 #
 module Stormpath
-
   module Http
-
     class HttpClientRequestExecutor
-
       include Stormpath::Http::Authc
       include Stormpath::Util::Assert
-
-      REDIRECTS_LIMIT = 10
 
       def initialize(api_key, options = {})
         @signer = Sauthc1Signer.new
         @api_key = api_key
         @http_client = HTTPClient.new options[:proxy]
-        @redirects_limit = REDIRECTS_LIMIT
       end
 
-      def execute_request(request)
-
+      def execute_request(request, redirects_limit = 10)
         assert_not_nil request, "Request argument cannot be null."
 
         @redirect_response = nil
@@ -47,56 +40,31 @@ module Stormpath
 
         method = @http_client.method(request.http_method.downcase)
 
-        if request.body.nil?
+        response = method.call domain, request.body, request.http_headers
 
-          response = method.call domain, nil, request.http_headers
-
-        else
-
-          response = method.call domain, request.body, request.http_headers
-
-        end
-
-        if response.redirect? and @redirects_limit > 0
+        if response.redirect? and redirects_limit > 0
           request.href = response.http_header['location'][0]
-          @redirects_limit -= 1
-          @redirect_response = execute_request request
+          redirects_limit -= 1
+          @redirect_response = execute_request request, redirects_limit
           return @redirect_response
         end
 
-        if @redirect_response
-          @redirects_limit = REDIRECTS_LIMIT
-          @redirect_response
-        else
-          Response.new response.http_header.status_code,
+        Response.new response.http_header.status_code,
                        response.http_header.body_type,
                        response.content,
                        response.http_header.body_size
-        end
-
       end
 
       private
 
-      def add_query_string href, query_string
-
-        query_string.each do |key, value|
-
-          if href.include? '?'
-
-            href << '&' << key.to_s << '=' << value.to_s
-
-          else
-            href << '?' << key.to_s << '=' << value.to_s
+        def add_query_string href, query_string
+          query_string.each do |key, value|
+            prefix = if href.include? '?' then '&' else '?' end
+            href << prefix << key.to_s << '=' << value.to_s
           end
-
         end
 
-      end
-
     end
-
   end
-
 end
 

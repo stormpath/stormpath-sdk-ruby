@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class  Stormpath::Resource::Account < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
+class Stormpath::Resource::Account < Stormpath::Resource::Instance
+  include Stormpath::Resource::AccountStatus
+  include Stormpath::Resource::CustomDataStorage
 
   prop_accessor :username, :email, :given_name, :middle_name, :surname
   prop_writer :password
@@ -22,13 +23,22 @@ class  Stormpath::Resource::Account < Stormpath::Resource::Instance
   prop_non_printable :password
 
   belongs_to :directory
+  belongs_to :tenant
+
   has_one :email_verification_token
 
   has_many :groups
   has_many :group_memberships
 
+  has_one :custom_data
+
   def add_group group
     client.group_memberships.create group: group, account: self
   end
-  
+
+  def remove_group group
+    group_membership = group_memberships.find {|group_membership| group_membership.group.href == group.href }
+    group_membership.delete if group_membership
+  end
+
 end

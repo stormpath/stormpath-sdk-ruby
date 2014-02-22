@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 class Stormpath::Resource::AccountStoreMapping < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
 
   prop_accessor :list_index, :is_default_account_store, :is_default_group_store
 
@@ -24,9 +23,12 @@ class Stormpath::Resource::AccountStoreMapping < Stormpath::Resource::Instance
 
   alias_method :default_account_store, :is_default_account_store
   alias_method :default_account_store?, :is_default_account_store
+
+  alias_method :default_account_store=, :is_default_account_store=
+
   alias_method :default_group_store, :is_default_group_store
   alias_method :default_group_store?, :is_default_group_store
-  alias_method :default_account_store=, :is_default_account_store=
+
   alias_method :default_group_store=, :is_default_group_store=
 
 end

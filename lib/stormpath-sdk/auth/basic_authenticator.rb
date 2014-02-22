@@ -40,6 +40,8 @@ module Stormpath
         attempt.type = 'basic'
         attempt.value = value
 
+        attempt.account_store = request.account_store if request.account_store
+
         href = parent_href + '/loginAttempts'
 
         @data_store.create href, attempt, AuthenticationResult

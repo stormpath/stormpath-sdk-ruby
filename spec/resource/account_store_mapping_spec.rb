@@ -24,11 +24,26 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   describe "instances" do
     subject(:account_store_mapping) {create_account_store_mapping(application,directory)}
    
-    it { should respond_to(:account_store) }
-    it { should respond_to(:list_index) }
-    it { should respond_to(:is_default_group_store) }
-    it { should respond_to(:is_default_account_store) }
-    it { should respond_to(:application) }
+    [:list_index, :is_default_account_store, :is_default_group_store, :default_account_store, :default_group_store ].each do |prop_accessor|
+      it { should respond_to prop_accessor }
+      it { should respond_to "#{prop_accessor}=" }
+    end
+
+    [:default_account_store?, :default_group_store?].each do |prop_getter|
+      it { should respond_to prop_getter }
+    end
+
+    its(:list_index) { should be_instance_of Fixnum }
+
+    [:default_account_store, :default_group_store].each do |default_store_method|
+      [default_store_method, "is_#{default_store_method}", "#{default_store_method}?"].each do |specific_store_method|
+        its(specific_store_method) {should satisfy {|attribute| [TrueClass, FalseClass].include? attribute.class }}
+      end
+    end
+
+    its(:account_store) { should satisfy {|prop_reader| [Stormpath::Resource::Directory, Stormpath::Resource::Group].include? prop_reader.class }}
+
+    its(:application) { should be_instance_of Stormpath::Resource::Application }
   end
 
 

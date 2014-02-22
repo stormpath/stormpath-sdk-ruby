@@ -19,6 +19,17 @@ module Stormpath
 
       TYPE = "type"
       VALUE = "value"
+      ACCOUNT_STORE = "account_store"
+
+      def account_store
+        get_property ACCOUNT_STORE
+      end
+
+      def account_store=(account_store)
+        if account_store.kind_of? Stormpath::Resource::Base
+          set_property ACCOUNT_STORE, {HREF_PROP_NAME => account_store.href}
+        end
+      end
 
       def type
         get_property TYPE
