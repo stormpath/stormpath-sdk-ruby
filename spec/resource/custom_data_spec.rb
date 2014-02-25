@@ -64,6 +64,14 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(reloaded_account.custom_data[:rank]).to eq("Captain")
     end
 
+    it 'trigger custom data saving on account.save with complex custom data' do
+      account.custom_data[:permissions] = {"crew_quarters" => "93-601"}
+      account.surname = "Picard!"
+      account.save
+      expect(reloaded_account.surname).to eq("Picard!")
+      expect(reloaded_account.custom_data[:permissions]).to eq({"crew_quarters" => "93-601"})
+    end
+
     it 'delete all custom data' do
       account.custom_data[:rank] = "Captain"
       account.custom_data.save
