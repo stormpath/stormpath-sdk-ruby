@@ -60,7 +60,7 @@ module Stormpath
     end
 
     def test_api_client
-      Stormpath::Client.new api_key: test_api_key
+      @test_api_client ||= Stormpath::Client.new api_key: test_api_key
     end
 
     def test_missing_env_vars

@@ -21,6 +21,8 @@ class Stormpath::DataStore
   DEFAULT_API_VERSION = 1
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
+  ACCOUNT_URL_REGEX = /#{DEFAULT_SERVER_HOST}\/v#{DEFAULT_API_VERSION}\/accounts\/\w+[\/]{0,1}$/
+
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
 
   attr_reader :client, :request_executor, :cache_manager
@@ -132,9 +134,20 @@ class Stormpath::DataStore
       end
 
       if result['href']
+        clear_custom_data_cache(request) if request.href =~ ACCOUNT_URL_REGEX
         cache_walk result
       else
         result
+      end
+    end
+
+    def clear_custom_data_cache request
+      if request.body['customData']
+        slash_added = request.href.end_with?('/') ? '' : '/'
+        custom_data_href = request.href + slash_added + "customData"
+
+        cache = cache_for custom_data_href
+        cache.delete custom_data_href if cache
       end
     end
 

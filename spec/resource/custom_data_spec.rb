@@ -18,6 +18,8 @@ describe Stormpath::Resource::CustomData, :vcr do
 
     let(:reloaded_account) { test_api_client.accounts.get account.href }
 
+    let(:reloaded_account_2) { test_api_client.accounts.get account.href }
+
     after do
       account.delete if account
       directory.delete if directory
@@ -70,6 +72,18 @@ describe Stormpath::Resource::CustomData, :vcr do
       account.save
       expect(reloaded_account.surname).to eq("Picard!")
       expect(reloaded_account.custom_data[:permissions]).to eq({"crew_quarters" => "93-601"})
+    end
+
+    it 'update custom data through account.save, cache should be cleared' do
+      account.custom_data[:permissions] = {"crew_quarters" => "93-601"}
+      account.custom_data.save
+
+      expect(reloaded_account.custom_data[:permissions]).to eq({"crew_quarters" => "93-601"})
+
+      reloaded_account.custom_data[:permissions] = {"crew_quarters" => "601-93"}
+
+      reloaded_account.save
+      expect(reloaded_account_2.custom_data[:permissions]).to eq({"crew_quarters" => "601-93"})
     end
 
     it 'delete all custom data' do

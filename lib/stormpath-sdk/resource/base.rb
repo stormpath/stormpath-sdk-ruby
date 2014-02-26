@@ -19,7 +19,7 @@ class Stormpath::Resource::Base
 
   HREF_PROP_NAME = "href"
   DEFAULT_SERVER_HOST = Stormpath::DataStore::DEFAULT_SERVER_HOST
-  attr_reader :client, :properties
+  attr_reader :client, :properties, :dirty_properties
 
   class << self
     def prop_reader(*args)
