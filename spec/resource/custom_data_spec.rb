@@ -20,6 +20,11 @@ describe Stormpath::Resource::CustomData, :vcr do
 
     let(:reloaded_account_2) { test_api_client.accounts.get account.href }
 
+    def get_data_cache href
+      data_store = test_api_client.send :data_store
+      data_store.send :cache_for, href
+    end
+
     after do
       account.delete if account
       directory.delete if directory
@@ -86,6 +91,82 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(reloaded_account_2.custom_data[:permissions]).to eq({"crew_quarters" => "601-93"})
     end
 
+    it 'delete all custom data and rebind without reloading' do
+      account.custom_data["a_map"] = {the_key: "this is the value"}
+
+      account.custom_data.save
+
+      expect(account.custom_data["a_map"]).to eq({"the_key" => "this is the value"})
+
+      account.custom_data.delete("a_map")
+
+      account.custom_data.save
+
+      expect(account.custom_data["a_map"]).to be_nil
+
+      account.custom_data["rank"] = "Captain"
+
+      account.custom_data.save
+
+      expect(account.custom_data["rank"]).to eq("Captain")
+
+      account.custom_data.delete
+
+      expect(account.custom_data["a_map"]).to be_nil
+
+      expect(account.custom_data["rank"]).to be_nil
+
+      account.custom_data['new_stuff'] = "the value"
+
+      account.custom_data.save
+
+      expect(account.custom_data["new_stuff"]).to eq("the value")
+
+      account.custom_data.delete("new_stuff")
+
+      account.custom_data.save
+
+      expect(account.custom_data["new_stuff"]).to be_nil
+    end
+
+    it 'delete all custom data and rebind without reloading through account#save' do
+      account.custom_data["a_map"] = {"the_key" => "this is the value"}
+
+      account.save
+
+      expect(account.custom_data["a_map"]).to eq({"the_key" => "this is the value"})
+
+      account.custom_data.delete("a_map")
+
+      account.custom_data.save
+
+      expect(account.custom_data["a_map"]).to be_nil
+
+      account.custom_data["rank"] = "Captain"
+
+      account.save
+
+      expect(account.custom_data["rank"]).to eq("Captain")
+
+      account.custom_data.delete
+
+      expect(account.custom_data["a_map"]).to be_nil
+
+      expect(account.custom_data["rank"]).to be_nil
+
+      account.custom_data['new_stuff'] = "the value"
+
+      account.save
+
+      expect(account.custom_data["new_stuff"]).to eq("the value")
+
+      account.custom_data.delete("new_stuff")
+
+      account.custom_data.save
+
+      expect(account.custom_data["new_stuff"]).to be_nil
+    end
+
     it 'delete all custom data' do
       account.custom_data[:rank] = "Captain"
       account.custom_data.save
@@ -93,6 +174,27 @@ describe Stormpath::Resource::CustomData, :vcr do
       account.custom_data.delete
       expect(reloaded_account.custom_data[:rank]).to eq(nil)
     end
+
+    it 'delete all custom data and re-add new custom data' do
+      account.custom_data[:rank] = "Captain"
+
+      account.custom_data.save
+ 
+      expect(account.custom_data[:rank]).to eq("Captain")
+ 
+      account.custom_data.delete
+ 
+      expect(reloaded_account.custom_data[:rank]).to eq(nil)
+
+      reloaded_account.custom_data[:rank] = "Pilot"
+
+      reloaded_account.custom_data.save
+
+      expect(reloaded_account.custom_data[:rank]).to eq("Pilot")
+
+      expect(reloaded_account_2.custom_data[:rank]).to eq("Pilot")
+    end
+
 
     it 'delete a specific custom data field' do
       account.custom_data[:rank] = "Captain"
@@ -103,6 +205,7 @@ describe Stormpath::Resource::CustomData, :vcr do
       account.custom_data.save
 
       expect(reloaded_account.custom_data[:rank]).to eq(nil)
+
       expect(reloaded_account.custom_data["favorite_drink"]).to eq("Earl Grey Tea")
     end
 

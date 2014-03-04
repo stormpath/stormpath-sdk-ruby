@@ -34,10 +34,15 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   end
 
   def delete(name = nil)
-    super() if name.nil?
+    if name.nil?
+      @properties = { HREF_PROP_NAME => @properties[HREF_PROP_NAME] }
+      @dirty_properties.clear
+      @deleted_properties.clear
+      return super()
+    end
 
     @write_lock.lock
-    property_name = name.to_s
+    property_name = name.to_s.camelize :lower
     begin
       @properties.delete(property_name)
       @dirty_properties.delete(property_name)

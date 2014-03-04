@@ -21,7 +21,9 @@ class Stormpath::DataStore
   DEFAULT_API_VERSION = 1
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
-  ACCOUNT_URL_REGEX = /#{DEFAULT_SERVER_HOST}\/v#{DEFAULT_API_VERSION}\/accounts\/\w+[\/]{0,1}$/
+  CUSTOM_DATA_STORAGE_URL_REGEX = /#{DEFAULT_SERVER_HOST}\/v#{DEFAULT_API_VERSION}\/(accounts|groups)\/\w+[\/]{0,1}$/
+
+  CUSTOM_DATA_DELETE_FIELD_REGEX = /#{DEFAULT_SERVER_HOST}\/v#{DEFAULT_API_VERSION}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
 
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
 
@@ -112,6 +114,7 @@ class Stormpath::DataStore
 
     def execute_request(http_method, href, body=nil, query=nil)
       if http_method == 'get' && (cache = cache_for href)
+        # binding.pry if href =~ /application/
         cached_result = cache.get href
         return cached_result if cached_result
       end
@@ -128,20 +131,29 @@ class Stormpath::DataStore
       end
 
       if http_method == 'delete'
-        cache = cache_for href
-        cache.delete href if cache
+        clear_cache href
         return nil
       end
 
       if result['href']
-        clear_custom_data_cache(request) if request.href =~ ACCOUNT_URL_REGEX
+        clear_custom_data_cache(request) if request.href =~ CUSTOM_DATA_STORAGE_URL_REGEX
         cache_walk result
       else
         result
       end
     end
 
-    def clear_custom_data_cache request
+
+    def clear_cache(href)
+      if href =~ CUSTOM_DATA_DELETE_FIELD_REGEX
+        href = href.split('/')[0..-2].join('/')
+      end
+
+      cache = cache_for href
+      cache.delete href if cache
+    end
+
+    def clear_custom_data_cache(request)
       if request.body['customData']
         slash_added = request.href.end_with?('/') ? '' : '/'
         custom_data_href = request.href + slash_added + "customData"

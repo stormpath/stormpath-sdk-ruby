@@ -25,6 +25,39 @@ describe Stormpath::DataStore do
     end
   end
 
+  describe 'custom data regex matchers' do
+    let(:custom_data_storage_url_regex) { Stormpath::DataStore::CUSTOM_DATA_STORAGE_URL_REGEX }
+    let(:custom_data_delete_field_regex) { Stormpath::DataStore::CUSTOM_DATA_DELETE_FIELD_REGEX }
+
+    context 'CUSTOM_DATA_STORAGE_URL_REGEX' do 
+      it 'should match account or group href' do
+        expect("https://api.stormpath.com/v1/accounts/2f8U7r5JweVf1ZTtcJ08L8").to match(custom_data_storage_url_regex)
+        expect("https://api.stormpath.com/v1/groups/4x6vwucf1w9wjHvt7paGoY").to match(custom_data_storage_url_regex)
+      end
+
+      it 'should not match custom data href' do
+        expect("https://api.stormpath.com/v1/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData").not_to match(custom_data_storage_url_regex)
+        expect("https://api.stormpath.com/v1/groups/4x6vwucf1w9wjHvt7paGoY/customData").not_to match(custom_data_storage_url_regex)
+      end
+
+      it 'should not match group memberships href' do
+        expect("https://api.stormpath.com/v1/groupMemberships/1u86fpQxJkFTfQHm1Hnhpb").not_to match(custom_data_storage_url_regex)
+      end
+    end
+
+    context 'CUSTOM_DATA_DELETE_FIELD_REGEX' do
+      it 'should match custom data field href' do
+        expect("https://api.stormpath.com/v1/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData/rank").to match(custom_data_delete_field_regex)
+        expect("https://api.stormpath.com/v1/groups/4x6vwucf1w9wjHvt7paGoY/customData/rank").to match(custom_data_delete_field_regex)
+      end
+
+      it 'should not match custom data resource href' do
+        expect("https://api.stormpath.com/v1/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData").not_to match(custom_data_delete_field_regex)
+        expect("https://api.stormpath.com/v1/groups/4x6vwucf1w9wjHvt7paGoY/customData").not_to match(custom_data_delete_field_regex)
+      end
+    end
+  end
+
   describe '#delete' do
     before do
       resource = factory.resource 'application', 1, %w(tenant groups)

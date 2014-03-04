@@ -49,7 +49,9 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
 
   describe 'given an application' do
     let!(:account_store_mapping) {create_account_store_mapping(application,directory,true)}
+
     let(:reloaded_application) { test_api_client.applications.get application.href}
+
     it 'should retrive a default account store mapping' do
       expect(reloaded_application.default_account_store_mapping).to eq(account_store_mapping)
     end
