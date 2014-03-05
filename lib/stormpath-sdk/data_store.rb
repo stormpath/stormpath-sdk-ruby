@@ -111,7 +111,8 @@ class Stormpath::DataStore
       end
     end
 
-    def execute_request(http_method, href, body=nil, query=nil)
+    def execute_request(http_method, href, resource=nil, query=nil)
+      body = MultiJson.dump(to_hash(resource)) if resource
       if http_method == 'get' && (cache = cache_for href)
         # binding.pry if href =~ /application/
         cached_result = cache.get href
@@ -207,7 +208,7 @@ class Stormpath::DataStore
       request.http_headers.store 'Accept', 'application/json'
       request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
 
-      if !request.body.nil? and request.body.length > 0
+      if request.body and request.body.length > 0
         request.http_headers.store 'Content-Type', 'application/json'
       end
     end
@@ -219,7 +220,7 @@ class Stormpath::DataStore
 
       q_href = qualify href
 
-      response = execute_request('post', q_href, MultiJson.dump(to_hash(resource)))
+      response = execute_request 'post', q_href, resource
 
       instantiate return_type, response.to_hash
     end

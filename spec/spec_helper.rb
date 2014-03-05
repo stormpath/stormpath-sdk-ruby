@@ -63,6 +63,11 @@ module Stormpath
       @test_api_client ||= Stormpath::Client.new api_key: test_api_key
     end
 
+    def get_cache_data href
+      data_store = test_api_client.send :data_store
+      data_store.send :cache_for, href
+    end
+
     def test_missing_env_vars
       TEST_ENV_REQUIRED_VARS.reject do |var, message|
         ENV[var.to_s]
