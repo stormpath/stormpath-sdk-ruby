@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Stormpath::Resource::CustomData, :vcr do
 
-  RESERVED_FIELDS = %w( created_at modified_at meta sp_meta spmeta ion_meta ionmeta )
+  RESERVED_FIELDS = %w( createdAt modifiedAt meta spMeta spmeta ionMeta ionmeta )
 
   describe "#for accounts" do
     let(:directory) { test_api_client.directories.create name: 'test_directory' }
@@ -20,11 +20,6 @@ describe Stormpath::Resource::CustomData, :vcr do
 
     let(:reloaded_account_2) { test_api_client.accounts.get account.href }
 
-    def get_data_cache href
-      data_store = test_api_client.send :data_store
-      data_store.send :cache_for, href
-    end
-
     after do
       account.delete if account
       directory.delete if directory
@@ -32,8 +27,8 @@ describe Stormpath::Resource::CustomData, :vcr do
     
     it 'read reserved data' do
       expect(account.custom_data["href"]).not_to eq(nil)
-      expect(account.custom_data["created_at"]).not_to eq(nil)
-      expect(account.custom_data["modified_at"]).not_to eq(nil)
+      expect(account.custom_data["createdAt"]).not_to eq(nil)
+      expect(account.custom_data["modifiedAt"]).not_to eq(nil)
     end
 
     RESERVED_FIELDS.each do |reserved_field|
@@ -179,11 +174,11 @@ describe Stormpath::Resource::CustomData, :vcr do
       account.custom_data[:rank] = "Captain"
 
       account.custom_data.save
- 
+
       expect(account.custom_data[:rank]).to eq("Captain")
- 
+
       account.custom_data.delete
- 
+
       expect(reloaded_account.custom_data[:rank]).to eq(nil)
 
       reloaded_account.custom_data[:rank] = "Pilot"
@@ -195,6 +190,34 @@ describe Stormpath::Resource::CustomData, :vcr do
       expect(reloaded_account_2.custom_data[:rank]).to eq("Pilot")
     end
 
+    it "shouldn't be the same if the key is lowercased or camelcased" do
+
+      favorite_drink = "Earl Grey Tea";
+
+      account.custom_data["favorite_drink"] = favorite_drink
+
+      expect(account.custom_data["favorite_drink"]).to eq(favorite_drink)
+
+      expect(account.custom_data["favoriteDrink"]).to be_nil
+
+      account.custom_data.save
+
+      expect(account.custom_data["favorite_drink"]).to eq(favorite_drink)
+
+      expect(account.custom_data["favoriteDrink"]).to be_nil
+
+      account.custom_data.delete("favorite_drink")
+
+      expect(account.custom_data["favorite_drink"]).to be_nil
+
+      expect(account.custom_data["favoriteDrink"]).to be_nil
+
+      account.custom_data.save
+
+      expect(account.custom_data["favorite_drink"]).to be_nil
+
+      expect(account.custom_data["favoriteDrink"]).to be_nil
+    end
 
     it 'delete a specific custom data field' do
       account.custom_data[:rank] = "Captain"
@@ -260,8 +283,12 @@ describe Stormpath::Resource::CustomData, :vcr do
     
     it 'read reserved data' do
       expect(group.custom_data["href"]).not_to eq(nil)
-      expect(group.custom_data["created_at"]).not_to eq(nil)
-      expect(group.custom_data["modified_at"]).not_to eq(nil)
+
+      expect(group.custom_data["createdAt"]).to be
+      expect(group.custom_data["modifiedAt"]).to be
+
+      expect(group.custom_data["created_at"]).not_to be
+      expect(group.custom_data["modified_at"]).not_to be
     end
 
     RESERVED_FIELDS.each do |reserved_field|
