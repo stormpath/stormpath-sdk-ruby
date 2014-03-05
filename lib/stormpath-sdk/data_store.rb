@@ -72,7 +72,6 @@ class Stormpath::DataStore
   def save(resource, clazz = nil)
     assert_not_nil resource, "resource argument cannot be null."
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
-
     href = resource.href
     assert_not_nil href, "href or resource.href cannot be null."
     assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
@@ -154,7 +153,7 @@ class Stormpath::DataStore
     end
 
     def clear_custom_data_cache(request)
-      if request.body['customData']
+      if request.body and request.body['customData']
         slash_added = request.href.end_with?('/') ? '' : '/'
         custom_data_href = request.href + slash_added + "customData"
 
@@ -232,7 +231,8 @@ class Stormpath::DataStore
     def to_hash(resource)
       Hash.new.tap do |properties|
         resource.get_dirty_property_names.each do |name|
-          property = resource.get_property name
+          ignore_camelcasing = resource_not_custom_data(resource, name) ? false : true
+          property = resource.get_property name, ignore_camelcasing: ignore_camelcasing
 
           # Special use case is with Custom Data, it's hashes should not be simplified
           if property.kind_of?(Hash) and resource_not_custom_data resource, name
