@@ -85,12 +85,14 @@ module Stormpath
           def get_resource_property(key, clazz)
             value = get_property key
 
+            return nil if value.nil? and clazz != Stormpath::Resource::CustomData
+
             if value.is_a? Hash
-              href = get_href_from_hash value
+              resource_href = get_href_from_hash value
             end
             
             if instance_variable_get("@_#{key.underscore}").nil?
-              if href
+              if resource_href
                 instance_variable_set("@_#{key.underscore}", data_store.instantiate(clazz, value))
               else
                 instance_variable_set("@_#{key.underscore}", clazz.new(value))
