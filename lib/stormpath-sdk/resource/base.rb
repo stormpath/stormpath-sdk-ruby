@@ -137,8 +137,9 @@ class Stormpath::Resource::Base
     end
   end
 
-  def get_property name
-    property_name = name.to_s.camelize :lower
+  def get_property name, options = {}
+    property_name = name.to_s
+    property_name = property_name.camelize(:lower) unless options[:ignore_camelcasing] == true
 
     if HREF_PROP_NAME != property_name
       #not the href/id, must be a property that requires materialization:
@@ -165,8 +166,9 @@ class Stormpath::Resource::Base
     read_property property_name
   end
 
-  def set_property name, value
-    property_name = name.to_s.camelize :lower
+  def set_property name, value, options={}
+    property_name = name.to_s
+    property_name = property_name.camelize(:lower) unless options[:ignore_camelcasing] == true
     @write_lock.lock
 
     begin

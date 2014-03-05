@@ -17,11 +17,11 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   include Stormpath::Resource::CustomDataHashMethods
 
   def [](property_name)
-    get_property property_name
+    get_property property_name, ignore_camelcasing: true
   end
 
   def []=(property_name, property_value)
-    set_property property_name, property_value
+    set_property property_name, property_value, ignore_camelcasing: true
   end
   
   def save
@@ -42,7 +42,7 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
     end
 
     @write_lock.lock
-    property_name = name.to_s.camelize :lower
+    property_name = name.to_s
     begin
       @properties.delete(property_name)
       @dirty_properties.delete(property_name)
@@ -58,7 +58,7 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
     def sanitize(properties)
       {}.tap do |sanitized_properties|
         properties.map do |key, value|
-          property_name = key.to_s.camelize :lower
+          property_name = key.to_s
           sanitized_properties[property_name] = value
         end
       end
