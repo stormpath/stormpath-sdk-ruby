@@ -19,12 +19,14 @@ class Stormpath::DataStore
 
   DEFAULT_SERVER_HOST = "api.stormpath.com"
   DEFAULT_API_VERSION = 1
+  DEFAULT_BASE_URL = "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
+
+  CUSTOM_DATA_STORAGE_URL_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+[\/]{0,1}$/
+  CUSTOM_DATA_DELETE_FIELD_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
+  NEW_ACCOUNT_STORE_MAPPING_URL = /#{DEFAULT_BASE_URL}\/accountStoreMappings$/
+  EXISTING_ACCOUNT_STORE_MAPPING_URL = /#{DEFAULT_BASE_URL}\/accountStoreMappings\/\w+[\/]{0,1}$/
+
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
-
-  CUSTOM_DATA_STORAGE_URL_REGEX = /#{DEFAULT_SERVER_HOST}\/v#{DEFAULT_API_VERSION}\/(accounts|groups)\/\w+[\/]{0,1}$/
-
-  CUSTOM_DATA_DELETE_FIELD_REGEX = /#{DEFAULT_SERVER_HOST}\/v#{DEFAULT_API_VERSION}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
-
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
 
   attr_reader :client, :request_executor, :cache_manager
@@ -103,18 +105,11 @@ class Stormpath::DataStore
     end
 
     def qualify(href)
-      if needs_to_be_fully_qualified(href)
-        slash_added = href.start_with?('/') ? '' : '/'
-        @base_url + slash_added + href
-      else
-        href
-      end
+      needs_to_be_fully_qualified(href) ? @base_url + href : href
     end
 
-    def execute_request(http_method, href, resource=nil, query=nil)
-      body = MultiJson.dump(to_hash(resource)) if resource
+    def execute_request(http_method, href, body=nil, query=nil)
       if http_method == 'get' && (cache = cache_for href)
-        # binding.pry if href =~ /application/
         cached_result = cache.get href
         return cached_result if cached_result
       end
@@ -126,41 +121,49 @@ class Stormpath::DataStore
 
       if response.error?
         error = Stormpath::Resource::Error.new result
-        #puts "Error with request: #{http_method.upcase}: #{href}"
         raise Stormpath::Error.new error
       end
 
       if http_method == 'delete'
-        clear_cache href
+        clear_cache_on_delete(href)
         return nil
       end
 
       if result['href']
-        clear_custom_data_cache(request) if request.href =~ CUSTOM_DATA_STORAGE_URL_REGEX
         cache_walk result
       else
         result
       end
     end
 
-
-    def clear_cache(href)
+    def clear_cache_on_delete href
       if href =~ CUSTOM_DATA_DELETE_FIELD_REGEX
         href = href.split('/')[0..-2].join('/')
       end
-
-      cache = cache_for href
-      cache.delete href if cache
+      clear_cache href
     end
 
-    def clear_custom_data_cache(request)
-      if request.body and request.body['customData']
-        slash_added = request.href.end_with?('/') ? '' : '/'
-        custom_data_href = request.href + slash_added + "customData"
+    def clear_cache_on_post href, resource
+      if href =~ CUSTOM_DATA_STORAGE_URL_REGEX
+        cached_href = href + "/customData"
 
-        cache = cache_for custom_data_href
-        cache.delete custom_data_href if cache
+      elsif href =~ NEW_ACCOUNT_STORE_MAPPING_URL
+        if resource.properties["isDefaultAccountStore"] == true || resource.properties["isDefaultGroupStore"] == true
+          cached_href = resource.application.href
+        end
+
+      elsif href =~ EXISTING_ACCOUNT_STORE_MAPPING_URL
+        if resource.dirty_properties["isDefaultAccountStore"] != nil || resource.dirty_properties["isDefaultGroupStore"] != nil
+          cached_href = resource.application.href
+        end
       end
+
+      clear_cache cached_href if cached_href
+    end
+
+    def clear_cache(href)
+      cache = cache_for href
+      cache.delete href if cache
     end
 
     def cache_walk(resource)
@@ -220,13 +223,14 @@ class Stormpath::DataStore
 
       q_href = qualify href
 
-      response = execute_request 'post', q_href, resource
+      clear_cache_on_post q_href, resource
+      response = execute_request 'post', q_href, MultiJson.dump(to_hash(resource))
 
       instantiate return_type, response.to_hash
     end
 
     def get_base_url(base_url)
-        base_url || "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
+      base_url || DEFAULT_BASE_URL
     end
 
     def to_hash(resource)

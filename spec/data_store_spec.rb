@@ -8,6 +8,7 @@ describe Stormpath::DataStore do
   let(:application_cache) { data_store.cache_manager.get_cache 'applications' }
   let(:tenant_cache)      { data_store.cache_manager.get_cache 'tenants' }
   let(:group_cache)       { data_store.cache_manager.get_cache 'groups' }
+  let(:default_base_url) { Stormpath::DataStore::DEFAULT_BASE_URL }
 
   after do
     application_cache.clear
@@ -15,12 +16,12 @@ describe Stormpath::DataStore do
 
   describe '.region_for' do
     it 'pulls resource name from href' do
-      region = data_store.send :region_for, 'https://api.stormpath.com/v1/directories/4NykYrYH0OBiOOVOg8LXQ5'
+      region = data_store.send :region_for, default_base_url+"/directories/4NykYrYH0OBiOOVOg8LXQ5"
       expect(region).to eq('directories')
     end
 
     it 'pulls resource name from href if its custom data also' do
-      region = data_store.send :region_for, 'https://api.stormpath.com/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData'
+      region = data_store.send :region_for, default_base_url+"/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData"
       expect(region).to eq('customData')
     end
   end
@@ -28,32 +29,54 @@ describe Stormpath::DataStore do
   describe 'custom data regex matchers' do
     let(:custom_data_storage_url_regex) { Stormpath::DataStore::CUSTOM_DATA_STORAGE_URL_REGEX }
     let(:custom_data_delete_field_regex) { Stormpath::DataStore::CUSTOM_DATA_DELETE_FIELD_REGEX }
+    let(:new_account_store_mapping_url) { Stormpath::DataStore::NEW_ACCOUNT_STORE_MAPPING_URL }
+    let(:existing_account_store_mapping_url) { Stormpath::DataStore::EXISTING_ACCOUNT_STORE_MAPPING_URL }
 
     context 'CUSTOM_DATA_STORAGE_URL_REGEX' do 
       it 'should match account or group href' do
-        expect("https://api.stormpath.com/v1/accounts/2f8U7r5JweVf1ZTtcJ08L8").to match(custom_data_storage_url_regex)
-        expect("https://api.stormpath.com/v1/groups/4x6vwucf1w9wjHvt7paGoY").to match(custom_data_storage_url_regex)
+        expect(default_base_url+"/accounts/2f8U7r5JweVf1ZTtcJ08L8").to match(custom_data_storage_url_regex)
+        expect(default_base_url+"/groups/4x6vwucf1w9wjHvt7paGoY").to match(custom_data_storage_url_regex)
       end
 
       it 'should not match custom data href' do
-        expect("https://api.stormpath.com/v1/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData").not_to match(custom_data_storage_url_regex)
-        expect("https://api.stormpath.com/v1/groups/4x6vwucf1w9wjHvt7paGoY/customData").not_to match(custom_data_storage_url_regex)
+        expect(default_base_url+"/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData").not_to match(custom_data_storage_url_regex)
+        expect(default_base_url+"/groups/4x6vwucf1w9wjHvt7paGoY/customData").not_to match(custom_data_storage_url_regex)
       end
 
       it 'should not match group memberships href' do
-        expect("https://api.stormpath.com/v1/groupMemberships/1u86fpQxJkFTfQHm1Hnhpb").not_to match(custom_data_storage_url_regex)
+        expect(default_base_url+"/groupMemberships/1u86fpQxJkFTfQHm1Hnhpb").not_to match(custom_data_storage_url_regex)
       end
     end
 
     context 'CUSTOM_DATA_DELETE_FIELD_REGEX' do
       it 'should match custom data field href' do
-        expect("https://api.stormpath.com/v1/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData/rank").to match(custom_data_delete_field_regex)
-        expect("https://api.stormpath.com/v1/groups/4x6vwucf1w9wjHvt7paGoY/customData/rank").to match(custom_data_delete_field_regex)
+        expect(default_base_url+"/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData/rank").to match(custom_data_delete_field_regex)
+        expect(default_base_url+"/groups/4x6vwucf1w9wjHvt7paGoY/customData/rank").to match(custom_data_delete_field_regex)
       end
 
       it 'should not match custom data resource href' do
-        expect("https://api.stormpath.com/v1/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData").not_to match(custom_data_delete_field_regex)
-        expect("https://api.stormpath.com/v1/groups/4x6vwucf1w9wjHvt7paGoY/customData").not_to match(custom_data_delete_field_regex)
+        expect(default_base_url+"/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData").not_to match(custom_data_delete_field_regex)
+        expect(default_base_url+"/groups/4x6vwucf1w9wjHvt7paGoY/customData").not_to match(custom_data_delete_field_regex)
+      end
+    end
+
+    context 'NEW_ACCOUNT_STORE_MAPPING_URL' do
+      it 'should match new account store mapping href' do
+        expect(default_base_url+"/accountStoreMappings").to match(new_account_store_mapping_url)
+      end
+
+      it 'should not match existing account store mapping href' do
+        expect(default_base_url+"/accountStoreMappings/7Ui2gpn9tV75y3TExAmPLe").not_to match(new_account_store_mapping_url)
+      end
+    end
+
+    context 'EXISTING_ACCOUNT_STORE_MAPPING_URL' do
+      it 'should match existing account store mapping href' do
+        expect(default_base_url+"/accountStoreMappings/7Ui2gpn9tV75y3TExAmPLe").to match(existing_account_store_mapping_url)
+      end
+
+      it 'should not match new account store mapping href' do
+        expect(default_base_url+"/accountStoreMappings").not_to match(existing_account_store_mapping_url)
       end
     end
   end
