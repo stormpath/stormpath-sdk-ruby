@@ -21,10 +21,7 @@ class Stormpath::DataStore
   DEFAULT_API_VERSION = 1
   DEFAULT_BASE_URL = "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
 
-  CUSTOM_DATA_STORAGE_URL_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+[\/]{0,1}$/
-  CUSTOM_DATA_DELETE_FIELD_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
-  NEW_ACCOUNT_STORE_MAPPING_URL = /#{DEFAULT_BASE_URL}\/accountStoreMappings$/
-  EXISTING_ACCOUNT_STORE_MAPPING_URL = /#{DEFAULT_BASE_URL}\/accountStoreMappings\/\w+[\/]{0,1}$/
+  CUSTOM_DATA_DELETE_FIELD_URL_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
 
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
@@ -137,28 +134,10 @@ class Stormpath::DataStore
     end
 
     def clear_cache_on_delete href
-      if href =~ CUSTOM_DATA_DELETE_FIELD_REGEX
+      if href =~ CUSTOM_DATA_DELETE_FIELD_URL_REGEX
         href = href.split('/')[0..-2].join('/')
       end
       clear_cache href
-    end
-
-    def clear_cache_on_post href, resource
-      if href =~ CUSTOM_DATA_STORAGE_URL_REGEX
-        cached_href = href + "/customData"
-
-      elsif href =~ NEW_ACCOUNT_STORE_MAPPING_URL
-        if resource.properties["isDefaultAccountStore"] == true || resource.properties["isDefaultGroupStore"] == true
-          cached_href = resource.application.href
-        end
-
-      elsif href =~ EXISTING_ACCOUNT_STORE_MAPPING_URL
-        if resource.dirty_properties["isDefaultAccountStore"] != nil || resource.dirty_properties["isDefaultGroupStore"] != nil
-          cached_href = resource.application.href
-        end
-      end
-
-      clear_cache cached_href if cached_href
     end
 
     def clear_cache(href)
@@ -223,10 +202,36 @@ class Stormpath::DataStore
 
       q_href = qualify href
 
-      clear_cache_on_post q_href, resource
+      if resource.is_a?(Stormpath::Resource::Account) || resource.is_a?(Stormpath::Resource::Group)
+        clear_custom_data_cache_on_parent_save resource
+      end
+
+      if resource.is_a? Stormpath::Resource::AccountStoreMapping
+        clear_application_cache_on_account_store_save resource
+      end
+
       response = execute_request 'post', q_href, MultiJson.dump(to_hash(resource))
 
       instantiate return_type, response.to_hash
+    end
+
+    def clear_custom_data_cache_on_parent_save resource
+      if resource.dirty_properties.has_key? "customData" and resource.new? == false
+        cached_href = resource.href + "/customData"
+        clear_cache cached_href
+      end
+    end
+
+    def clear_application_cache_on_account_store_save resource
+      if resource.new?
+        if resource.default_account_store? == true || resource.default_group_store? == true
+          clear_cache resource.application.href
+        end
+      else
+        if resource.dirty_properties["isDefaultAccountStore"] != nil || resource.dirty_properties["isDefaultGroupStore"] != nil
+          clear_cache resource.application.href
+        end
+      end
     end
 
     def get_base_url(base_url)
