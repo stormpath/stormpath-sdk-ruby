@@ -126,7 +126,7 @@ class Stormpath::DataStore
         return nil
       end
 
-      if result['href']
+      if result[HREF_PROP_NAME]
         cache_walk result
       else
         result
@@ -146,19 +146,19 @@ class Stormpath::DataStore
     end
 
     def cache_walk(resource)
-      assert_not_nil resource['href'], "resource must have 'href' property"
+      assert_not_nil resource[HREF_PROP_NAME], "resource must have 'href' property"
       items = resource['items']
 
       if items # collection resource
         resource['items'] = items.map do |item|
           cache_walk item
-          { 'href' => item['href'] }
+          { HREF_PROP_NAME => item[HREF_PROP_NAME] }
         end
       else     # single resource
         resource.each do |attr, value|
-          if value.is_a? Hash and value['href']
+          if value.is_a? Hash and value[HREF_PROP_NAME]
             walked = cache_walk value
-            resource[attr] = { 'href' => value['href'] } if value["href"]
+            resource[attr] = { HREF_PROP_NAME => value[HREF_PROP_NAME] }
             resource[attr]['items'] = walked['items'] if walked['items']
           end
         end
@@ -168,8 +168,8 @@ class Stormpath::DataStore
     end
 
     def cache(resource)
-      cache = cache_for resource['href']
-      cache.put resource['href'], resource if cache
+      cache = cache_for resource[HREF_PROP_NAME]
+      cache.put resource[HREF_PROP_NAME], resource if cache
     end
 
     def cache_for(href)
