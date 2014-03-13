@@ -73,7 +73,7 @@ class Stormpath::Resource::Collection
       attr_accessor :item_type
 
       def items
-        to_resource_array get_property ITEMS
+        to_resource_array get_property(ITEMS)
       end
 
       def to_resource properties
@@ -90,6 +90,7 @@ class Stormpath::Resource::Collection
           end
         end
       end
+
     end#class Stormpath::Resource::Collection::CollectionPage
 
 end#Stormpath::Resource::Collection

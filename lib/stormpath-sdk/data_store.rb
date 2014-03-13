@@ -20,10 +20,9 @@ class Stormpath::DataStore
   DEFAULT_SERVER_HOST = "api.stormpath.com"
   DEFAULT_API_VERSION = 1
   DEFAULT_BASE_URL = "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
-
-  CUSTOM_DATA_DELETE_FIELD_URL_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
-
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
+  
+  CUSTOM_DATA_DELETE_FIELD_URL_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
 
   attr_reader :client, :request_executor, :cache_manager

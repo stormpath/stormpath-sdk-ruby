@@ -4,6 +4,7 @@ describe Stormpath::Resource::CustomData, :vcr do
   let(:directory) { test_api_client.directories.create name: 'test_directory' }
 
   after do
+    custom_data_storage.delete if custom_data_storage
     directory.delete if directory
   end
 
@@ -24,10 +25,6 @@ describe Stormpath::Resource::CustomData, :vcr do
       test_api_client.accounts.get custom_data_storage.href
     end
 
-    after do
-      custom_data_storage.delete if custom_data_storage
-    end
-
     it_behaves_like 'custom_data_storage'
   end
 
@@ -44,10 +41,7 @@ describe Stormpath::Resource::CustomData, :vcr do
       test_api_client.groups.get custom_data_storage.href
     end
 
-    after do
-      custom_data_storage.delete if custom_data_storage
-    end
-
     it_behaves_like 'custom_data_storage'
   end
+
 end
