@@ -57,7 +57,7 @@ module Stormpath
                       end
                     data_store.create href, resource, item_class, options
                   end
-                end
+                end# can.include? :create
 
                 if can.include? :get
                   def get(id_or_href, expansion=nil)
@@ -68,13 +68,13 @@ module Stormpath
                     end
                     data_store.get_resource item_href, item_class, (expansion ? expansion.to_query : nil)
                   end
-                end
-              end
+                end# can.include? :get
+              end# collection.class_eval do
 
               collection.class_eval(&block) if block
-            end
-          end
-        end
+            end# Stormpath::Resource::Collection.new
+          end# define_method(name)
+        end# def has_many
 
       end
 

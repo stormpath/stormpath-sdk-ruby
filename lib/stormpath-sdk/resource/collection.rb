@@ -65,31 +65,31 @@ class Stormpath::Resource::Collection
 
   private
 
-  class CollectionPage < Stormpath::Resource::Base
-    ITEMS = 'items'
+    class CollectionPage < Stormpath::Resource::Base
+      ITEMS = 'items'
 
-    prop_accessor :offset, :limit
+      prop_accessor :offset, :limit
 
-    attr_accessor :item_type
+      attr_accessor :item_type
 
-    def items
-      to_resource_array get_property ITEMS
-    end
+      def items
+        to_resource_array get_property ITEMS
+      end
 
-    def to_resource properties
-      data_store.instantiate item_type, properties
-    end
+      def to_resource properties
+        data_store.instantiate item_type, properties
+      end
 
-    def to_resource_array vals
-      Array.new.tap do |items|
-        if vals.is_a? Array
-          vals.each do |val|
-            resource = to_resource val
-            items << resource
+      def to_resource_array vals
+        Array.new.tap do |items|
+          if vals.is_a? Array
+            vals.each do |val|
+              resource = to_resource val
+              items << resource
+            end
           end
         end
       end
-    end
-  end
+    end#class Stormpath::Resource::Collection::CollectionPage
 
-end
+end#Stormpath::Resource::Collection
