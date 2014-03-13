@@ -16,9 +16,9 @@
 require 'java_properties'
 
 module Stormpath
-
   class Client
     include Stormpath::Util::Assert
+    include Stormpath::Resource::Associations
 
     attr_reader :data_store, :application
 
@@ -38,9 +38,8 @@ module Stormpath
           options[:api_key_secret_property_name]
       end
 
-      assert_not_nil api_key, "No API key has been provided.  Please " +
-          "pass an 'api_key' or 'api_key_file_location' to the " +
-          "Stormpath::Client constructor."
+      assert_not_nil api_key, "No API key has been provided. Please pass an 'api_key' or " +
+                              "'api_key_file_location' to the Stormpath::Client constructor."
 
       request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key, proxy: options[:proxy])
       @data_store = Stormpath::DataStore.new(request_executor, cache_opts, self, base_url)
@@ -58,18 +57,13 @@ module Stormpath
       @data_source.cache_stats
     end
 
-    include Stormpath::Resource::Associations
-
     has_many :tenants, href: '/tenants', can: :get
     has_many :applications, href: '/applications', can: [:get, :create], delegate: true
     has_many :directories, href: '/directories', can: [:get, :create], delegate: true
-    has_many(:accounts, href: '/accounts', can: :get) do
+    has_many :accounts, href: '/accounts', can: :get do
       def verify_email_token(token)
         token_href = "#{href}/emailVerificationTokens/#{token}"
-        token = Stormpath::Resource::EmailVerificationToken.new(
-          token_href,
-          client
-        )
+        token = Stormpath::Resource::EmailVerificationToken.new token_href, client
         data_store.save token, Stormpath::Resource::Account
       end
     end
@@ -77,38 +71,32 @@ module Stormpath
     has_many :group_memberships, href: '/groupMemberships', can: [:get, :create]
     has_many :account_store_mappings, href: '/accountStoreMappings', can: [:get, :create]
 
-    
     private
 
-    def load_api_key_file(api_key_file_location, id_property_name, secret_property_name)
-      begin
-        api_key_properties = JavaProperties::Properties.new api_key_file_location
-      rescue
-        raise ArgumentError,
-          "No API Key file could be found or loaded from '" +
-          api_key_file_location +
-          "'."
+      def load_api_key_file api_key_file_location, id_property_name, secret_property_name
+        begin
+          api_key_properties = JavaProperties::Properties.new api_key_file_location
+        rescue
+          raise ArgumentError, "No API Key file could be found or loaded from '#{api_key_file_location}'."
+        end
+
+        id_property_name ||= 'apiKey.id'
+        secret_property_name ||= 'apiKey.secret'
+
+        api_key_id = api_key_properties[id_property_name]
+        assert_not_nil api_key_id, api_key_warning_message(:id, api_key_file_location)
+
+        api_key_secret = api_key_properties[secret_property_name]
+        assert_not_nil api_key_secret, api_key_warning_message(:secret, api_key_file_location)
+
+        ApiKey.new api_key_id, api_key_secret
       end
 
-      id_property_name ||= 'apiKey.id'
-      secret_property_name ||= 'apiKey.secret'
-
-      api_key_id = api_key_properties[id_property_name]
-      assert_not_nil api_key_id,
-        "No API id in properties. Please provide a 'apiKey.id' property in '" +
-        api_key_file_location +
-        "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " +
-        "constructor to specify an alternative property."
-
-      api_key_secret = api_key_properties[secret_property_name]
-      assert_not_nil api_key_secret,
-        "No API secret in properties. Please provide a 'apiKey.secret' property in '" +
-        api_key_file_location +
-        "' or pass in an 'api_key_secret_property_name' to the Stormpath::Client " +
-        "constructor to specify an alternative property."
-
-      ApiKey.new api_key_id, api_key_secret
-    end
+      def api_key_warning_message id_or_secret, api_key_file_location
+        "No API #{id_or_secret} in properties. Please provide a 'apiKey.#{id_or_secret}' property " +
+        "in '#{api_key_file_location}' or pass in an 'api_key_#{id_or_secret}_property_name' " +
+        "to the Stormpath::Client constructor to specify an alternative property."
+      end
 
   end
 end

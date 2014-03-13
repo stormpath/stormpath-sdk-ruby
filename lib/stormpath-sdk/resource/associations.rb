@@ -39,9 +39,7 @@ module Stormpath
 
           define_method(name) do
             href = options[:href] || get_resource_href_property(property_name)
-            collection_href = if options[:delegate]
-              "#{tenant.send(name.to_s).href}"
-            end
+            collection_href = "#{tenant.send(name).href}" if options[:delegate]
 
             Stormpath::Resource::Collection.new(href, item_class, client,
               collection_href: collection_href).tap do |collection|
@@ -57,7 +55,7 @@ module Stormpath
                       end
                     data_store.create href, resource, item_class, options
                   end
-                end# can.include? :create
+                end#can.include? :create
 
                 if can.include? :get
                   def get(id_or_href, expansion=nil)
@@ -68,15 +66,15 @@ module Stormpath
                     end
                     data_store.get_resource item_href, item_class, (expansion ? expansion.to_query : nil)
                   end
-                end# can.include? :get
-              end# collection.class_eval do
+                end#can.include? :get
+              end#collection.class_eval do
 
               collection.class_eval(&block) if block
-            end# Stormpath::Resource::Collection.new
-          end# define_method(name)
-        end# def has_many
+            end#Stormpath::Resource::Collection.new
+          end#define_method(name)
+        end#def has_many
 
-      end
+      end#module Class Methods
 
       included do
 
@@ -111,7 +109,7 @@ module Stormpath
             end
           end
 
-      end
-    end
-  end
-end
+      end#included do
+    end#Associations
+  end#Resource
+end#Stormpath

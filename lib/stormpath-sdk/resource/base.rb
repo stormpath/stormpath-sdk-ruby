@@ -188,77 +188,75 @@ class Stormpath::Resource::Base
     end
   end
 
-  protected
-
-  def data_store
-    client.data_store
-  end
-
-  def materialized?
-    @materialized
-  end
-
-  def materialize
-    clazz = self.class
-
-    @write_lock.lock
-
-    begin
-      resource = data_store.get_resource href, clazz, @query
-      @properties.replace resource.properties
-
-      #retain dirty properties:
-      @properties.merge! @dirty_properties
-
-      @materialized = true
-    ensure
-      @write_lock.unlock
-    end
-  end
-
-  def printable_property? property_name
-    !self.class.non_printable_properties.include? property_name
-  end
-
   private
 
-  def get_href_from_hash(props)
-    if props and props.is_a? Hash
-      props[HREF_PROP_NAME]
+    def data_store
+      client.data_store
     end
-  end
 
-  def read_property name
-    @read_lock.lock
-
-    begin
-      @properties[name]
-    ensure
-      @read_lock.unlock
+    def materialized?
+      @materialized
     end
-  end
 
-  def sanitize(properties)
-    {}.tap do |sanitized_properties|
-      properties.map do |key, value|
-        property_name = key.to_s.camelize :lower
-        sanitized_properties[property_name] =
-          if value.kind_of? Hash or value.kind_of? Stormpath::Resource::Base
-            deep_sanitize value
-          else
-            value
-          end
+    def materialize
+      clazz = self.class
+
+      @write_lock.lock
+
+      begin
+        resource = data_store.get_resource href, clazz, @query
+        @properties.replace resource.properties
+
+        #retain dirty properties:
+        @properties.merge! @dirty_properties
+
+        @materialized = true
+      ensure
+        @write_lock.unlock
       end
     end
-  end
 
-  def deep_sanitize(hash_or_resource)
-    case hash_or_resource
-    when Stormpath::Resource::Base
-      deep_sanitize hash_or_resource.properties
-    when Hash
-      sanitize hash_or_resource
+    def printable_property? property_name
+      !self.class.non_printable_properties.include? property_name
     end
-  end
+
+    def get_href_from_hash(props)
+      if props and props.is_a? Hash
+        props[HREF_PROP_NAME]
+      end
+    end
+
+    def read_property name
+      @read_lock.lock
+
+      begin
+        @properties[name]
+      ensure
+        @read_lock.unlock
+      end
+    end
+
+    def sanitize(properties)
+      {}.tap do |sanitized_properties|
+        properties.map do |key, value|
+          property_name = key.to_s.camelize :lower
+          sanitized_properties[property_name] =
+            if value.kind_of? Hash or value.kind_of? Stormpath::Resource::Base
+              deep_sanitize value
+            else
+              value
+            end
+        end
+      end
+    end
+
+    def deep_sanitize(hash_or_resource)
+      case hash_or_resource
+      when Stormpath::Resource::Base
+        deep_sanitize hash_or_resource.properties
+      when Hash
+        sanitize hash_or_resource
+      end
+    end
 
 end
