@@ -202,7 +202,7 @@ class Stormpath::DataStore
 
       q_href = qualify href
 
-      if resource.is_a?(Stormpath::Resource::Account) || resource.is_a?(Stormpath::Resource::Group)
+      if resource.is_a? Stormpath::Resource::CustomDataStorage
         clear_custom_data_cache_on_parent_save resource
       end
 

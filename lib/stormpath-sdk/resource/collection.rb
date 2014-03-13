@@ -91,4 +91,5 @@ class Stormpath::Resource::Collection
       end
     end
   end
+
 end
