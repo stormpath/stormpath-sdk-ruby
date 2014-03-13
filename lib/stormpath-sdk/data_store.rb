@@ -202,20 +202,15 @@ class Stormpath::DataStore
 
       q_href = qualify href
 
-      if resource.is_a? Stormpath::Resource::CustomDataStorage
-        clear_custom_data_cache_on_parent_save resource
-      end
-
-      if resource.is_a? Stormpath::Resource::AccountStoreMapping
-        clear_application_cache_on_account_store_save resource
-      end
+      clear_custom_data_cache_on_custom_data_storage_save(resource) if resource.is_a? Stormpath::Resource::CustomDataStorage
+      clear_application_cache_on_account_store_save(resource) if resource.is_a? Stormpath::Resource::AccountStoreMapping
 
       response = execute_request 'post', q_href, MultiJson.dump(to_hash(resource))
 
       instantiate return_type, response.to_hash
     end
 
-    def clear_custom_data_cache_on_parent_save resource
+    def clear_custom_data_cache_on_custom_data_storage_save resource
       if resource.dirty_properties.has_key? "customData" and resource.new? == false
         cached_href = resource.href + "/customData"
         clear_cache cached_href
