@@ -57,13 +57,26 @@ class Stormpath::Resource::Collection
   end
 
   def each(&block)
-    page = CollectionPage.new collection_href, client, @criteria
-    page.item_type = item_class
-    items = page.items
-    items.each(&block)
+    PaginatedIterator.iterate(collection_href, client, item_class, @criteria, &block)
   end
 
   private
+
+    module PaginatedIterator
+
+      def self.iterate(collection_href, client, item_class, criteria, &block)
+        page = CollectionPage.new collection_href, client, criteria
+        page.item_type = item_class
+        page.items.each(&block)
+
+        if criteria[:limit].nil? and page.items.count == 25
+          criteria[:offset] ||=0
+          criteria[:offset] += 25
+          iterate(collection_href, client, item_class, criteria, &block)
+        end
+      end
+
+    end
 
     class CollectionPage < Stormpath::Resource::Base
       ITEMS = 'items'

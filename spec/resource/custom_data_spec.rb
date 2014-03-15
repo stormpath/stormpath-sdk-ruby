@@ -4,7 +4,6 @@ describe Stormpath::Resource::CustomData, :vcr do
   let(:directory) { test_api_client.directories.create name: 'test_directory' }
 
   after do
-    custom_data_storage.delete if custom_data_storage
     directory.delete if directory
   end
 
