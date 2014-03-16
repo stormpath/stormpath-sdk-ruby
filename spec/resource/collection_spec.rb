@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Stormpath::Resource::Collection do
+describe Stormpath::Resource::Collection, :vcr do
   let(:href) do
     'http://example.com'
   end
@@ -165,5 +165,43 @@ describe Stormpath::Resource::Collection do
         expect(collection.criteria).to include order_by: 'lastName asc'
       end
     end
+  end
+
+  context 'testing limits and offsets with live examples' do
+
+    let(:directory) {test_api_client.directories.create name: "Directory for pagination testing"}
+
+    let(:groups) do
+      ('A'..'Z').map do |letter|
+        directory.groups.create name: "#{letter}. pagination testing group "
+      end
+    end
+
+    after do
+      directory.delete
+    end
+
+    it 'should respond as expected with or without limits' do
+      expect(groups).to have(26).items
+
+      expect(directory.groups).to have(26).items
+
+      expect(directory.groups.limit(25)).to have(25).items
+
+      expect(directory.groups.limit(26)).to have(26).items
+
+      expect(directory.groups.limit(100)).to have(26).items
+
+      expect(directory.groups.limit(25)).not_to include(groups.last)
+
+      expect(directory.groups.offset(1).limit(25)).to include(groups.last)
+
+      expect(directory.groups.offset(1).limit(25)).not_to include(groups.first)
+
+      expect(directory.groups.offset(25)).to have(1).items
+
+      expect(directory.groups.offset(26)).to have(0).items
+    end
+
   end
 end
