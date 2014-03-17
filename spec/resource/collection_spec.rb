@@ -167,41 +167,79 @@ describe Stormpath::Resource::Collection, :vcr do
     end
   end
 
-  context 'testing limits and offsets with live examples' do
+  context 'live examples' do
+    context 'testing limits and offsets' do
+      let(:directory) {test_api_client.directories.create name: "Directory for pagination testing"}
 
-    let(:directory) {test_api_client.directories.create name: "Directory for pagination testing"}
+      let(:groups) do
+        ('A'..'Z').map do |letter|
+          directory.groups.create name: "#{letter}. pagination testing group "
+        end
+      end
 
-    let(:groups) do
-      ('A'..'Z').map do |letter|
-        directory.groups.create name: "#{letter}. pagination testing group "
+      after do
+        directory.delete
+      end
+
+      it 'should respond as expected with or without limits' do
+        expect(groups).to have(26).items
+
+        expect(directory.groups).to have(26).items
+
+        expect(directory.groups.limit(25)).to have(25).items
+
+        expect(directory.groups.limit(26)).to have(26).items
+
+        expect(directory.groups.limit(100)).to have(26).items
+
+        expect(directory.groups.limit(25)).not_to include(groups.last)
+
+        expect(directory.groups.offset(1).limit(25)).to include(groups.last)
+
+        expect(directory.groups.offset(1).limit(25)).not_to include(groups.first)
+
+        expect(directory.groups.offset(25)).to have(1).items
+
+        expect(directory.groups.offset(26)).to have(0).items
       end
     end
 
-    after do
-      directory.delete
-    end
+    context '#search' do
+      let(:directory) {test_api_client.directories.create name: "Test directory"}
 
-    it 'should respond as expected with or without limits' do
-      expect(groups).to have(26).items
+      # !@#$%^&*()_-+=?><:]}[{'
+      # 'jlpicard/!@$%^*()_-+&=?><:]}[{'
+      let(:username) { 'jlpicard/!@$%^ *()_-+=?><:]}[{' }
 
-      expect(directory.groups).to have(26).items
+      let!(:account) do
+        directory.accounts.create username: username,
+           email: "capt@enterprise.com",
+           givenName: "Jean-Luc",
+           surname: "Picard",
+           password: "hakunaMatata179Enterprise"
+      end
 
-      expect(directory.groups.limit(25)).to have(25).items
+      after do
+        directory.delete
+      end
 
-      expect(directory.groups.limit(26)).to have(26).items
+      it 'should search accounts by username' do
+        expect(directory.accounts.search(username: username)).to have(1).items
+      end
 
-      expect(directory.groups.limit(100)).to have(26).items
+      it 'should search accounts by any column (aiming at username)' do
+        expect(directory.accounts.search(username)).to have(1).items
+      end
 
-      expect(directory.groups.limit(25)).not_to include(groups.last)
+      it 'should search accounts by email' do
+        expect(directory.accounts.search(email: "capt@enterprise.com")).to have(1).items
+      end
 
-      expect(directory.groups.offset(1).limit(25)).to include(groups.last)
-
-      expect(directory.groups.offset(1).limit(25)).not_to include(groups.first)
-
-      expect(directory.groups.offset(25)).to have(1).items
-
-      expect(directory.groups.offset(26)).to have(0).items
+      it 'should search accounts by any column (aiming at email)' do
+        expect(directory.accounts.search("capt@enterprise.com")).to have(1).items
+      end
     end
 
   end
+
 end
