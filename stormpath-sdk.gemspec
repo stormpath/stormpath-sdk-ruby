@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.date = Stormpath::VERSION_DATE
   s.summary = "Stormpath SDK"
   s.description = "Stormpath SDK used to interact with the Stormpath REST API"
-  s.authors = ["Elder Crisostomo"]
-  s.email = 'elder@stormpath.com'
+  s.authors = ["Stormpath, Inc", "Elder Crisostomo"]
+  s.email = 'support@stormpath.com'
   s.homepage = 'https://github.com/stormpath/stormpath-sdk-ruby'
 
   s.platform = Gem::Platform::RUBY
