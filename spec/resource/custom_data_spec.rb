@@ -16,6 +16,19 @@ describe Stormpath::Resource::CustomData, :vcr do
          password: "uGhd%a8Kl!"
     end
     
+    let(:custom_data_storage_w_nested_custom_data) do
+      directory.accounts.create username: "jlpicard",
+         email: "capt@enterprise.com",
+         given_name: "Jean-Luc",
+         surname: "Picard",
+         password: "uGhd%a8Kl!",
+         custom_data: {
+            rank: "Captain",
+            favorite_drink: "Earl Grey Tea",
+            favoriteDrink: "Camelized Tea"
+         }
+    end
+
     let(:reloaded_custom_data_storage) do
       test_api_client.accounts.get custom_data_storage.href
     end
@@ -30,6 +43,16 @@ describe Stormpath::Resource::CustomData, :vcr do
   context 'group' do
     let(:custom_data_storage) do
       directory.groups.create name: 'test_group'
+    end
+
+    let(:custom_data_storage_w_nested_custom_data) do
+      directory.groups.create name: "Jean",
+         description: "Capital Group",
+         custom_data: {
+            rank: "Captain",
+            favorite_drink: "Earl Grey Tea",
+            favoriteDrink: "Camelized Tea"
+         }
     end
 
     let(:reloaded_custom_data_storage) do

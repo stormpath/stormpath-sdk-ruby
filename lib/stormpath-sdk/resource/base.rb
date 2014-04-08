@@ -139,7 +139,10 @@ class Stormpath::Resource::Base
 
   def get_property name, options = {}
     property_name = name.to_s
-    property_name = property_name.camelize(:lower) unless options[:ignore_camelcasing] == true
+
+    unless options[:ignore_camelcasing] == true
+      property_name = property_name.camelize(:lower)
+    end
 
     if HREF_PROP_NAME != property_name
       #not the href/id, must be a property that requires materialization:
@@ -168,7 +171,11 @@ class Stormpath::Resource::Base
 
   def set_property name, value, options={}
     property_name = name.to_s
-    property_name = property_name.camelize(:lower) unless options[:ignore_camelcasing] == true
+
+    unless options[:ignore_camelcasing] == true
+      property_name = property_name.camelize(:lower)
+    end
+
     @write_lock.lock
 
     begin
@@ -241,7 +248,7 @@ class Stormpath::Resource::Base
         properties.map do |key, value|
           property_name = key.to_s.camelize :lower
           sanitized_properties[property_name] =
-            if value.kind_of? Hash or value.kind_of? Stormpath::Resource::Base
+            if (value.kind_of? Hash or value.kind_of? Stormpath::Resource::Base) and property_name != "customData"
               deep_sanitize value
             else
               value

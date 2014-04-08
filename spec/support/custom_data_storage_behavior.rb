@@ -15,6 +15,12 @@ shared_examples_for 'custom_data_storage' do
     end
   end
 
+  it 'should save properly when custom data is nested on creation' do
+    expect(custom_data_storage_w_nested_custom_data.custom_data["rank"]).to eq("Captain")
+    expect(custom_data_storage_w_nested_custom_data.custom_data["favorite_drink"]).to eq("Earl Grey Tea")
+    expect(custom_data_storage_w_nested_custom_data.custom_data["favoriteDrink"]).to eq("Camelized Tea")
+  end
+
   it 'set custom data' do
     custom_data_storage.custom_data[:rank] = "Captain"
     expect(custom_data_storage.custom_data[:rank]).to eq("Captain")
