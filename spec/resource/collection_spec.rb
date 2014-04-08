@@ -204,7 +204,7 @@ describe Stormpath::Resource::Collection, :vcr do
       end
     end
 
-    context '#search' do
+    context '#wild characters search' do
       let(:directory) {test_api_client.directories.create name: "Test directory"}
 
       # !@#$%^&*()_-+=?><:]}[{'
@@ -237,6 +237,62 @@ describe Stormpath::Resource::Collection, :vcr do
 
       it 'should search accounts by any column (aiming at email)' do
         expect(directory.accounts.search("capt@enterprise.com")).to have(1).items
+      end
+    end
+
+    context '#asterisk search on one attribute' do
+      let(:directory) {test_api_client.directories.create name: "Test directory"}
+
+      let!(:account) do
+        directory.accounts.create username: "jlpicard",
+           email: "capt@enterprise.com",
+           givenName: "Jean-Luc",
+           surname: "Picard",
+           password: "hakunaMatata179Enterprise"
+      end
+
+      after do
+        directory.delete
+      end
+
+      it 'should search accounts by username with asterisk at the beginning' do
+        expect(directory.accounts.search(username: "*card")).to have(1).items
+      end
+
+      it 'should search accounts by username with asterisk at the end' do
+        expect(directory.accounts.search(username: "jl*")).to have(1).items
+      end
+
+      it 'should search accounts by username with asterisk at the beginning and the end' do
+        expect(directory.accounts.search(username: "*pic*")).to have(1).items
+      end
+    end
+
+    context '#asterisk search on multiple attribute' do
+      let(:directory) {test_api_client.directories.create name: "Test directory"}
+
+      let!(:account) do
+        directory.accounts.create username: "jlpicard",
+           email: "capt@enterprise.com",
+           givenName: "Jean-Luc",
+           surname: "Picard",
+           password: "hakunaMatata179Enterprise"
+      end
+
+      after do
+        directory.delete
+      end
+
+      it 'should search accounts by username with asterisk at the beginning' do
+        expect(directory.accounts.search(username: "*card", email: "*enterprise.com")).to have(1).items
+      end
+
+      it 'should search accounts by username with asterisk at the end' do
+        expect(directory.accounts.search(username: "jl*", email: "capt*")).to have(1).items
+      end
+
+      it 'should search accounts by username with asterisk at the beginning and the end' do
+        expect(directory.accounts.search(username: "*pic*", email: "*enterprise*")).to have(1).items
       end
     end
 
