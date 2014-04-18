@@ -1,6 +1,6 @@
 shared_examples_for 'custom_data_storage' do
 
-  RESERVED_FIELDS = %w( createdAt modifiedAt meta spMeta spmeta ionMeta ionmeta )
+  reserved_fields = %w( createdAt modifiedAt meta spMeta spmeta ionMeta ionmeta )
 
   it 'read reserved data' do
     expect(custom_data_storage.custom_data["href"]).not_to eq(nil)
@@ -8,7 +8,7 @@ shared_examples_for 'custom_data_storage' do
     expect(custom_data_storage.custom_data["modifiedAt"]).not_to eq(nil)
   end
 
-  RESERVED_FIELDS.each do |reserved_field|
+  reserved_fields.each do |reserved_field|
     it "set reserved data #{reserved_field} should raise error" do
       custom_data_storage.custom_data[reserved_field] = 12
       expect{ custom_data_storage.custom_data.save }.to raise_error

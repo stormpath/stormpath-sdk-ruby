@@ -46,6 +46,9 @@ module Stormpath
     autoload :GroupMembership, 'stormpath-sdk/resource/group_membership'
     autoload :AccountMembership, 'stormpath-sdk/resource/account_membership'
     autoload :PasswordResetToken, 'stormpath-sdk/resource/password_reset_token'
+
+    autoload :Provider, 'stormpath-sdk/resource/provider'
+    autoload :ProviderData, 'stormpath-sdk/resource/provider_data'
   end
 
   module Cache
@@ -70,3 +73,10 @@ require "stormpath-sdk/http/http_client_request_executor"
 require "stormpath-sdk/auth/basic_login_attempt"
 require "stormpath-sdk/auth/authentication_result"
 require "stormpath-sdk/auth/basic_authenticator"
+
+require "stormpath-sdk/auth/provider/provider_integrator"
+require "stormpath-sdk/auth/provider/provider_account_request"
+require "stormpath-sdk/auth/provider/google_account_request"
+require "stormpath-sdk/auth/provider/facebook_account_request"
+require "stormpath-sdk/auth/provider/provider_account_attempt"
+require "stormpath-sdk/auth/provider/provider_account_result"

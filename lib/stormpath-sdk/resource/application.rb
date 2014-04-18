@@ -57,8 +57,11 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
 
   def authenticate_account request
-    response = Stormpath::Authentication::BasicAuthenticator.new data_store
-    response.authenticate href, request
+    Stormpath::Authentication::BasicAuthenticator.new(data_store).authenticate(href, request)
+  end
+
+  def get_account request
+    Stormpath::Authentication::ProviderIntegrator.new(data_store).get_account(href, request)
   end
 
   private

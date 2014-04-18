@@ -31,6 +31,7 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   has_many :group_memberships
 
   has_one :custom_data
+  has_one :provider_data
 
   def add_group group
     client.group_memberships.create group: group, account: self

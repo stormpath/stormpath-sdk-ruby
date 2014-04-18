@@ -19,6 +19,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   prop_accessor :name, :description
 
   belongs_to :tenant
+  has_one :provider
 
   has_many :accounts, can: [:get, :create]
   has_many :groups, can: [:get, :create]
