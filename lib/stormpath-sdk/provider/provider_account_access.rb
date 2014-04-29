@@ -15,7 +15,7 @@
 #
 module Stormpath
   module Provider
-    class ProviderAccountAttempt < Stormpath::Resource::Base
+    class ProviderAccountAccess < Stormpath::Resource::Base
 
       PROVIDER_DATA = :provider_data
 

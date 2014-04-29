@@ -125,7 +125,7 @@ class Stormpath::DataStore
         raise Stormpath::Error.new error
       end
 
-      if resource.is_a? Stormpath::Provider::ProviderAccountAttempt
+      if resource.is_a? Stormpath::Provider::ProviderAccountAccess
         is_new_account = response.http_status == 201
         result = {is_new_account: is_new_account, account: result }
       end
