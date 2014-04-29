@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 module Stormpath
-  module Authentication
+  module Provider
     class ProviderAccountAttempt < Stormpath::Resource::Base
 
       PROVIDER_DATA = :provider_data

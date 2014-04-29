@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 module Stormpath
-  module Authentication
+  module Provider
     class ProviderIntegrator
       include Stormpath::Util::Assert
 
@@ -35,7 +35,7 @@ module Stormpath
 
         href = parent_href + '/accounts'
 
-        @data_store.create href, attempt, Stormpath::Authentication::ProviderAccountResult
+        @data_store.create href, attempt, Stormpath::Provider::ProviderAccountResult
       end
 
     end

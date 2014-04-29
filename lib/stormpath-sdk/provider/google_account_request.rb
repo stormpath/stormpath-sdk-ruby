@@ -1,5 +1,5 @@
 module Stormpath
-  module Authentication
+  module Provider
     class GoogleAccountRequest < ProviderAccountRequest
 
         def initialize(token_type, token_value)

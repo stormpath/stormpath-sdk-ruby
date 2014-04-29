@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 module Stormpath
-  module Authentication
+  module Provider
     class ProviderAccountResult < Stormpath::Resource::Base
 
       prop_reader :is_new_account

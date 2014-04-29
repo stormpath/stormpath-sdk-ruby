@@ -1,5 +1,5 @@
 module Stormpath
-  module Authentication
+  module Provider
     class ProviderAccountRequest
 
       attr_accessor :provider, :token_type, :token_value

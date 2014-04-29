@@ -1,5 +1,5 @@
 module Stormpath
-  module Authentication
+  module Provider
     class FacebookAccountRequest < ProviderAccountRequest
 
         def initialize(token_type, token_value)

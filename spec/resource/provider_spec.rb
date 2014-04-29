@@ -67,7 +67,7 @@ describe Stormpath::Resource::Provider, :vcr do
       account_store_mapping
 
       access_token = "XYZ"
-      facebook_account_request = Stormpath::Authentication::FacebookAccountRequest.new(:access_token, access_token)
+      facebook_account_request = Stormpath::Provider::FacebookAccountRequest.new(:access_token, access_token)
       result = application.get_account(facebook_account_request)
 
       expect(result.is_new_account?).to be
@@ -94,7 +94,7 @@ describe Stormpath::Resource::Provider, :vcr do
       account_store_mapping
 
       access_token = "XYZ"
-      google_account_request = Stormpath::Authentication::GoogleAccountRequest.new(:access_token, access_token)
+      google_account_request = Stormpath::Provider::GoogleAccountRequest.new(:access_token, access_token)
       result = application.get_account(google_account_request)
 
       expect(result.is_new_account?).to be

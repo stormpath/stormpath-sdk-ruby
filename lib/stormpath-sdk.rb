@@ -62,6 +62,9 @@ module Stormpath
 
   module Authentication
   end
+
+  module Provider
+  end
 end
 
 require "stormpath-sdk/auth/username_password_request"
