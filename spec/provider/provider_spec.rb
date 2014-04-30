@@ -50,13 +50,15 @@ describe Stormpath::Provider::Provider, :vcr do
       expect(provider.modified_at).to be
       expect(provider.href).to eq(directory.href + "/provider")
       
-      if(provider_id == "google" || provider_id == "facebook")
+      if provider_id == "google" || provider_id == "facebook"
         expect(provider.client_id).to eq(client_id)
         expect(provider.client_secret).to eq(client_secret)
-        expect(provider).to be_instance_of("Stormpath::Provider::#{provider_id.capitalize}Provider".constantize)
+
+        provider_clazz = "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
+        expect(provider).to be_instance_of(provider_clazz)
       end
       
-      if(provider_id == "google")
+      if provider_id == "google"
         expect(provider.redirect_uri).to eq(redirect_uri)
       end
     end
