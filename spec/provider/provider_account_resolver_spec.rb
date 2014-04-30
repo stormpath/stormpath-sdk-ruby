@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe "ProviderIntegrator" do
-  context "given an instance of ProviderIntegrator" do
+describe "ProviderAccountResolver" do
+  context "given an instance of ProviderAccountResolver" do
 
     before do
       data_store = Stormpath::DataStore.new "", {}, ""
