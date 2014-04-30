@@ -23,7 +23,7 @@ class Stormpath::DataStore
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
   
   CUSTOM_DATA_DELETE_FIELD_URL_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
-  CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
+  CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData provider providerData)
 
   attr_reader :client, :request_executor, :cache_manager
 
@@ -54,6 +54,11 @@ class Stormpath::DataStore
     q_href = qualify href
 
     data = execute_request('get', q_href, nil, query)
+
+    if clazz.respond_to? :call
+      clazz = clazz.call(data['providerId'])
+    end
+
     instantiate clazz, data.to_hash
   end
 
