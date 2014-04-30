@@ -19,7 +19,6 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   prop_accessor :name, :description
 
   belongs_to :tenant
-  has_one :provider
 
   has_many :accounts, can: [:get, :create]
   has_many :groups, can: [:get, :create]
@@ -31,5 +30,19 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     end
     account.apply_custom_data_updates_if_necessary
     data_store.create href, account, Stormpath::Resource::Account
+  end
+
+  def provider
+    internal_instance = instance_variable_get "@_provider"
+    return internal_instance if internal_instance
+
+    provider_href = self.href + '/provider'
+    clazz_proc = Proc.new do |property_id|
+      property_id = '' if property_id == 'stormpath'
+      "Stormpath::Provider::#{property_id.capitalize}Provider".constantize
+    end
+
+    provider = data_store.get_resource provider_href, clazz_proc
+    instance_variable_set "@_provider", provider
   end
 end

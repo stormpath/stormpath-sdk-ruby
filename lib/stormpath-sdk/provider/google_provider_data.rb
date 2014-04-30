@@ -13,11 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::ProviderData < Stormpath::Resource::Base
-
-  prop_reader :access_token,
-              :provider_id, 
-              :created_at, 
-              :modified_at,
-              :refresh_token
+class Stormpath::Provider::GoogleProviderData < Stormpath::Provider::ProviderData
+  prop_reader :access_token, :refresh_token
 end
+              

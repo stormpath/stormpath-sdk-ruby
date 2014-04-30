@@ -46,9 +46,6 @@ module Stormpath
     autoload :GroupMembership, 'stormpath-sdk/resource/group_membership'
     autoload :AccountMembership, 'stormpath-sdk/resource/account_membership'
     autoload :PasswordResetToken, 'stormpath-sdk/resource/password_reset_token'
-
-    autoload :Provider, 'stormpath-sdk/resource/provider'
-    autoload :ProviderData, 'stormpath-sdk/resource/provider_data'
   end
 
   module Cache
@@ -64,6 +61,18 @@ module Stormpath
   end
 
   module Provider
+    autoload :ProviderAccountResolver, "stormpath-sdk/provider/provider_account_resolver"
+    autoload :ProviderAccountAccess, "stormpath-sdk/provider/provider_account_access"
+    autoload :ProviderAccountResult, "stormpath-sdk/provider/provider_account_result"
+    autoload :Provider, 'stormpath-sdk/provider/provider'
+    autoload :FacebookProvider, 'stormpath-sdk/provider/facebook_provider'
+    autoload :GoogleProvider, 'stormpath-sdk/provider/google_provider'
+    autoload :ProviderData, 'stormpath-sdk/provider/provider_data'
+    autoload :FacebookProviderData, 'stormpath-sdk/provider/facebook_provider_data'
+    autoload :GoogleProviderData, 'stormpath-sdk/provider/google_provider_data'
+    autoload :ProviderAccountRequest, "stormpath-sdk/provider/provider_account_request"
+    autoload :FacebookAccountRequest, "stormpath-sdk/provider/facebook_account_request"
+    autoload :GoogleAccountRequest, "stormpath-sdk/provider/google_account_request"
   end
 end
 
@@ -76,10 +85,3 @@ require "stormpath-sdk/http/http_client_request_executor"
 require "stormpath-sdk/auth/basic_login_attempt"
 require "stormpath-sdk/auth/authentication_result"
 require "stormpath-sdk/auth/basic_authenticator"
-
-require "stormpath-sdk/provider/provider_account_resolver"
-require "stormpath-sdk/provider/provider_account_request"
-require "stormpath-sdk/provider/google_account_request"
-require "stormpath-sdk/provider/facebook_account_request"
-require "stormpath-sdk/provider/provider_account_access"
-require "stormpath-sdk/provider/provider_account_result"

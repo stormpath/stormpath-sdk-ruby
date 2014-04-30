@@ -88,15 +88,17 @@ module Stormpath
             if value.is_a? Hash
               resource_href = get_href_from_hash value
             end
-            
-            if instance_variable_get("@_#{key.underscore}").nil?
+
+            key_name = "@_#{key.underscore}"
+
+            if instance_variable_get(key_name).nil?
               if resource_href
-                instance_variable_set("@_#{key.underscore}", data_store.instantiate(clazz, value))
+                instance_variable_set(key_name, data_store.instantiate(clazz, value))
               else
-                instance_variable_set("@_#{key.underscore}", clazz.new(value))
+                instance_variable_set(key_name, clazz.new(value))
               end
             end
-            instance_variable_get("@_#{key.underscore}")
+            instance_variable_get(key_name)
           end
 
           def get_resource_href_property(key)

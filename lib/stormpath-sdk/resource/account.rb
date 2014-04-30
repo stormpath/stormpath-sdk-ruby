@@ -31,7 +31,6 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   has_many :group_memberships
 
   has_one :custom_data
-  has_one :provider_data
 
   def add_group group
     client.group_memberships.create group: group, account: self
@@ -40,6 +39,20 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   def remove_group group
     group_membership = group_memberships.find {|group_membership| group_membership.group.href == group.href }
     group_membership.delete if group_membership
+  end
+
+  def provider_data
+    internal_instance = instance_variable_get "@_provider_data"
+    return internal_instance if internal_instance
+
+    provider_data_href = self.href + '/providerData'
+    clazz_proc = Proc.new do |property_id|
+      property_id = '' if property_id == 'stormpath'
+      "Stormpath::Provider::#{property_id.capitalize}ProviderData".constantize
+    end
+
+    provider_data = data_store.get_resource provider_data_href, clazz_proc
+    instance_variable_set "@_provider_data", provider_data
   end
 
 end
