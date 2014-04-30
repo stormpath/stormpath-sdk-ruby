@@ -37,10 +37,6 @@ describe Stormpath::Provider::Provider, :vcr do
   shared_examples 'a provider directory' do
     it { should be_kind_of Stormpath::Provider::Provider }
 
-    # [:client_id, :client_secret, :provider_id, :created_at, :modified_at, :href ].each do |attribute|
-    #   it { should respond_to attribute }
-    # end
-
     it "assign provider directory to an application" do
       expect(application.account_store_mappings).to have(0).items
       expect(account_store_mapping.application).to eq(application)
@@ -98,7 +94,8 @@ describe Stormpath::Provider::Provider, :vcr do
       expect(result.is_new_account?).to be
       expect(result.account).to be_kind_of(Stormpath::Resource::Account)
       expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
-      expect(result.account.provider_data.provider_id).to eq("facebook")
+      expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::FacebookProviderData)
+      expect(result.account.provider_data.provider_id).to eq(provider_id)
 
       new_result = application.get_account(facebook_account_request)
       expect(new_result.is_new_account).not_to be
@@ -129,7 +126,8 @@ describe Stormpath::Provider::Provider, :vcr do
       expect(result.is_new_account?).to be
       expect(result.account).to be_kind_of(Stormpath::Resource::Account)
       expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
-      expect(result.account.provider_data.provider_id).to eq("google")
+      expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::GoogleProviderData)
+      expect(result.account.provider_data.provider_id).to eq(provider_id)
 
       new_result = application.get_account(google_account_request)
       expect(new_result.is_new_account).not_to be
