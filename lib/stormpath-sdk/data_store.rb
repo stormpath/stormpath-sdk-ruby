@@ -97,6 +97,8 @@ class Stormpath::DataStore
     href = qualify(href)
    
     execute_request('delete', href)
+    clear_cache_on_delete(href)
+    return nil
   end
 
   private
@@ -135,10 +137,7 @@ class Stormpath::DataStore
         result = {is_new_account: is_new_account, account: result }
       end
 
-      if http_method == 'delete'
-        clear_cache_on_delete(href)
-        return nil
-      end
+      return if http_method == 'delete'
 
       if result[HREF_PROP_NAME]
         cache_walk result
