@@ -89,16 +89,20 @@ describe Stormpath::Provider::Provider, :vcr do
     it 'syncrhonize account' do
       account_store_mapping
 
-      access_token = "CAATmZBgxF6rMBAJ8NW6ChSnrk4OMxb6WmnH78Mcv3SD4zs5ZCXoeFEP3rBqL7ReAXgN1CGmWpJ2LbihblIPbSqfMEf2XIf4BFarZAqS64dylSomqzzoZChAvfPLZBH8GvVIuF80kCXtwMReIBEzTZBYaRcI215nYVCTaUMm20LdZAamku4qIkAIQEOmhigVVOHSYOZCe7tXE1wZDZD"
+      access_token = "CAATmZBgxF6rMBAPYbfBhGrVPRw27nn9fAz6bR0DBV1XGfOcSYXSBrhZCkE1y1lWue348fboRxqX7nz88KBYi05qCHw4AQoZCqyIaWedEXrV2vFVzVHo2glq6Vb1ofAWcEHva7baZAaojA8KN5DVz4UTToKgvoIMa1kjyvZCmFZBpYXoG7H3aIKoyWJzUGCDIUrcFjvjnNZBvAZDZD"
       facebook_account_request = Stormpath::Provider::FacebookAccountRequest.new(:access_token, access_token)
-      result = application.get_provider_account(facebook_account_request)
 
+      stub_request(:post, application.href + "/accounts").to_return(body: MultiJson.dump(Stormpath::Test::FACEBOOK_ACCOUNT), status: 201)
+      result = application.get_provider_account(facebook_account_request)
       expect(result.is_new_account?).to be
       expect(result.account).to be_kind_of(Stormpath::Resource::Account)
+
+      stub_request(:get, result.account.href + "/providerData").to_return(body: MultiJson.dump(Stormpath::Test::FACEBOOK_PROVIDER_DATA))
       expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
       expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::FacebookProviderData)
       expect(result.account.provider_data.provider_id).to eq(provider_id)
 
+      stub_request(:post, application.href + "/accounts").to_return(body: MultiJson.dump(Stormpath::Test::FACEBOOK_ACCOUNT), status: 200)
       new_result = application.get_provider_account(facebook_account_request)
       expect(new_result.is_new_account).not_to be
     end
@@ -121,16 +125,20 @@ describe Stormpath::Provider::Provider, :vcr do
     it 'syncrhonize account' do
       account_store_mapping
 
-      access_token = "ya29.1.AADtN_XtWwdxVv9_fgh4vkpu24EjcOKnXvFUw2SxuR6pYX1EhlQXMyLHW5uleg"
+      access_token = "ya29.GwCFxf7GuqpKOx8AAACnZZvl-TR_UAqpwVHHfUlt-nM_yjVel2FiqjMgAoOtxQ"
       google_account_request = Stormpath::Provider::GoogleAccountRequest.new(:access_token, access_token)
-      result = application.get_provider_account(google_account_request)
 
+      stub_request(:post, application.href + "/accounts").to_return(body: MultiJson.dump(Stormpath::Test::GOOGLE_ACCOUNT), status: 201)
+      result = application.get_provider_account(google_account_request)
       expect(result.is_new_account?).to be
       expect(result.account).to be_kind_of(Stormpath::Resource::Account)
+
+      stub_request(:get, result.account.href + "/providerData").to_return(body: MultiJson.dump(Stormpath::Test::GOOGLE_PROVIDER_DATA))
       expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
       expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::GoogleProviderData)
       expect(result.account.provider_data.provider_id).to eq(provider_id)
 
+      stub_request(:post, application.href + "/accounts").to_return(body: MultiJson.dump(Stormpath::Test::GOOGLE_ACCOUNT), status: 200)
       new_result = application.get_provider_account(google_account_request)
       expect(new_result.is_new_account).not_to be
     end
