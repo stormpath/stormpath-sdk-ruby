@@ -37,7 +37,9 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     return internal_instance if internal_instance
 
     provider_href = self.href + '/provider'
-    clazz_proc = Proc.new do |property_id|
+
+    clazz_proc = Proc.new do |data|
+      property_id = data['providerId']
       property_id = '' if property_id == 'stormpath'
       "Stormpath::Provider::#{property_id.capitalize}Provider".constantize
     end

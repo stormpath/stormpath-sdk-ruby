@@ -55,9 +55,7 @@ class Stormpath::DataStore
 
     data = execute_request('get', q_href, nil, query)
 
-    if clazz.respond_to? :call
-      clazz = clazz.call(data['providerId'])
-    end
+    clazz = clazz.call(data) if clazz.respond_to? :call
 
     instantiate clazz, data.to_hash
   end
