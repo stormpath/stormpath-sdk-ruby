@@ -24,37 +24,25 @@ module Stormpath
 
         splitted = href.split '?'
 
-        if query_string.nil?
-          @query_string = Hash.new
-        else
-          @query_string = query_string
-        end
+        @query_string = query_string || {}
 
-        if !splitted.nil? and splitted.length > 1
+        if splitted and splitted.length > 1
           @href = splitted[0]
           query_string_str = splitted[1]
-
           query_string_arr = query_string_str.split '&'
-
           query_string_arr.each do |pair|
-
             pair_arr = pair.split '='
-
             @query_string.store pair_arr[0], pair_arr[1]
-
           end
-
         else
-
           @href = href
-
         end
 
         @http_method = http_method.upcase
         @http_headers = http_headers
         @body = body
 
-        if !body.nil?
+        if body
           @http_headers.store 'Content-Length', @body.bytesize
         end
 
@@ -65,30 +53,22 @@ module Stormpath
       end
 
       def to_s_query_string canonical
-
         result = ''
 
-        if !@query_string.empty?
+        unless @query_string.empty?
           Hash[@query_string.sort].each do |key, value|
 
             enc_key = encode_url key, false, canonical
             enc_value = encode_url value, false, canonical
 
-            if !result.empty?
-              result << '&'
-            end
-
+            result << '&' unless result.empty?
             result << enc_key << '='<< enc_value
-
           end
-
         end
 
         result
       end
 
     end
-
   end
-
 end
