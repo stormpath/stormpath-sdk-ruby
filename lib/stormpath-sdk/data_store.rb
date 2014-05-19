@@ -101,12 +101,12 @@ class Stormpath::DataStore
 
   private
 
-    def needs_to_be_fully_qualified(href)
+    def needs_to_be_fully_qualified?(href)
       !href.downcase.start_with? 'http'
     end
 
     def qualify(href)
-      needs_to_be_fully_qualified(href) ? @base_url + href : href
+      needs_to_be_fully_qualified?(href) ? @base_url + href : href
     end
 
     def execute_request(http_method, href, resource=nil, query=nil)
