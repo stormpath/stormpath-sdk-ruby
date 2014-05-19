@@ -91,7 +91,7 @@ describe Stormpath::Provider::Provider, :vcr do
 
       access_token = "CAATmZBgxF6rMBAJ8NW6ChSnrk4OMxb6WmnH78Mcv3SD4zs5ZCXoeFEP3rBqL7ReAXgN1CGmWpJ2LbihblIPbSqfMEf2XIf4BFarZAqS64dylSomqzzoZChAvfPLZBH8GvVIuF80kCXtwMReIBEzTZBYaRcI215nYVCTaUMm20LdZAamku4qIkAIQEOmhigVVOHSYOZCe7tXE1wZDZD"
       facebook_account_request = Stormpath::Provider::FacebookAccountRequest.new(:access_token, access_token)
-      result = application.get_account(facebook_account_request)
+      result = application.get_provider_account(facebook_account_request)
 
       expect(result.is_new_account?).to be
       expect(result.account).to be_kind_of(Stormpath::Resource::Account)
@@ -99,7 +99,7 @@ describe Stormpath::Provider::Provider, :vcr do
       expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::FacebookProviderData)
       expect(result.account.provider_data.provider_id).to eq(provider_id)
 
-      new_result = application.get_account(facebook_account_request)
+      new_result = application.get_provider_account(facebook_account_request)
       expect(new_result.is_new_account).not_to be
     end
   end
@@ -123,7 +123,7 @@ describe Stormpath::Provider::Provider, :vcr do
 
       access_token = "ya29.1.AADtN_XtWwdxVv9_fgh4vkpu24EjcOKnXvFUw2SxuR6pYX1EhlQXMyLHW5uleg"
       google_account_request = Stormpath::Provider::GoogleAccountRequest.new(:access_token, access_token)
-      result = application.get_account(google_account_request)
+      result = application.get_provider_account(google_account_request)
 
       expect(result.is_new_account?).to be
       expect(result.account).to be_kind_of(Stormpath::Resource::Account)
@@ -131,7 +131,7 @@ describe Stormpath::Provider::Provider, :vcr do
       expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::GoogleProviderData)
       expect(result.account.provider_data.provider_id).to eq(provider_id)
 
-      new_result = application.get_account(google_account_request)
+      new_result = application.get_provider_account(google_account_request)
       expect(new_result.is_new_account).not_to be
     end
   end
