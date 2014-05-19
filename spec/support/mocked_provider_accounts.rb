@@ -26,7 +26,6 @@ module Stormpath
         providerId: "facebook"
       }
 
-
       GOOGLE_ACCOUNT = {
         href: "https://api.stormpath.com/v1/accounts/2XdHmcyFG8HJCYBTEL1dJj", 
         username: "damir.svrtan@gmail.com", 
