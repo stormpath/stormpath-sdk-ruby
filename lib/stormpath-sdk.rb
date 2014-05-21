@@ -61,19 +61,18 @@ module Stormpath
   end
 
   module Provider
-    autoload :ProviderAccountResolver, "stormpath-sdk/provider/provider_account_resolver"
-    autoload :ProviderAccountAccess, "stormpath-sdk/provider/provider_account_access"
-    autoload :ProviderAccountResult, "stormpath-sdk/provider/provider_account_result"
+    autoload :AccountResolver, "stormpath-sdk/provider/account_resolver"
+    autoload :AccountAccess, "stormpath-sdk/provider/account_access"
+    autoload :AccountResult, "stormpath-sdk/provider/account_result"
+    autoload :AccountRequest, "stormpath-sdk/provider/account_request"
     autoload :Provider, 'stormpath-sdk/provider/provider'
-    autoload :FacebookProvider, 'stormpath-sdk/provider/facebook_provider'
-    autoload :GoogleProvider, 'stormpath-sdk/provider/google_provider'
-    autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath_provider'
     autoload :ProviderData, 'stormpath-sdk/provider/provider_data'
-    autoload :FacebookProviderData, 'stormpath-sdk/provider/facebook_provider_data'
-    autoload :GoogleProviderData, 'stormpath-sdk/provider/google_provider_data'
-    autoload :ProviderAccountRequest, "stormpath-sdk/provider/provider_account_request"
-    autoload :FacebookAccountRequest, "stormpath-sdk/provider/facebook_account_request"
-    autoload :GoogleAccountRequest, "stormpath-sdk/provider/google_account_request"
+    autoload :FacebookProvider, 'stormpath-sdk/provider/facebook/facebook_provider'
+    autoload :FacebookProviderData, 'stormpath-sdk/provider/facebook/facebook_provider_data'
+    autoload :GoogleProvider, 'stormpath-sdk/provider/google/google_provider'
+    autoload :GoogleProviderData, 'stormpath-sdk/provider/google/google_provider_data'
+    autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath/stormpath_provider'
+    autoload :StormpathProviderData, 'stormpath-sdk/provider/stormpath/stormpath_provider_data'
   end
 end
 

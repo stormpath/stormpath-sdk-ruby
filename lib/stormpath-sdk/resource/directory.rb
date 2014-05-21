@@ -39,8 +39,8 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     provider_href = self.href + '/provider'
 
     clazz_proc = Proc.new do |data|
-      property_id = data['providerId']
-      "Stormpath::Provider::#{property_id.capitalize}Provider".constantize
+      provider_id = data['providerId']
+      "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
     end
 
     provider = data_store.get_resource provider_href, clazz_proc

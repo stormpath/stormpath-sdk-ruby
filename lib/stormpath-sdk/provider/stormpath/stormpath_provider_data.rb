@@ -13,16 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath
-  module Provider
-    class ProviderAccountAccess < Stormpath::Resource::Base
-
-      PROVIDER_DATA = :provider_data
-
-      def provider_data=(provider_data)
-        set_property PROVIDER_DATA, provider_data
-      end
-
-    end
-  end
+class Stormpath::Provider::StormpathProviderData < Stormpath::Provider::ProviderData
 end

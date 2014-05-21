@@ -15,13 +15,14 @@
 #
 module Stormpath
   module Provider
-    class ProviderAccountResult < Stormpath::Resource::Base
+    class AccountAccess < Stormpath::Resource::Base
 
-      prop_reader :is_new_account
+      PROVIDER_DATA = :provider_data
 
-      alias_method :is_new_account?, :is_new_account
+      def provider_data=(provider_data)
+        set_property PROVIDER_DATA, provider_data
+      end
 
-      has_one :account
     end
   end
 end

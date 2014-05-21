@@ -15,16 +15,13 @@
 #
 module Stormpath
   module Provider
-    class ProviderAccountRequest
+    class AccountResult < Stormpath::Resource::Base
 
-      attr_accessor :provider, :token_type, :token_value
+      prop_reader :is_new_account
 
-      def initialize(provider, token_type, token_value) 
-        @provider = provider
-        @token_type = token_type
-        @token_value = token_value
-      end
+      alias_method :is_new_account?, :is_new_account
 
+      has_one :account
     end
   end
 end

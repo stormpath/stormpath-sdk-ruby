@@ -15,7 +15,7 @@
 #
 module Stormpath
   module Provider
-    class ProviderAccountResolver
+    class AccountResolver
       include Stormpath::Util::Assert
 
       def initialize data_store
@@ -24,9 +24,9 @@ module Stormpath
 
       def resolve_provider_account parent_href, request
         assert_not_nil parent_href, "parentHref argument must be specified"
-        assert_kind_of ProviderAccountRequest, request, "Only ProviderAccountRequest instances are supported."
+        assert_kind_of AccountRequest, request, "Only ProviderAccountRequest instances are supported."
 
-        attempt = @data_store.instantiate ProviderAccountAccess
+        attempt = @data_store.instantiate AccountAccess
 
         attempt.provider_data = {
                                   request.token_type.to_s.camelize(:lower) => request.token_value,
@@ -35,7 +35,7 @@ module Stormpath
 
         href = parent_href + '/accounts'
 
-        @data_store.create href, attempt, Stormpath::Provider::ProviderAccountResult
+        @data_store.create href, attempt, Stormpath::Provider::AccountResult
       end
 
     end

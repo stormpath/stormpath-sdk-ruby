@@ -61,7 +61,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
 
   def get_provider_account request
-    Stormpath::Provider::ProviderAccountResolver.new(data_store).resolve_provider_account(href, request)
+    Stormpath::Provider::AccountResolver.new(data_store).resolve_provider_account(href, request)
   end
 
   private

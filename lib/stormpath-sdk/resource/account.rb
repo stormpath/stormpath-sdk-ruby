@@ -48,9 +48,8 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
     provider_data_href = self.href + '/providerData'
 
     clazz_proc = Proc.new do |data|
-      property_id = data['providerId']
-      property_id = '' if property_id == 'stormpath'
-      "Stormpath::Provider::#{property_id.capitalize}ProviderData".constantize
+      provider_id = data['providerId']
+      "Stormpath::Provider::#{provider_id.capitalize}ProviderData".constantize
     end
 
     provider_data = data_store.get_resource provider_data_href, clazz_proc

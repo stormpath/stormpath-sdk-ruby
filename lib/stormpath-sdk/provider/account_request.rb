@@ -15,11 +15,15 @@
 #
 module Stormpath
   module Provider
-    class FacebookAccountRequest < ProviderAccountRequest
+    class AccountRequest
 
-        def initialize(token_type, token_value)
-          super(:facebook, token_type, token_value)
-        end
+      attr_accessor :provider, :token_type, :token_value
+
+      def initialize(provider, token_type, token_value) 
+        @provider = provider
+        @token_type = token_type
+        @token_value = token_value
+      end
 
     end
   end

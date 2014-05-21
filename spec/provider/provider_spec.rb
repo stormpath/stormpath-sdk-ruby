@@ -62,12 +62,61 @@ describe Stormpath::Provider::Provider, :vcr do
     end
   end
 
+  shared_examples 'a syncrhonizeable directory' do
+    it 'should be able to store provider accounts' do
+      account_store_mapping
+
+      access_token = "xyz"
+      request = Stormpath::Provider::AccountRequest.new(provider_id, :access_token, access_token)
+
+      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test.mocked_account(provider_id), status: 201)
+      result = application.get_provider_account(request)
+      expect(result.is_new_account?).to be
+      expect(result.account).to be_kind_of(Stormpath::Resource::Account)
+
+      stub_request(:get, result.account.href + "/providerData").to_return(body: Stormpath::Test.mocked_provider_data(provider_id))
+
+      expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
+      provider_data_clazz = "Stormpath::Provider::#{provider_id.capitalize}ProviderData".constantize
+      expect(result.account.provider_data).to be_instance_of(provider_data_clazz)
+
+      expect(result.account.provider_data.provider_id).to eq(provider_id)
+      expect(result.account.provider_data.created_at).to be
+      expect(result.account.provider_data.modified_at).to be
+      expect(result.account.provider_data.access_token).to be
+
+      if provider_id == 'google'
+        expect(result.account.provider_data.refresh_token).to be
+      end
+
+      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test.mocked_account(provider_id), status: 200)
+      new_result = application.get_provider_account(request)
+      expect(new_result.is_new_account).not_to be
+    end
+  end
+
   describe 'create stormpath directory with empty provider credentials' do
     let(:name) { 'Stormpath Test Directory' }
     let(:description) { 'Directory for testing Stormpath directories.' }
     let(:provider_id) { "stormpath" }
 
     it_behaves_like 'a provider directory'
+
+    it 'should be able to retrieve provider data from a regular account' do
+      account = directory.accounts.create({
+        given_name: 'John',
+        surname: 'Smith',
+        email: 'john.smith@example.com',
+        username: 'johnsmith',
+        password: '4P@$$w0rd!'
+      })
+
+      expect(account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
+      expect(account.provider_data.provider_id).to eq(provider_id)
+      expect(account.provider_data.created_at).to be
+      expect(account.provider_data.modified_at).to be
+      expect(account.provider_data).to be_instance_of(Stormpath::Provider::StormpathProviderData)
+    end
   end
 
   describe 'create facebook directory with provider credentials' do
@@ -82,27 +131,7 @@ describe Stormpath::Provider::Provider, :vcr do
     end
 
     it_behaves_like 'a provider directory'
-
-    it 'syncrhonize account' do
-      account_store_mapping
-
-      access_token = "xyz"
-      facebook_account_request = Stormpath::Provider::FacebookAccountRequest.new(:access_token, access_token)
-
-      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test::FACEBOOK_ACCOUNT, status: 201)
-      result = application.get_provider_account(facebook_account_request)
-      expect(result.is_new_account?).to be
-      expect(result.account).to be_kind_of(Stormpath::Resource::Account)
-
-      stub_request(:get, result.account.href + "/providerData").to_return(body: Stormpath::Test::FACEBOOK_PROVIDER_DATA)
-      expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
-      expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::FacebookProviderData)
-      expect(result.account.provider_data.provider_id).to eq(provider_id)
-
-      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test::FACEBOOK_ACCOUNT, status: 200)
-      new_result = application.get_provider_account(facebook_account_request)
-      expect(new_result.is_new_account).not_to be
-    end
+    it_behaves_like 'a syncrhonizeable directory'
   end
 
   describe 'create google directory with provider credentials' do
@@ -118,26 +147,6 @@ describe Stormpath::Provider::Provider, :vcr do
     end
 
     it_behaves_like 'a provider directory'
-
-    it 'syncrhonize account' do
-      account_store_mapping
-
-      access_token = "xyz"
-      google_account_request = Stormpath::Provider::GoogleAccountRequest.new(:access_token, access_token)
-
-      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test::GOOGLE_ACCOUNT, status: 201)
-      result = application.get_provider_account(google_account_request)
-      expect(result.is_new_account?).to be
-      expect(result.account).to be_kind_of(Stormpath::Resource::Account)
-
-      stub_request(:get, result.account.href + "/providerData").to_return(body: Stormpath::Test::GOOGLE_PROVIDER_DATA)
-      expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
-      expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::GoogleProviderData)
-      expect(result.account.provider_data.provider_id).to eq(provider_id)
-
-      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test::GOOGLE_ACCOUNT, status: 200)
-      new_result = application.get_provider_account(google_account_request)
-      expect(new_result.is_new_account).not_to be
-    end
+    it_behaves_like 'a syncrhonizeable directory'
   end
 end
