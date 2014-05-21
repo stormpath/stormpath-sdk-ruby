@@ -40,7 +40,6 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
 
     clazz_proc = Proc.new do |data|
       property_id = data['providerId']
-      property_id = '' if property_id == 'stormpath'
       "Stormpath::Provider::#{property_id.capitalize}Provider".constantize
     end
 

@@ -13,6 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::Provider < Stormpath::Resource::Base
-  prop_reader :provider_id, :created_at, :modified_at
+class Stormpath::Provider::StormpathProvider < Stormpath::Provider::Provider
 end

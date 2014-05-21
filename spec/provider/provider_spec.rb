@@ -19,9 +19,7 @@ describe Stormpath::Provider::Provider, :vcr do
     Hash.new.tap do |hash|
       hash[:name] = name
       hash[:description] = description
-      if defined? provider_info
-        hash[:provider] = provider_info
-      end
+      hash[:provider] = provider_info if defined? provider_info
     end
   end
 
@@ -49,15 +47,15 @@ describe Stormpath::Provider::Provider, :vcr do
       expect(provider.created_at).to be
       expect(provider.modified_at).to be
       expect(provider.href).to eq(directory.href + "/provider")
-      
+
+      provider_clazz = "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
+      expect(provider).to be_instance_of(provider_clazz)
+
       if provider_id == "google" || provider_id == "facebook"
         expect(provider.client_id).to eq(client_id)
         expect(provider.client_secret).to eq(client_secret)
-
-        provider_clazz = "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
-        expect(provider).to be_instance_of(provider_clazz)
       end
-      
+
       if provider_id == "google"
         expect(provider.redirect_uri).to eq(redirect_uri)
       end
@@ -70,7 +68,6 @@ describe Stormpath::Provider::Provider, :vcr do
     let(:provider_id) { "stormpath" }
 
     it_behaves_like 'a provider directory'
-
   end
 
   describe 'create facebook directory with provider credentials' do
@@ -78,8 +75,8 @@ describe Stormpath::Provider::Provider, :vcr do
     let(:description) { 'Directory for testing Facebook directories.' }
 
     let(:provider_id) { "facebook" }
-    let(:client_id) { ENV['STORMPATH_SDK_TEST_FACEBOOK_APP_ID'] }
-    let(:client_secret) { ENV['STORMPATH_SDK_TEST_FACEBOOK_APP_SECRET'] }
+    let(:client_id) { 'FACEBOOK_APP_ID' }
+    let(:client_secret) { 'FACEBOOK_APP_SECRET' }
     let(:provider_info) do
       { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
     end
@@ -89,20 +86,20 @@ describe Stormpath::Provider::Provider, :vcr do
     it 'syncrhonize account' do
       account_store_mapping
 
-      access_token = "CAATmZBgxF6rMBAPYbfBhGrVPRw27nn9fAz6bR0DBV1XGfOcSYXSBrhZCkE1y1lWue348fboRxqX7nz88KBYi05qCHw4AQoZCqyIaWedEXrV2vFVzVHo2glq6Vb1ofAWcEHva7baZAaojA8KN5DVz4UTToKgvoIMa1kjyvZCmFZBpYXoG7H3aIKoyWJzUGCDIUrcFjvjnNZBvAZDZD"
+      access_token = "xyz"
       facebook_account_request = Stormpath::Provider::FacebookAccountRequest.new(:access_token, access_token)
 
-      stub_request(:post, application.href + "/accounts").to_return(body: MultiJson.dump(Stormpath::Test::FACEBOOK_ACCOUNT), status: 201)
+      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test::FACEBOOK_ACCOUNT, status: 201)
       result = application.get_provider_account(facebook_account_request)
       expect(result.is_new_account?).to be
       expect(result.account).to be_kind_of(Stormpath::Resource::Account)
 
-      stub_request(:get, result.account.href + "/providerData").to_return(body: MultiJson.dump(Stormpath::Test::FACEBOOK_PROVIDER_DATA))
+      stub_request(:get, result.account.href + "/providerData").to_return(body: Stormpath::Test::FACEBOOK_PROVIDER_DATA)
       expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
       expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::FacebookProviderData)
       expect(result.account.provider_data.provider_id).to eq(provider_id)
 
-      stub_request(:post, application.href + "/accounts").to_return(body: MultiJson.dump(Stormpath::Test::FACEBOOK_ACCOUNT), status: 200)
+      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test::FACEBOOK_ACCOUNT, status: 200)
       new_result = application.get_provider_account(facebook_account_request)
       expect(new_result.is_new_account).not_to be
     end
@@ -113,9 +110,9 @@ describe Stormpath::Provider::Provider, :vcr do
     let(:description) { 'Directory for testing Google directories.' }
 
     let(:provider_id) { "google" }
-    let(:client_id) { ENV['STORMPATH_SDK_TEST_GOOGLE_CLIENT_ID'] }
-    let(:client_secret) { ENV['STORMPATH_SDK_TEST_GOOGLE_CLIENT_SECRET'] }
-    let(:redirect_uri) { ENV['STORMPATH_SDK_TEST_GOOGLE_REDIRECT_URI'] }
+    let(:client_id) { 'GOOGLE_CLIENT_ID' }
+    let(:client_secret) { 'GOOGLE_CLIENT_SECRET' }
+    let(:redirect_uri) { 'GOOGLE_REDIRECT_URI' }
     let(:provider_info) do
       { provider_id: provider_id, client_id: client_id, client_secret: client_secret, redirect_uri: redirect_uri }
     end
@@ -125,20 +122,20 @@ describe Stormpath::Provider::Provider, :vcr do
     it 'syncrhonize account' do
       account_store_mapping
 
-      access_token = "ya29.GwCFxf7GuqpKOx8AAACnZZvl-TR_UAqpwVHHfUlt-nM_yjVel2FiqjMgAoOtxQ"
+      access_token = "xyz"
       google_account_request = Stormpath::Provider::GoogleAccountRequest.new(:access_token, access_token)
 
-      stub_request(:post, application.href + "/accounts").to_return(body: MultiJson.dump(Stormpath::Test::GOOGLE_ACCOUNT), status: 201)
+      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test::GOOGLE_ACCOUNT, status: 201)
       result = application.get_provider_account(google_account_request)
       expect(result.is_new_account?).to be
       expect(result.account).to be_kind_of(Stormpath::Resource::Account)
 
-      stub_request(:get, result.account.href + "/providerData").to_return(body: MultiJson.dump(Stormpath::Test::GOOGLE_PROVIDER_DATA))
+      stub_request(:get, result.account.href + "/providerData").to_return(body: Stormpath::Test::GOOGLE_PROVIDER_DATA)
       expect(result.account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
       expect(result.account.provider_data).to be_instance_of(Stormpath::Provider::GoogleProviderData)
       expect(result.account.provider_data.provider_id).to eq(provider_id)
 
-      stub_request(:post, application.href + "/accounts").to_return(body: MultiJson.dump(Stormpath::Test::GOOGLE_ACCOUNT), status: 200)
+      stub_request(:post, application.href + "/accounts").to_return(body: Stormpath::Test::GOOGLE_ACCOUNT, status: 200)
       new_result = application.get_provider_account(google_account_request)
       expect(new_result.is_new_account).not_to be
     end
