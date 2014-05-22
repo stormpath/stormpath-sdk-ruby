@@ -14,9 +14,7 @@
 # limitations under the License.
 #
 module Stormpath
-
   module Http
-
     class Response
 
       attr_reader :http_status, :headers, :body
@@ -29,7 +27,6 @@ module Stormpath
         @headers.content_type = content_type
         @headers.body_size = content_length
       end
-
 
       def client_error?
         http_status >= 400 and http_status < 500
@@ -44,7 +41,5 @@ module Stormpath
       end
 
     end
-
   end
-
 end

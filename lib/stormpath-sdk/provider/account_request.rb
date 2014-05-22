@@ -13,27 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath::Resource::CustomDataStorage
-  extend ActiveSupport::Concern
+module Stormpath
+  module Provider
+    class AccountRequest
 
-  CUSTOM_DATA = "custom_data"
+      attr_accessor :provider, :token_type, :token_value
 
-  included do
-
-    def save
-      apply_custom_data_updates_if_necessary
-      super
-    end
-
-    def apply_custom_data_updates_if_necessary
-      if custom_data.send :has_removed_properties?
-        custom_data.send :delete_removed_properties
+      def initialize(provider, token_type, token_value) 
+        @provider = provider
+        @token_type = token_type
+        @token_value = token_value
       end
-      if custom_data.send :has_new_properties?
-        self.set_property CUSTOM_DATA, custom_data.dirty_properties
-      end
-    end
 
+    end
   end
-
 end

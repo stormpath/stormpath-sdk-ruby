@@ -39,9 +39,7 @@ module Stormpath
 
           define_method(name) do
             href = options[:href] || get_resource_href_property(property_name)
-            collection_href = if options[:delegate]
-              "#{tenant.send(name.to_s).href}"
-            end
+            collection_href = "#{tenant.send(name).href}" if options[:delegate]
 
             Stormpath::Resource::Collection.new(href, item_class, client,
               collection_href: collection_href).tap do |collection|
@@ -57,7 +55,7 @@ module Stormpath
                       end
                     data_store.create href, resource, item_class, options
                   end
-                end
+                end#can.include? :create
 
                 if can.include? :get
                   def get(id_or_href, expansion=nil)
@@ -68,15 +66,15 @@ module Stormpath
                     end
                     data_store.get_resource item_href, item_class, (expansion ? expansion.to_query : nil)
                   end
-                end
-              end
+                end#can.include? :get
+              end#collection.class_eval do
 
               collection.class_eval(&block) if block
-            end
-          end
-        end
+            end#Stormpath::Resource::Collection.new
+          end#define_method(name)
+        end#def has_many
 
-      end
+      end#module Class Methods
 
       included do
 
@@ -85,18 +83,22 @@ module Stormpath
           def get_resource_property(key, clazz)
             value = get_property key
 
+            return nil if value.nil? and clazz != Stormpath::Resource::CustomData
+
             if value.is_a? Hash
-              href = get_href_from_hash value
+              resource_href = get_href_from_hash value
             end
-            
-            if instance_variable_get("@_#{key.underscore}").nil?
-              if href
-                instance_variable_set("@_#{key.underscore}", data_store.instantiate(clazz, value))
+
+            key_name = "@_#{key.underscore}"
+
+            if instance_variable_get(key_name).nil?
+              if resource_href
+                instance_variable_set(key_name, data_store.instantiate(clazz, value))
               else
-                instance_variable_set("@_#{key.underscore}", clazz.new(value))
+                instance_variable_set(key_name, clazz.new(value))
               end
             end
-            instance_variable_get("@_#{key.underscore}")
+            instance_variable_get(key_name)
           end
 
           def get_resource_href_property(key)
@@ -109,7 +111,7 @@ module Stormpath
             end
           end
 
-      end
-    end
-  end
-end
+      end#included do
+    end#Associations
+  end#Resource
+end#Stormpath

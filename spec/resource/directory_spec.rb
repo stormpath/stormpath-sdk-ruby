@@ -85,7 +85,7 @@ describe Stormpath::Resource::Directory, :vcr do
         expect(created_account.username).to eq(account.username)
         expect(created_account).to eq(account)
         expect(created_account.status).to eq("ENABLED")
-        expect(created_account.email_verification_token.href).not_to be
+        expect(created_account.email_verification_token).not_to be
       end
     end
 
@@ -108,7 +108,6 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     context 'with registration workflow but set it to false on account creation' do
-
       let(:created_account_with_reg_workflow) { test_directory_with_verification.create_account account, false }
 
       after do
@@ -120,9 +119,8 @@ describe Stormpath::Resource::Directory, :vcr do
         expect(created_account_with_reg_workflow.username).to eq(account.username)
         expect(created_account_with_reg_workflow).to eq(account)
         expect(created_account_with_reg_workflow.status).to eq("ENABLED")
-        expect(created_account_with_reg_workflow.email_verification_token.href).not_to be
+        expect(created_account_with_reg_workflow.email_verification_token).not_to be
       end
-
     end
 
   end

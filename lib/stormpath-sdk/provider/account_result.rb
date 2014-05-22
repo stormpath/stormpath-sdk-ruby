@@ -13,27 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module Stormpath::Resource::CustomDataStorage
-  extend ActiveSupport::Concern
+module Stormpath
+  module Provider
+    class AccountResult < Stormpath::Resource::Base
 
-  CUSTOM_DATA = "custom_data"
+      prop_reader :is_new_account
 
-  included do
+      alias_method :is_new_account?, :is_new_account
 
-    def save
-      apply_custom_data_updates_if_necessary
-      super
+      has_one :account
     end
-
-    def apply_custom_data_updates_if_necessary
-      if custom_data.send :has_removed_properties?
-        custom_data.send :delete_removed_properties
-      end
-      if custom_data.send :has_new_properties?
-        self.set_property CUSTOM_DATA, custom_data.dirty_properties
-      end
-    end
-
   end
-
 end

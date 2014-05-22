@@ -41,4 +41,19 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
     group_membership.delete if group_membership
   end
 
+  def provider_data
+    internal_instance = instance_variable_get "@_provider_data"
+    return internal_instance if internal_instance
+
+    provider_data_href = self.href + '/providerData'
+
+    clazz_proc = Proc.new do |data|
+      provider_id = data['providerId']
+      "Stormpath::Provider::#{provider_id.capitalize}ProviderData".constantize
+    end
+
+    provider_data = data_store.get_resource provider_data_href, clazz_proc
+    instance_variable_set "@_provider_data", provider_data
+  end
+
 end

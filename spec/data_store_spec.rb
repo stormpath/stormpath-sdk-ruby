@@ -8,6 +8,7 @@ describe Stormpath::DataStore do
   let(:application_cache) { data_store.cache_manager.get_cache 'applications' }
   let(:tenant_cache)      { data_store.cache_manager.get_cache 'tenants' }
   let(:group_cache)       { data_store.cache_manager.get_cache 'groups' }
+  let(:default_base_url) { Stormpath::DataStore::DEFAULT_BASE_URL }
 
   after do
     application_cache.clear
@@ -15,13 +16,28 @@ describe Stormpath::DataStore do
 
   describe '.region_for' do
     it 'pulls resource name from href' do
-      region = data_store.send :region_for, 'https://api.stormpath.com/v1/directories/4NykYrYH0OBiOOVOg8LXQ5'
+      region = data_store.send :region_for, default_base_url+"/directories/4NykYrYH0OBiOOVOg8LXQ5"
       expect(region).to eq('directories')
     end
 
     it 'pulls resource name from href if its custom data also' do
-      region = data_store.send :region_for, 'https://api.stormpath.com/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData'
+      region = data_store.send :region_for, default_base_url+"/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData"
       expect(region).to eq('customData')
+    end
+  end
+
+  describe 'custom data regex matchers' do
+    let(:custom_data_delete_field_url_regex) { Stormpath::DataStore::CUSTOM_DATA_DELETE_FIELD_URL_REGEX }
+    context 'CUSTOM_DATA_DELETE_FIELD_REGEX' do
+      it 'should match custom data field href' do
+        expect(default_base_url+"/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData/rank").to match(custom_data_delete_field_url_regex)
+        expect(default_base_url+"/groups/4x6vwucf1w9wjHvt7paGoY/customData/rank").to match(custom_data_delete_field_url_regex)
+      end
+
+      it 'should not match custom data resource href' do
+        expect(default_base_url+"/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData").not_to match(custom_data_delete_field_url_regex)
+        expect(default_base_url+"/groups/4x6vwucf1w9wjHvt7paGoY/customData").not_to match(custom_data_delete_field_url_regex)
+      end
     end
   end
 

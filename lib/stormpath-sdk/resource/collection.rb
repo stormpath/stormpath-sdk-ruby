@@ -57,38 +57,53 @@ class Stormpath::Resource::Collection
   end
 
   def each(&block)
-    page = CollectionPage.new collection_href, client, @criteria
-    page.item_type = item_class
-    items = page.items
-    items.each(&block)
+    PaginatedIterator.iterate(collection_href, client, item_class, @criteria, &block)
   end
 
   private
 
-  class CollectionPage < Stormpath::Resource::Base
-    ITEMS = 'items'
+    module PaginatedIterator
 
-    prop_accessor :offset, :limit
+      def self.iterate(collection_href, client, item_class, criteria, &block)
+        page = CollectionPage.new collection_href, client, criteria
+        page.item_type = item_class
+        page.items.each(&block)
 
-    attr_accessor :item_type
+        if criteria[:limit].nil? and page.items.count == 25
+          criteria[:offset] ||=0
+          criteria[:offset] += 25
+          iterate(collection_href, client, item_class, criteria, &block)
+        end
+      end
 
-    def items
-      to_resource_array get_property ITEMS
     end
 
-    def to_resource properties
-      data_store.instantiate item_type, properties
-    end
+    class CollectionPage < Stormpath::Resource::Base
+      ITEMS = 'items'
 
-    def to_resource_array vals
-      Array.new.tap do |items|
-        if vals.is_a? Array
-          vals.each do |val|
-            resource = to_resource val
-            items << resource
+      prop_accessor :offset, :limit
+
+      attr_accessor :item_type
+
+      def items
+        to_resource_array get_property(ITEMS)
+      end
+
+      def to_resource properties
+        data_store.instantiate item_type, properties
+      end
+
+      def to_resource_array vals
+        Array.new.tap do |items|
+          if vals.is_a? Array
+            vals.each do |val|
+              resource = to_resource val
+              items << resource
+            end
           end
         end
       end
-    end
-  end
-end
+
+    end#class Stormpath::Resource::Collection::CollectionPage
+
+end#Stormpath::Resource::Collection
