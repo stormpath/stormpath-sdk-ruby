@@ -12,3 +12,4 @@ Guardfile
 tmp/*
 *.gem
 .bundle/
+dump.rdb

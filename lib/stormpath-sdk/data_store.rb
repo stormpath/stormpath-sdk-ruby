@@ -21,8 +21,7 @@ class Stormpath::DataStore
   DEFAULT_API_VERSION = 1
   DEFAULT_BASE_URL = "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
-  
-  CUSTOM_DATA_DELETE_FIELD_URL_REGEX = /#{DEFAULT_BASE_URL}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
+
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
 
   attr_reader :client, :request_executor, :cache_manager
@@ -31,7 +30,7 @@ class Stormpath::DataStore
     assert_not_nil request_executor, "RequestExecutor cannot be null."
 
     @client = client
-    @base_url = get_base_url(base_url)
+    @base_url = base_url || DEFAULT_BASE_URL
     @request_executor = request_executor
     initialize_cache cache_opts
   end
@@ -133,10 +132,14 @@ class Stormpath::DataStore
     end
 
     def clear_cache_on_delete href
-      if href =~ CUSTOM_DATA_DELETE_FIELD_URL_REGEX
+      if href =~ custom_data_delete_field_url_regex
         href = href.split('/')[0..-2].join('/')
       end
       clear_cache href
+    end
+
+    def custom_data_delete_field_url_regex
+      /#{@base_url}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
     end
 
     def clear_cache(href)
@@ -176,7 +179,7 @@ class Stormpath::DataStore
     end
 
     def region_for(href)
-      return nil unless href
+      return nil if href.nil?
       if href.include? "/customData"
         region = href.split('/')[-1]
       else
@@ -201,13 +204,21 @@ class Stormpath::DataStore
 
       q_href = qualify href
 
-      clear_custom_data_cache_on_custom_data_storage_save(resource) if resource.is_a? Stormpath::Resource::CustomDataStorage
-      clear_application_cache_on_account_store_save(resource) if resource.is_a? Stormpath::Resource::AccountStoreMapping
+      clear_cache_on_save(resource)
 
       response = execute_request 'post', q_href, MultiJson.dump(to_hash(resource))
 
       instantiate return_type, response.to_hash
     end
+
+    def clear_cache_on_save(resource)
+      if resource.is_a? Stormpath::Resource::CustomDataStorage
+        clear_custom_data_cache_on_custom_data_storage_save(resource)
+      elsif resource.is_a? Stormpath::Resource::AccountStoreMapping
+        clear_application_cache_on_account_store_save(resource)
+      end
+    end
+
 
     def clear_custom_data_cache_on_custom_data_storage_save resource
       if resource.dirty_properties.has_key? "customData" and resource.new? == false
@@ -226,10 +237,6 @@ class Stormpath::DataStore
           clear_cache resource.application.href
         end
       end
-    end
-
-    def get_base_url(base_url)
-      base_url || DEFAULT_BASE_URL
     end
 
     def to_hash(resource)
