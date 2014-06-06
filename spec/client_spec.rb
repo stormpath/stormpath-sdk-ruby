@@ -301,7 +301,7 @@ properties
       end
 
       it 'accepts offset and limit' do
-        expect(test_api_client.applications.limit(2)).to have(2).items
+        expect(test_api_client.applications.limit(2)).to have_at_least(3).items
         expect(test_api_client.applications.offset(1).limit(2)).to have_at_least(2).items
       end
 

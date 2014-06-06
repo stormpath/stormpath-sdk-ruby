@@ -67,11 +67,10 @@ class Stormpath::Resource::Collection
       def self.iterate(collection_href, client, item_class, criteria, &block)
         page = CollectionPage.new collection_href, client, criteria
         page.item_type = item_class
-        page.items.each(&block)
 
-        if criteria[:limit].nil? and page.items.count == 25
-          criteria[:offset] ||=0
-          criteria[:offset] += 25
+        unless page.items.count.zero?
+          page.items.each(&block)
+          criteria[:offset] = page.offset + page.limit
           iterate(collection_href, client, item_class, criteria, &block)
         end
       end

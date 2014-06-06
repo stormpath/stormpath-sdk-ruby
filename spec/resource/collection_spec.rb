@@ -184,15 +184,21 @@ describe Stormpath::Resource::Collection, :vcr do
       it 'should respond as expected with or without limits' do
         expect(groups).to have(26).items
 
+        expect(directory.groups.limit(3)).to have(26).items
+
+        expect(directory.groups.offset(10).limit(3)).to have(16).items
+
+        expect(directory.groups.limit(3).offset(10)).to have(16).items
+
         expect(directory.groups).to have(26).items
 
-        expect(directory.groups.limit(25)).to have(25).items
+        expect(directory.groups.limit(25)).to have(26).items
 
         expect(directory.groups.limit(26)).to have(26).items
 
         expect(directory.groups.limit(100)).to have(26).items
 
-        expect(directory.groups.limit(25)).not_to include(groups.last)
+        expect(directory.groups.limit(25)).to include(groups.last)
 
         expect(directory.groups.offset(1).limit(25)).to include(groups.last)
 
@@ -201,6 +207,42 @@ describe Stormpath::Resource::Collection, :vcr do
         expect(directory.groups.offset(25)).to have(1).items
 
         expect(directory.groups.offset(26)).to have(0).items
+      end
+    end
+
+    context 'testing limits and offsets with name checking' do
+      let(:directory) {test_api_client.directories.create name: "Directory for pagination testing"}
+
+      let!(:groups) do
+        ('1'..'100').map do |number|
+          directory.groups.create name: number
+        end
+      end
+
+      after do
+        directory.delete
+      end
+
+      it 'should paginate properly' do
+        expect(directory.groups).to have(100).items
+
+        expect(directory.groups.map {|group| group.name }).to eq(('1'..'100').to_a.sort)
+
+        expect(directory.groups.limit(30)).to have(100).items
+
+        expect(directory.groups.limit(30).offset(30)).to have(70).items
+
+        expect(directory.groups.limit(30).offset(60)).to have(40).items
+
+        expect(directory.groups.limit(30).offset(90)).to have(10).items
+
+        expect(directory.groups.limit(30).map {|group| group.name }).to eq(('1'..'100').to_a.sort)
+
+        expect(directory.groups.limit(30).offset(30).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(30))
+
+        expect(directory.groups.limit(30).offset(60).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(60))
+
+        expect(directory.groups.limit(30).offset(90).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(90))
       end
     end
 
