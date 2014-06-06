@@ -7,63 +7,23 @@ describe Stormpath::Resource::CustomData, :vcr do
     directory.delete if directory
   end
 
-  context 'account' do
-    let(:custom_data_storage) do
-      directory.accounts.create username: "jlpicard",
-         email: "capt@enterprise.com",
-         givenName: "Jean-Luc",
-         surname: "Picard",
-         password: "uGhd%a8Kl!"
-    end
-    
-    let(:custom_data_storage_w_nested_custom_data) do
-      directory.accounts.create username: "jlpicard",
-         email: "capt@enterprise.com",
-         given_name: "Jean-Luc",
-         surname: "Picard",
-         password: "uGhd%a8Kl!",
-         custom_data: {
-            rank: "Captain",
-            favorite_drink: "Earl Grey Tea",
-            favoriteDrink: "Camelized Tea"
-         }
-    end
-
-    let(:reloaded_custom_data_storage) do
-      test_api_client.accounts.get custom_data_storage.href
-    end
-
-    let(:reloaded_custom_data_storage_2) do
-      test_api_client.accounts.get custom_data_storage.href
-    end
-
-    it_behaves_like 'custom_data_storage'
+  context 'wuth caching regions' do
+    it_behaves_like 'account_custom_data'
+    it_behaves_like 'group_custom_data'
   end
 
-  context 'group' do
-    let(:custom_data_storage) do
-      directory.groups.create name: 'test_group'
+  context 'without caching regions' do
+    before(:all) do
+      Stormpath::DataStore.send :remove_const, :CACHE_REGIONS
+      Stormpath::DataStore.const_set :CACHE_REGIONS, %w(applications directories accounts groups groupMemberships accountMemberships tenants)
     end
 
-    let(:custom_data_storage_w_nested_custom_data) do
-      directory.groups.create name: "Jean",
-         description: "Capital Group",
-         custom_data: {
-            rank: "Captain",
-            favorite_drink: "Earl Grey Tea",
-            favoriteDrink: "Camelized Tea"
-         }
-    end
+    it_behaves_like 'account_custom_data'
+    it_behaves_like 'group_custom_data'
 
-    let(:reloaded_custom_data_storage) do
-      test_api_client.groups.get custom_data_storage.href
+    after(:all) do
+      Stormpath::DataStore.send :remove_const, :CACHE_REGIONS
+      Stormpath::DataStore.const_set :CACHE_REGIONS, %w(applications directories accounts groups groupMemberships accountMemberships tenants customData)
     end
-
-    let(:reloaded_custom_data_storage_2) do
-      test_api_client.groups.get custom_data_storage.href
-    end
-
-    it_behaves_like 'custom_data_storage'
   end
-
 end

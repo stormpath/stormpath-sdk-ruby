@@ -83,8 +83,9 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
     end
 
     def delete_removed_properties
-      @deleted_properties.each do |deleted_property_name|
+      @deleted_properties.delete_if do |deleted_property_name|
         data_store.delete self, deleted_property_name
+        true
       end
     end
 

@@ -1,6 +1,69 @@
-shared_examples_for 'custom_data_storage' do
+shared_examples_for 'account_custom_data' do
+  context 'account' do
+    let(:custom_data_storage) do
+      directory.accounts.create username: "jlpicard",
+         email: "capt@enterprise.com",
+         givenName: "Jean-Luc",
+         surname: "Picard",
+         password: "uGhd%a8Kl!"
+    end
 
-  RESERVED_FIELDS = %w( createdAt modifiedAt meta spMeta spmeta ionMeta ionmeta )
+    let(:custom_data_storage_w_nested_custom_data) do
+      directory.accounts.create username: "jlpicard",
+         email: "capt@enterprise.com",
+         given_name: "Jean-Luc",
+         surname: "Picard",
+         password: "uGhd%a8Kl!",
+         custom_data: {
+            rank: "Captain",
+            favorite_drink: "Earl Grey Tea",
+            favoriteDrink: "Camelized Tea"
+         }
+    end
+
+    let(:reloaded_custom_data_storage) do
+      test_api_client.accounts.get custom_data_storage.href
+    end
+
+    let(:reloaded_custom_data_storage_2) do
+      test_api_client.accounts.get custom_data_storage.href
+    end
+
+    it_behaves_like 'custom_data_storage'
+  end
+end
+
+shared_examples_for 'group_custom_data' do
+  context 'group' do
+    let(:custom_data_storage) do
+      directory.groups.create name: 'test_group'
+    end
+
+    let(:custom_data_storage_w_nested_custom_data) do
+      directory.groups.create name: "Jean",
+         description: "Capital Group",
+         custom_data: {
+            rank: "Captain",
+            favorite_drink: "Earl Grey Tea",
+            favoriteDrink: "Camelized Tea"
+         }
+    end
+
+    let(:reloaded_custom_data_storage) do
+      test_api_client.groups.get custom_data_storage.href
+    end
+
+    let(:reloaded_custom_data_storage_2) do
+      test_api_client.groups.get custom_data_storage.href
+    end
+
+    it_behaves_like 'custom_data_storage'
+  end
+end
+
+RESERVED_FIELDS = %w( createdAt modifiedAt meta spMeta spmeta ionMeta ionmeta )
+
+shared_examples_for 'custom_data_storage' do
 
   it 'read reserved data' do
     expect(custom_data_storage.custom_data["href"]).not_to eq(nil)
@@ -284,4 +347,45 @@ shared_examples_for 'custom_data_storage' do
     expect(reloaded_custom_data_storage.custom_data.values).to eq(reloaded_custom_data_storage.custom_data.properties.values)
   end
 
+  it 'inner property holders clearing properly' do
+    expect(deleted_properties).to have(0).items
+
+    custom_data_storage.custom_data[:permissions] = 'NOOP'
+
+    custom_data_storage.custom_data.save
+
+    expect(custom_data_storage.custom_data[:permissions]).to eq("NOOP")
+    custom_data_storage.custom_data.delete(:permissions)
+    expect(custom_data_storage.custom_data[:permissions]).to be_nil
+
+    expect(deleted_properties).to have(1).items
+
+    custom_data_storage.custom_data.save
+
+    expect(custom_data_storage.custom_data[:permissions]).to be_nil
+    expect(deleted_properties).to have(0).items
+
+    custom_data_storage.custom_data[:permissions] = 'NOOP'
+    expect(custom_data_storage.custom_data[:permissions]).to eq("NOOP")
+
+    custom_data_storage.custom_data.delete(:permissions)
+    expect(custom_data_storage.custom_data[:permissions]).to be_nil
+
+    expect(deleted_properties).to have(1).items
+
+    if custom_data_storage.is_a? Stormpath::Resource::Account
+      custom_data_storage.given_name = "Capt"
+    else
+      custom_data_storage.name = "Capt"
+    end
+
+    custom_data_storage.save
+
+    expect(custom_data_storage.custom_data[:permissions]).to be_nil
+    expect(deleted_properties).to have(0).items
+  end
+
+  def deleted_properties
+    custom_data_storage.custom_data.instance_variable_get("@deleted_properties")
+  end
 end
