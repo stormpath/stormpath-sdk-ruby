@@ -495,8 +495,8 @@ The following environment variables need will then need to be set:
 
 ### Running
 
-Once properly configured, the tests can be run as the default
-<code>Rake<code> task:
+Once properly configured, start the redis server with <code>redis-server</code> and the tests can be run as the default
+<code>Rake</code> task:
 
 ```sh
 $ rake
