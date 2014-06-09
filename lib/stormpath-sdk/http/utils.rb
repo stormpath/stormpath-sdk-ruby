@@ -24,39 +24,14 @@ module Stormpath
       end
 
       def encode_url(value, path, canonical)
-        if path
-          return URI.escape(value.to_s)
-        else
-          CGI.escape(value.to_s).tap do |encoded|
-            str_map = {'+' => '%20', '%7E' => '~' }
+        return URI.escape(value.to_s) if path
 
-            str_map.each do |key, str_value|
-              if encoded.include? key
-                encoded.gsub!(key, str_value)
-              end
-            end
-
+        CGI.escape(value.to_s).tap do |encoded|
+          str_map = {'+' => '%20', '%7E' => '~' }
+          str_map.each do |key, str_value|
+            encoded.gsub!(key, str_value) if encoded.include? key
           end
         end
-        # URI.escape(value.to_s).tap do |encoded|
-        #   if canonical
-        #     str_map = {'+' => '%20', '*' => '%2A', '@' => '%40', '%7E' => '~' }
-        #     # encoded['%7E'] = '~'  --> yes, this is reversed (compared to the other three) intentionally
-
-        #     str_map.each do |key, str_value|
-        #       if encoded.include? key
-        #         encoded[key] = str_value
-        #       end
-        #     end
-
-        #     if path
-        #       str = '%2F'
-        #       if encoded.include? str
-        #         encoded[str] = '/'
-        #       end
-        #     end
-        #   end
-        # end
       end
 
     end
