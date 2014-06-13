@@ -55,6 +55,7 @@ module Stormpath
     autoload :CacheStats, 'stormpath-sdk/cache/cache_stats'
     autoload :MemoryStore, 'stormpath-sdk/cache/memory_store'
     autoload :RedisStore, 'stormpath-sdk/cache/redis_store'
+    autoload :DisabledCacheStore, 'stormpath-sdk/cache/disabled_cache_store'
   end
 
   module Authentication

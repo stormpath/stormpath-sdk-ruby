@@ -55,8 +55,7 @@ module Stormpath
     end
 
     def test_api_key
-      Stormpath::ApiKey.new test_api_key_id,
-        test_api_key_secret
+      Stormpath::ApiKey.new test_api_key_id, test_api_key_secret
     end
 
     def test_api_client
