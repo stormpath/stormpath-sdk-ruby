@@ -243,6 +243,14 @@ describe Stormpath::Resource::Collection, :vcr do
         expect(directory.groups.limit(30).offset(60).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(60))
 
         expect(directory.groups.limit(30).offset(90).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(90))
+
+        group_count = 0
+        directory.groups.each do |group|
+          group_count += 1
+          expect(('1'..'100').to_a).to include(group.name)
+        end
+
+        expect(group_count).to eq(100)
       end
     end
 
