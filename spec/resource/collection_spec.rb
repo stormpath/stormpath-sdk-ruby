@@ -230,19 +230,37 @@ describe Stormpath::Resource::Collection, :vcr do
 
         expect(directory.groups.limit(30)).to have(100).items
 
+        expect(directory.groups.limit(30).current_page.items).to have(30).items
+
         expect(directory.groups.limit(30).offset(30)).to have(70).items
+
+        expect(directory.groups.limit(30).offset(30).current_page.items).to have(30).items
 
         expect(directory.groups.limit(30).offset(60)).to have(40).items
 
+        expect(directory.groups.limit(30).offset(60).current_page.items).to have(30).items
+
         expect(directory.groups.limit(30).offset(90)).to have(10).items
+
+        expect(directory.groups.limit(30).offset(90).current_page.items).to have(10).items
 
         expect(directory.groups.limit(30).map {|group| group.name }).to eq(('1'..'100').to_a.sort)
 
+        expect(directory.groups.limit(30).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.first(30))
+
         expect(directory.groups.limit(30).offset(30).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(30))
+
+        expect(directory.groups.limit(30).offset(30).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(30).first(30))
 
         expect(directory.groups.limit(30).offset(60).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(60))
 
+        expect(directory.groups.limit(30).offset(60).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(60).first(30))
+
         expect(directory.groups.limit(30).offset(90).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(90))
+
+        expect(directory.groups.limit(30).offset(90).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(90).first(30))
+
+        expect(directory.groups.limit(30).offset(90).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(90).first(10))
 
         group_count = 0
         directory.groups.each do |group|

@@ -60,6 +60,12 @@ class Stormpath::Resource::Collection
     PaginatedIterator.iterate(collection_href, client, item_class, @criteria, &block)
   end
 
+  def current_page
+    page = CollectionPage.new(collection_href, client, criteria)
+    page.item_type = item_class
+    page
+  end
+
   private
 
     module PaginatedIterator
