@@ -13,3 +13,4 @@ tmp/*
 *.gem
 .bundle/
 dump.rdb
+.ruby-version
