@@ -6,6 +6,7 @@ require "open-uri"
 require "uri"
 require "uuidtools"
 require "yaml"
+require 'active_support'
 require "active_support/core_ext"
 require 'active_support/core_ext/module/delegation'
 require 'active_support/core_ext/kernel/singleton_class'
