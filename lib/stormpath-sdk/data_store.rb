@@ -19,6 +19,7 @@ class Stormpath::DataStore
 
   DEFAULT_SERVER_HOST = "api.stormpath.com"
   DEFAULT_API_VERSION = 1
+  DEFAULT_BASE_URL = "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
   CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
@@ -29,7 +30,7 @@ class Stormpath::DataStore
     assert_not_nil request_executor, "RequestExecutor cannot be null."
 
     @client = client
-    @base_url = get_base_url(base_url)
+    @base_url = base_url || DEFAULT_BASE_URL
     @request_executor = request_executor
     initialize_cache cache_opts
   end
@@ -68,7 +69,6 @@ class Stormpath::DataStore
   def save(resource, clazz = nil)
     assert_not_nil resource, "resource argument cannot be null."
     assert_kind_of Stormpath::Resource::Base, resource, "resource argument must be instance of Stormpath::Resource::Base"
-
     href = resource.href
     assert_not_nil href, "href or resource.href cannot be null."
     assert_true href.length > 0, "save may only be called on objects that have already been persisted (i.e. they have an existing href)."
@@ -100,12 +100,7 @@ class Stormpath::DataStore
     end
 
     def qualify(href)
-      if needs_to_be_fully_qualified(href)
-        slash_added = href.start_with?('/') ? '' : '/'
-        @base_url + slash_added + href
-      else
-        href
-      end
+      needs_to_be_fully_qualified(href) ? @base_url + href : href
     end
 
     def execute_request(http_method, href, body=nil, query=nil)
@@ -121,37 +116,51 @@ class Stormpath::DataStore
 
       if response.error?
         error = Stormpath::Resource::Error.new result
-        #puts "Error with request: #{http_method.upcase}: #{href}"
         raise Stormpath::Error.new error
       end
 
       if http_method == 'delete'
-        cache = cache_for href
-        cache.delete href if cache
+        clear_cache_on_delete(href)
         return nil
       end
 
-      if result['href']
+      if result[HREF_PROP_NAME]
         cache_walk result
       else
         result
       end
     end
 
+    def clear_cache_on_delete href
+      if href =~ custom_data_delete_field_url_regex
+        href = href.split('/')[0..-2].join('/')
+      end
+      clear_cache href
+    end
+
+    def custom_data_delete_field_url_regex
+      /#{@base_url}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
+    end
+
+    def clear_cache(href)
+      cache = cache_for href
+      cache.delete href if cache
+    end
+
     def cache_walk(resource)
-      assert_not_nil resource['href'], "resource must have 'href' property"
+      assert_not_nil resource[HREF_PROP_NAME], "resource must have 'href' property"
       items = resource['items']
 
       if items # collection resource
         resource['items'] = items.map do |item|
           cache_walk item
-          { 'href' => item['href'] }
+          { HREF_PROP_NAME => item[HREF_PROP_NAME] }
         end
       else     # single resource
         resource.each do |attr, value|
-          if value.is_a? Hash and value['href']
+          if value.is_a? Hash and value[HREF_PROP_NAME]
             walked = cache_walk value
-            resource[attr] = { 'href' => value['href'] } if value["href"]
+            resource[attr] = { HREF_PROP_NAME => value[HREF_PROP_NAME] }
             resource[attr]['items'] = walked['items'] if walked['items']
           end
         end
@@ -161,8 +170,8 @@ class Stormpath::DataStore
     end
 
     def cache(resource)
-      cache = cache_for resource['href']
-      cache.put resource['href'], resource if cache
+      cache = cache_for resource[HREF_PROP_NAME]
+      cache.put resource[HREF_PROP_NAME], resource if cache
     end
 
     def cache_for(href)
@@ -170,7 +179,7 @@ class Stormpath::DataStore
     end
 
     def region_for(href)
-      return nil unless href
+      return nil if href.nil?
       if href.include? "/customData"
         region = href.split('/')[-1]
       else
@@ -183,7 +192,7 @@ class Stormpath::DataStore
       request.http_headers.store 'Accept', 'application/json'
       request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
 
-      if !request.body.nil? and request.body.length > 0
+      if request.body and request.body.length > 0
         request.http_headers.store 'Content-Type', 'application/json'
       end
     end
@@ -195,19 +204,46 @@ class Stormpath::DataStore
 
       q_href = qualify href
 
-      response = execute_request('post', q_href, MultiJson.dump(to_hash(resource)))
+      clear_cache_on_save(resource)
+
+      response = execute_request 'post', q_href, MultiJson.dump(to_hash(resource))
 
       instantiate return_type, response.to_hash
     end
 
-    def get_base_url(base_url)
-        base_url || "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
+    def clear_cache_on_save(resource)
+      if resource.is_a? Stormpath::Resource::CustomDataStorage
+        clear_custom_data_cache_on_custom_data_storage_save(resource)
+      elsif resource.is_a? Stormpath::Resource::AccountStoreMapping
+        clear_application_cache_on_account_store_save(resource)
+      end
+    end
+
+
+    def clear_custom_data_cache_on_custom_data_storage_save resource
+      if resource.dirty_properties.has_key? "customData" and resource.new? == false
+        cached_href = resource.href + "/customData"
+        clear_cache cached_href
+      end
+    end
+
+    def clear_application_cache_on_account_store_save resource
+      if resource.new?
+        if resource.default_account_store? == true || resource.default_group_store? == true
+          clear_cache resource.application.href
+        end
+      else
+        if resource.dirty_properties["isDefaultAccountStore"] != nil || resource.dirty_properties["isDefaultGroupStore"] != nil
+          clear_cache resource.application.href
+        end
+      end
     end
 
     def to_hash(resource)
       Hash.new.tap do |properties|
         resource.get_dirty_property_names.each do |name|
-          property = resource.get_property name
+          ignore_camelcasing = resource_not_custom_data(resource, name) ? false : true
+          property = resource.get_property name, ignore_camelcasing: ignore_camelcasing
 
           # Special use case is with Custom Data, it's hashes should not be simplified
           if property.kind_of?(Hash) and resource_not_custom_data resource, name

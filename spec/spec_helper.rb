@@ -55,12 +55,16 @@ module Stormpath
     end
 
     def test_api_key
-      Stormpath::ApiKey.new test_api_key_id,
-        test_api_key_secret
+      Stormpath::ApiKey.new test_api_key_id, test_api_key_secret
     end
 
     def test_api_client
-      Stormpath::Client.new api_key: test_api_key
+      @test_api_client ||= Stormpath::Client.new api_key: test_api_key
+    end
+
+    def get_cache_data href
+      data_store = test_api_client.send :data_store
+      data_store.send :cache_for, href
     end
 
     def test_missing_env_vars

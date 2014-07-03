@@ -1,7 +1,7 @@
 module Stormpath
   module Test
     class ResourceFactory
-      URL_PREFIX = 'https://api.stormpath.com/v1'
+      URL_PREFIX = Stormpath::DataStore::DEFAULT_BASE_URL
 
       def initialize
         @id_count = 0

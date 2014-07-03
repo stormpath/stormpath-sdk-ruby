@@ -301,7 +301,7 @@ properties
       end
 
       it 'accepts offset and limit' do
-        expect(test_api_client.applications.limit(2)).to have(2).items
+        expect(test_api_client.applications.limit(2)).to have_at_least(3).items
         expect(test_api_client.applications.offset(1).limit(2)).to have_at_least(2).items
       end
 
@@ -575,6 +575,25 @@ properties
 
       after do
         directory.delete
+      end
+    end
+
+    context 'given a collection with a limit' do
+      let!(:directory_1) do
+        test_api_client.directories.create name: "0000_test_directory_with_limit"
+      end
+
+      let!(:directory_2) do
+        test_api_client.directories.create name: "0001_test_directory_with_limit"
+      end
+
+      after do
+        directory_1.delete if directory_1
+        directory_2.delete if directory_2
+      end
+
+      it 'should retrieve the number of directories described with the limit' do
+        expect(test_api_client.directories).to have_at_least(26).items
       end
     end
 

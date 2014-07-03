@@ -4,7 +4,7 @@ module Stormpath::Resource::CustomDataHashMethods
   included do
     def has_key?(key)
       materialize unless materialized?
-      properties.has_key? key.to_s.camelize(:lower)
+      properties.has_key? key.to_s
     end
 
     alias_method :include?, :has_key?
@@ -21,7 +21,7 @@ module Stormpath::Resource::CustomDataHashMethods
 
     def keys
       materialize unless materialized?
-      properties.keys.map {|key| key.to_s.underscore}
+      properties.keys
     end
 
     def values

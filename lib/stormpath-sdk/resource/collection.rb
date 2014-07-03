@@ -57,38 +57,58 @@ class Stormpath::Resource::Collection
   end
 
   def each(&block)
-    page = CollectionPage.new collection_href, client, @criteria
+    PaginatedIterator.iterate(collection_href, client, item_class, @criteria, &block)
+  end
+
+  def current_page
+    page = CollectionPage.new(collection_href, client, criteria)
     page.item_type = item_class
-    items = page.items
-    items.each(&block)
+    page
   end
 
   private
 
-  class CollectionPage < Stormpath::Resource::Base
-    ITEMS = 'items'
+    module PaginatedIterator
 
-    prop_accessor :offset, :limit
+      def self.iterate(collection_href, client, item_class, criteria, &block)
+        page = CollectionPage.new collection_href, client, criteria
+        page.item_type = item_class
 
-    attr_accessor :item_type
+        unless page.items.count.zero?
+          page.items.each(&block)
+          criteria[:offset] = page.offset + page.limit
+          iterate(collection_href, client, item_class, criteria, &block)
+        end
+      end
 
-    def items
-      to_resource_array get_property ITEMS
     end
 
-    def to_resource properties
-      data_store.instantiate item_type, properties
-    end
+    class CollectionPage < Stormpath::Resource::Base
+      ITEMS = 'items'
 
-    def to_resource_array vals
-      Array.new.tap do |items|
-        if vals.is_a? Array
-          vals.each do |val|
-            resource = to_resource val
-            items << resource
+      prop_accessor :offset, :limit
+
+      attr_accessor :item_type
+
+      def items
+        to_resource_array get_property(ITEMS)
+      end
+
+      def to_resource properties
+        data_store.instantiate item_type, properties
+      end
+
+      def to_resource_array vals
+        Array.new.tap do |items|
+          if vals.is_a? Array
+            vals.each do |val|
+              resource = to_resource val
+              items << resource
+            end
           end
         end
       end
-    end
-  end
-end
+
+    end#class Stormpath::Resource::Collection::CollectionPage
+
+end#Stormpath::Resource::Collection

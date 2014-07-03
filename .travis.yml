@@ -26,5 +26,10 @@ env:
       yvaGCsPr2h6rwtiMb8QHA4tMqHsoay0e9s7jyBtn6amgUaLsV2vdhQTWDuIU
       cksOE3PMIovYl9ANLb6KrhDWt7ue/fOxEALh0a5rAu50C/tNvgo=
 
+language: ruby
+rvm:
+- 1.9.3
+- 2.0.0
+- 2.1.1
 services:
   - redis-server

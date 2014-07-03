@@ -6,6 +6,7 @@ require "open-uri"
 require "uri"
 require "uuidtools"
 require "yaml"
+require 'active_support'
 require "active_support/core_ext"
 require 'active_support/core_ext/module/delegation'
 require 'active_support/core_ext/kernel/singleton_class'
@@ -55,18 +56,24 @@ module Stormpath
     autoload :CacheStats, 'stormpath-sdk/cache/cache_stats'
     autoload :MemoryStore, 'stormpath-sdk/cache/memory_store'
     autoload :RedisStore, 'stormpath-sdk/cache/redis_store'
+    autoload :DisabledCacheStore, 'stormpath-sdk/cache/disabled_cache_store'
   end
 
   module Authentication
+    autoload :UsernamePasswordRequest, "stormpath-sdk/auth/username_password_request"
+    autoload :BasicLoginAttempt, "stormpath-sdk/auth/basic_login_attempt"
+    autoload :AuthenticationResult, "stormpath-sdk/auth/authentication_result"
+    autoload :BasicAuthenticator, "stormpath-sdk/auth/basic_authenticator"
+  end
+
+  module Http
+    autoload :Utils, "stormpath-sdk/http/utils"
+    autoload :Request, "stormpath-sdk/http/request"
+    autoload :Response, "stormpath-sdk/http/response"
+    autoload :HttpClientRequestExecutor, "stormpath-sdk/http/http_client_request_executor"
+
+    module Authc
+      autoload :Sauthc1Signer, "stormpath-sdk/http/authc/sauthc1_signer"
+    end
   end
 end
-
-require "stormpath-sdk/auth/username_password_request"
-require 'stormpath-sdk/http/utils'
-require "stormpath-sdk/http/request"
-require "stormpath-sdk/http/response"
-require "stormpath-sdk/http/authc/sauthc1_signer"
-require "stormpath-sdk/http/http_client_request_executor"
-require "stormpath-sdk/auth/basic_login_attempt"
-require "stormpath-sdk/auth/authentication_result"
-require "stormpath-sdk/auth/basic_authenticator"

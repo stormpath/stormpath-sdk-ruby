@@ -30,7 +30,7 @@ module Stormpath::Resource::CustomDataStorage
         custom_data.send :delete_removed_properties
       end
       if custom_data.send :has_new_properties?
-        self.set_property CUSTOM_DATA, custom_data.properties
+        self.set_property CUSTOM_DATA, custom_data.dirty_properties
       end
     end
 
