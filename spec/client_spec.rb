@@ -593,7 +593,7 @@ properties
       end
 
       it 'should retrieve the number of directories described with the limit' do
-        expect(test_api_client.directories).to have_at_least(26).items
+        expect(test_api_client.directories).to have_at_least(2).items
       end
     end
 
