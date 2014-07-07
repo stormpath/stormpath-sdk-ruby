@@ -135,7 +135,7 @@ module Stormpath
 
           def sign data, key, algorithm
             digest_data = to_utf8 data
-            digest = Digest::Digest.new(algorithm)
+            digest = Digest.new(algorithm)
             HMAC.digest(digest, key, digest_data)
           end
 

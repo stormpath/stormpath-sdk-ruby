@@ -38,7 +38,7 @@ module Stormpath
           begin
             account.delete
           rescue Stormpath::Error => e
-            raise e if e.message != "The account cannot be deleted because the account is marked as not deletable."
+            raise e unless e.code == 4001
           end
         end
       end

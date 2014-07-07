@@ -21,7 +21,7 @@ VCR.configure do |c|
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
   c.hook_into :webmock
   c.configure_rspec_metadata!
-  c.ignore_request { |r| HIJACK_HTTP_REQUESTS_WITH_VCR != true }
+  c.ignore_request { |r| HIJACK_HTTP_REQUESTS_WITH_VCR == false }
 end
 
 module Stormpath
