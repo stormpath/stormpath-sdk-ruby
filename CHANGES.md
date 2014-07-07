@@ -1,6 +1,16 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.0.0.beta.6
+--------------------
+
+Released on July 7, 2014
+
+- Fixed custom data deletion issue.
+- Added resource pagination functionality.
+- Fixed issue when searching by email.
+
+
 Version 1.0.0.beta.5
 --------------------
 
