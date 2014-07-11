@@ -31,4 +31,19 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     account.apply_custom_data_updates_if_necessary
     data_store.create href, account, Stormpath::Resource::Account
   end
+
+  def provider
+    internal_instance = instance_variable_get "@_provider"
+    return internal_instance if internal_instance
+
+    provider_href = self.href + '/provider'
+
+    clazz_proc = Proc.new do |data|
+      provider_id = data['providerId']
+      "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
+    end
+
+    provider = data_store.get_resource provider_href, clazz_proc
+    instance_variable_set "@_provider", provider
+  end
 end

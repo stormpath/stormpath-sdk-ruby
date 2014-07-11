@@ -22,7 +22,7 @@ class Stormpath::DataStore
   DEFAULT_BASE_URL = "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
-  CACHE_REGIONS = %w( applications directories accounts groups groupMemberships accountMemberships tenants customData )
+  CACHE_REGIONS = %w(applications directories accounts groups groupMemberships accountMemberships tenants customData provider providerData)
 
   attr_reader :client, :request_executor, :cache_manager
 
@@ -53,6 +53,9 @@ class Stormpath::DataStore
     q_href = qualify href
 
     data = execute_request('get', q_href, nil, query)
+
+    clazz = clazz.call(data) if clazz.respond_to? :call
+
     instantiate clazz, data.to_hash
   end
 
@@ -89,29 +92,36 @@ class Stormpath::DataStore
     href = resource.href
     href += "/#{property_name}" if property_name
     href = qualify(href)
-   
+
     execute_request('delete', href)
+    clear_cache_on_delete(href)
+    return nil
   end
 
   private
 
-    def needs_to_be_fully_qualified(href)
+    def needs_to_be_fully_qualified?(href)
       !href.downcase.start_with? 'http'
     end
 
     def qualify(href)
-      needs_to_be_fully_qualified(href) ? @base_url + href : href
+      needs_to_be_fully_qualified?(href) ? @base_url + href : href
     end
 
-    def execute_request(http_method, href, body=nil, query=nil)
+    def execute_request(http_method, href, resource=nil, query=nil)
       if http_method == 'get' && (cache = cache_for href)
         cached_result = cache.get href
         return cached_result if cached_result
       end
 
+      body = if resource
+               MultiJson.dump(to_hash(resource))
+             end
+
       request = Request.new(http_method, href, query, Hash.new, body)
       apply_default_request_headers request
       response = @request_executor.execute_request request
+
       result = response.body.length > 0 ? MultiJson.load(response.body) : ''
 
       if response.error?
@@ -119,10 +129,12 @@ class Stormpath::DataStore
         raise Stormpath::Error.new error
       end
 
-      if http_method == 'delete'
-        clear_cache_on_delete(href)
-        return nil
+      if resource.is_a? Stormpath::Provider::AccountAccess
+        is_new_account = response.http_status == 201
+        result = {is_new_account: is_new_account, account: result }
       end
+
+      return if http_method == 'delete'
 
       if result[HREF_PROP_NAME]
         cache_walk result
@@ -206,7 +218,7 @@ class Stormpath::DataStore
 
       clear_cache_on_save(resource)
 
-      response = execute_request 'post', q_href, MultiJson.dump(to_hash(resource))
+      response = execute_request 'post', q_href, resource
 
       instantiate return_type, response.to_hash
     end
@@ -242,11 +254,11 @@ class Stormpath::DataStore
     def to_hash(resource)
       Hash.new.tap do |properties|
         resource.get_dirty_property_names.each do |name|
-          ignore_camelcasing = resource_not_custom_data(resource, name) ? false : true
+          ignore_camelcasing = resource_is_custom_data(resource, name)
           property = resource.get_property name, ignore_camelcasing: ignore_camelcasing
 
-          # Special use case is with Custom Data, it's hashes should not be simplified
-          if property.kind_of?(Hash) and resource_not_custom_data resource, name
+          # Special use cases are with Custom Data, Provider and ProviderData, their hashes should not be simplified
+          if property.kind_of?(Hash) and !resource_nested_submittable(resource, name)
             property = to_simple_reference name, property
           end
 
@@ -263,8 +275,12 @@ class Stormpath::DataStore
       {HREF_PROP_NAME => href}
     end
 
-    def resource_not_custom_data resource, name
-      resource.class != Stormpath::Resource::CustomData and name != "customData"
+    def resource_nested_submittable resource, name
+      ['provider', 'providerData'].include?(name) or resource_is_custom_data(resource, name)
+    end
+
+    def resource_is_custom_data resource, name
+      resource.is_a? Stormpath::Resource::CustomData or name == 'customData'
     end
 
 end
