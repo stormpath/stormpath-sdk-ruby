@@ -30,8 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'webmock', '~> 1.11.0'
   s.add_development_dependency 'simplecov', '~> 0.7.1'
   s.add_development_dependency 'pry', '~> 0.9.12.1'
-  s.add_development_dependency 'pry-debugger', '~> 0.2.2'
-  s.add_development_dependency 'pry-stack_explorer', '~> 0.4.9'
   s.add_development_dependency 'vcr', '~> 2.4.0'
   s.add_development_dependency 'timecop', '~> 0.6.1'
   s.add_development_dependency 'redis', '~> 3.0.4'

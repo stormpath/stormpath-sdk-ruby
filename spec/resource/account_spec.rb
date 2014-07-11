@@ -1,11 +1,10 @@
 require 'spec_helper'
-require 'pry-debugger'
 
 describe Stormpath::Resource::Account, :vcr do
 
   describe "instances" do
-    let(:directory) { test_api_client.directories.create name: 'testDirectory' }
-    
+    let(:directory) { test_api_client.directories.create name: random_directory_name }
+
     let(:given_name) { 'Ruby SDK' }
     let(:middle_name) { 'Gruby' }
     let(:surname) { 'SDK' }
@@ -32,7 +31,7 @@ describe Stormpath::Resource::Account, :vcr do
     it {should respond_to "password="}
 
     its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
-    its(:directory) { should be_instance_of Stormpath::Resource::Directory } 
+    its(:directory) { should be_instance_of Stormpath::Resource::Directory }
     its(:custom_data) { should be_instance_of Stormpath::Resource::CustomData }
     its(:email_verification_token) { should be_nil }
 
@@ -47,8 +46,8 @@ describe Stormpath::Resource::Account, :vcr do
   end
 
   describe 'account_associations' do
-    let(:directory) { test_api_client.directories.create name: 'testDirectory' }
-    
+    let(:directory) { test_api_client.directories.create name: random_directory_name }
+
     let(:account) do
       directory.accounts.create email: 'test@example.com',
           givenName: 'Ruby SDK',
@@ -74,7 +73,7 @@ describe Stormpath::Resource::Account, :vcr do
 
   describe "#add_or_remove_group" do
     context "given a group" do
-      let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       let(:group) { directory.groups.create name: 'testGroup' }
 

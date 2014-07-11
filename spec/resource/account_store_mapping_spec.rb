@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountStoreMapping, :vcr do
-  
+
   def create_account_store_mapping(application, account_store, options={})
     test_api_client.account_store_mappings.create({
       application: application,
@@ -12,18 +12,20 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
      })
   end
 
-  let(:directory) { test_api_client.directories.create name: 'testDirectory', description: 'testDirectory for AccountStoreMappings' }
-  
-  let(:application) { test_api_client.applications.create name: 'testApplication', description: 'testApplication for AccountStoreMappings' }
-  
+  let(:directory_name) { random_directory_name }
+
+  let(:directory) { test_api_client.directories.create name: directory_name, description: 'testDirectory for AccountStoreMappings' }
+
+  let(:application) { test_api_client.applications.create name: random_application_name, description: 'testApplication for AccountStoreMappings' }
+
   after do
     application.delete if application
     directory.delete if directory
   end
-    
+
   describe "instances" do
     subject(:account_store_mapping) {create_account_store_mapping(application,directory, is_default_account_store: true)}
-   
+
     [:list_index, :is_default_account_store, :is_default_group_store, :default_account_store, :default_group_store ].each do |prop_accessor|
       it { should respond_to prop_accessor }
       it { should respond_to "#{prop_accessor}=" }
@@ -171,10 +173,10 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
       account_store_mapping.delete
       expect(reloaded_application.account_store_mappings.count).to eq(0)
     end
-  
+
     it 'should be able to list its attributes' do
       reloaded_application.account_store_mappings.each do |account_store_mapping|
-        expect(account_store_mapping.account_store.name).to eq("testDirectory")
+        expect(account_store_mapping.account_store.name).to eq(directory_name)
         expect(account_store_mapping.list_index).to eq(0)
         expect(account_store_mapping.default_account_store?).to eq(true)
         expect(account_store_mapping.default_group_store?).to eq(false)

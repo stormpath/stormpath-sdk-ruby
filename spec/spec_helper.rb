@@ -6,7 +6,6 @@ SimpleCov.start
 
 require 'stormpath-sdk'
 require 'pry'
-require 'pry-debugger'
 require 'webmock/rspec'
 require 'vcr'
 require_relative '../support/api.rb'
@@ -98,9 +97,31 @@ module Stormpath
       opts.tap do |o|
         o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'surname'
         o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || 'givenname'
-        o[:username]   = (!opts[:username].blank? && opts[:username]) || 'username'
+        o[:username]   = (!opts[:username].blank? && opts[:username]) || random_user_name
         o[:password]   = (!opts[:password].blank? && opts[:password]) || 'P@$$w0rd'
-        o[:email]      = (!opts[:email].blank? && opts[:email]) || 'test@example.com'
+        o[:email]      = (!opts[:email].blank? && opts[:email]) || random_email
+      end
+    end
+  end
+
+  module RandomResourceNameGenerator
+    include UUIDTools
+
+    %w(application directory group user).each do |resource|
+      define_method "random_#{resource}_name" do |suffix=nil|
+        "#{random_string}_#{resource}_#{suffix}"
+      end
+    end
+
+    def random_email
+      "#{random_string}@stormpath.com"
+    end
+
+    def random_string
+      if HIJACK_HTTP_REQUESTS_WITH_VCR
+        'test'
+      else
+        UUID.method(:random_create).call.to_s[0..9]
       end
     end
   end
@@ -117,6 +138,7 @@ RSpec.configure do |c|
 
   c.include Stormpath::TestApiKeyHelpers
   c.include Stormpath::TestResourceHelpers
+  c.include Stormpath::RandomResourceNameGenerator
 
   c.treat_symbols_as_metadata_keys_with_true_values = true
 
@@ -130,10 +152,10 @@ RSpec.configure do |c|
       raise set_up_message
     end
 
-    destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
+    # destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
   end
 
-  c.after(:all) do
-    destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
-  end
+  # c.after(:all) do
+    # destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
+  # end
 end

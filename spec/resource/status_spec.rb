@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Status, :vcr do
-  
+
   def authenticate_user
     auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'test@example.com', 'P@$$w0rd'
     account_store_mapping unless account_store_mapping
     application.authenticate_account auth_request
   end
 
-  let(:directory) { test_api_client.directories.create name: 'testDirectory', description: 'testDirectory' }
+  let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'testDirectory for statuses' }
 
-  let(:application) { test_api_client.applications.create name: 'testApplication', description: 'testApplication' }
-  
+  let(:application) { test_api_client.applications.create name: random_application_name, description: 'testDirectory for statuses' }
+
   let(:group) { directory.groups.create name: 'testGroup', description: 'testGroup' }
 
   let(:account_store_mapping) { test_api_client.account_store_mappings.create application: application, account_store: directory }
@@ -28,14 +28,14 @@ describe Stormpath::Resource::Status, :vcr do
     application.delete if application
     directory.delete if directory
   end
-    
+
   it "should respond to status getter and setter" do
     expect(directory.respond_to? :status).to be_true
     expect(directory.respond_to? :status=).to be_true
 
     expect(application.respond_to? :status).to be_true
     expect(application.respond_to? :status=).to be_true
-    
+
     expect(group.respond_to? :status).to be_true
     expect(group.respond_to? :status=).to be_true
 
@@ -46,7 +46,7 @@ describe Stormpath::Resource::Status, :vcr do
   it "compare status hashes" do
     expect(directory.status_hash).to eq(status_hash)
     expect(application.status_hash).to eq(status_hash)
-    
+
     expect(group.status_hash).to eq(status_hash)
     expect(account.status_hash).to eq(account_status_hash)
   end
@@ -60,7 +60,7 @@ describe Stormpath::Resource::Status, :vcr do
     account.save
     expect(reloaded_account.status).to eq("DISABLED")
   end
- 
+
   it "authenticate user with status ENABLED" do
     expect(authenticate_user.properties["account"]["href"]).to eq(account.href)
   end

@@ -169,7 +169,7 @@ describe Stormpath::Resource::Collection, :vcr do
 
   context 'live examples' do
     context 'testing limits and offsets' do
-      let(:directory) {test_api_client.directories.create name: "Directory for pagination testing"}
+      let(:directory) {test_api_client.directories.create name: random_directory_name }
 
       let(:groups) do
         ('A'..'Z').map do |letter|
@@ -211,7 +211,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context 'testing limits and offsets with name checking' do
-      let(:directory) {test_api_client.directories.create name: "Directory for pagination testing"}
+      let(:directory) {test_api_client.directories.create name: random_directory_name }
 
       let!(:groups) do
         ('1'..'100').map do |number|
@@ -273,7 +273,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context '#wild characters search' do
-      let(:directory) {test_api_client.directories.create name: "Test directory"}
+      let(:directory) {test_api_client.directories.create name: random_directory_name }
 
       # !@#$%^&*()_-+=?><:]}[{'
       # 'jlpicard/!@$%^*()_-+&=?><:]}[{'
@@ -309,7 +309,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context '#asterisk search on one attribute' do
-      let(:directory) {test_api_client.directories.create name: "Test directory"}
+      let(:directory) {test_api_client.directories.create name: random_directory_name }
 
       let!(:account) do
         directory.accounts.create username: "jlpicard",
@@ -337,7 +337,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context '#asterisk search on multiple attribute' do
-      let(:directory) {test_api_client.directories.create name: "Test directory"}
+      let(:directory) {test_api_client.directories.create name: random_directory_name }
 
       let!(:account) do
         directory.accounts.create username: "jlpicard",

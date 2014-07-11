@@ -30,7 +30,7 @@ describe Stormpath::Resource::Group, :vcr do
   describe '#add_or_remove_account' do
     context "given an account" do
 
-      let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       let(:group) { directory.groups.create name: 'someGroup' }
 

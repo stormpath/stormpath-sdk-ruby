@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Stormpath::Provider::Provider, :vcr do
 
-  let(:application) do 
-    test_api_client.applications.create name: 'Test Provider Application', 
+  let(:application) do
+    test_api_client.applications.create name: random_application_name,
                                         description: 'Test Provider Application for AccountStoreMappings'
   end
 
@@ -96,7 +96,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create stormpath directory with empty provider credentials' do
-    let(:name) { 'Stormpath Test Directory' }
+    let(:name) { random_directory_name('Stormpath') }
     let(:description) { 'Directory for testing Stormpath directories.' }
     let(:provider_id) { "stormpath" }
 
@@ -120,7 +120,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create facebook directory with provider credentials' do
-    let(:name) { 'Facebook Test Directory' }
+    let(:name) { random_directory_name('Facebook') }
     let(:description) { 'Directory for testing Facebook directories.' }
 
     let(:provider_id) { "facebook" }
@@ -135,7 +135,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create google directory with provider credentials' do
-    let(:name) { 'Google Test Directory' }
+    let(:name) { random_directory_name('Google') }
     let(:description) { 'Directory for testing Google directories.' }
 
     let(:provider_id) { "google" }

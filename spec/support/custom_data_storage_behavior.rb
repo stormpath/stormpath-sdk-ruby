@@ -1,16 +1,16 @@
 shared_examples_for 'account_custom_data' do
   context 'account' do
     let(:custom_data_storage) do
-      directory.accounts.create username: "jlpicard",
-         email: "capt@enterprise.com",
+      directory.accounts.create username: random_user_name,
+         email: random_email,
          givenName: "Jean-Luc",
          surname: "Picard",
          password: "uGhd%a8Kl!"
     end
 
     let(:custom_data_storage_w_nested_custom_data) do
-      directory.accounts.create username: "jlpicard",
-         email: "capt@enterprise.com",
+      directory.accounts.create username: random_user_name,
+         email: random_email,
          given_name: "Jean-Luc",
          surname: "Picard",
          password: "uGhd%a8Kl!",
@@ -36,11 +36,11 @@ end
 shared_examples_for 'group_custom_data' do
   context 'group' do
     let(:custom_data_storage) do
-      directory.groups.create name: 'test_group'
+      directory.groups.create name: random_group_name
     end
 
     let(:custom_data_storage_w_nested_custom_data) do
-      directory.groups.create name: "Jean",
+      directory.groups.create name: random_group_name,
          description: "Capital Group",
          custom_data: {
             rank: "Captain",
@@ -376,7 +376,7 @@ shared_examples_for 'custom_data_storage' do
     if custom_data_storage.is_a? Stormpath::Resource::Account
       custom_data_storage.given_name = "Capt"
     else
-      custom_data_storage.name = "Capt"
+      custom_data_storage.name = random_group_name
     end
 
     custom_data_storage.save
