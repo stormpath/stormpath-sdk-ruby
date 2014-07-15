@@ -22,15 +22,13 @@ Gem::Specification.new do |s|
   s.add_dependency('java_properties')
 
   s.add_development_dependency 'rake', '~> 0.9.2'
-  s.add_development_dependency 'rspec-core', '~> 2.14rc1'
-  s.add_development_dependency 'rspec-expectations', '~> 2.14rc1'
-  s.add_development_dependency 'rspec-mocks', '~> 2.14rc1'
-  s.add_development_dependency 'guard-rspec', '~> 3.0.3'
+  s.add_development_dependency 'rspec', '~> 3.0.0'
+  s.add_development_dependency 'guard-rspec', '~> 4.2.10'
   s.add_development_dependency 'rack', '~> 1.4.1'
-  s.add_development_dependency 'webmock', '~> 1.11.0'
+  s.add_development_dependency 'webmock', '~> 1.17.4'
   s.add_development_dependency 'simplecov', '~> 0.7.1'
   s.add_development_dependency 'pry', '~> 0.9.12.1'
-  s.add_development_dependency 'vcr', '~> 2.4.0'
+  s.add_development_dependency 'vcr', '~> 2.9.2'
   s.add_development_dependency 'timecop', '~> 0.6.1'
   s.add_development_dependency 'redis', '~> 3.0.4'
 

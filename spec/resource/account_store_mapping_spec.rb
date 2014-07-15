@@ -24,28 +24,29 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   end
 
   describe "instances" do
-    subject(:account_store_mapping) {create_account_store_mapping(application,directory, is_default_account_store: true)}
+    let(:account_store_mapping) {create_account_store_mapping(application,directory, is_default_account_store: true)}
 
-    [:list_index, :is_default_account_store, :is_default_group_store, :default_account_store, :default_group_store ].each do |prop_accessor|
-      it { should respond_to prop_accessor }
-      it { should respond_to "#{prop_accessor}=" }
-    end
-
-    [:default_account_store?, :default_group_store?].each do |prop_getter|
-      it { should respond_to prop_getter }
-    end
-
-    its(:list_index) { should be_instance_of Fixnum }
-
-    [:default_account_store, :default_group_store].each do |default_store_method|
-      [default_store_method, "is_#{default_store_method}", "#{default_store_method}?"].each do |specific_store_method|
-        its(specific_store_method) {should satisfy {|attribute| [TrueClass, FalseClass].include? attribute.class }}
+    it do
+      [:list_index, :is_default_account_store, :is_default_group_store, :default_account_store, :default_group_store ].each do |prop_accessor|
+        expect(account_store_mapping).to respond_to(prop_accessor)
+        expect(account_store_mapping).to respond_to("#{prop_accessor}=")
       end
+
+      [:default_account_store?, :default_group_store?].each do |prop_getter|
+        expect(account_store_mapping).to respond_to(prop_getter)
+      end
+
+      expect(account_store_mapping.list_index).to be_a Fixnum
+
+      [:default_account_store, :default_group_store].each do |default_store_method|
+        [default_store_method, "is_#{default_store_method}", "#{default_store_method}?"].each do |specific_store_method|
+          expect(account_store_mapping.send specific_store_method).to be_boolean
+        end
+      end
+
+      expect(account_store_mapping.account_store).to be_a Stormpath::Resource::Directory
+      expect(account_store_mapping.application).to be_a Stormpath::Resource::Application
     end
-
-    its(:account_store) { should satisfy {|prop_reader| [Stormpath::Resource::Directory, Stormpath::Resource::Group].include? prop_reader.class }}
-
-    its(:application) { should be_instance_of Stormpath::Resource::Application }
   end
 
 
@@ -161,7 +162,6 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
       account_store_mapping.save
       expect(reloaded_mapping.is_default_account_store).to eq(false)
     end
-
   end
 
   describe "given a mapping" do
@@ -182,7 +182,6 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
         expect(account_store_mapping.default_group_store?).to eq(false)
       end
     end
-
   end
 
 end

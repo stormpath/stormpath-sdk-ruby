@@ -15,27 +15,24 @@ describe Stormpath::Resource::Application, :vcr do
     directory.delete if directory
   end
 
-  describe "instances should respond to attribute property methods" do
-    subject(:application) { test_application }
+  it "instances should respond to attribute property methods" do
 
-    it { should be_instance_of Stormpath::Resource::Application }
+    expect(application).to be_a Stormpath::Resource::Application
 
     [:name, :description, :status].each do |property_accessor|
-      it { should respond_to property_accessor }
-      it { should respond_to "#{property_accessor}="}
-      its(property_accessor) { should be_instance_of String }
+      expect(application).to respond_to(property_accessor)
+      expect(application).to respond_to("#{property_accessor}=")
+      expect(application.send property_accessor).to be_a String
     end
 
-    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
-    its(:default_account_store_mapping) { should be_instance_of Stormpath::Resource::AccountStoreMapping }
-    its(:default_group_store_mapping) { should be_instance_of Stormpath::Resource::AccountStoreMapping }
+    expect(application.tenant).to be_a Stormpath::Resource::Tenant
+    expect(application.default_account_store_mapping).to be_a Stormpath::Resource::AccountStoreMapping
+    expect(application.default_group_store_mapping).to be_a Stormpath::Resource::AccountStoreMapping
 
-    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
-    its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
-    its(:password_reset_tokens) { should be_instance_of Stormpath::Resource::Collection }
-    its(:account_store_mappings) { should be_instance_of Stormpath::Resource::Collection }
-
-
+    expect(application.groups).to be_a Stormpath::Resource::Collection
+    expect(application.accounts).to be_a Stormpath::Resource::Collection
+    expect(application.password_reset_tokens).to be_a Stormpath::Resource::Collection
+    expect(application.account_store_mappings).to be_a Stormpath::Resource::Collection
   end
 
   describe '.load' do

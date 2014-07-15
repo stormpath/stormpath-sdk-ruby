@@ -36,10 +36,10 @@ describe Stormpath::Provider::Provider, :vcr do
     it { should be_kind_of Stormpath::Provider::Provider }
 
     it "assign provider directory to an application" do
-      expect(application.account_store_mappings).to have(0).items
+      expect(application.account_store_mappings.count).to eq(0)
       expect(account_store_mapping.application).to eq(application)
       expect(account_store_mapping.account_store).to eq(directory)
-      expect(application.account_store_mappings).to have(1).items
+      expect(application.account_store_mappings.count).to eq(1)
     end
 
     it 'should properly respond to attributes' do

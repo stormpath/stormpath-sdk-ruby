@@ -30,17 +30,17 @@ describe Stormpath::Resource::Status, :vcr do
   end
 
   it "should respond to status getter and setter" do
-    expect(directory.respond_to? :status).to be_true
-    expect(directory.respond_to? :status=).to be_true
+    expect(directory.respond_to? :status).to be_truthy
+    expect(directory.respond_to? :status=).to be_truthy
 
-    expect(application.respond_to? :status).to be_true
-    expect(application.respond_to? :status=).to be_true
+    expect(application.respond_to? :status).to be_truthy
+    expect(application.respond_to? :status=).to be_truthy
 
-    expect(group.respond_to? :status).to be_true
-    expect(group.respond_to? :status=).to be_true
+    expect(group.respond_to? :status).to be_truthy
+    expect(group.respond_to? :status=).to be_truthy
 
-    expect(account.respond_to? :status).to be_true
-    expect(account.respond_to? :status=).to be_true
+    expect(account.respond_to? :status).to be_truthy
+    expect(account.respond_to? :status=).to be_truthy
   end
 
   it "compare status hashes" do

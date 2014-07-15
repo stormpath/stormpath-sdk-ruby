@@ -285,7 +285,7 @@ properties
 
       it 'returns the collection' do
         expect(applications).to be_kind_of(Stormpath::Resource::Collection)
-        expect(applications).to have_at_least(1).item
+        expect(applications.count).to be >= 1
       end
 
       after do
@@ -301,8 +301,8 @@ properties
       end
 
       it 'accepts offset and limit' do
-        expect(test_api_client.applications.limit(2)).to have_at_least(3).items
-        expect(test_api_client.applications.offset(1).limit(2)).to have_at_least(2).items
+        expect(test_api_client.applications.limit(2).count).to be >= 3
+        expect(test_api_client.applications.offset(1).limit(2).count).to be >= 2
       end
 
       after do
@@ -547,7 +547,7 @@ properties
           end
         end
 
-        after(:each) do
+        after(:each) do |example|
           unless example.metadata[:skip_cleanup]
             application.delete
             test_api_client.directories.each do |d|
@@ -574,7 +574,7 @@ properties
 
       it 'returns the collection' do
         expect(directories).to be_kind_of(Stormpath::Resource::Collection)
-        expect(directories).to have_at_least(1).item
+        expect(directories.count).to be >= 1
       end
 
       after do
@@ -597,7 +597,7 @@ properties
       end
 
       it 'should retrieve the number of directories described with the limit' do
-        expect(test_api_client.directories).to have_at_least(2).items
+        expect(test_api_client.directories.count).to be >= 2
       end
     end
 

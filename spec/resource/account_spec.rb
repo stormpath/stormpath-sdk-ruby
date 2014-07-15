@@ -2,14 +2,12 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Account, :vcr do
 
-  describe "instances" do
+  describe "instances should respond to attribute property methods" do
     let(:directory) { test_api_client.directories.create name: random_directory_name }
-
     let(:given_name) { 'Ruby SDK' }
     let(:middle_name) { 'Gruby' }
     let(:surname) { 'SDK' }
-
-    subject(:account) do
+    let(:account) do
       directory.accounts.create email: 'test@example.com',
           given_name: given_name,
           password: 'P@$$w0rd',
@@ -18,31 +16,30 @@ describe Stormpath::Resource::Account, :vcr do
           username: 'rubysdk'
     end
 
-    [:given_name, :username, :middle_name, :surname, :email, :status].each do |property_accessor|
-      it { should respond_to property_accessor }
-      it { should respond_to "#{property_accessor}=" }
-      its(property_accessor) { should be_instance_of String }
-    end
-
-    it {should respond_to :full_name}
-    its(:full_name) { should be_instance_of String}
-    its(:full_name) { should eq("#{given_name} #{middle_name} #{surname}")}
-
-    it {should respond_to "password="}
-
-    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
-    its(:directory) { should be_instance_of Stormpath::Resource::Directory }
-    its(:custom_data) { should be_instance_of Stormpath::Resource::CustomData }
-    its(:email_verification_token) { should be_nil }
-
-    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
-    its(:group_memberships) { should be_instance_of Stormpath::Resource::Collection }
-
     after do
       account.delete if account
       directory.delete if directory
     end
 
+    it do
+      [:given_name, :username, :middle_name, :surname, :email, :status].each do |property_accessor|
+        expect(account).to respond_to(property_accessor)
+        expect(account).to respond_to("#{property_accessor}=")
+        expect(account.send property_accessor).to be_a String
+      end
+
+      expect(account).to respond_to(:full_name)
+      expect(account.full_name).to be_a String
+      expect(account.full_name).to eq("#{given_name} #{middle_name} #{surname}")
+      expect(account).to respond_to("password=")
+
+      expect(account.tenant).to be_a Stormpath::Resource::Tenant
+      expect(account.directory).to be_a Stormpath::Resource::Directory
+      expect(account.custom_data).to be_a Stormpath::Resource::CustomData
+      expect(account.email_verification_token).to be_nil
+      expect(account.groups).to be_a Stormpath::Resource::Collection
+      expect(account.group_memberships).to be_a Stormpath::Resource::Collection
+    end
   end
 
   describe 'account_associations' do
@@ -92,7 +89,7 @@ describe Stormpath::Resource::Account, :vcr do
       end
 
       it 'has one group membership resource' do
-        expect(account.group_memberships).to have(1).item
+        expect(account.group_memberships.count).to eq(1)
       end
 
       it 'adds and removes the group from the account' do

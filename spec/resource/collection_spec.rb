@@ -182,21 +182,21 @@ describe Stormpath::Resource::Collection, :vcr do
       end
 
       it 'should respond as expected with or without limits' do
-        expect(groups).to have(26).items
+        expect(groups.count).to eq(26)
 
-        expect(directory.groups.limit(3)).to have(26).items
+        expect(directory.groups.limit(3).count).to eq(26)
 
-        expect(directory.groups.offset(10).limit(3)).to have(16).items
+        expect(directory.groups.offset(10).limit(3).count).to eq(16)
 
-        expect(directory.groups.limit(3).offset(10)).to have(16).items
+        expect(directory.groups.limit(3).offset(10).count).to eq(16)
 
-        expect(directory.groups).to have(26).items
+        expect(directory.groups.count).to eq(26)
 
-        expect(directory.groups.limit(25)).to have(26).items
+        expect(directory.groups.limit(25).count).to eq(26)
 
-        expect(directory.groups.limit(26)).to have(26).items
+        expect(directory.groups.limit(26).count).to eq(26)
 
-        expect(directory.groups.limit(100)).to have(26).items
+        expect(directory.groups.limit(100).count).to eq(26)
 
         expect(directory.groups.limit(25)).to include(groups.last)
 
@@ -204,9 +204,9 @@ describe Stormpath::Resource::Collection, :vcr do
 
         expect(directory.groups.offset(1).limit(25)).not_to include(groups.first)
 
-        expect(directory.groups.offset(25)).to have(1).items
+        expect(directory.groups.offset(25).count).to eq(1)
 
-        expect(directory.groups.offset(26)).to have(0).items
+        expect(directory.groups.offset(26).count).to eq(0)
       end
     end
 
@@ -224,25 +224,25 @@ describe Stormpath::Resource::Collection, :vcr do
       end
 
       it 'should paginate properly' do
-        expect(directory.groups).to have(100).items
+        expect(directory.groups.count).to eq(100)
 
         expect(directory.groups.map {|group| group.name }).to eq(('1'..'100').to_a.sort)
 
-        expect(directory.groups.limit(30)).to have(100).items
+        expect(directory.groups.limit(30).count).to eq(100)
 
-        expect(directory.groups.limit(30).current_page.items).to have(30).items
+        expect(directory.groups.limit(30).current_page.items.count).to eq(30)
 
-        expect(directory.groups.limit(30).offset(30)).to have(70).items
+        expect(directory.groups.limit(30).offset(30).count).to eq(70)
 
-        expect(directory.groups.limit(30).offset(30).current_page.items).to have(30).items
+        expect(directory.groups.limit(30).offset(30).current_page.items.count).to eq(30)
 
-        expect(directory.groups.limit(30).offset(60)).to have(40).items
+        expect(directory.groups.limit(30).offset(60).count).to eq(40)
 
-        expect(directory.groups.limit(30).offset(60).current_page.items).to have(30).items
+        expect(directory.groups.limit(30).offset(60).current_page.items.count).to eq(30)
 
-        expect(directory.groups.limit(30).offset(90)).to have(10).items
+        expect(directory.groups.limit(30).offset(90).count).to eq(10)
 
-        expect(directory.groups.limit(30).offset(90).current_page.items).to have(10).items
+        expect(directory.groups.limit(30).offset(90).current_page.items.count).to eq(10)
 
         expect(directory.groups.limit(30).map {|group| group.name }).to eq(('1'..'100').to_a.sort)
 
@@ -292,19 +292,19 @@ describe Stormpath::Resource::Collection, :vcr do
       end
 
       it 'should search accounts by username' do
-        expect(directory.accounts.search(username: username)).to have(1).items
+        expect(directory.accounts.search(username: username).count).to eq(1)
       end
 
       it 'should search accounts by any column (aiming at username)' do
-        expect(directory.accounts.search(username)).to have(1).items
+        expect(directory.accounts.search(username).count).to eq(1)
       end
 
       it 'should search accounts by email' do
-        expect(directory.accounts.search(email: "capt@enterprise.com")).to have(1).items
+        expect(directory.accounts.search(email: "capt@enterprise.com").count).to eq(1)
       end
 
       it 'should search accounts by any column (aiming at email)' do
-        expect(directory.accounts.search("capt@enterprise.com")).to have(1).items
+        expect(directory.accounts.search("capt@enterprise.com").count).to eq(1)
       end
     end
 
@@ -324,15 +324,15 @@ describe Stormpath::Resource::Collection, :vcr do
       end
 
       it 'should search accounts by username with asterisk at the beginning' do
-        expect(directory.accounts.search(username: "*card")).to have(1).items
+        expect(directory.accounts.search(username: "*card").count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the end' do
-        expect(directory.accounts.search(username: "jl*")).to have(1).items
+        expect(directory.accounts.search(username: "jl*").count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the beginning and the end' do
-        expect(directory.accounts.search(username: "*pic*")).to have(1).items
+        expect(directory.accounts.search(username: "*pic*").count).to eq(1)
       end
     end
 
@@ -352,15 +352,15 @@ describe Stormpath::Resource::Collection, :vcr do
       end
 
       it 'should search accounts by username with asterisk at the beginning' do
-        expect(directory.accounts.search(username: "*card", email: "*enterprise.com")).to have(1).items
+        expect(directory.accounts.search(username: "*card", email: "*enterprise.com").count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the end' do
-        expect(directory.accounts.search(username: "jl*", email: "capt*")).to have(1).items
+        expect(directory.accounts.search(username: "jl*", email: "capt*").count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the beginning and the end' do
-        expect(directory.accounts.search(username: "*pic*", email: "*enterprise*")).to have(1).items
+        expect(directory.accounts.search(username: "*pic*", email: "*enterprise*").count).to eq(1)
       end
     end
 

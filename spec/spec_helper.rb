@@ -23,6 +23,12 @@ VCR.configure do |c|
   c.ignore_request { |r| HIJACK_HTTP_REQUESTS_WITH_VCR == false }
 end
 
+RSpec::Matchers.define :be_boolean do
+  match do |actual|
+    actual.should satisfy { |x| x == true || x == false }
+  end
+end
+
 module Stormpath
   module TestApiKeyHelpers
     TEST_ENV_REQUIRED_VARS = {
@@ -127,6 +133,12 @@ module Stormpath
   end
 end
 
+RSpec::Matchers.define :be_boolean do
+  match do |actual|
+    actual == true || actual == false
+  end
+end
+
 RSpec.configure do |c|
   c.mock_with :rspec do |c|
     c.syntax = :expect
@@ -139,8 +151,6 @@ RSpec.configure do |c|
   c.include Stormpath::TestApiKeyHelpers
   c.include Stormpath::TestResourceHelpers
   c.include Stormpath::RandomResourceNameGenerator
-
-  c.treat_symbols_as_metadata_keys_with_true_values = true
 
   c.before(:all) do
     unless test_missing_env_vars.empty?
