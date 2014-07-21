@@ -8,7 +8,6 @@ require 'stormpath-sdk'
 require 'pry'
 require 'webmock/rspec'
 require 'vcr'
-require_relative '../support/api.rb'
 
 Dir['./spec/support/*.rb'].each { |file| require file }
 
@@ -92,13 +91,6 @@ module Stormpath
   end
 
   module TestResourceHelpers
-    def destroy_all_stormpath_test_resources
-      Stormpath::Support::Api.destroy_resources(
-        test_api_key_id, test_api_key_secret, test_application_url,
-        test_directory_url, test_directory_with_verification_url
-      )
-    end
-
     def build_account(opts={})
       opts.tap do |o|
         o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'surname'
@@ -161,11 +153,6 @@ RSpec.configure do |c|
       set_up_message << "\nBe sure to configure these before running the specs again."
       raise set_up_message
     end
-
-    # destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
   end
 
-  # c.after(:all) do
-    # destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
-  # end
 end
