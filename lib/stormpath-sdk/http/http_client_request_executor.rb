@@ -50,9 +50,9 @@ module Stormpath
         end
 
         Response.new response.http_header.status_code,
-                       response.http_header.body_type,
-                       response.content,
-                       response.http_header.body_size
+                     response.http_header.body_type,
+                     response.content,
+                     response.http_header.body_size
       end
     end
   end
