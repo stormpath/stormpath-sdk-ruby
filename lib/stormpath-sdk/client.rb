@@ -27,16 +27,7 @@ module Stormpath
       base_url = options[:base_url]
       cache_opts = options[:cache] || {}
 
-      api_key = if api_key
-        case api_key
-        when ApiKey then api_key
-        when Hash then ApiKey.new api_key[:id], api_key[:secret]
-        end
-      elsif options[:api_key_file_location]
-        load_api_key_file options[:api_key_file_location],
-          options[:api_key_id_property_name],
-          options[:api_key_secret_property_name]
-      end
+      api_key = ApiKey(options)
 
       assert_not_nil api_key, "No API key has been provided. Please pass an 'api_key' or " +
                               "'api_key_file_location' to the Stormpath::Client constructor."
@@ -72,6 +63,19 @@ module Stormpath
     has_many :account_store_mappings, href: '/accountStoreMappings', can: [:get, :create]
 
     private
+
+      def ApiKey(options={})
+        if api_key = options[:api_key]
+          case api_key
+          when ApiKey then api_key
+          when Hash then ApiKey.new api_key[:id], api_key[:secret]
+          end
+        elsif options[:api_key_file_location]
+          load_api_key_file(options[:api_key_file_location],
+                            options[:api_key_id_property_name],
+                            options[:api_key_secret_property_name])
+        end
+      end
 
       def load_api_key_file api_key_file_location, id_property_name, secret_property_name
         begin
