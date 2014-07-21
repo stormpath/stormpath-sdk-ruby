@@ -44,10 +44,6 @@ module Stormpath
       self
     end
 
-    def cache_stats
-      @data_source.cache_stats
-    end
-
     has_many :tenants, href: '/tenants', can: :get
     has_many :applications, href: '/applications', can: [:get, :create], delegate: true
     has_many :directories, href: '/directories', can: [:get, :create], delegate: true
