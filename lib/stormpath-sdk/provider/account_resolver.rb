@@ -23,8 +23,8 @@ module Stormpath
       end
 
       def resolve_provider_account parent_href, request
-        assert_not_nil parent_href, "parentHref argument must be specified"
-        assert_kind_of AccountRequest, request, "Only ProviderAccountRequest instances are supported."
+        assert_not_nil parent_href, "parent_href argument must be specified"
+        assert_kind_of AccountRequest, request, "Only #{AccountRequest} instances are supported."
 
         attempt = @data_store.instantiate AccountAccess
 
