@@ -1,30 +1,38 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Application, :vcr do
-  let(:application) { test_application }
-  let(:directory) { test_directory }
+  let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
+  let(:application) { test_api_client.applications.get app.href }
+  let(:directory) { test_api_client.directories.create name: random_directory_name }
 
-  describe "instances should respond to attribute property methods" do
-    subject(:application) { test_application }
+  before do
+   test_api_client.account_store_mappings.create({ application: app, account_store: directory,
+      list_index: 1, is_default_account_store: true, is_default_group_store: true })
+  end
 
-    it { should be_instance_of Stormpath::Resource::Application }
+  after do
+    application.delete if application
+    directory.delete if directory
+  end
+
+  it "instances should respond to attribute property methods" do
+
+    expect(application).to be_a Stormpath::Resource::Application
 
     [:name, :description, :status].each do |property_accessor|
-      it { should respond_to property_accessor }
-      it { should respond_to "#{property_accessor}="}
-      its(property_accessor) { should be_instance_of String }
+      expect(application).to respond_to(property_accessor)
+      expect(application).to respond_to("#{property_accessor}=")
+      expect(application.send property_accessor).to be_a String
     end
 
-    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
-    its(:default_account_store_mapping) { should be_instance_of Stormpath::Resource::AccountStoreMapping }
-    its(:default_group_store_mapping) { should be_instance_of Stormpath::Resource::AccountStoreMapping }
+    expect(application.tenant).to be_a Stormpath::Resource::Tenant
+    expect(application.default_account_store_mapping).to be_a Stormpath::Resource::AccountStoreMapping
+    expect(application.default_group_store_mapping).to be_a Stormpath::Resource::AccountStoreMapping
 
-    its(:groups) { should be_instance_of Stormpath::Resource::Collection }
-    its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
-    its(:password_reset_tokens) { should be_instance_of Stormpath::Resource::Collection }
-    its(:account_store_mappings) { should be_instance_of Stormpath::Resource::Collection }
-
-
+    expect(application.groups).to be_a Stormpath::Resource::Collection
+    expect(application.accounts).to be_a Stormpath::Resource::Collection
+    expect(application.password_reset_tokens).to be_a Stormpath::Resource::Collection
+    expect(application.account_store_mappings).to be_a Stormpath::Resource::Collection
   end
 
   describe '.load' do
@@ -69,7 +77,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context '#groups' do
-      let(:group) { application.groups.create name: "test_group"}
+      let(:group) { application.groups.create name: random_group_name }
 
       after do
         group.delete if group
@@ -86,7 +94,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
   end
-  
+
   describe '#authenticate_account' do
     let(:account) do
       directory.accounts.create build_account(password: 'P@$$w0rd')
@@ -132,10 +140,10 @@ describe Stormpath::Resource::Application, :vcr do
     after do
       account.delete if account
     end
-    
-    context 'given a proper directory' do 
+
+    context 'given a proper directory' do
       let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
-      
+
       let(:login_request) do
         Stormpath::Authentication::UsernamePasswordRequest.new account.username, password, account_store: directory
       end
@@ -149,7 +157,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'given a wrong directory' do
-      let(:new_directory) { test_api_client.directories.create name: 'test_account_store'}
+      let(:new_directory) { test_api_client.directories.create name: random_directory_name('new') }
 
       let(:account) { new_directory.accounts.create build_account(password: 'P@$$w0rd') }
 
@@ -167,7 +175,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'given a group' do
-      let(:group) {directory.groups.create name: "test_group"}
+      let(:group) {directory.groups.create name: random_group_name }
 
       let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
 
@@ -229,11 +237,11 @@ describe Stormpath::Resource::Application, :vcr do
   describe '#verify_password_reset_token' do
     let(:account) do
       directory.accounts.create({
-        email: 'test@example.com',
+        email: random_email,
         given_name: 'Ruby SDK',
         password: 'P@$$w0rd',
         surname: 'SDK',
-        username: 'rubysdk'
+        username: random_user_name
       })
     end
 

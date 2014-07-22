@@ -63,7 +63,7 @@ describe Stormpath::Cache::CacheEntry do
       end
 
       it 'returns false' do
-        expect(expired).to be_false
+        expect(expired).to be_falsey
       end
     end
 
@@ -76,7 +76,7 @@ describe Stormpath::Cache::CacheEntry do
       end
 
       it 'returns true' do
-        expect(@expired).to be_true
+        expect(@expired).to be_truthy
       end
     end
 
@@ -89,7 +89,7 @@ describe Stormpath::Cache::CacheEntry do
       end
 
       it 'returns true' do
-        expect(@expired).to be_true
+        expect(@expired).to be_truthy
       end
     end
   end

@@ -5,32 +5,31 @@ describe Stormpath::Resource::Group, :vcr do
   describe "instances should respond to attribute property methods" do
     let(:directory) { test_directory }
 
-    subject(:group) { directory.groups.create name: 'someTestGroup', description: 'someTestDescription' }
-
-    [:name, :description, :status].each do |property_accessor|
-      it { should respond_to property_accessor }
-      it { should respond_to "#{property_accessor}="}
-      its(property_accessor) { should be_instance_of String }
-    end
-
-    its(:tenant) { should be_instance_of Stormpath::Resource::Tenant }
-    its(:directory) { should be_instance_of Stormpath::Resource::Directory }
-    its(:custom_data) { should be_instance_of Stormpath::Resource::CustomData }
-
-    its(:accounts) { should be_instance_of Stormpath::Resource::Collection }
-    its(:account_memberships) { should be_instance_of Stormpath::Resource::Collection}
-
+    let(:group) { directory.groups.create name: 'someTestGroup', description: 'someTestDescription' }
 
     after do
       group.delete if group
     end
 
+    it do
+      [:name, :description, :status].each do |property_accessor|
+        expect(group).to respond_to(property_accessor)
+        expect(group).to respond_to("#{property_accessor}=")
+        expect(group.send property_accessor).to be_a String
+      end
+
+      expect(group.tenant).to be_a Stormpath::Resource::Tenant
+      expect(group.directory).to be_a Stormpath::Resource::Directory
+      expect(group.custom_data).to be_a Stormpath::Resource::CustomData
+      expect(group.accounts).to be_a Stormpath::Resource::Collection
+      expect(group.account_memberships).to be_a Stormpath::Resource::Collection
+    end
   end
 
   describe '#add_or_remove_account' do
     context "given an account" do
 
-      let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       let(:group) { directory.groups.create name: 'someGroup' }
 
@@ -51,7 +50,7 @@ describe Stormpath::Resource::Group, :vcr do
       end
 
       it 'has one account membership resource' do
-        expect(group.account_memberships).to have(1).item
+        expect(group.account_memberships.count).to eq(1)
       end
 
       it 'adds and removes the group from the account' do

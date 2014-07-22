@@ -66,6 +66,21 @@ module Stormpath
     autoload :BasicAuthenticator, "stormpath-sdk/auth/basic_authenticator"
   end
 
+  module Provider
+    autoload :AccountResolver, "stormpath-sdk/provider/account_resolver"
+    autoload :AccountAccess, "stormpath-sdk/provider/account_access"
+    autoload :AccountResult, "stormpath-sdk/provider/account_result"
+    autoload :AccountRequest, "stormpath-sdk/provider/account_request"
+    autoload :Provider, 'stormpath-sdk/provider/provider'
+    autoload :ProviderData, 'stormpath-sdk/provider/provider_data'
+    autoload :FacebookProvider, 'stormpath-sdk/provider/facebook/facebook_provider'
+    autoload :FacebookProviderData, 'stormpath-sdk/provider/facebook/facebook_provider_data'
+    autoload :GoogleProvider, 'stormpath-sdk/provider/google/google_provider'
+    autoload :GoogleProviderData, 'stormpath-sdk/provider/google/google_provider_data'
+    autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath/stormpath_provider'
+    autoload :StormpathProviderData, 'stormpath-sdk/provider/stormpath/stormpath_provider_data'
+  end
+
   module Http
     autoload :Utils, "stormpath-sdk/http/utils"
     autoload :Request, "stormpath-sdk/http/request"

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountStore, :vcr do
-  
+
   def create_account_store_mapping(application, account_store, is_default_group_store=false)
     test_api_client.account_store_mappings.create({
       application: application,
@@ -11,13 +11,13 @@ describe Stormpath::Resource::AccountStore, :vcr do
       is_default_group_store: is_default_group_store
      })
   end
-  
-  let(:application) { test_api_client.applications.create name: 'testApplication', description: 'testApplication for AccountStoreMappings' }
-  
-  let(:directory) { test_api_client.directories.create name: 'testDirectory', description: 'testDirectory for AccountStoreMappings' }
-  
+
+  let(:application) { test_api_client.applications.create name: random_application_name, description: 'testApplication for AccountStoreMappings' }
+
+  let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'testDirectory for AccountStoreMappings' }
+
   let(:group) { directory.groups.create name: 'testGroup', description: 'testGroup for AccountStoreMappings' }
-  
+
   after do
     application.delete if application
     group.delete if group

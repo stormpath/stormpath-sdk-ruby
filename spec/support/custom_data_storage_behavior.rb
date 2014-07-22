@@ -1,16 +1,16 @@
 shared_examples_for 'account_custom_data' do
   context 'account' do
     let(:custom_data_storage) do
-      directory.accounts.create username: "jlpicard",
-         email: "capt@enterprise.com",
+      directory.accounts.create username: random_user_name,
+         email: random_email,
          givenName: "Jean-Luc",
          surname: "Picard",
          password: "uGhd%a8Kl!"
     end
 
     let(:custom_data_storage_w_nested_custom_data) do
-      directory.accounts.create username: "jlpicard",
-         email: "capt@enterprise.com",
+      directory.accounts.create username: random_user_name,
+         email: random_email,
          given_name: "Jean-Luc",
          surname: "Picard",
          password: "uGhd%a8Kl!",
@@ -36,11 +36,11 @@ end
 shared_examples_for 'group_custom_data' do
   context 'group' do
     let(:custom_data_storage) do
-      directory.groups.create name: 'test_group'
+      directory.groups.create name: random_group_name
     end
 
     let(:custom_data_storage_w_nested_custom_data) do
-      directory.groups.create name: "Jean",
+      directory.groups.create name: random_group_name,
          description: "Capital Group",
          custom_data: {
             rank: "Captain",
@@ -266,7 +266,7 @@ shared_examples_for 'custom_data_storage' do
     custom_data_storage.custom_data[:rank] = "Captain"
     custom_data_storage.custom_data["favorite_drink"] = "Earl Grey Tea"
     custom_data_storage.custom_data.save
-    
+
     custom_data_storage.custom_data.delete(:rank)
     custom_data_storage.custom_data.save
 
@@ -277,19 +277,19 @@ shared_examples_for 'custom_data_storage' do
 
 
   it '#has_key?' do
-    expect(custom_data_storage.custom_data.has_key? "createdAt").to be_true
-    expect(custom_data_storage.custom_data.has_key? "created_at").not_to be_true
+    expect(custom_data_storage.custom_data.has_key? "createdAt").to be_truthy
+    expect(custom_data_storage.custom_data.has_key? "created_at").to be_falsey
   end
 
   it '#include?' do
-    expect(custom_data_storage.custom_data.include? "createdAt").to be_true
-    expect(custom_data_storage.custom_data.include? "created_at").not_to be_true
+    expect(custom_data_storage.custom_data.include? "createdAt").to be_truthy
+    expect(custom_data_storage.custom_data.include? "created_at").to be_falsey
   end
 
   it '#has_value?' do
     custom_data_storage.custom_data[:rank] = "Captain"
     custom_data_storage.custom_data.save
-    expect(reloaded_custom_data_storage.custom_data.has_value? "Captain").to be_true
+    expect(reloaded_custom_data_storage.custom_data.has_value? "Captain").to be_truthy
   end
 
   it '#store' do
@@ -336,7 +336,7 @@ shared_examples_for 'custom_data_storage' do
 
   it '#keys' do
     expect(custom_data_storage.custom_data.keys).to be_kind_of(Array)
-    expect(custom_data_storage.custom_data.keys).to have_at_least(3).items
+    expect(custom_data_storage.custom_data.keys.count).to eq(3)
     expect(custom_data_storage.custom_data.keys).to eq(custom_data_storage.custom_data.properties.keys)
   end
 
@@ -348,7 +348,7 @@ shared_examples_for 'custom_data_storage' do
   end
 
   it 'inner property holders clearing properly' do
-    expect(deleted_properties).to have(0).items
+    expect(deleted_properties.count).to eq(0)
 
     custom_data_storage.custom_data[:permissions] = 'NOOP'
 
@@ -358,12 +358,12 @@ shared_examples_for 'custom_data_storage' do
     custom_data_storage.custom_data.delete(:permissions)
     expect(custom_data_storage.custom_data[:permissions]).to be_nil
 
-    expect(deleted_properties).to have(1).items
+    expect(deleted_properties.count).to eq(1)
 
     custom_data_storage.custom_data.save
 
     expect(custom_data_storage.custom_data[:permissions]).to be_nil
-    expect(deleted_properties).to have(0).items
+    expect(deleted_properties.count).to eq(0)
 
     custom_data_storage.custom_data[:permissions] = 'NOOP'
     expect(custom_data_storage.custom_data[:permissions]).to eq("NOOP")
@@ -371,18 +371,18 @@ shared_examples_for 'custom_data_storage' do
     custom_data_storage.custom_data.delete(:permissions)
     expect(custom_data_storage.custom_data[:permissions]).to be_nil
 
-    expect(deleted_properties).to have(1).items
+    expect(deleted_properties.count).to eq(1)
 
     if custom_data_storage.is_a? Stormpath::Resource::Account
       custom_data_storage.given_name = "Capt"
     else
-      custom_data_storage.name = "Capt"
+      custom_data_storage.name = random_group_name
     end
 
     custom_data_storage.save
 
     expect(custom_data_storage.custom_data[:permissions]).to be_nil
-    expect(deleted_properties).to have(0).items
+    expect(deleted_properties.count).to eq(0)
   end
 
   def deleted_properties

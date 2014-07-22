@@ -4,17 +4,17 @@ describe "BasicAuthenticator" do
   context "given an instance of BasicAuthenticator" do
 
     before do
-      ds = Stormpath::DataStore.new "", {}, ""
-      allow(test_api_client).to receive(:data_store).and_return(ds)
+      data_store = Stormpath::DataStore.new "", {}, ""
+      allow(test_api_client).to receive(:data_store).and_return(data_store)
       auth_result = Stormpath::Authentication::AuthenticationResult.new({}, test_api_client)
-      allow(ds).to receive(:create).and_return(auth_result)
+      allow(data_store).to receive(:create).and_return(auth_result)
 
-      @ba = Stormpath::Authentication::BasicAuthenticator.new ds
+      @basic_authenticator = Stormpath::Authentication::BasicAuthenticator.new data_store
     end
 
     context "when authenticating" do
       before do
-        @response = @ba.authenticate "foo/bar", Stormpath::Authentication::UsernamePasswordRequest.new("fake-username", "fake-password")
+        @response = @basic_authenticator.authenticate "foo/bar", Stormpath::Authentication::UsernamePasswordRequest.new("fake-username", "fake-password")
       end
 
       it "an AuthenticationResult is returned" do

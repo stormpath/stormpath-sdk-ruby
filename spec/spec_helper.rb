@@ -6,10 +6,8 @@ SimpleCov.start
 
 require 'stormpath-sdk'
 require 'pry'
-require 'pry-debugger'
 require 'webmock/rspec'
 require 'vcr'
-require_relative '../support/api.rb'
 
 Dir['./spec/support/*.rb'].each { |file| require file }
 
@@ -22,6 +20,12 @@ VCR.configure do |c|
   c.hook_into :webmock
   c.configure_rspec_metadata!
   c.ignore_request { |r| HIJACK_HTTP_REQUESTS_WITH_VCR == false }
+end
+
+RSpec::Matchers.define :be_boolean do
+  match do |actual|
+    actual.should satisfy { |x| x == true || x == false }
+  end
 end
 
 module Stormpath
@@ -87,22 +91,43 @@ module Stormpath
   end
 
   module TestResourceHelpers
-    def destroy_all_stormpath_test_resources
-      Stormpath::Support::Api.destroy_resources(
-        test_api_key_id, test_api_key_secret, test_application_url,
-        test_directory_url, test_directory_with_verification_url
-      )
-    end
-
     def build_account(opts={})
       opts.tap do |o|
         o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'surname'
         o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || 'givenname'
-        o[:username]   = (!opts[:username].blank? && opts[:username]) || 'username'
+        o[:username]   = (!opts[:username].blank? && opts[:username]) || random_user_name
         o[:password]   = (!opts[:password].blank? && opts[:password]) || 'P@$$w0rd'
-        o[:email]      = (!opts[:email].blank? && opts[:email]) || 'test@example.com'
+        o[:email]      = (!opts[:email].blank? && opts[:email]) || random_email
       end
     end
+  end
+
+  module RandomResourceNameGenerator
+    include UUIDTools
+
+    %w(application directory group user).each do |resource|
+      define_method "random_#{resource}_name" do |suffix=nil|
+        "#{random_string}_#{resource}_#{suffix}"
+      end
+    end
+
+    def random_email
+      "#{random_string}@stormpath.com"
+    end
+
+    def random_string
+      if HIJACK_HTTP_REQUESTS_WITH_VCR
+        'test'
+      else
+        UUID.method(:random_create).call.to_s[0..9]
+      end
+    end
+  end
+end
+
+RSpec::Matchers.define :be_boolean do
+  match do |actual|
+    actual == true || actual == false
   end
 end
 
@@ -117,8 +142,7 @@ RSpec.configure do |c|
 
   c.include Stormpath::TestApiKeyHelpers
   c.include Stormpath::TestResourceHelpers
-
-  c.treat_symbols_as_metadata_keys_with_true_values = true
+  c.include Stormpath::RandomResourceNameGenerator
 
   c.before(:all) do
     unless test_missing_env_vars.empty?
@@ -129,11 +153,6 @@ RSpec.configure do |c|
       set_up_message << "\nBe sure to configure these before running the specs again."
       raise set_up_message
     end
-
-    destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
   end
 
-  c.after(:all) do
-    destroy_all_stormpath_test_resources unless HIJACK_HTTP_REQUESTS_WITH_VCR
-  end
 end

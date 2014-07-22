@@ -8,7 +8,7 @@ describe Stormpath::Resource::GroupMembership, :vcr do
   describe '#add_account' do
     context "given an account and a group" do
 
-      let(:directory) { test_api_client.directories.create name: 'testDirectory' }
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       let(:group) { directory.groups.create name: 'someGroup' }
 
@@ -23,8 +23,8 @@ describe Stormpath::Resource::GroupMembership, :vcr do
       end
 
       it ", group membership and account membership should correspond to each other" do
-        expect(group.account_memberships).to have(1).item
-        expect(account.group_memberships).to have(1).item
+        expect(group.account_memberships.count).to eq(1)
+        expect(account.group_memberships.count).to eq(1)
         expect(group.accounts).to include(account)
         expect(account.groups).to include(group)
         expect(group.account_memberships.first).to be_a(Stormpath::Resource::GroupMembership)
