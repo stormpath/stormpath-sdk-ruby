@@ -1,6 +1,16 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.0.0.beta.7
+--------------------
+
+Released on July 21, 2014
+
+- Added provider integration (Google, Facebook and Stormpath).
+- Updated tests to use RSpec3.
+- Updated tests to run in parallel in multiple versions (1.9.3, 2.0.0 and 2.1.2).
+
+
 Version 1.0.0.beta.6
 --------------------
 
