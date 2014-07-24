@@ -23,7 +23,6 @@ module Stormpath
     attr_reader :data_store, :application
 
     def initialize(options)
-      api_key = options[:api_key]
       base_url = options[:base_url]
       cache_opts = options[:cache] || {}
 
