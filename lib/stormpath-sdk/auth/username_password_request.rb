@@ -21,7 +21,7 @@ module Stormpath
 
       def initialize username, password, options = {}
         @username = username
-        @password = (password != nil and password.length > 0) ? password.chars.to_a : "".chars.to_a
+        @password = (password || "").chars.to_a
         @host = options[:host]
         @account_store = options[:account_store]
       end

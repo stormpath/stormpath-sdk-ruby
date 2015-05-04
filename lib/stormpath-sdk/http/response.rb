@@ -17,8 +17,8 @@ module Stormpath
   module Http
     class Response
 
-      attr_reader :http_status, :headers, :body
-      attr_writer :headers
+      attr_reader :http_status, :body
+      attr_accessor :headers
 
       def initialize http_status, content_type, body, content_length
         @http_status = http_status

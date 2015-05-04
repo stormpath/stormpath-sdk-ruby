@@ -50,20 +50,10 @@ module Stormpath
         end
 
         Response.new response.http_header.status_code,
-                       response.http_header.body_type,
-                       response.content,
-                       response.http_header.body_size
+                     response.http_header.body_type,
+                     response.content,
+                     response.http_header.body_size
       end
-
-      private
-
-        def add_query_string href, query_string
-          query_string.each do |key, value|
-            prefix = if href.include? '?' then '&' else '?' end
-            href << prefix << key.to_s << '=' << value.to_s
-          end
-        end
-
     end
   end
 end

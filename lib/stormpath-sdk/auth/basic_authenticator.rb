@@ -27,7 +27,7 @@ module Stormpath
         assert_kind_of UsernamePasswordRequest, request, "Only UsernamePasswordRequest instances are supported."
 
         username = request.principals
-        username = (username != nil) ? username : ''
+        username = username || ''
 
         password = request.credentials
         pw_string = password.join

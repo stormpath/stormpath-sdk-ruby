@@ -18,19 +18,19 @@ module Stormpath
     module Assert
 
       def assert_not_nil(object, message)
-        raise ArgumentError, message, caller unless !object.nil?
+        raise(ArgumentError, message, caller) if object.nil?
       end
 
       def assert_kind_of(clazz, object, message)
-        raise ArgumentError, message, caller unless object.kind_of? clazz
+        raise(ArgumentError, message, caller) unless object.kind_of? clazz
       end
 
       def assert_true(arg, message)
-        raise ArgumentError, message, caller unless arg
+        raise(ArgumentError, message, caller) unless arg
       end
 
       def assert_false(arg, message)
-        raise ArgumentError, message, caller unless !arg
+        raise(ArgumentError, message, caller) if arg
       end
 
     end

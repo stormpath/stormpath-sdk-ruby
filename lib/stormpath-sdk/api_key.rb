@@ -14,9 +14,7 @@
 # limitations under the License.
 #
 module Stormpath
-
   class ApiKey
-
     attr_accessor :id, :secret
 
     def initialize(id, secret)
@@ -24,6 +22,5 @@ module Stormpath
       @secret = secret
     end
   end
-
 end
 
