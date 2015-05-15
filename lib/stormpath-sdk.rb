@@ -5,6 +5,7 @@ require "openssl"
 require "open-uri"
 require "uri"
 require "uuidtools"
+require "jwt"
 require "yaml"
 require 'active_support'
 require "active_support/core_ext"

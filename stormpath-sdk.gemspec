@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency('activesupport', '>= 3.2.8')
   s.add_dependency('properties-ruby', "~> 0.0.4")
   s.add_dependency('java_properties')
+  s.add_dependency('jwt')
 
   s.add_development_dependency 'rake', '~> 0.9.2'
   s.add_development_dependency 'rspec', '~> 3.0.0'
