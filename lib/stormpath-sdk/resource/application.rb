@@ -26,7 +26,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_many :password_reset_tokens, can: [:get, :create]
   has_many :account_store_mappings, can: [:get, :create]
   has_many :groups, can: [:get, :create]
-  
+
   has_one :default_account_store_mapping, class_name: :accountStoreMapping
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
 
@@ -45,6 +45,23 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     rescue
       raise LoadError
     end
+  end
+
+  def create_id_site_url(options = {})
+    base = "https://" + DEFAULT_SERVER_HOST + "/sso"
+    base += '/logout' if options[:logout]
+
+    token = JWT.encode({
+        'iat' => Time.now.to_i,
+        'jti' => UUID.method(:random_create).call.to_s,
+        'iss' => client.api_key.id,
+        'sub' => href,
+        'cb_uri' => options[:callback_uri],
+        'path' => options[:path] || '',
+        'state' => options[:state] || ''
+      }, client.api_key.secret, 'HS256')
+
+    base + '?jwtRequest=' + token
   end
 
   def send_password_reset_email email
