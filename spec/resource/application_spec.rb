@@ -288,4 +288,44 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
   end
+
+  describe '#create_id_site_url' do
+    let(:jwt_token) { JWT.encode({
+        'iat' => Time.now.to_i,
+        'jti' => UUID.method(:random_create).call.to_s,
+        'aud' => test_api_key_id,
+        'sub' => application.href,
+        'cb_uri' => 'http://localhost:9292/redirect',
+        'path' => '',
+        'state' => ''
+      }, test_api_key_secret, 'HS256')
+    }
+
+    let(:create_id_site_url_result) do
+      options = { callback_uri: 'http://localhost:9292/redirect' }
+      application.create_id_site_url options
+    end
+
+    it 'should create a url with jwtRequest' do
+      expect(create_id_site_url_result).to include('jwtRequest')
+    end
+
+    it 'should create a request to /sso' do
+      expect(create_id_site_url_result).to include('/sso')
+    end
+
+    it 'should create a jwtRequest that is signed wit the client secret' do
+      uri = Addressable::URI.parse(create_id_site_url_result)
+      jwt_token = JWT.decode(uri.query_values["jwtRequest"], test_api_key_secret).first
+
+      expect(jwt_token["iss"]).to eq test_api_key_id
+      expect(jwt_token["sub"]).to eq application.href
+      expect(jwt_token["cb_uri"]).to eq 'http://localhost:9292/redirect'
+    end
+
+    context 'with logout option' do
+      it 'shoud create a request to /sso/logout' do
+      end
+    end
+  end
 end

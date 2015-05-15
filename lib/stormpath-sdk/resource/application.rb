@@ -15,6 +15,7 @@
 #
 class Stormpath::Resource::Application < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
+  include UUIDTools
 
   class LoadError < Stormpath::Error; end
 
