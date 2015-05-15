@@ -22,6 +22,7 @@ module Stormpath
   autoload :ApiKey, 'stormpath-sdk/api_key'
   autoload :Client, 'stormpath-sdk/client'
   autoload :DataStore, 'stormpath-sdk/data_store'
+  autoload :IdSiteResult, 'stormpath-sdk/id_site_result'
 
   module Resource
     autoload :Expansion, 'stormpath-sdk/resource/expansion'
