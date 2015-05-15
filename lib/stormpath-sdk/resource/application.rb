@@ -64,6 +64,25 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     base + '?jwtRequest=' + token
   end
 
+  def handle_id_site_callback(response_url)
+    assert_not_nil response_url, "No response provided. Please provide response object."
+
+    uri = URI(response_url)
+    params = CGI::parse(uri.query)
+    token = params["jwtResponse"].first
+
+    begin
+      jwt_response = JWT.decode(token, client.api_key.secret)
+      jwt_response = jwt_response.first if jwt_response.kind_of?(Array)
+    rescue JWT::DecodeError, JWT::ExpiredSignature => e
+      raise e
+    end
+
+    raise Stormpath::Error.new if jwt_response["aud"] != client.api_key.id
+
+    Stormpath::IdSiteResult.new(jwt_response)
+  end
+
   def send_password_reset_email email
     password_reset_token = create_password_reset_token email;
     password_reset_token.account
