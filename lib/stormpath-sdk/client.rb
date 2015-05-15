@@ -20,18 +20,18 @@ module Stormpath
     include Stormpath::Util::Assert
     include Stormpath::Resource::Associations
 
-    attr_reader :data_store, :application
+    attr_reader :data_store, :application, :api_key
 
     def initialize(options)
       base_url = options[:base_url]
       cache_opts = options[:cache] || {}
 
-      api_key = ApiKey(options)
+      @api_key = ApiKey(options)
 
-      assert_not_nil api_key, "No API key has been provided. Please pass an 'api_key' or " +
+      assert_not_nil @api_key, "No API key has been provided. Please pass an 'api_key' or " +
                               "'api_key_file_location' to the Stormpath::Client constructor."
 
-      request_executor = Stormpath::Http::HttpClientRequestExecutor.new(api_key, proxy: options[:proxy])
+      request_executor = Stormpath::Http::HttpClientRequestExecutor.new(@api_key, proxy: options[:proxy])
       @data_store = Stormpath::DataStore.new(request_executor, cache_opts, self, base_url)
     end
 
