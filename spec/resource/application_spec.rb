@@ -360,7 +360,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'should set the correct account on IdSiteResult object' do
-        expect(@site_result.account).to eq(application.href)
+        expect(@site_result.account_href).to eq(application.href)
       end
 
       it 'should set the correct status on IdSiteResult object' do
