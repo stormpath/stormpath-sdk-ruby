@@ -72,12 +72,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     params = CGI::parse(uri.query)
     token = params["jwtResponse"].first
 
-    begin
-      jwt_response = JWT.decode(token, client.api_key.secret)
-      jwt_response = jwt_response.first if jwt_response.kind_of?(Array)
-    rescue JWT::DecodeError, JWT::ExpiredSignature => e
-      raise e
-    end
+    jwt_response, _header = JWT.decode(token, client.api_key.secret)
 
     raise Stormpath::Error.new if jwt_response["aud"] != client.api_key.id
 
