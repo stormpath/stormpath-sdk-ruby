@@ -49,7 +49,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
 
   def create_id_site_url(options = {})
-    base = "https://" + DEFAULT_SERVER_HOST + "/sso"
+    base = client.data_store.base_url.sub("v" + Stormpath::DataStore::DEFAULT_API_VERSION.to_s, "sso")
     base += '/logout' if options[:logout]
 
     token = JWT.encode({
