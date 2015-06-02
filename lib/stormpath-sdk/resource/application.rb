@@ -55,12 +55,12 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     token = JWT.encode({
         'iat' => Time.now.to_i,
         'jti' => UUID.method(:random_create).call.to_s,
-        'iss' => client.api_key.id,
+        'iss' => client.data_store.api_key.id,
         'sub' => href,
         'cb_uri' => options[:callback_uri],
         'path' => options[:path] || '',
         'state' => options[:state] || ''
-      }, client.api_key.secret, 'HS256')
+      }, client.data_store.api_key.secret, 'HS256')
 
     base + '?jwtRequest=' + token
   end

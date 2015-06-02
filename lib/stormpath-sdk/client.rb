@@ -31,8 +31,8 @@ module Stormpath
       assert_not_nil @api_key, "No API key has been provided. Please pass an 'api_key' or " +
                               "'api_key_file_location' to the Stormpath::Client constructor."
 
-      request_executor = Stormpath::Http::HttpClientRequestExecutor.new(@api_key, proxy: options[:proxy])
-      @data_store = Stormpath::DataStore.new(request_executor, cache_opts, self, base_url)
+      request_executor = Stormpath::Http::HttpClientRequestExecutor.new(proxy: options[:proxy])
+      @data_store = Stormpath::DataStore.new(request_executor, @api_key, cache_opts, self, base_url)
     end
 
     def tenant(expansion = nil)

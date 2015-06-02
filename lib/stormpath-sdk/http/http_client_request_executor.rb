@@ -19,18 +19,17 @@ module Stormpath
       include Stormpath::Http::Authc
       include Stormpath::Util::Assert
 
-      def initialize(api_key, options = {})
+      def initialize(options = {})
         @signer = Sauthc1Signer.new
-        @api_key = api_key
         @http_client = HTTPClient.new options[:proxy]
       end
 
-      def execute_request(request, redirects_limit = 10)
+      def execute_request(request, api_key, redirects_limit = 10)
         assert_not_nil request, "Request argument cannot be null."
 
         @redirect_response = nil
 
-        @signer.sign_request request, @api_key
+        @signer.sign_request request, api_key
 
         domain = if request.query_string.present?
                    [request.href, request.to_s_query_string(true)].join '?'
@@ -45,7 +44,7 @@ module Stormpath
         if response.redirect? and redirects_limit > 0
           request.href = response.http_header['location'][0]
           redirects_limit -= 1
-          @redirect_response = execute_request request, redirects_limit
+          @redirect_response = execute_request request, api_key, redirects_limit
           return @redirect_response
         end
 
