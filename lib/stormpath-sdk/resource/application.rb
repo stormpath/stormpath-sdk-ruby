@@ -15,6 +15,7 @@
 #
 class Stormpath::Resource::Application < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
+  include Stormpath::Resource::CustomDataStorage
 
   class LoadError < Stormpath::Error; end
 
@@ -26,9 +27,10 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_many :password_reset_tokens, can: [:get, :create]
   has_many :account_store_mappings, can: [:get, :create]
   has_many :groups, can: [:get, :create]
-  
+
   has_one :default_account_store_mapping, class_name: :accountStoreMapping
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
+  has_one :custom_data
 
   def self.load composite_url
     begin
