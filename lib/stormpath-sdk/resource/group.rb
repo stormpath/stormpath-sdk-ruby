@@ -35,5 +35,5 @@ class Stormpath::Resource::Group < Stormpath::Resource::Instance
     account_membership = account_memberships.find {|account_membership| account_membership.account.href == account.href }
     account_membership.delete if account_membership
   end
-  
+
 end

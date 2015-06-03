@@ -26,6 +26,17 @@ describe Stormpath::Resource::Group, :vcr do
     end
   end
 
+  describe '#create_group_with_custom_data' do
+    let(:directory) { test_directory }
+
+    it 'creates a directory with custom data' do
+      directory.custom_data["category"] = "classified"
+
+      directory.save
+      expect(directory.custom_data["category"]).to eq("classified")
+    end
+  end
+
   describe '#add_or_remove_account' do
     context "given an account" do
 
