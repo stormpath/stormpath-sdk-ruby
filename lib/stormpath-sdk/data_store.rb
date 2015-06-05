@@ -119,9 +119,9 @@ class Stormpath::DataStore
                MultiJson.dump(to_hash(resource))
              end
 
-      request = Request.new(http_method, href, query, Hash.new, body)
+      request = Request.new(http_method, href, query, Hash.new, body, @api_key)
       apply_default_request_headers request
-      response = @request_executor.execute_request request, @api_key
+      response = @request_executor.execute_request request
 
       result = response.body.length > 0 ? MultiJson.load(response.body) : ''
 
