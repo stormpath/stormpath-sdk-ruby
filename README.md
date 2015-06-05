@@ -275,6 +275,70 @@ expansion.add_property 'groups', offset: 5, limit: 10
 client.accounts.get account.href, expansion
 ```
 
+### ID Site
+
+ID Site is a set of hosted and pre-built user interface screens that easily add authentication to your application. ID Site can be accessed via your own custom domain like id.mydomain.com and shared across multiple applications to create centralized authentication if needed. To use ID Site an url needs to be generated which contains JWT token as a parameter.
+
+#### ID Site Login
+
+In order to use ID Site an url needs to be generated. You also need to redirect to the generated url. You can call create_id_site_url which is on application object. For example if you are using sinatra the code would look something like this:
+
+```ruby
+get ‘login’ do
+  redirect application.create_id_site_url callback_uri: “#{callback_uri}”
+end
+```
+
+The application will be an instance of your application. callback_uri is a url with which you want to handle the ID Site information, this url also needs to be set in the Stormpath’s dashboard on [ID Site settings page](https://api.stormpath.com/ui2/index.html#/id-site) as Authorized Redirect URLs.
+
+#### Handle ID Site Callback
+
+For any request you make for ID Site, you need to specify a callback uri. To parse the information from the servers response and to decode the data from the JWT token you need to call the handle_id_site_callback method and pass the Request URI.
+
+For example in your sinatra app this would look something like this:
+
+```ruby
+app.get ‘/callback' do
+  user_data = application.handle_id_site_callback(request.url)
+end
+```
+
+> NOTE:
+> A JWT Response Token can only be used once. This is to prevent replay attacks. It will also only be valid for a total of 60 seconds. After which time, You will need to restart the workflow you were in.
+
+#### Other ID Site Options
+
+There are a few other methods that you will need to concern yourself with when using ID Site. Logging out a User, Registering a User, and a User who has forgotten their password. These methods will use the same information from the login method but a few more items will need to be passed into the array. For example if you have a sinatra application.
+
+Logging Out a User
+```ruby
+app.get ‘/logout' do
+  user_data = application.handle_id_site_callback(request.url)
+  redirect application.create_id_site_url callback_uri: “#{callback_uri}”, logout: true
+end
+```
+
+Registering a User
+```ruby
+app.get ‘/register' do
+  user_data = application.handle_id_site_callback(request.url)
+  redirect application.create_id_site_url callback_uri: “#{callback_uri}”, path: ‘/#/register'
+end
+```
+
+Forgot Link
+```ruby
+app.get ‘/forgot' do
+  user_data = application.handle_id_site_callback(request.url)
+  redirect application.create_id_site_url callback_uri: “#{callback_uri}”, path: ‘/#/forgot'
+end
+```
+
+Again, with all these methods, You will want your application to link to an internal page where the JWT is created at that time. Without doing this, a user will only have 60 seconds to click on the link before the JWT expires.
+
+> NOTE:
+> A JWT will expire after 60 seconds of creation.
+
 ### Registering Accounts
 
 Accounts are created on a directory instance. They can be created in two
