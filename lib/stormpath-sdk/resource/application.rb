@@ -72,9 +72,9 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     params = CGI::parse(uri.query)
     token = params["jwtResponse"].first
 
-    jwt_response, _header = JWT.decode(token, client.api_key.secret)
+    jwt_response, _header = JWT.decode(token, client.data_store.api_key.secret)
 
-    raise Stormpath::Error.new if jwt_response["aud"] != client.api_key.id
+    raise Stormpath::Error.new if jwt_response["aud"] != client.data_store.api_key.id
 
     Stormpath::IdSiteResult.new(jwt_response)
   end
