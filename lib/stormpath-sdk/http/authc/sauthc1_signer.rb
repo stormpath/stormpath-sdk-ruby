@@ -40,7 +40,7 @@ module Stormpath
           @uuid_generator = uuid_generator
         end
 
-        def sign_request request, api_key
+        def sign_request request
           request.http_headers.delete(Sauthc1Signer::AUTHORIZATION_HEADER)
           request.http_headers.delete(Sauthc1Signer::STORMPATH_DATE_HEADER)
 
@@ -78,14 +78,14 @@ module Stormpath
                                signed_headers_string,
                                request_payload_hash_hex].join(NL)
 
-          id = [api_key.id, date_stamp, nonce, ID_TERMINATOR].join("/")
+          id = [request.api_key.id, date_stamp, nonce, ID_TERMINATOR].join("/")
 
           canonical_request_hash_hex = to_hex(hash_text(canonical_request))
 
           string_to_sign = [ALGORITHM, time_stamp, id, canonical_request_hash_hex].join(NL)
 
           # SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
-          k_secret = to_utf8 AUTHENTICATION_SCHEME + api_key.secret
+          k_secret = to_utf8 AUTHENTICATION_SCHEME + request.api_key.secret
           k_date = sign date_stamp, k_secret, DEFAULT_ALGORITHM
           k_nonce = sign nonce, k_date, DEFAULT_ALGORITHM
           k_signing = sign ID_TERMINATOR, k_nonce, DEFAULT_ALGORITHM
