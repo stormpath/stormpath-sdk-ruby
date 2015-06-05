@@ -19,17 +19,17 @@ describe Stormpath::Http::Authc::Sauthc1Signer do
         let(:fake_api_key) { Stormpath::ApiKey.new('foo', 'bar') }
 
         let(:empty_query_hash_request) do
-          Stormpath::Http::Request.new 'get', 'http://example.com/resources/abc123?q=red blue', nil, Hash.new, nil
+          Stormpath::Http::Request.new 'get', 'http://example.com/resources/abc123?q=red blue', nil, Hash.new, nil, test_api_key
         end
 
         let(:filled_query_hash_request) do
-          Stormpath::Http::Request.new 'get', 'http://example.com/resources/abc123', {'q' => 'red blue'}, Hash.new, nil
+          Stormpath::Http::Request.new 'get', 'http://example.com/resources/abc123', {'q' => 'red blue'}, Hash.new, nil, test_api_key
         end
 
         before do
           Timecop.freeze(Time.now)
-          signer.sign_request empty_query_hash_request, fake_api_key
-          signer.sign_request filled_query_hash_request, fake_api_key
+          signer.sign_request empty_query_hash_request
+          signer.sign_request filled_query_hash_request
         end
 
         it 'assigns identical headers to both requests' do
