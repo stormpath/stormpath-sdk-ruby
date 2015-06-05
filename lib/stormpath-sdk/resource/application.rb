@@ -15,6 +15,7 @@
 #
 class Stormpath::Resource::Application < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
+  include UUIDTools
 
   class LoadError < Stormpath::Error; end
 
@@ -26,7 +27,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_many :password_reset_tokens, can: [:get, :create]
   has_many :account_store_mappings, can: [:get, :create]
   has_many :groups, can: [:get, :create]
-  
+
   has_one :default_account_store_mapping, class_name: :accountStoreMapping
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
 
@@ -45,6 +46,37 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     rescue
       raise LoadError
     end
+  end
+
+  def create_id_site_url(options = {})
+    base = client.data_store.base_url.sub("v" + Stormpath::DataStore::DEFAULT_API_VERSION.to_s, "sso")
+    base += '/logout' if options[:logout]
+
+    token = JWT.encode({
+        'iat' => Time.now.to_i,
+        'jti' => UUID.method(:random_create).call.to_s,
+        'iss' => client.data_store.api_key.id,
+        'sub' => href,
+        'cb_uri' => options[:callback_uri],
+        'path' => options[:path] || '',
+        'state' => options[:state] || ''
+      }, client.data_store.api_key.secret, 'HS256')
+
+    base + '?jwtRequest=' + token
+  end
+
+  def handle_id_site_callback(response_url)
+    assert_not_nil response_url, "No response provided. Please provide response object."
+
+    uri = URI(response_url)
+    params = CGI::parse(uri.query)
+    token = params["jwtResponse"].first
+
+    jwt_response, _header = JWT.decode(token, client.data_store.api_key.secret)
+
+    raise Stormpath::Error.new if jwt_response["aud"] != client.data_store.api_key.id
+
+    Stormpath::IdSiteResult.new(jwt_response)
   end
 
   def send_password_reset_email email

@@ -18,9 +18,9 @@ module Stormpath
     class Request
       include Stormpath::Http::Utils
 
-      attr_accessor :http_method, :href, :query_string, :http_headers, :body
+      attr_accessor :http_method, :href, :query_string, :http_headers, :body, :api_key
 
-      def initialize(http_method, href, query_string, http_headers, body)
+      def initialize(http_method, href, query_string, http_headers, body, api_key)
 
         splitted = href.split '?'
 
@@ -41,6 +41,7 @@ module Stormpath
         @http_method = http_method.upcase
         @http_headers = http_headers
         @body = body
+        @api_key = api_key
 
         if body
           @http_headers.store 'Content-Length', @body.bytesize

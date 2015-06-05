@@ -4,7 +4,7 @@ describe Stormpath::DataStore do
   let(:factory)           { Stormpath::Test::ResourceFactory.new }
   let(:request_executor)  { Stormpath::Test::TestRequestExecutor.new }
   let(:store)             { Stormpath::Cache::RedisStore }
-  let(:data_store)        { Stormpath::DataStore.new request_executor, {store: store}, nil, nil }
+  let(:data_store)        { Stormpath::DataStore.new request_executor, test_api_key, {store: store}, nil, nil }
   let(:application_cache) { data_store.cache_manager.get_cache 'applications' }
   let(:tenant_cache)      { data_store.cache_manager.get_cache 'tenants' }
   let(:group_cache)       { data_store.cache_manager.get_cache 'groups' }

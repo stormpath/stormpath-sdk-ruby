@@ -1,4 +1,5 @@
 require 'spec_helper'
+include UUIDTools
 
 describe Stormpath::Resource::Application, :vcr do
   let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
@@ -285,6 +286,171 @@ describe Stormpath::Resource::Application, :vcr do
         expect(authentication_result.account).to be
         expect(authentication_result.account).to be_kind_of Stormpath::Resource::Account
         expect(authentication_result.account.email).to eq(account.email)
+      end
+    end
+  end
+
+  describe '#create_id_site_url' do
+    let(:jwt_token) { JWT.encode({
+        'iat' => Time.now.to_i,
+        'jti' => UUID.method(:random_create).call.to_s,
+        'aud' => test_api_key_id,
+        'sub' => application.href,
+        'cb_uri' => 'http://localhost:9292/redirect',
+        'path' => '',
+        'state' => ''
+      }, test_api_key_secret, 'HS256')
+    }
+
+    let(:create_id_site_url_result) do
+      options = { callback_uri: 'http://localhost:9292/redirect' }
+      application.create_id_site_url options
+    end
+
+    it 'should create a url with jwtRequest' do
+      expect(create_id_site_url_result).to include('jwtRequest')
+    end
+
+    it 'should create a request to /sso' do
+      expect(create_id_site_url_result).to include('/sso')
+    end
+
+    it 'should create a jwtRequest that is signed wit the client secret' do
+      uri = Addressable::URI.parse(create_id_site_url_result)
+      jwt_token = JWT.decode(uri.query_values["jwtRequest"], test_api_key_secret).first
+
+      expect(jwt_token["iss"]).to eq test_api_key_id
+      expect(jwt_token["sub"]).to eq application.href
+      expect(jwt_token["cb_uri"]).to eq 'http://localhost:9292/redirect'
+    end
+
+    context 'with logout option' do
+      it 'shoud create a request to /sso/logout' do
+      end
+    end
+  end
+
+  describe '#handle_id_site_callback' do
+    let(:callback_uri_base) { 'http://localhost:9292/somwhere?jwtResponse=' }
+
+    context 'without the response_url provided' do
+      it 'should raise argument error' do
+        expect { application.handle_id_site_callback(nil) }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'with a valid jwt response' do
+      let(:jwt_token) { JWT.encode({
+          'iat' => Time.now.to_i,
+          'aud' => test_api_key_id,
+          'sub' => application.href,
+          'path' => '',
+          'state' => '',
+          'isNewSub' => true,
+          'status' => "REGISTERED"
+        }, test_api_key_secret, 'HS256')
+      }
+
+      before do
+        @site_result = application.handle_id_site_callback(callback_uri_base + jwt_token)
+      end
+
+      it 'should return IdSiteResult object' do
+        expect(@site_result).to be_kind_of(Stormpath::IdSiteResult)
+      end
+
+      it 'should set the correct account on IdSiteResult object' do
+        expect(@site_result.account_href).to eq(application.href)
+      end
+
+      it 'should set the correct status on IdSiteResult object' do
+        expect(@site_result.status).to eq("REGISTERED")
+      end
+
+      it 'should set the correct state on IdSiteResult object' do
+        expect(@site_result.state).to eq("")
+      end
+
+      it 'should set the correct is_new_account on IdSiteResult object' do
+        expect(@site_result.new_account?).to eq(true)
+      end
+    end
+
+    context 'with an expired token' do
+      let(:jwt_token) { JWT.encode({
+          'iat' => Time.now.to_i,
+          'aud' => test_api_key_id,
+          'sub' => application.href,
+          'path' => '',
+          'state' => '',
+          'exp' => Time.now.to_i - 1,
+          'isNewSub' => true,
+          'status' => "REGISTERED"
+        }, test_api_key_secret, 'HS256')
+      }
+
+      it 'should raise expiration error' do
+        expect {
+          application.handle_id_site_callback(callback_uri_base + jwt_token)
+        }.to raise_error(JWT::DecodeError)
+      end
+    end
+
+    context 'with a different client id (aud)' do
+      let(:jwt_token) { JWT.encode({
+          'iat' => Time.now.to_i,
+          'aud' => UUID.method(:random_create).call.to_s,
+          'sub' => application.href,
+          'path' => '',
+          'state' => '',
+          'isNewSub' => true,
+          'status' => "REGISTERED"
+        }, test_api_key_secret, 'HS256')
+      }
+
+      it 'should raise error' do
+        expect {
+          application.handle_id_site_callback(callback_uri_base + jwt_token)
+        }.to raise_error(Stormpath::Error)
+      end
+    end
+
+    context 'with an invalid exp value' do
+      let(:jwt_token) { JWT.encode({
+          'iat' => Time.now.to_i,
+          'aud' => test_api_key_id,
+          'sub' => application.href,
+          'path' => '',
+          'state' => '',
+          'exp' => 'not gona work',
+          'isNewSub' => true,
+          'status' => "REGISTERED"
+        }, test_api_key_secret, 'HS256')
+      }
+
+      it 'should error with the expiration error' do
+        expect {
+          application.handle_id_site_callback(callback_uri_base + jwt_token)
+        }.to raise_error(JWT::DecodeError)
+      end
+    end
+
+    context 'with an invalid signature' do
+      let(:jwt_token) { JWT.encode({
+          'iat' => Time.now.to_i,
+          'aud' => test_api_key_id,
+          'sub' => application.href,
+          'path' => '',
+          'state' => '',
+          'isNewSub' => true,
+          'status' => "REGISTERED"
+        }, 'false key', 'HS256')
+      }
+
+      it 'should reject the signature' do
+        expect {
+          application.handle_id_site_callback(callback_uri_base + jwt_token)
+        }.to raise_error(JWT::DecodeError)
       end
     end
   end

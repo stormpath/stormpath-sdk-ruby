@@ -24,14 +24,15 @@ class Stormpath::DataStore
 
   CACHE_REGIONS = %w(applications directories accounts groups groupMemberships accountMemberships tenants customData provider providerData)
 
-  attr_reader :client, :request_executor, :cache_manager
+  attr_reader :client, :request_executor, :cache_manager, :api_key, :base_url
 
-  def initialize(request_executor, cache_opts, client, base_url = nil)
+  def initialize(request_executor, api_key, cache_opts, client, base_url = nil)
     assert_not_nil request_executor, "RequestExecutor cannot be null."
 
     @client = client
     @base_url = base_url || DEFAULT_BASE_URL
     @request_executor = request_executor
+    @api_key = api_key
     initialize_cache cache_opts
   end
 
@@ -118,7 +119,7 @@ class Stormpath::DataStore
                MultiJson.dump(to_hash(resource))
              end
 
-      request = Request.new(http_method, href, query, Hash.new, body)
+      request = Request.new(http_method, href, query, Hash.new, body, @api_key)
       apply_default_request_headers request
       response = @request_executor.execute_request request
 

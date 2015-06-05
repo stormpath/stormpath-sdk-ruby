@@ -4,7 +4,7 @@ describe "ProviderAccountResolver" do
   context "given an instance of ProviderAccountResolver" do
 
     before do
-      data_store = Stormpath::DataStore.new "", {}, ""
+      data_store = Stormpath::DataStore.new "", "", {}, ""
       allow(test_api_client).to receive(:data_store).and_return(data_store)
       auth_result = Stormpath::Provider::AccountResult.new({}, test_api_client)
       allow(data_store).to receive(:create).and_return(auth_result)
