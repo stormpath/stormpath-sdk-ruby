@@ -51,10 +51,6 @@ class Stormpath::Resource::Collection
     self
   end
 
-  def size
-    current_page.items.size
-  end
-
   def order statement
     criteria.merge! order_by: statement
     self
