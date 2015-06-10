@@ -230,19 +230,19 @@ describe Stormpath::Resource::Collection, :vcr do
 
         expect(directory.groups.limit(30).count).to eq(100)
 
-        expect(directory.groups.limit(30).size).to eq(30)
+        expect(directory.groups.limit(30).current_page.size).to eq(100)
 
         expect(directory.groups.limit(30).offset(30).count).to eq(70)
 
-        expect(directory.groups.limit(30).offset(30).size).to eq(30)
+        expect(directory.groups.limit(30).offset(30).current_page.size).to eq(100)
 
         expect(directory.groups.limit(30).offset(60).count).to eq(40)
 
-        expect(directory.groups.limit(30).offset(60).size).to eq(30)
+        expect(directory.groups.limit(30).offset(60).current_page.size).to eq(100)
 
         expect(directory.groups.limit(30).offset(90).count).to eq(10)
 
-        expect(directory.groups.limit(30).offset(90).size).to eq(10)
+        expect(directory.groups.limit(30).offset(90).current_page.size).to eq(100)
 
         expect(directory.groups.limit(30).map {|group| group.name }).to eq(('1'..'100').to_a.sort)
 
