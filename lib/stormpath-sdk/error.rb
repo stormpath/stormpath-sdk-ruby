@@ -13,27 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Error < RuntimeError
+module Stormpath
+  class Error < RuntimeError
 
-  def initialize error = nil
-    super !error.nil? ? error.message : ''
-    @error = error
+    attr_reader :status, :code, :developer_message, :more_info
+
+    def initialize error = NilError.new
+      super error.message
+      @status = error.status
+      @code = error.code
+      @developer_message = error.developer_message
+      @more_info = error.more_info
+    end
+
+    private
+
+      class NilError
+        def message; '' end
+        def status; -1 end
+        def code; -1 end
+        def developer_message; end
+        def more_info; end
+      end
+
   end
-
-  def status
-    !@error.nil? ? @error.status : -1
-  end
-
-  def code
-    !@error.nil? ? @error.code : -1
-  end
-
-  def developer_message
-    !@error.nil? ? @error.developer_message : nil
-  end
-
-  def more_info
-    !@error.nil? ? @error.more_info : nil
-  end
-
 end

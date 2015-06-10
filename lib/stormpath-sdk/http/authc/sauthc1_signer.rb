@@ -56,7 +56,7 @@ module Stormpath
           # have to have it in the request by the time we sign.
           host_header = uri.host
 
-          if !default_port?(uri)
+          unless default_port?(uri)
             host_header << ":" << uri.port.to_s
           end
 
@@ -71,21 +71,18 @@ module Stormpath
           signed_headers_string = get_signed_headers request
           request_payload_hash_hex = to_hex(hash_text(get_request_payload(request)))
 
-          canonical_request = method + NL +
-              canonical_resource_path + NL +
-              canonical_query_string + NL +
-              canonical_headers_string + NL +
-              signed_headers_string + NL +
-              request_payload_hash_hex
+          canonical_request = [method,
+                               canonical_resource_path,
+                               canonical_query_string,
+                               canonical_headers_string,
+                               signed_headers_string,
+                               request_payload_hash_hex].join(NL)
 
-          id = api_key.id + "/" + date_stamp + "/" + nonce + "/" + ID_TERMINATOR
+          id = [api_key.id, date_stamp, nonce, ID_TERMINATOR].join("/")
 
           canonical_request_hash_hex = to_hex(hash_text(canonical_request))
 
-          string_to_sign = ALGORITHM + NL +
-              time_stamp + NL +
-              id + NL +
-              canonical_request_hash_hex
+          string_to_sign = [ALGORITHM, time_stamp, id, canonical_request_hash_hex].join(NL)
 
           # SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
           k_secret = to_utf8 AUTHENTICATION_SCHEME + api_key.secret
@@ -102,7 +99,6 @@ module Stormpath
               create_name_value_pair(SAUTHC1_SIGNATURE, signature_hex)
 
           request.http_headers.store AUTHORIZATION_HEADER, authorization_header
-
         end
 
 
@@ -123,7 +119,7 @@ module Stormpath
           result
         end
 
-        protected
+        private
 
           def canonicalize_query_string request
             request.to_s_query_string true
@@ -149,17 +145,11 @@ module Stormpath
           end
 
           def get_request_payload_without_query_params request
-            result = ''
-            if !request.body.nil?
-              result = request.body
-            end
-            result
+            request.body || ''
           end
 
-        private
-
           def create_name_value_pair name, value
-            name + '=' + value
+            "#{name}=#{value}"
           end
 
           def canonicalize_resource_path resource_path
@@ -186,10 +176,10 @@ module Stormpath
             sorted_headers = request.http_headers.keys.sort!
             result = ''
             sorted_headers.each do |header|
-              if !result.empty?
-                result << ';' << header
-              else
+              if result.empty?
                 result << header
+              else
+                result << ';' << header
               end
             end
             result.downcase

@@ -1,35 +1,14 @@
----
-env:
-  global:
-  - secure: |-
-      USqTzWnRXTxgwF6wpwT3UHx4hoo5QIWP6bmmJMOIG/jLWTV3cCZ4y3LEuGx/
-      2x4gTyRuAAbVpJD8n9k/h7Vh6xZ8ts715kRL2OCqD+yOEioKG9RTWWzFCsNY
-      V3wic2+25BHgyCcnXtNFTjP/TfIKjVQETQjn3Ast2foThmyLVYo=
-  - secure: |-
-      UDZPetAAzPMtlosw481STlt60UFEei28DlBrHzDS7j/MKgkum9ZECPm4h7Dr
-      MXsDBp3GghLqGWc5+yNvlV2RSSZdI6YCeTSG7dXu3Tb1vTLd8Ia7pVZg3Ut2
-      5Ru3+xBVHZ/4xrc+8bfL2FGpH8T1mT6GZt9BfkY8v4a+rsn8FLA=
-  - secure: |-
-      FRAT9Sjpv2MUmIu9/uaXAa2LRKmsR0vHz3Vc8oCiDIKihqFq4YF9DpHtQ0nF
-      OYwdcprSH5RzV/bFsf6XcPP4IlIhSRj333FJoHXfmon5cdPcpt70O4in+4YI
-      gXPNGgbzCpZ4WRsFbmtVazQwpXBUg2fYK8y0jNrhZoVZ9UK61Zc=
-  - secure: |-
-      WvFXv/1RKdnh/tJFRlCDMKpiNre0+K3qWLf9PaQzjvWyTAVtq3NK7Av3JSoR
-      EoPy/0VCzlBJPfcPa+EmLO518trgsAJ1dmBOSUmNhQOyl9bfOFlzvjqZ20Ru
-      eMksU4t3HbbBdh3LqR9LPxViJGfUk3LvaiuWwp8y0GB5jMjrASg=
-  - secure: |-
-      HggUi1F44G7uHy3PyKcBE54JpBMIjrmROvzrKkCPOmRP5DoeZQ+wU+8zJ89z
-      4YsxOzQjYLwStB4U95LEZgQYvcbdfjkCY4uthb8XbmSeT7KSkMifhNT619+D
-      sTekVOlY9Ei+8O/BUr4ZCE+Fs8/8obFOxooWxxdHlaYsjj/atm4=
-  - secure: |-
-      cJ2ExNmmGSjBHIgjZ6zs+AUEVBSfyTj2qG9SNV0j/P9mnjg32irU/tG7f1yI
-      yvaGCsPr2h6rwtiMb8QHA4tMqHsoay0e9s7jyBtn6amgUaLsV2vdhQTWDuIU
-      cksOE3PMIovYl9ANLb6KrhDWt7ue/fOxEALh0a5rAu50C/tNvgo=
-
 language: ruby
 rvm:
 - 1.9.3
 - 2.0.0
 - 2.1.2
 services:
-  - redis-server
+- redis-server
+env:
+  global:
+  - secure: cfX/Vagk7SskUp1cnuTTfQHNWz6pjx7bHJOa25ahk/3Jvsqz37qf8MLNs8uRUb/LN63G/YNUtrcRZQiyDS9WHehQy0p7IO68UuOG4zqkJE0iemR0kToCTHMbyLTOB70nhTuwmRfh1KeT5Ja3D9TOtApQErU5IQaKm5jP8CZb4PA=
+  - secure: Vhb4qkFc0BcRkJaPU6ZbM9vPHaEHoz/A1LlQ1IMrEdXS/nUabd4l32q6zjJZvfHJ5bI1PXgk1BFztVGT65UT7Uu17KKawzLZWDLmrgzRESkKDj/Ld9Wg79DY6ooJ/juWBrWuJtoNOFKy6CqLdCKWIzNkd9zG+au3qoFP8LfhRh4=
+  - secure: dKmkzv90Fn1JQpSc2l+cESLFYw3bnN5TsgDKTc2tFFi285EJuqd2z22wfDGcaYAoqX/ck+YTdPqVH6trrC7b3pSMqJSBEaHtWiYMbEkmf/QWrVAHy4LEKFAcs0oACjwVRe7CGBu8RRBWcl8I1STpYm11S8WDe8Y/GHo0HnXipHo=
+  - secure: FejMHUo69w52zjPBMfUThhhgj7md/dj+7gf+1d0sgDuDfZ+gECEyHF8iWvkm64k3j+PX4E/y44HdV1+qIMWTGNA0xSZNFEHBBJrEC1BRKm9BkT8W0KBcupmLRHW0BtLWMrqtKOgOyDEdoufuLx7wDpTNslPeGJ4NUZIGEDTuwLc=
+  - secure: DyEw82o0ozA9rbbgYUk8jiC/KNwB0x0OuVv/TX7Xso3uXgfTL1m3IWYLDX6kvV4QIvHNaNdj1g02ddnRwZwuvA3IH81J8+mkZ6aIXTS1YKZPEZMSqewZNOGQPRVaUOeQ9ymQtE7bfxWkViF2JzJlGzc3IxYUKHeo+NE/Hgehuz4=
