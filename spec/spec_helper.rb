@@ -10,6 +10,8 @@ require 'stormpath-sdk'
 require 'pry'
 require 'webmock/rspec'
 require 'vcr'
+require 'jwt'
+require 'uuidtools'
 
 Dir['./spec/support/*.rb'].each { |file| require file }
 

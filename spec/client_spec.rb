@@ -262,7 +262,7 @@ properties
       it 'initializes the request executor with the proxy' do
         expect(Stormpath::Http::HttpClientRequestExecutor)
           .to receive(:new)
-          .with(api_key, proxy: http_proxy)
+          .with(proxy: http_proxy)
           .and_return request_executor
 
         Stormpath::Client.new api_key: api_key, proxy: http_proxy
