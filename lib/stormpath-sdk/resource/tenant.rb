@@ -14,10 +14,12 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Tenant < Stormpath::Resource::Instance
+  include Stormpath::Resource::CustomDataStorage
 
   prop_reader :name, :key
 
   has_many :applications
   has_many :directories
+  has_one :custom_data
 
 end
