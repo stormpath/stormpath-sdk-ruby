@@ -366,7 +366,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'should return IdSiteResult object' do
-        expect(@site_result).to be_kind_of(Stormpath::IdSiteResult)
+        expect(@site_result).to be_kind_of(Stormpath::IdSite::IdSiteResult)
       end
 
       it 'should set the correct account on IdSiteResult object' do

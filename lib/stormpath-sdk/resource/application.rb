@@ -78,7 +78,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
     raise Stormpath::Error.new if jwt_response["aud"] != client.data_store.api_key.id
 
-    Stormpath::IdSiteResult.new(jwt_response)
+    Stormpath::IdSite::IdSiteResult.new(jwt_response)
   end
 
   def send_password_reset_email email
