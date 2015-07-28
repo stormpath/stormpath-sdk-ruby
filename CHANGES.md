@@ -1,6 +1,16 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.0.0.beta.8
+--------------------
+
+Released on July 28, 2015
+
+- Added support for Id Site.
+- Added custom data support for tenant, application and directory resources.
+- Added the size property to the collection resources.
+
+
 Version 1.0.0.beta.7
 --------------------
 

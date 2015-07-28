@@ -14,6 +14,6 @@
 # limitations under the License.
 #
 module Stormpath
-  VERSION = '1.0.0.beta.7'
-  VERSION_DATE = '2014-07-21'
+  VERSION = '1.0.0.beta.8'
+  VERSION_DATE = '2015-07-28'
 end
