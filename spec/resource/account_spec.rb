@@ -39,6 +39,7 @@ describe Stormpath::Resource::Account, :vcr do
       expect(account.email_verification_token).to be_nil
       expect(account.groups).to be_a Stormpath::Resource::Collection
       expect(account.group_memberships).to be_a Stormpath::Resource::Collection
+      expect(account.applications).to be_a Stormpath::Resource::Collection
     end
   end
 
