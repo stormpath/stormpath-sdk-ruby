@@ -15,6 +15,7 @@
 #
 class Stormpath::Resource::Application < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
+  include Stormpath::Resource::CustomDataStorage
   include UUIDTools
 
   class LoadError < Stormpath::Error; end
@@ -30,6 +31,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   has_one :default_account_store_mapping, class_name: :accountStoreMapping
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
+  has_one :custom_data
 
   def self.load composite_url
     begin
@@ -76,7 +78,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
     raise Stormpath::Error.new if jwt_response["aud"] != client.data_store.api_key.id
 
-    Stormpath::IdSiteResult.new(jwt_response)
+    Stormpath::IdSite::IdSiteResult.new(jwt_response)
   end
 
   def send_password_reset_email email

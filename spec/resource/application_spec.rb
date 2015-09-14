@@ -29,6 +29,7 @@ describe Stormpath::Resource::Application, :vcr do
     expect(application.tenant).to be_a Stormpath::Resource::Tenant
     expect(application.default_account_store_mapping).to be_a Stormpath::Resource::AccountStoreMapping
     expect(application.default_group_store_mapping).to be_a Stormpath::Resource::AccountStoreMapping
+    expect(application.custom_data).to be_a Stormpath::Resource::CustomData
 
     expect(application.groups).to be_a Stormpath::Resource::Collection
     expect(application.accounts).to be_a Stormpath::Resource::Collection
@@ -290,6 +291,15 @@ describe Stormpath::Resource::Application, :vcr do
     end
   end
 
+  describe '#create_application_with_custom_data' do
+    it 'creates an application with custom data' do
+      application.custom_data["category"] = "classified"
+      application.save
+
+      expect(application.custom_data["category"]).to eq("classified")
+    end
+  end
+
   describe '#create_id_site_url' do
     let(:jwt_token) { JWT.encode({
         'iat' => Time.now.to_i,
@@ -356,7 +366,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'should return IdSiteResult object' do
-        expect(@site_result).to be_kind_of(Stormpath::IdSiteResult)
+        expect(@site_result).to be_kind_of(Stormpath::IdSite::IdSiteResult)
       end
 
       it 'should set the correct account on IdSiteResult object' do

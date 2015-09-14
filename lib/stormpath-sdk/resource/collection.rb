@@ -86,7 +86,7 @@ class Stormpath::Resource::Collection
     class CollectionPage < Stormpath::Resource::Base
       ITEMS = 'items'
 
-      prop_accessor :offset, :limit
+      prop_accessor :offset, :limit, :size
 
       attr_accessor :item_type
 

@@ -21,6 +21,7 @@ describe Stormpath::Resource::Directory, :vcr do
       expect(directory.tenant).to be_a Stormpath::Resource::Tenant
       expect(directory.groups).to be_a Stormpath::Resource::Collection
       expect(directory.accounts).to be_a Stormpath::Resource::Collection
+      expect(directory.custom_data).to be_a Stormpath::Resource::CustomData
     end
   end
 
@@ -125,6 +126,23 @@ describe Stormpath::Resource::Directory, :vcr do
       end
     end
 
+  end
+
+  describe '#create_directory_with_custom_data' do
+    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
+
+    after do
+      directory.delete if directory
+    end
+
+    it 'creates an directory with custom data' do
+      directory.custom_data["category"] = "classified"
+
+      directory.save
+      expect(directory.name).to eq(random_directory_name)
+      expect(directory.description).to eq('description_for_some_test_directory')
+      expect(directory.custom_data["category"]).to eq("classified")
+    end
   end
 
   describe '#create_account_with_custom_data' do

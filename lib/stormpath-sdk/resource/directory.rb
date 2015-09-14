@@ -15,6 +15,7 @@
 #
 class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
+  include Stormpath::Resource::CustomDataStorage
 
   prop_accessor :name, :description
 
@@ -22,6 +23,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
 
   has_many :accounts, can: [:get, :create]
   has_many :groups, can: [:get, :create]
+  has_one :custom_data
 
   def create_account account, registration_workflow_enabled=nil
     href = accounts.href

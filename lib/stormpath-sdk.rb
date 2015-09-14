@@ -22,7 +22,6 @@ module Stormpath
   autoload :ApiKey, 'stormpath-sdk/api_key'
   autoload :Client, 'stormpath-sdk/client'
   autoload :DataStore, 'stormpath-sdk/data_store'
-  autoload :IdSiteResult, 'stormpath-sdk/id_site_result'
 
   module Resource
     autoload :Expansion, 'stormpath-sdk/resource/expansion'
@@ -91,5 +90,9 @@ module Stormpath
     module Authc
       autoload :Sauthc1Signer, "stormpath-sdk/http/authc/sauthc1_signer"
     end
+  end
+
+  module IdSite
+    autoload :IdSiteResult, 'stormpath-sdk/id_site/id_site_result'
   end
 end
