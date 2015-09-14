@@ -74,7 +74,7 @@ shared_examples_for 'custom_data_storage' do
   RESERVED_FIELDS.each do |reserved_field|
     it "set reserved data #{reserved_field} should raise error" do
       custom_data_storage.custom_data[reserved_field] = 12
-      expect{ custom_data_storage.custom_data.save }.to raise_error
+      expect{ custom_data_storage.custom_data.save }.to raise_error Stormpath::Error
     end
   end
 
