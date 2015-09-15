@@ -34,6 +34,7 @@ describe Stormpath::Resource::Application, :vcr do
     expect(application.groups).to be_a Stormpath::Resource::Collection
     expect(application.accounts).to be_a Stormpath::Resource::Collection
     expect(application.password_reset_tokens).to be_a Stormpath::Resource::Collection
+    expect(application.verification_emails).to be_a Stormpath::Resource::Collection
     expect(application.account_store_mappings).to be_a Stormpath::Resource::Collection
   end
 
@@ -233,6 +234,32 @@ describe Stormpath::Resource::Application, :vcr do
           end.to raise_error Stormpath::Error
         end
       end
+    end
+  end
+
+  describe '#verification_emails' do
+    let(:directory) { test_directory_with_verification }
+
+    let(:account) do
+      directory.accounts.create({
+        email: random_email,
+        given_name: 'Ruby SDK',
+        password: 'P@$$w0rd',
+        surname: 'SDK',
+        username: random_user_name
+      })
+    end
+
+    let(:verification_emails) do
+      application.verification_emails.create(login: account.email)
+    end
+
+    after do
+      account.delete if account
+    end
+
+    it 'returnes verification email' do
+      expect(verification_emails).to be_kind_of Stormpath::Resource::VerificationEmail
     end
   end
 
