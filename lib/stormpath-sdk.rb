@@ -47,6 +47,7 @@ module Stormpath
     autoload :GroupMembership, 'stormpath-sdk/resource/group_membership'
     autoload :AccountMembership, 'stormpath-sdk/resource/account_membership'
     autoload :PasswordResetToken, 'stormpath-sdk/resource/password_reset_token'
+    autoload :VerificationEmail, 'stormpath-sdk/resource/verification_email'
   end
 
   module Cache
