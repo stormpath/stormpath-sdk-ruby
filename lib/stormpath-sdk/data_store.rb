@@ -221,7 +221,12 @@ class Stormpath::DataStore
 
       response = execute_request 'post', q_href, resource
 
-      instantiate return_type, response.to_hash
+      instantiate return_type, parse_response(response)
+    end
+
+    def parse_response(response)
+      return {} if response.is_a? String and response.blank?
+      response.to_hash
     end
 
     def clear_cache_on_save(resource)
