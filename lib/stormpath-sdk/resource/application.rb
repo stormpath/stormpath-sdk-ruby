@@ -55,6 +55,10 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     base = client.data_store.base_url.sub("v" + Stormpath::DataStore::DEFAULT_API_VERSION.to_s, "sso")
     base += '/logout' if options[:logout]
 
+    if options[:callback_uri].empty?
+      raise Stormpath::IdSite::Error.new(:jwt_cb_uri_incorrect)
+    end
+
     token = JWT.encode({
         'iat' => Time.now.to_i,
         'jti' => UUID.method(:random_create).call.to_s,
@@ -75,11 +79,21 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     params = CGI::parse(uri.query)
     token = params["jwtResponse"].first
 
-    jwt_response, _header = JWT.decode(token, client.data_store.api_key.secret)
+    begin
+      jwt_response, _header = JWT.decode(token, client.data_store.api_key.secret)
+    rescue JWT::ExpiredSignature => error
+      # JWT raises error if the signature expired, we need to capture this and
+      # rerase IdSite::Error
+      raise Stormpath::IdSite::Error.new(:jwt_expired)
+    end
 
-    raise Stormpath::Error.new if jwt_response["aud"] != client.data_store.api_key.id
+    id_site_result = Stormpath::IdSite::IdSiteResult.new(jwt_response)
 
-    Stormpath::IdSite::IdSiteResult.new(jwt_response)
+    if id_site_result.jwt_invalid?(api_key_id)
+      raise Stormpath::IdSite::Error.new(:jwt_invalid)
+    end
+
+    id_site_result
   end
 
   def send_password_reset_email email
@@ -101,8 +115,11 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   private
 
-    def create_password_reset_token email
-      password_reset_tokens.create email: email
-    end
+  def api_key_id
+    client.data_store.api_key.id
+  end
 
+  def create_password_reset_token email
+    password_reset_tokens.create email: email
+  end
 end
