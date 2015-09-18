@@ -95,5 +95,6 @@ module Stormpath
 
   module IdSite
     autoload :IdSiteResult, 'stormpath-sdk/id_site/id_site_result'
+    autoload :Error, 'stormpath-sdk/id_site/error'
   end
 end
