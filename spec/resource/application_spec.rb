@@ -365,6 +365,25 @@ describe Stormpath::Resource::Application, :vcr do
       it 'shoud create a request to /sso/logout' do
       end
     end
+
+    context 'without providing cb_uri' do
+      let(:create_id_site_url_result) do
+        options = { callback_uri: '' }
+        application.create_id_site_url options
+      end
+
+      it 'should raise Stormpath Error with correct id_site error data' do
+        begin
+          create_id_site_url_result
+        rescue Stormpath::Error => error
+          expect(error.status).to eq(400)
+          expect(error.code).to eq(400)
+          expect(error.message).to eq("The specified callback URI (cb_uri) is not valid")
+          expect(error.developer_message).to eq("The specified callback URI (cb_uri) is not valid. Make sure the "\
+            "callback URI specified in your ID Site configuration matches the value specified.")
+        end 
+      end
+    end
   end
 
   describe '#handle_id_site_callback' do
@@ -426,10 +445,21 @@ describe Stormpath::Resource::Application, :vcr do
         }, test_api_key_secret, 'HS256')
       }
 
+      it 'should raise Stormpath Error with correct data' do
+        begin
+          application.handle_id_site_callback(callback_uri_base + jwt_token)
+        rescue Stormpath::Error => error
+          expect(error.status).to eq(400)
+          expect(error.code).to eq(10011)
+          expect(error.message).to eq("Token is invalid")
+          expect(error.developer_message).to eq("Token is no longer valid because it has expired")
+        end
+      end
+
       it 'should raise expiration error' do
         expect {
           application.handle_id_site_callback(callback_uri_base + jwt_token)
-        }.to raise_error(JWT::DecodeError)
+        }.to raise_error(Stormpath::Error)
       end
     end
 
@@ -450,6 +480,18 @@ describe Stormpath::Resource::Application, :vcr do
           application.handle_id_site_callback(callback_uri_base + jwt_token)
         }.to raise_error(Stormpath::Error)
       end
+
+      it 'should raise Stormpath Error with correct id_site error data' do
+        begin
+          application.handle_id_site_callback(callback_uri_base + jwt_token)
+        rescue Stormpath::Error => error
+          expect(error.status).to eq(400)
+          expect(error.code).to eq(10012)
+          expect(error.message).to eq("Token is invalid")
+          expect(error.developer_message).to eq("Token is invalid because the issued at time (iat) "\
+            "is after the current time")
+        end
+      end
     end
 
     context 'with an invalid exp value' do
@@ -465,10 +507,10 @@ describe Stormpath::Resource::Application, :vcr do
         }, test_api_key_secret, 'HS256')
       }
 
-      it 'should error with the expiration error' do
+      it 'should error with the stormpath error' do  
         expect {
           application.handle_id_site_callback(callback_uri_base + jwt_token)
-        }.to raise_error(JWT::DecodeError)
+        }.to raise_error(Stormpath::Error)
       end
     end
 
