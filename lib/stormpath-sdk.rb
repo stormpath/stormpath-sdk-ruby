@@ -48,6 +48,7 @@ module Stormpath
     autoload :AccountMembership, 'stormpath-sdk/resource/account_membership'
     autoload :PasswordResetToken, 'stormpath-sdk/resource/password_reset_token'
     autoload :VerificationEmail, 'stormpath-sdk/resource/verification_email'
+    autoload :OauthPolicy, 'stormpath-sdk/resource/oauth_policy'
   end
 
   module Cache
