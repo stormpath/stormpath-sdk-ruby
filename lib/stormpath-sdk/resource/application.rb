@@ -29,11 +29,11 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_many :account_store_mappings, can: [:get, :create]
   has_many :groups, can: [:get, :create]
   has_many :verification_emails, can: :create
-  has_many :oauth_policies, can: [:get]
 
   has_one :default_account_store_mapping, class_name: :accountStoreMapping
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
   has_one :custom_data
+  has_one :o_auth_policy, class_name: :oauthPolicy
 
   def self.load composite_url
     begin
