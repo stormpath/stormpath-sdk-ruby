@@ -98,4 +98,8 @@ module Stormpath
     autoload :IdSiteResult, 'stormpath-sdk/id_site/id_site_result'
     autoload :Error, 'stormpath-sdk/id_site/error'
   end
+  
+  module Oauth
+    autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
+  end
 end
