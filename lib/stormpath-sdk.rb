@@ -101,5 +101,7 @@ module Stormpath
   
   module Oauth
     autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
+    autoload :AccessTokenResponse, "stormpath-sdk/oauth/access_token_response"
+    autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"
   end
 end
