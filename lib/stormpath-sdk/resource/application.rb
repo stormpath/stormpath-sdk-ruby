@@ -114,6 +114,14 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Provider::AccountResolver.new(data_store).resolve_provider_account(href, request)
   end
 
+  def oauth_authenticate(options = {})
+    if options[:body][:grant_type] == "password"
+      Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, options)
+    elsif options[:headers][:authorization]
+      Stormpath::Jwt::Authenticator.new(data_store).authenticate(href, options) 
+    end 
+  end
+
   private
 
   def api_key_id
