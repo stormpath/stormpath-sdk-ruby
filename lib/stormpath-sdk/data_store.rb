@@ -115,12 +115,16 @@ class Stormpath::DataStore
         return cached_result if cached_result
       end
 
-      body = if resource
-               MultiJson.dump(to_hash(resource))
-             end
+      body = extract_body_from_resource(resource)
 
       request = Request.new(http_method, href, query, Hash.new, body, @api_key)
-      apply_default_request_headers request
+
+      if resource.try(:form_data?) 
+        apply_form_data_request_headers request
+      else
+        apply_default_request_headers request
+      end
+
       response = @request_executor.execute_request request
 
       result = response.body.length > 0 ? MultiJson.load(response.body) : ''
@@ -209,6 +213,11 @@ class Stormpath::DataStore
         request.http_headers.store 'Content-Type', 'application/json'
       end
     end
+    
+    def apply_form_data_request_headers(request)
+      request.http_headers.store 'Content-Type', 'application/x-www-form-urlencoded'
+      request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
+    end
 
     def save_resource(href, resource, return_type)
       assert_not_nil resource, "resource argument cannot be null."
@@ -255,6 +264,32 @@ class Stormpath::DataStore
           clear_cache resource.application.href
         end
       end
+    end
+
+    def extract_body_from_resource(resource)
+      return if resource.nil?
+      form_data = resource.try(:form_data?)
+
+      if form_data
+        form_request_parse(resource) 
+      else
+        MultiJson.dump(to_hash(resource))
+      end
+    end
+
+    def form_request_parse(resource)
+      data = ""
+      
+      property_names = resource.get_dirty_property_names
+      property_names.each do |name|
+        if name != "formData"
+          property = resource.get_property name, ignore_camelcasing: true
+          data += name.underscore + '=' + property.to_s
+          data += '&' unless name == property_names.last
+        end
+      end
+
+      data
     end
 
     def to_hash(resource)
