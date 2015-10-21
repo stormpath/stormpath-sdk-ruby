@@ -104,4 +104,9 @@ module Stormpath
     autoload :AccessTokenResponse, "stormpath-sdk/oauth/access_token_response"
     autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"
   end
+
+  module Jwt
+    autoload :Authenticator, "stormpath-sdk/jwt/authenticator"
+    autoload :AuthenticationResult, "stormpath-sdk/jwt/authentication_result.rb"
+  end
 end
