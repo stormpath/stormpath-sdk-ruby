@@ -6,9 +6,8 @@ module Stormpath
       end
 
       def authenticate parent_href, options
-        #TODO add validations here
-
-        att
+        href = parent_href + '/authTokens/' + options[:headers][:authorization]
+        @data_store.get_resource href, Stormpath::Jwt::AuthenticationResult
       end
     end
   end
