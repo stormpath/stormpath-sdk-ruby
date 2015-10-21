@@ -1,7 +1,7 @@
 module Stormpath
   module Oauth
     class PasswordGrant < Stormpath::Resource::Base
-      prop_accessor :grant_type, :username, :password, :form_data
+      prop_accessor :grant_type, :username, :password
 
       def set_options(options)
         set_property :grant_type, options[:body][:grant_type]

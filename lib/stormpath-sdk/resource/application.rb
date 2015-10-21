@@ -115,7 +115,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
 
   def oauth_authenticate(options = {})
-    if options[:body] && options[:body][:grant_type] == "password"
+    if options[:body] && (options[:body][:grant_type] == "password" || options[:body][:grant_type] == "refresh_token")
       Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, options)
     elsif options[:headers] && options[:headers][:authorization]
       Stormpath::Jwt::Authenticator.new(data_store).authenticate(href, options) 
