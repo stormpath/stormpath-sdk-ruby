@@ -17,7 +17,7 @@ module Stormpath
         attempt.set_options(options)
         
         href = parent_href + '/oauth/token'
-        @data_store.create href, attempt, Stormpath::Oauth::AccessTokenResponse
+        @data_store.create href, attempt, Stormpath::Resource::AccessToken
       end
     end
   end

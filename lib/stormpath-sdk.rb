@@ -49,6 +49,7 @@ module Stormpath
     autoload :PasswordResetToken, 'stormpath-sdk/resource/password_reset_token'
     autoload :VerificationEmail, 'stormpath-sdk/resource/verification_email'
     autoload :OauthPolicy, 'stormpath-sdk/resource/oauth_policy'
+    autoload :AccessToken, 'stormpath-sdk/resource/access_token'
   end
 
   module Cache
@@ -101,7 +102,7 @@ module Stormpath
   
   module Oauth
     autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
-    autoload :AccessTokenResponse, "stormpath-sdk/oauth/access_token_response"
+    #autoload :AccessTokenResponse, "stormpath-sdk/oauth/access_token_response"
     autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"
     autoload :RefreshToken, "stormpath-sdk/oauth/refresh_token"
   end
