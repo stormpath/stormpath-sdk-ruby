@@ -3,10 +3,19 @@ require 'spec_helper'
 describe Stormpath::Resource::Directory, :vcr do
 
   describe "instances should respond to attribute property methods" do
+    let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
+    let(:application) { test_api_client.applications.get app.href }
     let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
+    let(:directory_with_verification) { test_directory_with_verification }
+
+    before do
+      test_api_client.account_store_mappings.create({ application: app, account_store: directory_with_verification,
+        list_index: 1, is_default_account_store: false, is_default_group_store: false })
+    end
 
     after do
       directory.delete if directory
+      application.delete if application
     end
 
     it do
