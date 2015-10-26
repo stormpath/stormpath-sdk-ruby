@@ -10,9 +10,6 @@ describe Stormpath::Resource::Application, :vcr do
   before do
    test_api_client.account_store_mappings.create({ application: app, account_store: directory,
       list_index: 1, is_default_account_store: true, is_default_group_store: true })
-
-   test_api_client.account_store_mappings.create({ application: app, account_store: directory_with_verification,
-      list_index: 1, is_default_account_store: false, is_default_group_store: false })
   end
 
   after do
@@ -242,6 +239,12 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe '#verification_emails' do
+    let(:directory_with_verification) { test_directory_with_verification }
+
+    before do
+      test_api_client.account_store_mappings.create({ application: app, account_store: directory_with_verification,
+        list_index: 1, is_default_account_store: false, is_default_group_store: false })
+    end
 
     let(:account) do
       directory_with_verification.accounts.create({
