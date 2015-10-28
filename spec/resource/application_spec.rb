@@ -542,6 +542,15 @@ describe Stormpath::Resource::Application, :vcr do
 
   describe '#oauth_authenticate' do
     let(:account_data) { build_account }
+    let(:aquire_token) do
+      application.oauth_authenticate({ 
+        body: { 
+          username: account_data[:email], 
+          grant_type: 'password', 
+          password: account_data[:password] 
+        } 
+      })
+    end
 
     before do
       application.accounts.create account_data
@@ -564,17 +573,16 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
 
-    context 'validate access token' do
-      let(:aquire_token) do
-        application.oauth_authenticate({ 
-          body: { 
-            username: account_data[:email], 
-            grant_type: 'password', 
-            password: account_data[:password] 
-          } 
-        })
-      end
+    context 'refresh token' do
+      let(:oauth_data) { { body: { username: account_data[:email], grant_type: 'refresh_token', refresh_token: aquire_token.refresh_token} } }
+      let(:oauth_authenticate) { application.oauth_authenticate(oauth_data) }
 
+      it 'should return access token response with refreshed token' do
+        expect(oauth_authenticate).to be_kind_of(Stormpath::Resource::AccessToken)
+      end
+    end
+
+    context 'validate access token' do
       let(:oauth_data) { { headers: { authorization: aquire_token.access_token } } } 
       let(:oauth_authenticate) { application.oauth_authenticate(oauth_data) }
 
