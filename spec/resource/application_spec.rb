@@ -547,7 +547,7 @@ describe Stormpath::Resource::Application, :vcr do
       application.accounts.create account_data
     end
   
-    context 'with valida data' do
+    context 'generate access token' do
       let(:oauth_data) { { body: { username: account_data[:email], grant_type: 'password', password: account_data[:password] } } }
       let(:oauth_authenticate) { application.oauth_authenticate(oauth_data) }
 
@@ -561,6 +561,34 @@ describe Stormpath::Resource::Application, :vcr do
         expect(oauth_authenticate.token_type).not_to be_empty
         expect(oauth_authenticate.expires_in).not_to be_nil
         expect(oauth_authenticate.stormpath_access_token_href).not_to be_empty
+      end
+    end
+
+    context 'validate access token' do
+      let(:aquire_token) do
+        application.oauth_authenticate({ 
+          body: { 
+            username: account_data[:email], 
+            grant_type: 'password', 
+            password: account_data[:password] 
+          } 
+        })
+      end
+
+      let(:oauth_data) { { headers: { authorization: aquire_token.access_token } } } 
+      let(:oauth_authenticate) { application.oauth_authenticate(oauth_data) }
+
+      it 'should return authentication result response' do
+        expect(oauth_authenticate).to be_kind_of(Stormpath::Jwt::AuthenticationResult)
+      end
+
+      it 'returens success on valid token' do
+        expect(oauth_authenticate.href).not_to be_empty 
+        expect(oauth_authenticate.account).not_to be_empty 
+        expect(oauth_authenticate.application).not_to be_empty 
+        expect(oauth_authenticate.jwt).not_to be_empty 
+        expect(oauth_authenticate.tenant).not_to be_empty 
+        expect(oauth_authenticate.expanded_jwt).not_to be_empty 
       end
     end
   end

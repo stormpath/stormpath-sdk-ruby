@@ -1,12 +1,14 @@
 module Stormpath
   module Oauth
     class Authenticator
+      include Stormpath::Util::Assert
+
       def initialize(data_store)
         @data_store = data_store
       end
 
       def authenticate parent_href, options
-        #TODO maybe add here some validations
+        assert_not_nil parent_href, "parent_href must be specified"
 
         if options[:body][:grant_type] == 'password'
           attempt = @data_store.instantiate PasswordGrant
