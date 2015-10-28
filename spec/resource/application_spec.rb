@@ -539,4 +539,29 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
   end
+
+  describe '#oauth_authenticate' do
+    let(:account_data) { build_account }
+
+    before do
+      application.accounts.create account_data
+    end
+  
+    context 'with valida data' do
+      let(:oauth_data) { { body: { username: account_data[:email], grant_type: 'password', password: account_data[:password] } } }
+      let(:oauth_authenticate) { application.oauth_authenticate(oauth_data) }
+
+      it 'should return access token response' do
+        expect(oauth_authenticate).to be_kind_of(Stormpath::Resource::AccessToken)
+      end
+
+      it 'response should contain token data' do
+        expect(oauth_authenticate.access_token).not_to be_empty
+        expect(oauth_authenticate.refresh_token).not_to be_empty
+        expect(oauth_authenticate.token_type).not_to be_empty
+        expect(oauth_authenticate.expires_in).not_to be_nil
+        expect(oauth_authenticate.stormpath_access_token_href).not_to be_empty
+      end
+    end
+  end
 end
