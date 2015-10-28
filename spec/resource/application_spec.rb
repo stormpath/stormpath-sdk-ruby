@@ -611,5 +611,16 @@ describe Stormpath::Resource::Application, :vcr do
         expect(oauth_authenticate.expanded_jwt).not_to be_empty 
       end
     end
+
+    context 'delete token' do
+      it 'after token was deleted user can authenticate with the same token' do
+        access_token = aquire_token.access_token
+        aquire_token.delete
+
+        expect {
+          response = application.oauth_authenticate( { headers: { authorization: access_token } } )
+        }.to raise_error(Stormpath::Error)
+      end
+    end
   end
 end
