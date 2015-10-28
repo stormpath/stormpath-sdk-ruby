@@ -580,6 +580,18 @@ describe Stormpath::Resource::Application, :vcr do
       it 'should return access token response with refreshed token' do
         expect(oauth_authenticate).to be_kind_of(Stormpath::Resource::AccessToken)
       end
+
+      it 'refreshed token is not the same as previous one' do
+        expect(oauth_authenticate.access_token).not_to be_equal(aquire_token.access_token)
+      end
+
+      it 'returens success with data' do
+        expect(oauth_authenticate.access_token).not_to be_empty
+        expect(oauth_authenticate.refresh_token).not_to be_empty
+        expect(oauth_authenticate.token_type).not_to be_empty
+        expect(oauth_authenticate.expires_in).not_to be_nil
+        expect(oauth_authenticate.stormpath_access_token_href).not_to be_empty
+      end
     end
 
     context 'validate access token' do
