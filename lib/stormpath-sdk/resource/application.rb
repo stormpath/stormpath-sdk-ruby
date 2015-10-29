@@ -124,7 +124,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
   
   def create_login_attempt(options = {})
-    login_attempts.create encoded_credentials(options) 
+    login_attempts.create parse_create_login_options(options) 
   end
 
   private
@@ -133,9 +133,12 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     client.data_store.api_key.id
   end
 
-  def encoded_credentials(options)
-    options[:value] = Base64.encode64(options.delete(:username) + ":" + options.delete(:password))
-    options
+  def parse_create_login_options(options)
+    options[:value] = encode_credentials(options.delete(:username), options.delete(:password))
+  end
+
+  def encode_credentials(username, password)
+    Base64.encode64(username + ":" + password)
   end
 
   def create_password_reset_token email
