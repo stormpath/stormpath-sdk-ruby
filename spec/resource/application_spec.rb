@@ -269,7 +269,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
   end
 
-  describe '#encoded_credentials' do
+  describe '#create_login_attempt' do
     let(:account) do
       directory.accounts.create({
         email: random_email,
@@ -290,6 +290,16 @@ describe Stormpath::Resource::Application, :vcr do
       it 'containes account data' do
         expect(login_attempt.account["href"]).to eq(account.href) 
       end
+    end
+
+    context 'with invalid credentials' do
+      let(:login_attempt) { application.create_login_attempt({type: "basic", username: account.email, password: "invalid"}) }
+
+      it 'returnes stormpath error' do
+        expect { 
+          login_attempt 
+        }.to raise_error(Stormpath::Error)
+      end 
     end
   end
 
