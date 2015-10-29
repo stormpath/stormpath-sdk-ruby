@@ -269,6 +269,30 @@ describe Stormpath::Resource::Application, :vcr do
     end
   end
 
+  describe '#encoded_credentials' do
+    let(:account) do
+      directory.accounts.create({
+        email: random_email,
+        given_name: 'Ruby SDK',
+        password: 'P@$$w0rd',
+        surname: 'SDK',
+        username: random_user_name
+      })
+    end
+
+    context 'valid credentials' do
+      let(:login_attempt) { application.create_login_attempt({type: "basic", username: account.email, password: "P@$$w0rd"}) }
+
+      it 'returnes login attempt response' do
+        expect(login_attempt).to be_kind_of Stormpath::Resource::LoginAttempt
+      end
+
+      it 'containes account data' do
+        expect(login_attempt.account["href"]).to eq(account.href) 
+      end
+    end
+  end
+
   describe '#verify_password_reset_token' do
     let(:account) do
       directory.accounts.create({
