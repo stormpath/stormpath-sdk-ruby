@@ -11,15 +11,13 @@ describe Stormpath::Resource::Organization, :vcr do
     organization.delete if organization
   end
 
-  describe 'organization instance should respond to attribute property methods' do
-  end
-
   describe 'get resource' do
     let(:fetched_organization) { test_api_client.organizations.get organization.href }
-    it 'returnes the organization resource' do
+    it 'returnes the organization resource with correct attribute properties' do
       org = test_api_client.organizations.get organization.href
       expect(fetched_organization.name).to eq(organization.name)
       expect(fetched_organization.description).to eq(organization.description)
+      expect(fetched_organization.name_key).to eq(organization.name_key)
     end
   end
 
