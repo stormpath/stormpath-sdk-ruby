@@ -14,23 +14,49 @@ describe Stormpath::Resource::Organization, :vcr do
   describe 'organization instance should respond to attribute property methods' do
   end
 
-  describe 'organization_associations' do
-  end
-
   describe 'get resource' do
+    let(:fetched_organization) { test_api_client.organizations.get organization.href }
     it 'returnes the organization resource' do
       org = test_api_client.organizations.get organization.href
-      expect(org.name).to eq(organization.name)
-      expect(org.description).to eq(organization.description)
+      expect(fetched_organization.name).to eq(organization.name)
+      expect(fetched_organization.description).to eq(organization.description)
     end
   end
 
   describe 'create' do
+    context 'invalid data' do
+      it 'should raise Stormpath::Error' do
+        expect do
+          test_api_client.organizations.create name: 'test_organization',
+            name_key: "test_org"
+        end.to raise_error(Stormpath::Error)
+      end
+    end
   end
-
+  
   describe 'delete' do
+    let(:href) { organization.href }
+
+    before do
+      organization.delete
+    end
+
+    it 'removes the organization' do
+      expect do
+        test_api_client.organizations.get href
+      end.to raise_error(Stormpath::Error)
+    end
   end
 
   describe 'update' do
+    before do
+      organization.name_key = "changed-test-organization"
+      organization.save
+    end
+
+    it 'can change the data of the existing organization' do
+      org = test_api_client.organizations.get organization.href
+      expect(org.name_key).to eq("changed-test-organization")
+    end
   end
 end
