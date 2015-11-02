@@ -53,7 +53,7 @@ module Stormpath
         data_store.save token, Stormpath::Resource::Account
       end
     end
-    has_many :organizations, href: '/organizations', can: :get
+    has_many :organizations, href: '/organizations', can: [:get, :create]
     has_many :groups, href: '/groups', can: :get
     has_many :group_memberships, href: '/groupMemberships', can: [:get, :create]
     has_many :account_store_mappings, href: '/accountStoreMappings', can: [:get, :create]
