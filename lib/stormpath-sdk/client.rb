@@ -57,6 +57,7 @@ module Stormpath
     has_many :groups, href: '/groups', can: :get
     has_many :group_memberships, href: '/groupMemberships', can: [:get, :create]
     has_many :account_store_mappings, href: '/accountStoreMappings', can: [:get, :create]
+    has_many :organization_account_store_mappings, href: '/organizationAccountStoreMappings', can: [:get, :create]
 
     private
 

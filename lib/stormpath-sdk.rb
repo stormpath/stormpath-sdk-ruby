@@ -51,6 +51,7 @@ module Stormpath
     autoload :OauthPolicy, 'stormpath-sdk/resource/oauth_policy'
     autoload :AccessToken, 'stormpath-sdk/resource/access_token'
     autoload :Organization, 'stormpath-sdk/resource/organization'
+    autoload :OrganizationAccountStoreMapping, 'stormpath-sdk/resource/organization_account_store_mapping'
   end
 
   module Cache
