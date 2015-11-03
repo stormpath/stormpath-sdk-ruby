@@ -135,6 +135,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   def parse_create_login_options(options)
     options[:value] = encode_credentials(options.delete(:username), options.delete(:password))
+    options
   end
 
   def encode_credentials(username, password)

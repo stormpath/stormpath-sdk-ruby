@@ -283,7 +283,7 @@ describe Stormpath::Resource::Application, :vcr do
     context 'valid credentials' do
       let(:login_attempt) { application.create_login_attempt({type: "basic", username: account.email, password: "P@$$w0rd"}) }
 
-      it 'returnes login attempt response' do
+      it 'returns login attempt response' do
         expect(login_attempt).to be_kind_of Stormpath::Resource::LoginAttempt
       end
 
@@ -292,10 +292,30 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
 
+    context 'with organization as account store option' do
+      let()
+      let(:login_attempt) do
+        application.create_login_attempt({
+          type: "basic",
+          username: account.email,
+          password: "P@$$w0rd",
+          account_store: {
+            name_key: organization.name
+          }
+        })
+      end
+
+      it 'returns login attempt response' do
+      end
+
+      it 'containes account data' do
+      end
+    end
+
     context 'with invalid credentials' do
       let(:login_attempt) { application.create_login_attempt({type: "basic", username: account.email, password: "invalid"}) }
 
-      it 'returnes stormpath error' do
+      it 'returns stormpath error' do
         expect { 
           login_attempt 
         }.to raise_error(Stormpath::Error)
