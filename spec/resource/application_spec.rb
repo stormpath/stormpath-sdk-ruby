@@ -293,22 +293,41 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'with organization as account store option' do
-      let()
+      def create_organization_account_store_mapping(organization, account_store)
+        test_api_client.organization_account_store_mappings.create({
+          account_store: { href: account_store.href },
+          organization: { href: organization.href }
+        })
+      end
+
+      let(:organization) do 
+        test_api_client.organizations.create name: 'test_organization',
+           name_key: "testorganization"
+      end
+
       let(:login_attempt) do
         application.create_login_attempt({
           type: "basic",
           username: account.email,
           password: "P@$$w0rd",
-          account_store: {
-            name_key: organization.name
-          }
+          name_key: organization.name
         })
       end
 
+      before do
+        create_organization_account_store_mapping(organization, directory)
+      end
+
+      after do
+        organization.delete if organization
+      end
+
       it 'returns login attempt response' do
+        expect(login_attempt).to be_kind_of Stormpath::Resource::LoginAttempt
       end
 
       it 'containes account data' do
+        expect(login_attempt.account["href"]).to eq(account.href)
       end
     end
 
