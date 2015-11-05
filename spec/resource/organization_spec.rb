@@ -11,13 +11,26 @@ describe Stormpath::Resource::Organization, :vcr do
     organization.delete if organization
   end
 
+  def create_organization_account_store_mapping(organization, account_store)
+    test_api_client.organization_account_store_mappings.create({
+      account_store: { href: account_store.href },
+      organization: { href: organization.href }
+    })
+  end
+
   describe 'get resource' do
     let(:fetched_organization) { test_api_client.organizations.get organization.href }
+
     it 'returnes the organization resource with correct attribute properties' do
-      org = test_api_client.organizations.get organization.href
+      expect(fetched_organization).to be_kind_of(Stormpath::Resource::Organization)
       expect(fetched_organization.name).to eq(organization.name)
       expect(fetched_organization.description).to eq(organization.description)
       expect(fetched_organization.name_key).to eq(organization.name_key)
+      expect(fetched_organization.status).to eq(organization.status)
+    end
+
+    it 'returnes custom_data' do
+      expect(organization.custom_data).to be_a Stormpath::Resource::CustomData
     end
   end
 
@@ -31,7 +44,67 @@ describe Stormpath::Resource::Organization, :vcr do
       end
     end
   end
-  
+
+  describe 'associations' do
+    context 'groups' do
+
+      let(:directory) { test_api_client.directories.create name: random_directory_name }    
+    
+      let(:group) { directory.groups.create name: "test_group" }    
+
+      before do 
+        create_organization_account_store_mapping(organization, group)
+      end
+
+      after do
+        organization.delete if organization
+        directory.delete if directory
+      end
+
+      it 'returnes a collection of groups' do
+        expect(organization.groups).to be_kind_of(Stormpath::Resource::Collection)
+        expect(organization.groups).to include(group)
+      end
+    end 
+
+    context 'accounts' do
+      let(:directory) { test_api_client.directories.create name: random_directory_name }    
+
+      let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
+    
+      before do 
+        create_organization_account_store_mapping(organization, directory)
+      end
+
+      after do
+        organization.delete if organization
+        directory.delete if directory
+      end
+
+      it 'returnes a collection of groups' do
+        expect(organization.accounts).to be_kind_of(Stormpath::Resource::Collection)
+        expect(organization.accounts).to include(account)
+      end
+    end
+
+    context 'tenant' do
+      let(:directory) { test_api_client.directories.create name: random_directory_name }    
+    
+      before do 
+        create_organization_account_store_mapping(organization, directory)
+      end
+
+      after do
+        organization.delete if organization
+        directory.delete if directory
+      end
+
+      it 'returnes tenant' do
+        expect(organization.tenant).to eq(directory.tenant)
+      end
+    end
+  end
+
   describe 'delete' do
     let(:href) { organization.href }
 
@@ -59,13 +132,6 @@ describe Stormpath::Resource::Organization, :vcr do
   end
 
   describe 'organization account store mapping' do
-    def create_organization_account_store_mapping(organization, account_store)
-      test_api_client.organization_account_store_mappings.create({
-        account_store: { href: account_store.href },
-        organization: { href: organization.href }
-      })
-    end
-
     context 'given an account_store is a directory' do
       let(:directory) { test_api_client.directories.create name: random_directory_name }    
 
