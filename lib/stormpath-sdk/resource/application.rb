@@ -114,12 +114,12 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Provider::AccountResolver.new(data_store).resolve_provider_account(href, request)
   end
 
-  def oauth_authenticate(options = {})
-    if options[:body] && (options[:body][:grant_type] == "password" || options[:body][:grant_type] == "refresh_token")
-      Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, options)
-    elsif options[:headers] && options[:headers][:authorization]
-      Stormpath::Jwt::Authenticator.new(data_store).authenticate(href, options) 
-    end 
+  def oauth_authenticate(request)
+    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
+  end
+
+  def verify_access_token(authorization_token)
+    Stormpath::Oauth::VerifyAccessToken.new(data_store).verify(href, authorization_token)
   end
 
   private
