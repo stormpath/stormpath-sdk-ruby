@@ -542,23 +542,16 @@ describe Stormpath::Resource::Application, :vcr do
 
   describe '#oauth_authenticate' do
     let(:account_data) { build_account }
-    let(:aquire_token) do
-      application.oauth_authenticate({ 
-        body: { 
-          username: account_data[:email], 
-          grant_type: 'password', 
-          password: account_data[:password] 
-        } 
-      })
-    end
+    let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
+    let(:aquire_token) { application.oauth_authenticate(password_grant_request) }
 
     before do
       application.accounts.create account_data
     end
   
     context 'generate access token' do
-      let(:oauth_data) { { body: { username: account_data[:email], grant_type: 'password', password: account_data[:password] } } }
-      let(:oauth_authenticate) { application.oauth_authenticate(oauth_data) }
+      let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
+      let(:oauth_authenticate) { application.oauth_authenticate(password_grant_request) }
 
       it 'should return access token response' do
         expect(oauth_authenticate).to be_kind_of(Stormpath::Resource::AccessToken)
@@ -574,8 +567,8 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'refresh token' do
-      let(:oauth_data) { { body: { username: account_data[:email], grant_type: 'refresh_token', refresh_token: aquire_token.refresh_token} } }
-      let(:oauth_authenticate) { application.oauth_authenticate(oauth_data) }
+      let(:refresh_grant_request) { Stormpath::Oauth::RefreshGrantRequest.new aquire_token }
+      let(:oauth_authenticate) { application.oauth_authenticate(refresh_grant_request) }
 
       it 'should return access token response with refreshed token' do
         expect(oauth_authenticate).to be_kind_of(Stormpath::Resource::AccessToken)
@@ -595,11 +588,11 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'validate access token' do
-      let(:oauth_data) { { headers: { authorization: aquire_token.access_token } } } 
-      let(:oauth_authenticate) { application.oauth_authenticate(oauth_data) }
+      let(:access_token) { aquire_token.access_token }
+      let(:oauth_authenticate) { application.verify_access_token(access_token) }
 
       it 'should return authentication result response' do
-        expect(oauth_authenticate).to be_kind_of(Stormpath::Jwt::AuthenticationResult)
+        expect(oauth_authenticate).to be_kind_of(Stormpath::Oauth::VerifyToken)
       end
 
       it 'returens success on valid token' do
@@ -618,7 +611,7 @@ describe Stormpath::Resource::Application, :vcr do
         aquire_token.delete
 
         expect {
-          response = application.oauth_authenticate( { headers: { authorization: access_token } } )
+          application.verify_access_token(access_token)
         }.to raise_error(Stormpath::Error)
       end
     end
