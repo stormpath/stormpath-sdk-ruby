@@ -3,10 +3,10 @@ module Stormpath
     class PasswordGrant < Stormpath::Resource::Base
       prop_accessor :grant_type, :username, :password
 
-      def set_options(options)
-        set_property :grant_type, options[:body][:grant_type]
-        set_property :username, options[:body][:username]
-        set_property :password, options[:body][:password]
+      def set_options(request)
+        set_property :username, request.username
+        set_property :password, request.password
+        set_property :grant_type, request.grant_type
       end
 
       def form_data?

@@ -3,9 +3,9 @@ module Stormpath
     class RefreshToken < Stormpath::Resource::Base
       prop_accessor :grant_type, :refresh_token
 
-      def set_options(options)
-        set_property :grant_type, options[:body][:grant_type]
-        set_property :refresh_token, options[:body][:refresh_token]
+      def set_options(request)
+        set_property :refresh_token, request.refresh_token
+        set_property :grant_type, request.grant_type
       end
 
       def form_data?

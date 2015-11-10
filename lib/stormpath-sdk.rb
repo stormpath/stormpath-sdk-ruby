@@ -107,10 +107,9 @@ module Stormpath
     autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
     autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"
     autoload :RefreshToken, "stormpath-sdk/oauth/refresh_token"
-  end
-
-  module Jwt
-    autoload :Authenticator, "stormpath-sdk/jwt/authenticator"
-    autoload :AuthenticationResult, "stormpath-sdk/jwt/authentication_result.rb"
+    autoload :PasswordGrantRequest, "stormpath-sdk/oauth/password_grant_request"
+    autoload :RefreshGrantRequest, "stormpath-sdk/oauth/refresh_grant_request"
+    autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
+    autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
   end
 end
