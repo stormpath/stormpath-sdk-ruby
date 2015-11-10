@@ -109,9 +109,4 @@ module Stormpath
     autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
     autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
   end
-
-  module Jwt
-    autoload :Authenticator, "stormpath-sdk/jwt/authenticator"
-    autoload :AuthenticationResult, "stormpath-sdk/jwt/authentication_result.rb"
-  end
 end
