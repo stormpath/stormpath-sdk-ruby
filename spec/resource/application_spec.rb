@@ -589,7 +589,7 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'validate access token' do
       let(:access_token) { aquire_token.access_token }
-      let(:oauth_authenticate) { application.verify_access_token(access_token) }
+      let(:oauth_authenticate) { Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token) }
 
       it 'should return authentication result response' do
         expect(oauth_authenticate).to be_kind_of(Stormpath::Oauth::VerifyToken)
@@ -611,7 +611,7 @@ describe Stormpath::Resource::Application, :vcr do
         aquire_token.delete
 
         expect {
-          application.verify_access_token(access_token)
+          Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token)
         }.to raise_error(Stormpath::Error)
       end
     end

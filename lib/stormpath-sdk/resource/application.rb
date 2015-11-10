@@ -118,10 +118,6 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
   end
 
-  def verify_access_token(authorization_token)
-    Stormpath::Oauth::VerifyAccessToken.new(data_store).verify(href, authorization_token)
-  end
-
   private
 
   def api_key_id
