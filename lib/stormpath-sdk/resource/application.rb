@@ -35,6 +35,8 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_one :custom_data
   has_one :o_auth_policy, class_name: :oauthPolicy
 
+  alias_method :oauth_policy, :o_auth_policy
+
   def self.load composite_url
     begin
       uri = URI(composite_url)
