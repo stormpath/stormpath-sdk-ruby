@@ -114,7 +114,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Provider::AccountResolver.new(data_store).resolve_provider_account(href, request)
   end
 
-  def oauth_authenticate(request)
+  def authenticate_oauth(request)
     Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
   end
 

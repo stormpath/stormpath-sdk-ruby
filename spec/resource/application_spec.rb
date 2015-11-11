@@ -540,10 +540,10 @@ describe Stormpath::Resource::Application, :vcr do
     end
   end
 
-  describe '#oauth_authenticate' do
+  describe '#authenticate_oauth' do
     let(:account_data) { build_account }
     let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
-    let(:aquire_token) { application.oauth_authenticate(password_grant_request) }
+    let(:aquire_token) { application.authenticate_oauth(password_grant_request) }
 
     before do
       application.accounts.create account_data
@@ -551,57 +551,57 @@ describe Stormpath::Resource::Application, :vcr do
   
     context 'generate access token' do
       let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
-      let(:oauth_authenticate) { application.oauth_authenticate(password_grant_request) }
+      let(:authenticate_oauth) { application.authenticate_oauth(password_grant_request) }
 
       it 'should return access token response' do
-        expect(oauth_authenticate).to be_kind_of(Stormpath::Resource::AccessToken)
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Resource::AccessToken)
       end
 
       it 'response should contain token data' do
-        expect(oauth_authenticate.access_token).not_to be_empty
-        expect(oauth_authenticate.refresh_token).not_to be_empty
-        expect(oauth_authenticate.token_type).not_to be_empty
-        expect(oauth_authenticate.expires_in).not_to be_nil
-        expect(oauth_authenticate.stormpath_access_token_href).not_to be_empty
+        expect(authenticate_oauth.access_token).not_to be_empty
+        expect(authenticate_oauth.refresh_token).not_to be_empty
+        expect(authenticate_oauth.token_type).not_to be_empty
+        expect(authenticate_oauth.expires_in).not_to be_nil
+        expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
       end
     end
 
     context 'refresh token' do
       let(:refresh_grant_request) { Stormpath::Oauth::RefreshGrantRequest.new aquire_token }
-      let(:oauth_authenticate) { application.oauth_authenticate(refresh_grant_request) }
+      let(:authenticate_oauth) { application.authenticate_oauth(refresh_grant_request) }
 
       it 'should return access token response with refreshed token' do
-        expect(oauth_authenticate).to be_kind_of(Stormpath::Resource::AccessToken)
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Resource::AccessToken)
       end
 
       it 'refreshed token is not the same as previous one' do
-        expect(oauth_authenticate.access_token).not_to be_equal(aquire_token.access_token)
+        expect(authenticate_oauth.access_token).not_to be_equal(aquire_token.access_token)
       end
 
       it 'returens success with data' do
-        expect(oauth_authenticate.access_token).not_to be_empty
-        expect(oauth_authenticate.refresh_token).not_to be_empty
-        expect(oauth_authenticate.token_type).not_to be_empty
-        expect(oauth_authenticate.expires_in).not_to be_nil
-        expect(oauth_authenticate.stormpath_access_token_href).not_to be_empty
+        expect(authenticate_oauth.access_token).not_to be_empty
+        expect(authenticate_oauth.refresh_token).not_to be_empty
+        expect(authenticate_oauth.token_type).not_to be_empty
+        expect(authenticate_oauth.expires_in).not_to be_nil
+        expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
       end
     end
 
     context 'validate access token' do
       let(:access_token) { aquire_token.access_token }
-      let(:oauth_authenticate) { Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token) }
+      let(:authenticate_oauth) { Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token) }
 
       it 'should return authentication result response' do
-        expect(oauth_authenticate).to be_kind_of(Stormpath::Oauth::VerifyToken)
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyToken)
       end
 
       it 'returens success on valid token' do
-        expect(oauth_authenticate.href).not_to be_empty 
-        expect(oauth_authenticate.account).not_to be_empty 
-        expect(oauth_authenticate.application).not_to be_empty 
-        expect(oauth_authenticate.jwt).not_to be_empty 
-        expect(oauth_authenticate.tenant).not_to be_empty 
-        expect(oauth_authenticate.expanded_jwt).not_to be_empty 
+        expect(authenticate_oauth.href).not_to be_empty 
+        expect(authenticate_oauth.account).not_to be_empty 
+        expect(authenticate_oauth.application).not_to be_empty 
+        expect(authenticate_oauth.jwt).not_to be_empty 
+        expect(authenticate_oauth.tenant).not_to be_empty 
+        expect(authenticate_oauth.expanded_jwt).not_to be_empty 
       end
     end
 
