@@ -567,7 +567,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'refresh token' do
-      let(:refresh_grant_request) { Stormpath::Oauth::RefreshGrantRequest.new aquire_token }
+      let(:refresh_grant_request) { Stormpath::Oauth::RefreshGrantRequest.new aquire_token.refresh_token }
       let(:authenticate_oauth) { application.authenticate_oauth(refresh_grant_request) }
 
       it 'should return access token response with refreshed token' do
