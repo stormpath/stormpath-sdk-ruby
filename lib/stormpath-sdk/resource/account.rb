@@ -29,6 +29,7 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
 
   has_many :groups
   has_many :group_memberships
+  has_many :applications
 
   has_one :custom_data
 

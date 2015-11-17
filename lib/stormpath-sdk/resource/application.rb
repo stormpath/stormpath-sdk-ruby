@@ -28,10 +28,14 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_many :password_reset_tokens, can: [:get, :create]
   has_many :account_store_mappings, can: [:get, :create]
   has_many :groups, can: [:get, :create]
+  has_many :verification_emails, can: :create
 
   has_one :default_account_store_mapping, class_name: :accountStoreMapping
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
   has_one :custom_data
+  has_one :o_auth_policy, class_name: :oauthPolicy
+
+  alias_method :oauth_policy, :o_auth_policy
 
   def self.load composite_url
     begin
@@ -54,6 +58,10 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     base = client.data_store.base_url.sub("v" + Stormpath::DataStore::DEFAULT_API_VERSION.to_s, "sso")
     base += '/logout' if options[:logout]
 
+    if options[:callback_uri].empty?
+      raise Stormpath::IdSite::Error.new(:jwt_cb_uri_incorrect)
+    end
+
     token = JWT.encode({
         'iat' => Time.now.to_i,
         'jti' => UUID.method(:random_create).call.to_s,
@@ -74,11 +82,21 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     params = CGI::parse(uri.query)
     token = params["jwtResponse"].first
 
-    jwt_response, _header = JWT.decode(token, client.data_store.api_key.secret)
+    begin
+      jwt_response, _header = JWT.decode(token, client.data_store.api_key.secret)
+    rescue JWT::ExpiredSignature => error
+      # JWT raises error if the signature expired, we need to capture this and
+      # rerase IdSite::Error
+      raise Stormpath::IdSite::Error.new(:jwt_expired)
+    end
 
-    raise Stormpath::Error.new if jwt_response["aud"] != client.data_store.api_key.id
+    id_site_result = Stormpath::IdSite::IdSiteResult.new(jwt_response)
 
-    Stormpath::IdSite::IdSiteResult.new(jwt_response)
+    if id_site_result.jwt_invalid?(api_key_id)
+      raise Stormpath::IdSite::Error.new(:jwt_invalid)
+    end
+
+    id_site_result
   end
 
   def send_password_reset_email email
@@ -98,10 +116,17 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Provider::AccountResolver.new(data_store).resolve_provider_account(href, request)
   end
 
+  def authenticate_oauth(request)
+    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
+  end
+
   private
 
-    def create_password_reset_token email
-      password_reset_tokens.create email: email
-    end
+  def api_key_id
+    client.data_store.api_key.id
+  end
 
+  def create_password_reset_token email
+    password_reset_tokens.create email: email
+  end
 end

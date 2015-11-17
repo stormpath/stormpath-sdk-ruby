@@ -47,6 +47,9 @@ module Stormpath
     autoload :GroupMembership, 'stormpath-sdk/resource/group_membership'
     autoload :AccountMembership, 'stormpath-sdk/resource/account_membership'
     autoload :PasswordResetToken, 'stormpath-sdk/resource/password_reset_token'
+    autoload :VerificationEmail, 'stormpath-sdk/resource/verification_email'
+    autoload :OauthPolicy, 'stormpath-sdk/resource/oauth_policy'
+    autoload :AccessToken, 'stormpath-sdk/resource/access_token'
   end
 
   module Cache
@@ -94,5 +97,16 @@ module Stormpath
 
   module IdSite
     autoload :IdSiteResult, 'stormpath-sdk/id_site/id_site_result'
+    autoload :Error, 'stormpath-sdk/id_site/error'
+  end
+  
+  module Oauth
+    autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
+    autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"
+    autoload :RefreshToken, "stormpath-sdk/oauth/refresh_token"
+    autoload :PasswordGrantRequest, "stormpath-sdk/oauth/password_grant_request"
+    autoload :RefreshGrantRequest, "stormpath-sdk/oauth/refresh_grant_request"
+    autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
+    autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
   end
 end

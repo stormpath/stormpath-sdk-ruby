@@ -5,6 +5,7 @@ describe Stormpath::Resource::Application, :vcr do
   let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
   let(:application) { test_api_client.applications.get app.href }
   let(:directory) { test_api_client.directories.create name: random_directory_name }
+  let(:directory_with_verification) { test_directory_with_verification }
 
   before do
    test_api_client.account_store_mappings.create({ application: app, account_store: directory,
@@ -34,6 +35,7 @@ describe Stormpath::Resource::Application, :vcr do
     expect(application.groups).to be_a Stormpath::Resource::Collection
     expect(application.accounts).to be_a Stormpath::Resource::Collection
     expect(application.password_reset_tokens).to be_a Stormpath::Resource::Collection
+    expect(application.verification_emails).to be_a Stormpath::Resource::Collection
     expect(application.account_store_mappings).to be_a Stormpath::Resource::Collection
   end
 
@@ -236,6 +238,37 @@ describe Stormpath::Resource::Application, :vcr do
     end
   end
 
+  describe '#verification_emails' do
+    let(:directory_with_verification) { test_directory_with_verification }
+
+    before do
+      test_api_client.account_store_mappings.create({ application: app, account_store: directory_with_verification,
+        list_index: 1, is_default_account_store: false, is_default_group_store: false })
+    end
+
+    let(:account) do
+      directory_with_verification.accounts.create({
+        email: random_email,
+        given_name: 'Ruby SDK',
+        password: 'P@$$w0rd',
+        surname: 'SDK',
+        username: random_user_name
+      })
+    end
+
+    let(:verification_emails) do
+      application.verification_emails.create(login: account.email)
+    end
+
+    after do
+      account.delete if account
+    end
+
+    it 'returnes verification email' do
+      expect(verification_emails).to be_kind_of Stormpath::Resource::VerificationEmail
+    end
+  end
+
   describe '#verify_password_reset_token' do
     let(:account) do
       directory.accounts.create({
@@ -338,6 +371,25 @@ describe Stormpath::Resource::Application, :vcr do
       it 'shoud create a request to /sso/logout' do
       end
     end
+
+    context 'without providing cb_uri' do
+      let(:create_id_site_url_result) do
+        options = { callback_uri: '' }
+        application.create_id_site_url options
+      end
+
+      it 'should raise Stormpath Error with correct id_site error data' do
+        begin
+          create_id_site_url_result
+        rescue Stormpath::Error => error
+          expect(error.status).to eq(400)
+          expect(error.code).to eq(400)
+          expect(error.message).to eq("The specified callback URI (cb_uri) is not valid")
+          expect(error.developer_message).to eq("The specified callback URI (cb_uri) is not valid. Make sure the "\
+            "callback URI specified in your ID Site configuration matches the value specified.")
+        end 
+      end
+    end
   end
 
   describe '#handle_id_site_callback' do
@@ -399,10 +451,21 @@ describe Stormpath::Resource::Application, :vcr do
         }, test_api_key_secret, 'HS256')
       }
 
+      it 'should raise Stormpath Error with correct data' do
+        begin
+          application.handle_id_site_callback(callback_uri_base + jwt_token)
+        rescue Stormpath::Error => error
+          expect(error.status).to eq(400)
+          expect(error.code).to eq(10011)
+          expect(error.message).to eq("Token is invalid")
+          expect(error.developer_message).to eq("Token is no longer valid because it has expired")
+        end
+      end
+
       it 'should raise expiration error' do
         expect {
           application.handle_id_site_callback(callback_uri_base + jwt_token)
-        }.to raise_error(JWT::DecodeError)
+        }.to raise_error(Stormpath::Error)
       end
     end
 
@@ -423,6 +486,18 @@ describe Stormpath::Resource::Application, :vcr do
           application.handle_id_site_callback(callback_uri_base + jwt_token)
         }.to raise_error(Stormpath::Error)
       end
+
+      it 'should raise Stormpath Error with correct id_site error data' do
+        begin
+          application.handle_id_site_callback(callback_uri_base + jwt_token)
+        rescue Stormpath::Error => error
+          expect(error.status).to eq(400)
+          expect(error.code).to eq(10012)
+          expect(error.message).to eq("Token is invalid")
+          expect(error.developer_message).to eq("Token is invalid because the issued at time (iat) "\
+            "is after the current time")
+        end
+      end
     end
 
     context 'with an invalid exp value' do
@@ -438,10 +513,10 @@ describe Stormpath::Resource::Application, :vcr do
         }, test_api_key_secret, 'HS256')
       }
 
-      it 'should error with the expiration error' do
+      it 'should error with the stormpath error' do  
         expect {
           application.handle_id_site_callback(callback_uri_base + jwt_token)
-        }.to raise_error(JWT::DecodeError)
+        }.to raise_error(Stormpath::Error)
       end
     end
 
@@ -461,6 +536,83 @@ describe Stormpath::Resource::Application, :vcr do
         expect {
           application.handle_id_site_callback(callback_uri_base + jwt_token)
         }.to raise_error(JWT::DecodeError)
+      end
+    end
+  end
+
+  describe '#authenticate_oauth' do
+    let(:account_data) { build_account }
+    let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
+    let(:aquire_token) { application.authenticate_oauth(password_grant_request) }
+
+    before do
+      application.accounts.create account_data
+    end
+  
+    context 'generate access token' do
+      let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
+      let(:authenticate_oauth) { application.authenticate_oauth(password_grant_request) }
+
+      it 'should return access token response' do
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Resource::AccessToken)
+      end
+
+      it 'response should contain token data' do
+        expect(authenticate_oauth.access_token).not_to be_empty
+        expect(authenticate_oauth.refresh_token).not_to be_empty
+        expect(authenticate_oauth.token_type).not_to be_empty
+        expect(authenticate_oauth.expires_in).not_to be_nil
+        expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+      end
+    end
+
+    context 'refresh token' do
+      let(:refresh_grant_request) { Stormpath::Oauth::RefreshGrantRequest.new aquire_token.refresh_token }
+      let(:authenticate_oauth) { application.authenticate_oauth(refresh_grant_request) }
+
+      it 'should return access token response with refreshed token' do
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Resource::AccessToken)
+      end
+
+      it 'refreshed token is not the same as previous one' do
+        expect(authenticate_oauth.access_token).not_to be_equal(aquire_token.access_token)
+      end
+
+      it 'returens success with data' do
+        expect(authenticate_oauth.access_token).not_to be_empty
+        expect(authenticate_oauth.refresh_token).not_to be_empty
+        expect(authenticate_oauth.token_type).not_to be_empty
+        expect(authenticate_oauth.expires_in).not_to be_nil
+        expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+      end
+    end
+
+    context 'validate access token' do
+      let(:access_token) { aquire_token.access_token }
+      let(:authenticate_oauth) { Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token) }
+
+      it 'should return authentication result response' do
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyToken)
+      end
+
+      it 'returens success on valid token' do
+        expect(authenticate_oauth.href).not_to be_empty 
+        expect(authenticate_oauth.account).not_to be_empty 
+        expect(authenticate_oauth.application).not_to be_empty 
+        expect(authenticate_oauth.jwt).not_to be_empty 
+        expect(authenticate_oauth.tenant).not_to be_empty 
+        expect(authenticate_oauth.expanded_jwt).not_to be_empty 
+      end
+    end
+
+    context 'delete token' do
+      it 'after token was deleted user can authenticate with the same token' do
+        access_token = aquire_token.access_token
+        aquire_token.delete
+
+        expect {
+          Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token)
+        }.to raise_error(Stormpath::Error)
       end
     end
   end

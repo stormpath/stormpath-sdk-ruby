@@ -39,11 +39,19 @@ describe Stormpath::Resource::Account, :vcr do
       expect(account.email_verification_token).to be_nil
       expect(account.groups).to be_a Stormpath::Resource::Collection
       expect(account.group_memberships).to be_a Stormpath::Resource::Collection
+      expect(account.applications).to be_a Stormpath::Resource::Collection
     end
   end
 
   describe 'account_associations' do
+    let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
+    let(:application) { test_api_client.applications.get app.href }
     let(:directory) { test_api_client.directories.create name: random_directory_name }
+
+    before do
+      test_api_client.account_store_mappings.create({ application: app, account_store: directory,
+        list_index: 1, is_default_account_store: true, is_default_group_store: true })
+    end
 
     let(:account) do
       directory.accounts.create email: 'test@example.com',
@@ -57,12 +65,17 @@ describe Stormpath::Resource::Account, :vcr do
       expect(account.directory).to eq(directory)
     end
 
+    it 'should have many applications' do
+      expect(account.applications.count).to eq(1)
+    end
+
     it 'should belong_to tenant' do
       expect(account.tenant).to be
       expect(account.tenant).to eq(account.directory.tenant)
     end
 
     after do
+      application.delete if application
       account.delete if account
       directory.delete if directory
     end
