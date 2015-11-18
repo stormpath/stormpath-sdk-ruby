@@ -27,6 +27,9 @@ describe Stormpath::Resource::Organization, :vcr do
       expect(fetched_organization.description).to eq(organization.description)
       expect(fetched_organization.name_key).to eq(organization.name_key)
       expect(fetched_organization.status).to eq(organization.status)
+      expect(fetched_organization.account_store_mappings).to eq(organization.account_store_mappings)
+      expect(fetched_organization.default_account_store_mapping).to eq(organization.default_account_store_mapping)
+      expect(fetched_organization.default_group_store_mapping).to eq(organization.default_group_store_mapping)
     end
 
     it 'returnes custom_data' do
