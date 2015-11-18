@@ -643,6 +643,11 @@ properties
       })
     end
 
+    after do
+      organization.delete if organization
+      directory.delete if directory
+    end
+
     it "returnes the mapping" do
       expect(organization_account_store_mappings.is_default_account_store).to eq(false)
       expect(organization_account_store_mappings.is_default_group_store).to eq(false)
