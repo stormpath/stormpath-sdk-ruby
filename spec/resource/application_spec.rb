@@ -340,11 +340,18 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'with invalid credentials' do
-      let(:login_attempt) { application.create_login_attempt({type: "basic", username: account.email, password: "invalid"}) }
+      let(:username_password_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.email,
+          "invalid"
+        )
+      end
+
+      let(:auth_request) { application.authenticate_account(username_password_request) }
 
       it 'returns stormpath error' do
         expect { 
-          login_attempt 
+          auth_request 
         }.to raise_error(Stormpath::Error)
       end 
     end
