@@ -269,7 +269,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
   end
 
-  describe '#create_login_attempt' do
+  describe 'create_login_attempt' do
     let(:account) do
       directory.accounts.create({
         email: random_email,
@@ -314,6 +314,16 @@ describe Stormpath::Resource::Application, :vcr do
         })
       end
 
+      let(:username_password_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.email,
+          "P@$$w0rd",
+          account_store: organization.name_key
+        )
+      end
+
+      let(:auth_request) { application.authenticate_account(username_password_request) }
+
       before do
         create_organization_account_store_mapping(organization, directory)
       end
@@ -323,11 +333,11 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'returns login attempt response' do
-        expect(login_attempt).to be_kind_of Stormpath::Resource::LoginAttempt
+        expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
       end
 
       it 'containes account data' do
-        expect(login_attempt.account["href"]).to eq(account.href)
+        expect(auth_request.account.href).to eq(account.href)
       end
     end
 
