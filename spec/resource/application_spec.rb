@@ -281,14 +281,21 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'valid credentials' do
-      let(:login_attempt) { application.create_login_attempt({type: "basic", username: account.email, password: "P@$$w0rd"}) }
+      let(:username_password_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.email,
+          "P@$$w0rd"
+        )
+      end
+
+      let(:auth_request) { application.authenticate_account(username_password_request) }
 
       it 'returns login attempt response' do
-        expect(login_attempt).to be_kind_of Stormpath::Resource::LoginAttempt
+        expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
       end
 
       it 'containes account data' do
-        expect(login_attempt.account["href"]).to eq(account.href) 
+        expect(auth_request.account.href).to eq(account.href) 
       end
     end
 
@@ -303,15 +310,6 @@ describe Stormpath::Resource::Application, :vcr do
       let(:organization) do 
         test_api_client.organizations.create name: 'test_organization',
            name_key: "testorganization"
-      end
-
-      let(:login_attempt) do
-        application.create_login_attempt({
-          type: "basic",
-          username: account.email,
-          password: "P@$$w0rd",
-          name_key: organization.name
-        })
       end
 
       let(:username_password_request) do
