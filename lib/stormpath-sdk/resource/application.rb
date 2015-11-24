@@ -29,7 +29,6 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_many :account_store_mappings, can: [:get, :create]
   has_many :groups, can: [:get, :create]
   has_many :verification_emails, can: :create
-  has_many :login_attempts, can: :create
 
   has_one :default_account_store_mapping, class_name: :accountStoreMapping
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
@@ -119,23 +118,10 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
   end
   
-  def create_login_attempt(options = {})
-    login_attempts.create parse_create_login_options(options) 
-  end
-
   private
 
   def api_key_id
     client.data_store.api_key.id
-  end
-
-  def parse_create_login_options(options)
-    options[:value] = encode_credentials(options.delete(:username), options.delete(:password))
-    options
-  end
-
-  def encode_credentials(username, password)
-    Base64.encode64(username + ":" + password)
   end
 
   def create_password_reset_token email

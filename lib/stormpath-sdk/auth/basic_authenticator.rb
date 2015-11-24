@@ -45,9 +45,7 @@ module Stormpath
         href = parent_href + '/loginAttempts'
 
         @data_store.create href, attempt, AuthenticationResult
-
       end
-
     end
   end
 end
