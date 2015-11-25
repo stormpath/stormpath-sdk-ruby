@@ -264,7 +264,7 @@ describe Stormpath::Resource::Application, :vcr do
       account.delete if account
     end
 
-    it 'returnes verification email' do
+    it 'returns verification email' do
       expect(verification_emails).to be_kind_of Stormpath::Resource::VerificationEmail
     end
   end

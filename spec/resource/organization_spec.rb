@@ -21,7 +21,7 @@ describe Stormpath::Resource::Organization, :vcr do
   describe 'get resource' do
     let(:fetched_organization) { test_api_client.organizations.get organization.href }
 
-    it 'returnes the organization resource with correct attribute properties' do
+    it 'returns the organization resource with correct attribute properties' do
       expect(fetched_organization).to be_kind_of(Stormpath::Resource::Organization)
       expect(fetched_organization.name).to eq(organization.name)
       expect(fetched_organization.description).to eq(organization.description)
@@ -32,7 +32,7 @@ describe Stormpath::Resource::Organization, :vcr do
       expect(fetched_organization.default_group_store_mapping).to eq(organization.default_group_store_mapping)
     end
 
-    it 'returnes custom_data' do
+    it 'returns custom_data' do
       expect(organization.custom_data).to be_a Stormpath::Resource::CustomData
     end
   end
@@ -64,7 +64,7 @@ describe Stormpath::Resource::Organization, :vcr do
         directory.delete if directory
       end
 
-      it 'returnes a collection of groups' do
+      it 'returns a collection of groups' do
         expect(organization.groups).to be_kind_of(Stormpath::Resource::Collection)
         expect(organization.groups).to include(group)
       end
@@ -84,7 +84,7 @@ describe Stormpath::Resource::Organization, :vcr do
         directory.delete if directory
       end
 
-      it 'returnes a collection of groups' do
+      it 'returns a collection of groups' do
         expect(organization.accounts).to be_kind_of(Stormpath::Resource::Collection)
         expect(organization.accounts).to include(account)
       end
@@ -102,7 +102,7 @@ describe Stormpath::Resource::Organization, :vcr do
         directory.delete if directory
       end
 
-      it 'returnes tenant' do
+      it 'returns tenant' do
         expect(organization.tenant).to eq(directory.tenant)
       end
     end
