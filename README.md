@@ -1,4 +1,5 @@
 [![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-ruby.png?branch=master,development)](https://travis-ci.org/stormpath/stormpath-sdk-ruby)
+[![Code Climate](https://codeclimate.com/github/stormpath/stormpath-sdk-ruby/badges/gpa.svg)](https://codeclimate.com/github/stormpath/stormpath-sdk-ruby)
 
 # Stormpath Ruby SDK
 
