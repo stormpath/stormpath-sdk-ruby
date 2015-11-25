@@ -6,9 +6,6 @@ SimpleCov.start do
   add_filter {|src| src.filename =~ /spec/ }
 end
 
-require 'coveralls'
-Coveralls.wear!
-
 require 'stormpath-sdk'
 require 'pry'
 require 'webmock/rspec'
