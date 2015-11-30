@@ -628,6 +628,35 @@ properties
     end
   end
 
+  describe "#organization_account_store_mappings" do
+    let(:organization) do
+      test_api_client.organizations.create name: 'test_organization',
+      name_key: "testorganization"
+    end
+
+    let(:directory) { test_api_client.directories.create name: random_directory_name }
+
+    let(:organization_account_store_mappings) do
+      test_api_client.organization_account_store_mappings.create({
+        account_store: { href: directory.href },
+        organization: { href: organization.href }
+      })
+    end
+
+    after do
+      organization.delete if organization
+      directory.delete if directory
+    end
+
+    it "returns the mapping" do
+      expect(organization_account_store_mappings.is_default_account_store).to eq(false)
+      expect(organization_account_store_mappings.is_default_group_store).to eq(false)
+      expect(organization_account_store_mappings.organization).to eq(organization)
+      expect(organization_account_store_mappings.list_index).to eq(0)
+      expect(organization_account_store_mappings.account_store).to be_kind_of(Stormpath::Resource::Directory)
+    end
+  end
+
   describe '#accounts.verify_account_email' do
     context 'given a verfication token of an account' do
       let(:directory) { test_directory_with_verification }

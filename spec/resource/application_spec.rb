@@ -264,8 +264,96 @@ describe Stormpath::Resource::Application, :vcr do
       account.delete if account
     end
 
-    it 'returnes verification email' do
+    it 'returns verification email' do
       expect(verification_emails).to be_kind_of Stormpath::Resource::VerificationEmail
+    end
+  end
+
+  describe 'create_login_attempt' do
+    let(:account) do
+      directory.accounts.create({
+        email: random_email,
+        given_name: 'Ruby SDK',
+        password: 'P@$$w0rd',
+        surname: 'SDK',
+        username: random_user_name
+      })
+    end
+
+    context 'valid credentials' do
+      let(:username_password_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.email,
+          "P@$$w0rd"
+        )
+      end
+
+      let(:auth_request) { application.authenticate_account(username_password_request) }
+
+      it 'returns login attempt response' do
+        expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
+      end
+
+      it 'containes account data' do
+        expect(auth_request.account.href).to eq(account.href) 
+      end
+    end
+
+    context 'with organization as account store option' do
+      def create_organization_account_store_mapping(organization, account_store)
+        test_api_client.organization_account_store_mappings.create({
+          account_store: { href: account_store.href },
+          organization: { href: organization.href }
+        })
+      end
+
+      let(:organization) do 
+        test_api_client.organizations.create name: 'test_organization',
+           name_key: "testorganization"
+      end
+
+      let(:username_password_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.email,
+          "P@$$w0rd",
+          account_store: organization.name_key
+        )
+      end
+
+      let(:auth_request) { application.authenticate_account(username_password_request) }
+
+      before do
+        create_organization_account_store_mapping(organization, directory)
+      end
+
+      after do
+        organization.delete if organization
+      end
+
+      it 'returns login attempt response' do
+        expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
+      end
+
+      it 'containes account data' do
+        expect(auth_request.account.href).to eq(account.href)
+      end
+    end
+
+    context 'with invalid credentials' do
+      let(:username_password_request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.email,
+          "invalid"
+        )
+      end
+
+      let(:auth_request) { application.authenticate_account(username_password_request) }
+
+      it 'returns stormpath error' do
+        expect { 
+          auth_request 
+        }.to raise_error(Stormpath::Error)
+      end 
     end
   end
 
