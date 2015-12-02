@@ -63,7 +63,7 @@ module Stormpath
             enc_value = encode_url value, false, canonical
 
             result << '&' unless result.empty?
-            result << enc_key << '='<< enc_value
+            result << enc_key.camelize(:lower) << '='<< enc_value
           end
         end
 
