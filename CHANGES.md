@@ -1,6 +1,17 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.0.0.beta.9
+--------------------
+
+Released on December 2, 2015
+
+- Organization CRUD
+- Token Management
+- Ability to specify an organization nameKey as an accountStore for loginAttempt
+- Get applications for an account
+- Resending email verification
+
 Version 1.0.0.beta.8
 --------------------
 
