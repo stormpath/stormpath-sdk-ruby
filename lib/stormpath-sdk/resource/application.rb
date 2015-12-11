@@ -62,16 +62,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
       raise Stormpath::IdSite::Error.new(:jwt_cb_uri_incorrect)
     end
 
-    token = JWT.encode({
-        'iat' => Time.now.to_i,
-        'jti' => UUID.method(:random_create).call.to_s,
-        'iss' => client.data_store.api_key.id,
-        'sub' => href,
-        'cb_uri' => options[:callback_uri],
-        'path' => options[:path] || '',
-        'state' => options[:state] || ''
-      }, client.data_store.api_key.secret, 'HS256')
-
+    token = JWT.encode(jwt_token_payload(options), client.data_store.api_key.secret, 'HS256')
     base + '?jwtRequest=' + token
   end
 
@@ -121,6 +112,23 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
   
   private
+
+  def jwt_token_payload(options)
+    payload = {
+      'iat' => Time.now.to_i,
+      'jti' => UUID.method(:random_create).call.to_s,
+      'iss' => client.data_store.api_key.id,
+      'sub' => href,
+      'cb_uri' => options[:callback_uri],
+      'path' => options[:path] || '',
+      'state' => options[:state] || '',
+    }
+
+    payload["sof"] = options[:show_organization_field] if options[:show_organization_field]
+    payload["onk"] = options[:organization_name_key] if options[:organization_name_key]
+    payload["usd"] = options[:use_subdomain] if options[:use_subdomain]
+    payload
+  end
 
   def api_key_id
     client.data_store.api_key.id
