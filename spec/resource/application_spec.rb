@@ -626,6 +626,29 @@ describe Stormpath::Resource::Application, :vcr do
         }.to raise_error(JWT::DecodeError)
       end
     end
+
+    context 'with show_organization_field key specified' do
+      let(:jwt_token) { JWT.encode({
+          'iat' => Time.now.to_i,
+          'aud' => test_api_key_id,
+          'sub' => application.href,
+          'path' => '',
+          'state' => '',
+          'isNewSub' => true,
+          'status' => "REGISTERED",
+          'organization_name_key' => 'stormtroopers',
+          'sof' => true
+        }, test_api_key_secret, 'HS256')
+      }
+
+      before do
+        @site_result = application.handle_id_site_callback(callback_uri_base + jwt_token)
+      end
+      
+      it 'should return IdSiteResult object' do
+        expect(@site_result).to be_kind_of(Stormpath::IdSite::IdSiteResult)
+      end
+    end
   end
 
   describe '#authenticate_oauth' do
