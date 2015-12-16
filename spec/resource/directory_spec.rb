@@ -159,8 +159,9 @@ describe Stormpath::Resource::Directory, :vcr do
     let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
     let!(:account_store_mapping) {create_account_store_mapping(application,directory,true)}
 
-    let(:account) do
-      directory.accounts.create({
+    before do
+      account_store_mapping
+      @account = directory.accounts.create({
         username: "jlucpicard",
         email: "captain@enterprise.com",
         given_name: "Jean-Luc",
@@ -172,20 +173,19 @@ describe Stormpath::Resource::Directory, :vcr do
     after do
       application.delete if application
       directory.delete if directory
+      @account.delete if @account
     end
 
     it 'creates an account' do
-      account_store_mapping
-      expect(account).to be_a Stormpath::Resource::Account
-      expect(account.username).to eq("jlucpicard") 
-      expect(account.email).to eq("captain@enterprise.com") 
-      expect(account.given_name).to eq("Jean-Luc") 
-      expect(account.surname).to eq("Picard") 
+      #account_store_mapping
+      expect(@account).to be_a Stormpath::Resource::Account
+      expect(@account.username).to eq("jlucpicard") 
+      expect(@account.email).to eq("captain@enterprise.com") 
+      expect(@account.given_name).to eq("Jean-Luc") 
+      expect(@account.surname).to eq("Picard") 
     end
 
     it 'can authenticate with the account credentials' do
-      account_store_mapping
-      account
       auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'qwerty'
       auth_result = application.authenticate_account auth_request
 
@@ -194,7 +194,6 @@ describe Stormpath::Resource::Directory, :vcr do
       expect(auth_result.account.email).to eq("captain@enterprise.com")
       expect(auth_result.account.given_name).to eq("Jean-Luc") 
       expect(auth_result.account.surname).to eq("Picard") 
-      account.delete
     end
   end
 
