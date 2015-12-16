@@ -159,40 +159,80 @@ describe Stormpath::Resource::Directory, :vcr do
     let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
     let!(:account_store_mapping) {create_account_store_mapping(application,directory,true)}
 
-    before do
-      account_store_mapping
-      @account = directory.accounts.create({
-        username: "jlucpicard",
-        email: "captain@enterprise.com",
-        given_name: "Jean-Luc",
-        surname: "Picard",
-        password: "$stormpath2$MD5$1$OGYyMmM5YzVlMDEwODEwZTg3MzM4ZTA2YjljZjMxYmE=$EuFAr2NTM83PrizVAYuOvw=="
-      }, password_format: 'mcf')
+    context "MD5 hashing algorithm" do
+      before do
+        account_store_mapping
+        @account = directory.accounts.create({
+          username: "jlucpicard",
+          email: "captain@enterprise.com",
+          given_name: "Jean-Luc",
+          surname: "Picard",
+          password: "$stormpath2$MD5$1$OGYyMmM5YzVlMDEwODEwZTg3MzM4ZTA2YjljZjMxYmE=$EuFAr2NTM83PrizVAYuOvw=="
+        }, password_format: 'mcf')
+      end
+
+      after do
+        application.delete if application
+        directory.delete if directory
+        @account.delete if @account
+      end
+
+      it 'creates an account' do
+        expect(@account).to be_a Stormpath::Resource::Account
+        expect(@account.username).to eq("jlucpicard") 
+        expect(@account.email).to eq("captain@enterprise.com") 
+        expect(@account.given_name).to eq("Jean-Luc") 
+        expect(@account.surname).to eq("Picard") 
+      end
+
+      it 'can authenticate with the account credentials' do
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'qwerty'
+        auth_result = application.authenticate_account auth_request
+
+        expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
+        expect(auth_result.account).to be_a Stormpath::Resource::Account
+        expect(auth_result.account.email).to eq("captain@enterprise.com")
+        expect(auth_result.account.given_name).to eq("Jean-Luc") 
+        expect(auth_result.account.surname).to eq("Picard") 
+      end
     end
 
-    after do
-      application.delete if application
-      directory.delete if directory
-      @account.delete if @account
-    end
+    context "SHA-512 hashing algorithm" do
+      before do
+        account_store_mapping
+        @account = directory.accounts.create({
+          username: "jlucpicard",
+          email: "captain@enterprise.com",
+          given_name: "Jean-Luc",
+          surname: "Picard",
+          password: "$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg=="
+        }, password_format: 'mcf')
+      end
 
-    it 'creates an account' do
-      expect(@account).to be_a Stormpath::Resource::Account
-      expect(@account.username).to eq("jlucpicard") 
-      expect(@account.email).to eq("captain@enterprise.com") 
-      expect(@account.given_name).to eq("Jean-Luc") 
-      expect(@account.surname).to eq("Picard") 
-    end
+      after do
+        application.delete if application
+        directory.delete if directory
+        @account.delete if @account
+      end
 
-    it 'can authenticate with the account credentials' do
-      auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'qwerty'
-      auth_result = application.authenticate_account auth_request
+      it 'creates an account' do
+        expect(@account).to be_a Stormpath::Resource::Account
+        expect(@account.username).to eq("jlucpicard") 
+        expect(@account.email).to eq("captain@enterprise.com") 
+        expect(@account.given_name).to eq("Jean-Luc") 
+        expect(@account.surname).to eq("Picard") 
+      end
 
-      expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
-      expect(auth_result.account).to be_a Stormpath::Resource::Account
-      expect(auth_result.account.email).to eq("captain@enterprise.com")
-      expect(auth_result.account.given_name).to eq("Jean-Luc") 
-      expect(auth_result.account.surname).to eq("Picard") 
+      it 'can authenticate with the account credentials' do
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'testing12'
+        auth_result = application.authenticate_account auth_request
+
+        expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
+        expect(auth_result.account).to be_a Stormpath::Resource::Account
+        expect(auth_result.account.email).to eq("captain@enterprise.com")
+        expect(auth_result.account.given_name).to eq("Jean-Luc") 
+        expect(auth_result.account.surname).to eq("Picard") 
+      end
     end
   end
 
