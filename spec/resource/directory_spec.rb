@@ -159,6 +159,12 @@ describe Stormpath::Resource::Directory, :vcr do
     let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
     let!(:account_store_mapping) {create_account_store_mapping(application,directory,true)}
 
+    after do
+      application.delete if application
+      directory.delete if directory
+      @account.delete if @account
+    end
+
     context "MD5 hashing algorithm" do
       before do
         account_store_mapping
@@ -169,12 +175,6 @@ describe Stormpath::Resource::Directory, :vcr do
           surname: "Picard",
           password: "$stormpath2$MD5$1$OGYyMmM5YzVlMDEwODEwZTg3MzM4ZTA2YjljZjMxYmE=$EuFAr2NTM83PrizVAYuOvw=="
         }, password_format: 'mcf')
-      end
-
-      after do
-        application.delete if application
-        directory.delete if directory
-        @account.delete if @account
       end
 
       it 'creates an account' do
@@ -207,12 +207,6 @@ describe Stormpath::Resource::Directory, :vcr do
           surname: "Picard",
           password: "$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg=="
         }, password_format: 'mcf')
-      end
-
-      after do
-        application.delete if application
-        directory.delete if directory
-        @account.delete if @account
       end
 
       it 'creates an account' do
