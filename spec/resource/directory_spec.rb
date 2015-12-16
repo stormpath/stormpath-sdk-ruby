@@ -177,7 +177,6 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     it 'creates an account' do
-      #account_store_mapping
       expect(@account).to be_a Stormpath::Resource::Account
       expect(@account.username).to eq("jlucpicard") 
       expect(@account.email).to eq("captain@enterprise.com") 
