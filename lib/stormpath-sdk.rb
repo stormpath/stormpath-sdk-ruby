@@ -82,6 +82,8 @@ module Stormpath
     autoload :FacebookProviderData, 'stormpath-sdk/provider/facebook/facebook_provider_data'
     autoload :GoogleProvider, 'stormpath-sdk/provider/google/google_provider'
     autoload :GoogleProviderData, 'stormpath-sdk/provider/google/google_provider_data'
+    autoload :LinkedinProvider, 'stormpath-sdk/provider/linkedin/linkedin_provider'
+    autoload :LinkedinProviderData, 'stormpath-sdk/provider/linkedin/linkedin_provider_data'
     autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath/stormpath_provider'
     autoload :StormpathProviderData, 'stormpath-sdk/provider/stormpath/stormpath_provider_data'
   end
