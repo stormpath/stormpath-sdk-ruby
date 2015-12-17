@@ -149,4 +149,19 @@ describe Stormpath::Provider::Provider, :vcr do
     it_behaves_like 'a provider directory'
     it_behaves_like 'a syncrhonizeable directory'
   end
+
+  describe 'create linkedin directory with provider credentials' do
+    let(:name) { random_directory_name('Linkedin') }
+    let(:description) { 'Directory for testing Linkedin directories.' }
+
+    let(:provider_id) { "linkedin" }
+    let(:client_id) { 'LINKEDIN_APP_ID' }
+    let(:client_secret) { 'LINKEDIN_APP_SECRET' }
+    let(:provider_info) do
+      { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
+    end
+
+    it_behaves_like 'a provider directory'
+    it_behaves_like 'a syncrhonizeable directory'
+  end
 end
