@@ -164,4 +164,19 @@ describe Stormpath::Provider::Provider, :vcr do
     it_behaves_like 'a provider directory'
     it_behaves_like 'a syncrhonizeable directory'
   end
+
+  describe 'create github directory with provider credentials' do
+    let(:name) { random_directory_name('Github') }
+    let(:description) { 'Directory for testing Github directories.' }
+
+    let(:provider_id) { "github" }
+    let(:client_id) { 'GITHUB_APP_ID' }
+    let(:client_secret) { 'GITHUB_APP_SECRET' }
+    let(:provider_info) do
+      { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
+    end
+
+    it_behaves_like 'a provider directory'
+    it_behaves_like 'a syncrhonizeable directory'
+  end
 end
