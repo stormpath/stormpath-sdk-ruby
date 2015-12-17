@@ -48,12 +48,12 @@ module Stormpath
 
       LINKEDIN_ACCOUNT = {
         href: "https://api.stormpath.com/v1/accounts/7jdiPam0PWES317hwRR5a7",
-        username: "damir.svrtan", 
-        email: "hladnidamir@hotmail.com", 
-        givenName: "Damir", 
+        username: "nenad.nikolic", 
+        email: "nnikolic87@gmail.com", 
+        givenName: "Nenad", 
         middleName: nil, 
-        surname: "Svrtan", 
-        fullName: "Damir Svrtan", 
+        surname: "Nikolic", 
+        fullName: "Nenad Nikolic", 
         status: "ENABLED", 
         emailVerificationToken: nil, 
         customData: { href: "https://api.stormpath.com/v1/accounts/7jdiPam0PWES317hwRR5a7/customData"}, 
