@@ -5,8 +5,8 @@ rvm:
 - 2.1.2
 services:
 - redis-server
-before-install:
- - gem install bundler
+before_install:
+  - gem install bundler
 env:
   global:
   - secure: MeyjZGgySZvpYVRm2i7wkrhvu9KUeU7eQ5aKj7FXqIYlQe3T67k+KKA3Ejp6WC3wUEVPUFseWMZCuNkRc0UeGA5/4e4LLc++XuaZn1jLTm1yNofh/CFAAjt5VdIYz4R7sKxpyLxs0orK2+HcaiCoqSDj7ehw2SlDca9VEi0GoQk=
