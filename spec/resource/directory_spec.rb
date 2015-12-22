@@ -135,6 +135,29 @@ describe Stormpath::Resource::Directory, :vcr do
       end
     end
 
+    context 'with account data as hash' do
+      let(:created_account_with_hash) do
+        directory.create_account({
+          email: random_email,
+          given_name: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK',
+          username: random_user_name
+        })
+      end
+
+      after do
+        created_account_with_hash.delete if created_account_with_hash
+      end
+      
+      it 'creates an account with status ENABLED' do
+        expect(created_account_with_hash.email).to eq(random_email)
+        expect(created_account_with_hash.given_name).to eq('Ruby SDK')
+        expect(created_account_with_hash.surname).to eq('SDK')
+        expect(created_account_with_hash.status).to eq("ENABLED")
+      end
+    end
+
   end
 
   describe '#create_directory_with_custom_data' do
