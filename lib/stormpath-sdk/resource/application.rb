@@ -16,6 +16,7 @@
 class Stormpath::Resource::Application < Stormpath::Resource::Instance
   include Stormpath::Resource::Status
   include Stormpath::Resource::CustomDataStorage
+  #include Stormpath::Resource::AccountOverrides
   include UUIDTools
 
   class LoadError < Stormpath::Error; end
@@ -97,6 +98,23 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     end
 
     id_site_result
+  end
+
+  def create_account account, registration_workflow_enabled=nil
+    href = accounts.href
+    if registration_workflow_enabled == false
+      href += "?registrationWorkflowEnabled=#{registration_workflow_enabled.to_s}"
+    end
+
+    resource = case account
+    when Stormpath::Resource::Base
+      account
+    else
+      Stormpath::Resource::Account.new account, client
+    end
+
+    resource.apply_custom_data_updates_if_necessary
+    data_store.create href, resource, Stormpath::Resource::Account
   end
 
   def send_password_reset_email email
