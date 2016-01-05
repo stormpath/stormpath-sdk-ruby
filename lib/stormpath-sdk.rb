@@ -110,5 +110,7 @@ module Stormpath
     autoload :RefreshGrantRequest, "stormpath-sdk/oauth/refresh_grant_request"
     autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
     autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
+    autoload :IdSiteGrantRequest, "stormpath-sdk/oauth/id_site_grant_request"
+    autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
   end
 end
