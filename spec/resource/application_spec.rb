@@ -654,6 +654,19 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
 
+    context 'exhange id site token for access_token' do
+      let(:invalid_jwt_token) { 'invalid_token' }
+
+      let(:id_site_grant_request) { Stormpath::Oauth::IdSiteGrantRequest.new invalid_jwt_token }
+      let(:authenticate_oauth) { application.authenticate_oauth(id_site_grant_request) }
+
+      it 'should raise invalid token error' do
+        expect {
+          authenticate_oauth
+        }.to raise_error(Stormpath::Error)
+      end
+    end
+
     context 'refresh token' do
       let(:refresh_grant_request) { Stormpath::Oauth::RefreshGrantRequest.new aquire_token.refresh_token }
       let(:authenticate_oauth) { application.authenticate_oauth(refresh_grant_request) }
