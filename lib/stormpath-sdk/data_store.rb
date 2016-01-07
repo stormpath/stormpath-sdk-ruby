@@ -207,7 +207,7 @@ class Stormpath::DataStore
 
     def apply_default_request_headers(request)
       request.http_headers.store 'Accept', 'application/json'
-      request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
+      apply_default_user_agent(request)
 
       if request.body and request.body.length > 0
         request.http_headers.store 'Content-Type', 'application/json'
@@ -216,7 +216,13 @@ class Stormpath::DataStore
     
     def apply_form_data_request_headers(request)
       request.http_headers.store 'Content-Type', 'application/x-www-form-urlencoded'
-      request.http_headers.store 'User-Agent', 'Stormpath-RubySDK/' + Stormpath::VERSION
+      apply_default_user_agent(request)
+    end
+
+    def apply_default_user_agent(request)
+      request.http_headers.store 'User-Agent', 'stormpath-sdk-ruby/' + Stormpath::VERSION +
+      " ruby/#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}" +
+      " " + Gem::Platform.local.os + "/" + Gem::Platform.local.version  
     end
 
     def save_resource(href, resource, return_type)
