@@ -222,7 +222,7 @@ class Stormpath::DataStore
     def apply_default_user_agent(request)
       request.http_headers.store 'User-Agent', 'stormpath-sdk-ruby/' + Stormpath::VERSION +
       " ruby/#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}" +
-      " " + Gem::Platform.local.os + "/" + Gem::Platform.local.version  
+      " " + Gem::Platform.local.os.to_s + "/" + Gem::Platform.local.version.to_s
     end
 
     def save_resource(href, resource, return_type)
