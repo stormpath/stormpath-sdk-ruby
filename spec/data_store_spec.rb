@@ -148,4 +148,22 @@ describe Stormpath::DataStore do
     end
 
   end
+
+  context '#apply_default_user_agent' do
+    let(:request) do
+      Stormpath::Http::Request.new 'get', 'http://example.com/resources/abc123', nil, Hash.new, nil, test_api_key
+    end
+
+    before do
+      allow(Gem::Platform.local).to receive(:os) { "darwin" } 
+      allow(Gem::Platform.local).to receive(:version) { "14" } 
+
+      data_store.send(:apply_default_user_agent, request)
+    end
+
+    it 'adds User-Agent to header' do
+      expect(request.http_headers["User-Agent"]).to include("darwin")
+      expect(request.http_headers["User-Agent"]).to include("14")
+    end
+  end
 end
