@@ -99,6 +99,37 @@ describe Stormpath::Resource::Application, :vcr do
 
   end
 
+
+  describe '#create_account' do
+    let(:account) do
+      Stormpath::Resource::Account.new({
+        email: random_email,
+        given_name: 'Ruby SDK',
+        password: 'P@$$w0rd',
+        surname: 'SDK',
+        username: random_user_name
+      })
+    end
+
+    context 'with registration workflow' do
+      it 'creates an account with worflow enabled' do
+        response = application.create_account account, true
+
+        expect(response).to be_kind_of Stormpath::Resource::Account
+        expect(response.email).to eq(account.email)
+      end
+    end
+
+    context 'without registration workflow' do
+      it 'creates an account with workflow disabled' do
+        response = application.create_account account 
+
+        expect(response).to be_kind_of Stormpath::Resource::Account
+        expect(response.email).to eq(account.email)
+      end
+    end
+  end
+
   describe '#authenticate_account' do
     let(:account) do
       directory.accounts.create build_account(password: 'P@$$w0rd')
