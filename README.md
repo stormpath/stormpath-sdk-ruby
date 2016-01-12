@@ -292,6 +292,32 @@ end
 
 The application will be an instance of your application. callback_uri is a url with which you want to handle the ID Site information, this url also needs to be set in the Stormpath’s dashboard on [ID Site settings page](https://api.stormpath.com/ui2/index.html#/id-site) as Authorized Redirect URLs.
 
+Using ID Site for [multitenancy][id-site-multitenancy]
+
+When a user wants to login to your application, you may want to specify an organization for the user to login to. Stormpath ID Site is configurable to support multitenancy with Organization resources
+
+```ruby
+application.create_id_dite_url({
+    callback_uri: 'https://trooperapp.com/callback',
+    organization_name_key: 'stormtrooper',
+    show_organization_field: true
+});
+```
+
+Using Subdomains 
+
+In some cases, you may want to show the organization that the user is logging into as a subdomain instead of an form field. To configuring this, you need to use a [wildcard certificate][wildcard-certificate] when setting up your [custom domain with ID Site][custom-domain-with-id-site]. Otherwise, the Stormpath infrastructure will cause browser SSL errors.
+
+Once a wildcard certificate is configured on your domain, you can tell ID Site to use a subdomain to represent the organization:
+
+```ruby
+application.create_id_dite_url({
+    callback_uri: 'https://trooperapp.com/callback',
+    organization_name_key: 'stormtrooper',
+    use_subdomain: true
+});
+```
+
 #### Handle ID Site Callback
 
 For any request you make for ID Site, you need to specify a callback uri. To parse the information from the servers response and to decode the data from the JWT token you need to call the handle_id_site_callback method and pass the Request URI.
@@ -641,3 +667,6 @@ For additional information, please see the full [Project Documentation](https://
   [stormpath-admin-login]: http://api.stormpath.com/login
   [create-api-keys]: http://www.stormpath.com/docs/ruby/product-guide#AssignAPIkeys
   [concepts]: http://www.stormpath.com/docs/stormpath-basics#keyConcepts
+  [wildcard-certificate]: https://en.wikipedia.org/wiki/Wildcard_certificate
+  [custom-domain-with-id-site]: https://docs.stormpath.com/guides/using-id-site/#setting-your-own-custom-domain-name-and-ssl-certificate
+  [id-site-multitenancy]: https://docs.stormpath.com/guides/using-id-site/#using-id-site-for-multitenancy
