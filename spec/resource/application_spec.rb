@@ -637,6 +637,7 @@ describe Stormpath::Resource::Application, :vcr do
           'isNewSub' => true,
           'status' => "REGISTERED",
           'organization_name_key' => 'stormtroopers',
+          'use_subdomain' => true,
           'sof' => true
         }, test_api_key_secret, 'HS256')
       }
