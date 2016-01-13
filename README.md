@@ -298,9 +298,9 @@ When a user wants to login to your application, you may want to specify an organ
 
 ```ruby
 application.create_id_site_url({
-    callback_uri: 'https://trooperapp.com/callback',
-    organization_name_key: 'stormtrooper',
-    show_organization_field: true
+  callback_uri: 'https://trooperapp.com/callback',
+  organization_name_key: 'stormtrooper',
+  show_organization_field: true
 });
 ```
 
@@ -312,10 +312,22 @@ Once a wildcard certificate is configured on your domain, you can tell ID Site t
 
 ```ruby
 application.create_id_site_url({
-    callback_uri: 'https://trooperapp.com/callback',
-    organization_name_key: 'stormtrooper',
-    use_subdomain: true
+  callback_uri: 'https://trooperapp.com/callback',
+  organization_name_key: 'stormtrooper',
+  use_subdomain: true
 });
+```
+
+##### Specifying the Organization
+
+In the case where you are using a subdomain to designate the organization, you can tell ID Site which organization the user is logging into to.
+
+```ruby
+application.create_id_site_url({
+  callback_uri: 'https://trooperapp.com/callback',
+  organization_name_key: 'stormtrooper',
+  show_organization_field: true
+})
 ```
 
 #### Handle ID Site Callback
