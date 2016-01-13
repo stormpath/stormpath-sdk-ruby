@@ -457,6 +457,19 @@ With the account acquired you can then update the password:
 _NOTE :_ Confirming a new password is left up to the web application
 code calling the Stormpath SDK. The SDK does not require confirmation.
 
+### Social Providers
+
+To access or create an account in an already created social Directory (facebook, google, github, linkedin),
+it is required to gather Authorization Code on behalf of the user. This requires leveraging Oauth 2.0
+protocol and the user's consent for your applications permissions. Once you have the access_token you can
+access the account via get_provider_account method.
+
+```ruby
+provider = ‘facebook’ # can also be google, github, linkedin
+request = Stormpath::Provider::AccountRequest.new(provider, :access_token, access_token)
+application.get_provider_account(request)
+```
+
 ### ACL through Groups
 
 Memberships of accounts in certain groups can be used as an
