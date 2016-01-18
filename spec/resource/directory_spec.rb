@@ -1,6 +1,15 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Directory, :vcr do
+  def create_account_store_mapping(application, account_store, is_default_group_store=false)
+    test_api_client.account_store_mappings.create({
+      application: application,
+      account_store: account_store,
+      list_index: 0,
+      is_default_account_store: true,
+      is_default_group_store: is_default_group_store
+     })
+  end
 
   describe "instances should respond to attribute property methods" do
     let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
@@ -35,7 +44,11 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'directory_associations' do
-    let(:directory) { test_directory }
+    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
+
+    after do
+      directory.delete if directory
+    end
 
     context '#accounts' do
       let(:account) { directory.accounts.create build_account}
@@ -72,7 +85,7 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_account' do
-    let(:directory) { test_directory }
+    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
 
     let(:account) do
       Stormpath::Resource::Account.new({
@@ -82,6 +95,10 @@ describe Stormpath::Resource::Directory, :vcr do
         surname: 'SDK',
         username: random_user_name
       })
+    end
+
+    after do
+      directory.delete if directory
     end
 
     context 'without registration workflow' do
@@ -134,6 +151,83 @@ describe Stormpath::Resource::Directory, :vcr do
         expect(created_account_with_reg_workflow.email_verification_token).not_to be
       end
     end
+  end
+
+  describe 'create account with password import MCF feature' do
+    let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
+    let(:application) { test_api_client.applications.get app.href }
+    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
+    let!(:account_store_mapping) {create_account_store_mapping(application,directory,true)}
+
+    after do
+      application.delete if application
+      directory.delete if directory
+      @account.delete if @account
+    end
+
+    context "MD5 hashing algorithm" do
+      before do
+        account_store_mapping
+        @account = directory.accounts.create({
+          username: "jlucpicard",
+          email: "captain@enterprise.com",
+          given_name: "Jean-Luc",
+          surname: "Picard",
+          password: "$stormpath2$MD5$1$OGYyMmM5YzVlMDEwODEwZTg3MzM4ZTA2YjljZjMxYmE=$EuFAr2NTM83PrizVAYuOvw=="
+        }, password_format: 'mcf')
+      end
+
+      it 'creates an account' do
+        expect(@account).to be_a Stormpath::Resource::Account
+        expect(@account.username).to eq("jlucpicard") 
+        expect(@account.email).to eq("captain@enterprise.com") 
+        expect(@account.given_name).to eq("Jean-Luc") 
+        expect(@account.surname).to eq("Picard") 
+      end
+
+      it 'can authenticate with the account credentials' do
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'qwerty'
+        auth_result = application.authenticate_account auth_request
+
+        expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
+        expect(auth_result.account).to be_a Stormpath::Resource::Account
+        expect(auth_result.account.email).to eq("captain@enterprise.com")
+        expect(auth_result.account.given_name).to eq("Jean-Luc") 
+        expect(auth_result.account.surname).to eq("Picard") 
+      end
+    end
+
+    context "SHA-512 hashing algorithm" do
+      before do
+        account_store_mapping
+        @account = directory.accounts.create({
+          username: "jlucpicard",
+          email: "captain@enterprise.com",
+          given_name: "Jean-Luc",
+          surname: "Picard",
+          password: "$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg=="
+        }, password_format: 'mcf')
+      end
+
+      it 'creates an account' do
+        expect(@account).to be_a Stormpath::Resource::Account
+        expect(@account.username).to eq("jlucpicard") 
+        expect(@account.email).to eq("captain@enterprise.com") 
+        expect(@account.given_name).to eq("Jean-Luc") 
+        expect(@account.surname).to eq("Picard") 
+      end
+
+      it 'can authenticate with the account credentials' do
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'testing12'
+        auth_result = application.authenticate_account auth_request
+
+        expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
+        expect(auth_result.account).to be_a Stormpath::Resource::Account
+        expect(auth_result.account.email).to eq("captain@enterprise.com")
+        expect(auth_result.account.given_name).to eq("Jean-Luc") 
+        expect(auth_result.account.surname).to eq("Picard") 
+      end
+    end
 
     context 'with account data as hash' do
       let(:created_account_with_hash) do
@@ -178,7 +272,11 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_account_with_custom_data' do
-    let(:directory) { test_directory }
+    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
+
+    after do
+      directory.delete if directory
+    end
 
       it 'creates an account with custom data' do
         account =  Stormpath::Resource::Account.new({
@@ -202,7 +300,11 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_group' do
-    let(:directory) { test_directory }
+    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
+
+    after do
+      directory.delete if directory
+    end
 
     context 'given a valid group' do
       let(:group_name) { "valid_test_group" }
@@ -236,6 +338,7 @@ describe Stormpath::Resource::Directory, :vcr do
 
     after do
       application.delete if application
+      directory.delete if directory
     end
 
     it 'and all of its associations' do
@@ -256,8 +359,5 @@ describe Stormpath::Resource::Directory, :vcr do
       expect(application.accounts).not_to include(account)
       expect(application.groups).not_to include(group)
     end
-
   end
-
-
 end
