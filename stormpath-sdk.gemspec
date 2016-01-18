@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency('uuidtools', '>= 2.1.3')
   s.add_dependency('activesupport', '>= 3.2.8')
   s.add_dependency('properties-ruby', "~> 0.0.4")
+  s.add_dependency('http-cookie', "~> 1.0.2")
   s.add_dependency('java_properties')
   s.add_dependency('jwt', '>= 1.5.0')
 
