@@ -14,6 +14,8 @@ module Stormpath
           attempt = @data_store.instantiate PasswordGrant
         elsif request.grant_type == 'refresh_token'
           attempt = @data_store.instantiate RefreshToken
+        elsif request.grant_type == 'id_site_token'
+          attempt = @data_store.instantiate IdSiteGrant 
         end
 
         attempt.set_options(request)
