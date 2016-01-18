@@ -99,6 +99,37 @@ describe Stormpath::Resource::Application, :vcr do
 
   end
 
+
+  describe '#create_account' do
+    let(:account) do
+      Stormpath::Resource::Account.new({
+        email: random_email,
+        given_name: 'Ruby SDK',
+        password: 'P@$$w0rd',
+        surname: 'SDK',
+        username: random_user_name
+      })
+    end
+
+    context 'with registration workflow' do
+      it 'creates an account with worflow enabled' do
+        response = application.create_account account, true
+
+        expect(response).to be_kind_of Stormpath::Resource::Account
+        expect(response.email).to eq(account.email)
+      end
+    end
+
+    context 'without registration workflow' do
+      it 'creates an account with workflow disabled' do
+        response = application.create_account account 
+
+        expect(response).to be_kind_of Stormpath::Resource::Account
+        expect(response.email).to eq(account.email)
+      end
+    end
+  end
+
   describe '#authenticate_account' do
     let(:account) do
       directory.accounts.create build_account(password: 'P@$$w0rd')
@@ -624,6 +655,30 @@ describe Stormpath::Resource::Application, :vcr do
         expect {
           application.handle_id_site_callback(callback_uri_base + jwt_token)
         }.to raise_error(JWT::DecodeError)
+      end
+    end
+
+    context 'with show_organization_field key specified' do
+      let(:jwt_token) { JWT.encode({
+          'iat' => Time.now.to_i,
+          'aud' => test_api_key_id,
+          'sub' => application.href,
+          'path' => '',
+          'state' => '',
+          'isNewSub' => true,
+          'status' => "REGISTERED",
+          'organization_name_key' => 'stormtroopers',
+          'usd' => true,
+          'sof' => true
+        }, test_api_key_secret, 'HS256')
+      }
+
+      before do
+        @site_result = application.handle_id_site_callback(callback_uri_base + jwt_token)
+      end
+      
+      it 'should return IdSiteResult object' do
+        expect(@site_result).to be_kind_of(Stormpath::IdSite::IdSiteResult)
       end
     end
   end

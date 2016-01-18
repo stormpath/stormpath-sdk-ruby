@@ -52,6 +52,7 @@ module Stormpath
     autoload :AccessToken, 'stormpath-sdk/resource/access_token'
     autoload :Organization, 'stormpath-sdk/resource/organization'
     autoload :OrganizationAccountStoreMapping, 'stormpath-sdk/resource/organization_account_store_mapping'
+    autoload :AccountOverrides, 'stormpath-sdk/resource/account_overrides'
   end
 
   module Cache
@@ -82,6 +83,10 @@ module Stormpath
     autoload :FacebookProviderData, 'stormpath-sdk/provider/facebook/facebook_provider_data'
     autoload :GoogleProvider, 'stormpath-sdk/provider/google/google_provider'
     autoload :GoogleProviderData, 'stormpath-sdk/provider/google/google_provider_data'
+    autoload :LinkedinProvider, 'stormpath-sdk/provider/linkedin/linkedin_provider'
+    autoload :LinkedinProviderData, 'stormpath-sdk/provider/linkedin/linkedin_provider_data'
+    autoload :GithubProvider, 'stormpath-sdk/provider/github/github_provider'
+    autoload :GithubProviderData, 'stormpath-sdk/provider/github/github_provider_data'
     autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath/stormpath_provider'
     autoload :StormpathProviderData, 'stormpath-sdk/provider/stormpath/stormpath_provider_data'
   end
