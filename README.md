@@ -306,7 +306,7 @@ application.create_id_site_url({
 
 ##### Using Subdomains 
 
-In some cases, you may want to show the organization that the user is logging into as a subdomain instead of an form field. To configuring this, you need to use a [wildcard certificate][wildcard-certificate] when setting up your [custom domain with ID Site][custom-domain-with-id-site]. Otherwise, the Stormpath infrastructure will cause browser SSL errors.
+In some cases, you may want to show the organization that the user is logging into as a subdomain instead of an form field. To configure this, you need to use a [wildcard certificate][wildcard-certificate] when setting up your [custom domain with ID Site][custom-domain-with-id-site]. Otherwise, the Stormpath infrastructure will cause browser SSL errors.
 
 Once a wildcard certificate is configured on your domain, you can tell ID Site to use a subdomain to represent the organization:
 
