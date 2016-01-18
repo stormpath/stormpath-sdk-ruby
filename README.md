@@ -346,6 +346,12 @@ This is done by passing the JWT similar to the way we passed the user’s creden
 The difference is that instead of using the password grant type and passing credentials, we will use the id_site_token type and pass the JWT we got from the ID Site
 more info [here][exchange-id-site-token].
 
+To exchange ID Site token for the oauth token use the following snippet
+```ruby
+grant_request = Stormpath::Oauth::IdSiteGrantRequest.new jwt_token
+response = application.authenticate_oauth grant_request
+```
+
 ### Registering Accounts
 
 Accounts are created on a directory instance. They can be created in two
