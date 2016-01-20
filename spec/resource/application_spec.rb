@@ -709,6 +709,44 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
 
+    context 'exchange id site token for access_token with invalid jwt' do
+      let(:invalid_jwt_token) { 'invalid_token' }
+
+      let(:id_site_grant_request) { Stormpath::Oauth::IdSiteGrantRequest.new invalid_jwt_token }
+      let(:authenticate_oauth) { application.authenticate_oauth(id_site_grant_request) }
+
+      it 'should raise invalid token error' do
+        expect {
+          authenticate_oauth
+        }.to raise_error(Stormpath::Error)
+      end
+    end
+
+    context 'echange id site token for access_token with valid jwt' do
+      let(:jwt_token) { JWT.encode({
+          'iat' => Time.now.to_i,
+          'jti' => UUID.method(:random_create).call.to_s,
+          'iss' => test_api_client.data_store.api_key.id,
+          'sub' => application.href,
+          'cb_uri' => 'http://localhost:9292/redirect',
+          'path' => '',
+          'state' => ''
+        }, test_api_client.data_store.api_key.secret, 'HS256')
+      }
+
+      it 'should create a jwtRequest that is signed wit the client secret' do
+        allow(application.client.data_store).to receive(:create).and_return(Stormpath::Resource::AccessToken)
+        expect(application.client.data_store).to receive(:instantiate)
+          .with(Stormpath::Oauth::IdSiteGrant)
+          .and_return(Stormpath::Oauth::IdSiteGrant.new({}, application.client))
+
+        grant_request = Stormpath::Oauth::IdSiteGrantRequest.new jwt_token
+        response = application.authenticate_oauth(grant_request) 
+
+        expect(response).to be(Stormpath::Resource::AccessToken)
+      end
+    end
+
     context 'refresh token' do
       let(:refresh_grant_request) { Stormpath::Oauth::RefreshGrantRequest.new aquire_token.refresh_token }
       let(:authenticate_oauth) { application.authenticate_oauth(refresh_grant_request) }
