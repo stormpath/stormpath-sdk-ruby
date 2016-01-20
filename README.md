@@ -449,6 +449,21 @@ get '/users/verify' do
 end
 ```
 
+#### Create an Account with an Existing Password Hash
+
+If you are moving from an existing user repository to Stormpath, you may have existing password hashes that you want to reuse to provide a seamless upgrade path for your end users.
+More info about this feature can be found [here][mcf-hash-password-doc]
+
+Example of creating an account with existing SHA-512 password hash. For details on other hashing algorithms chech the [documentation][stormpaht-hash-algorithm]
+
+directory.accounts.create({
+  username: "jlucpicard",
+  email: "captain@enterprise.com",
+  given_name: "Jean-Luc",
+  surname: "Picard",
+  password: "$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg=="
+}, password_format: 'mcf')
+
 ### Authentication
 
 Authentication is accomplished by passing a username or an email and a
@@ -706,6 +721,8 @@ For additional information, please see the full [Project Documentation](https://
   [concepts]: http://www.stormpath.com/docs/stormpath-basics#keyConcepts
   [exchange-id-site-token]: https://docs.stormpath.com/rest/product-guide/latest/008_idsite.html#exchanging-the-id-site-jwt-for-an-oauth-token
   [generate-oauth-access-token]: https://docs.stormpath.com/rest/product-guide/latest/005_auth_n.html#generate-oauth-token
+  [mcf-hash-password-doc]: http://docs.stormpath.com/rest/product-guide/latest/004_accnt_mgmt.html#importing-accounts-with-mcf-hash-passwords
+  [stormpath-hash-algorithm]: http://docs.stormpath.com/rest/product-guide/latest/004_accnt_mgmt.html#the-stormpath2-hashing-algorithm
   [wildcard-certificate]: https://en.wikipedia.org/wiki/Wildcard_certificate
   [custom-domain-with-id-site]: https://docs.stormpath.com/guides/using-id-site/#setting-your-own-custom-domain-name-and-ssl-certificate
   [id-site-multitenancy]: https://docs.stormpath.com/guides/using-id-site/#using-id-site-for-multitenancy
