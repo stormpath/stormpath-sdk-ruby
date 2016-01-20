@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.authors = ["Stormpath, Inc", "Elder Crisostomo"]
   s.email = 'support@stormpath.com'
   s.homepage = 'https://github.com/stormpath/stormpath-sdk-ruby'
+  s.license = 'Apache-2.0'
 
   s.platform = Gem::Platform::RUBY
   s.require_paths = %w[lib]
