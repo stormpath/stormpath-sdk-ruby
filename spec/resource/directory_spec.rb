@@ -291,10 +291,10 @@ describe Stormpath::Resource::Directory, :vcr do
 
     it 'creates the directory with provider data' do
       directory
-      expect(directory.provider["provider_id"]).to eq("saml")
-      expect(directory.provider["sso_login_url"]).to eq("https://yourIdp.com/saml2/sso/login")
-      expect(directory.provider["sso_logout_url"]).to eq("https://yourIdp.com/saml2/sso/logout")
-      expect(directory.provider["request_signature_algorithm"]).to eq("RSA-SHA256")
+      expect(directory.provider.provider_id).to eq("saml")
+      expect(directory.provider.sso_login_url).to eq("https://yourIdp.com/saml2/sso/login")
+      expect(directory.provider.sso_logout_url.).to eq("https://yourIdp.com/saml2/sso/logout")
+      expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256")
     end
 
   end
