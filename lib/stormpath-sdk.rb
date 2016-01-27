@@ -87,6 +87,8 @@ module Stormpath
     autoload :LinkedinProviderData, 'stormpath-sdk/provider/linkedin/linkedin_provider_data'
     autoload :GithubProvider, 'stormpath-sdk/provider/github/github_provider'
     autoload :GithubProviderData, 'stormpath-sdk/provider/github/github_provider_data'
+    autoload :SamlProvider, 'stormpath-sdk/provider/saml/saml_provider'
+    autoload :SamlProviderData, 'stormpath-sdk/provider/saml/saml_provider_data'
     autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath/stormpath_provider'
     autoload :StormpathProviderData, 'stormpath-sdk/provider/stormpath/stormpath_provider_data'
   end
