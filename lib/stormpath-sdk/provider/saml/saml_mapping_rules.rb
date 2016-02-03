@@ -14,6 +14,5 @@
 # limitations under the License.
 #
 class Stormpath::Provider::SamlMappingRules < Stormpath::Provider::Provider
-  prop_reader :href, :created_at, :modified_at, :entity_id,
-    :assertion_consumer_service_post_endpoint, :x509_signing_cert
+  prop_reader :href, :created_at, :modified_at, :items
 end

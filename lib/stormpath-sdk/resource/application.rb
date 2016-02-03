@@ -116,9 +116,9 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     policy = data_store.instantiate Stormpath::Resource::SamlPolicy
     policy.set_options(options)
 
-    data_store.create href, policy, Stormpath::Provider::AccountResult
+    data_store.create href, policy, Stormpath::Resource::Application 
   end
-  
+ 
   private
 
   def jwt_token_payload(options)
