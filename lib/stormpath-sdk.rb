@@ -53,6 +53,7 @@ module Stormpath
     autoload :Organization, 'stormpath-sdk/resource/organization'
     autoload :OrganizationAccountStoreMapping, 'stormpath-sdk/resource/organization_account_store_mapping'
     autoload :AccountOverrides, 'stormpath-sdk/resource/account_overrides'
+    autoload :SamlPolicy, 'stormpath-sdk/resource/saml_policy'
   end
 
   module Cache
