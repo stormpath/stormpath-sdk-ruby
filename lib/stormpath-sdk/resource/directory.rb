@@ -40,4 +40,14 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     provider = data_store.get_resource provider_href, clazz_proc
     instance_variable_set "@_provider", provider
   end
+
+  def provider_metadata
+    metadata_href = provider.service_provider_metadata["href"]
+    data_store.get_resource metadata_href, Stormpath::Provider::SamlProviderMetadata
+  end
+
+  def statement_mapping_rules
+    metadata_href = provider.service_provider_metadata["href"]
+    data_store.get_resource metadata_href, Stormpath::Provider::SamlMappingRules
+  end
 end
