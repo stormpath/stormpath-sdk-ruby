@@ -295,6 +295,9 @@ describe Stormpath::Resource::Directory, :vcr do
       expect(directory.provider.sso_login_url).to eq("https://yourIdp.com/saml2/sso/login")
       expect(directory.provider.sso_logout_url.).to eq("https://yourIdp.com/saml2/sso/logout")
       expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256")
+
+      expect(directory.provider.attribute_statement_mappings_rules).not_to be_empty
+      expect(directory.provider.service_provider_metadata).not_to be_empty
     end
 
   end
