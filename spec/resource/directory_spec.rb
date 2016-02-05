@@ -273,9 +273,9 @@ describe Stormpath::Resource::Directory, :vcr do
 
   describe 'create directory with provider data' do
     let(:directory) do
-      test_api_client.directories.create 
-        name: random_directory_name, 
-        description: 'description_for_some_test_directory'
+      test_api_client.directories.create(
+        name: random_directory_name,
+        description: 'description_for_some_test_directory',
         provider: {
           provider_id: "saml",
           sso_login_url:"https://yourIdp.com/saml2/sso/login",
@@ -283,6 +283,7 @@ describe Stormpath::Resource::Directory, :vcr do
           encoded_x509_signing_cert:"-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
           request_signature_algorithm:"RSA-SHA256"
         }
+      )
     end
 
     after do
@@ -293,7 +294,7 @@ describe Stormpath::Resource::Directory, :vcr do
       directory
       expect(directory.provider.provider_id).to eq("saml")
       expect(directory.provider.sso_login_url).to eq("https://yourIdp.com/saml2/sso/login")
-      expect(directory.provider.sso_logout_url.).to eq("https://yourIdp.com/saml2/sso/logout")
+      expect(directory.provider.sso_logout_url).to eq("https://yourIdp.com/saml2/sso/logout")
       expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256")
 
       expect(directory.provider.attribute_statement_mappings_rules).not_to be_empty
