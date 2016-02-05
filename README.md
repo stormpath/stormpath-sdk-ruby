@@ -486,6 +486,10 @@ rescue Stormpath::Error => e
 end
 ```
 
+### Authentication Against a SAML Directory
+
+SAML is an XML-based standard for exchanging authentication and authorization data between security domains. Stormpath enables you to allow customers to log-in by authenticating with an external SAML Identity Provider.
+
 ### Password Reset
 
 A password reset workflow, if configured on the directory the account is
