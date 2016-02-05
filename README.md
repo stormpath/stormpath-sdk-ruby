@@ -488,7 +488,80 @@ end
 
 ### Authentication Against a SAML Directory
 
-SAML is an XML-based standard for exchanging authentication and authorization data between security domains. Stormpath enables you to allow customers to log-in by authenticating with an external SAML Identity Provider.
+SAML is an XML-based standard for exchanging authentication and authorization data between security domains. 
+Stormpath enables you to allow customers to log-in by authenticating with an external SAML Identity Provider.
+
+#### Stormpath as a Service Provider
+
+The specific use case that Stormpath supports is user-initiated single sign-on. In this scenario, a user requests 
+a protected resource (e.g. your application). Your application, with the help of Stormpath, then confirms the users 
+identity in order to determine whether they are able to access the resource. In SAML terminology, the user is the User 
+Agent, your application (along with Stormpath) is the Service Provider, and the third-party SAML authentication site 
+is the Identity Provider or IdP.
+
+The broad strokes of the process are as follows:
+
+* User Agent requests access from Service Provider
+* Service Provider responds with redirect to Identity Provider
+* Identity Provider authenticates the user
+* Identity provider redirects user back to Service Provider along with SAML assertions.
+* Service Provider receives SAML assertions and either creates or retrieves Account information
+
+#### Configuring Stormpath as a Service Provider
+
+Configuration is stored in the Directory's Provider resource. Both of these resources must also be linked with an 
+AccountStoreMapping. Here we will explain to you the steps that are required to configure Stormpath as a SAML Service 
+Provider.
+
+#### Step 1: Gather IDP Data
+
+You will need the following information from your IdP:
+
+- **SSO Login URL** - The URL at the IdP to which SAML authentication requests should be sent. This is often called an "SSO URL", "Login URL" or "Sign-in URL".
+- **SSO Logout URL** - The URL at the IdP to which SAML logout requests should be sent. This is often called a "Logout URL", "Global Logout URL" or "Single Logout URL".
+- **Signing Cert** - The IdP will digitally sign auth assertions and Stormpath will need to validate the signature. This will usually be in .pem or .crt format, but Stormpath requires the text value.
+- **Signing Algorithm** - You will need the name of the signing algorithm that your IdP uses. It will be either "RSA-SHA256" or "RSA-SHA1".
+
+#### Step 2: Configure Your SAML Directory
+
+Input the data you gathered in Step 1 above into your Directory's Provider resource, and then pass that along as part of the Directory creation HTTP POST:
+
+```ruby
+```
+
+##### Retrive Your Service Provider Metadata
+
+Next you will have to configure your Stormpath-powered application as a Service Provider in your Identity Provider. This means that you will need to retrieve the correct metadata from Stormpath.
+
+In order to retrieve the required values, start by sending a GET to the Directory's Provider:
+
+```ruby
+```
+
+#### Step 4: Configure Your Service Provider in Your Identity Provider
+
+Log-in to your Identity Provider (Salesforce, OneLogin, etc) and enter the information you retrieved in 
+the previous step into the relevant application configuration fields. The specific steps to follow here 
+will depend entirely on what Identity Provider you use, and for more information you should consult your 
+Identity Provider's SAML documentation.
+
+#### Step 5: Configure Your Application
+
+The Stormpath `Application` Resource has two parts that are relevant to SAML: 
+
+- an ``authorizedCallbackUri`` Array that defines the authorized URIs that the IdP can return your user to. These should be URIs that you host yourself. 
+- an embedded ``samlPolicy`` object that contains information about the SAML flow configuration and endpoints.
+
+```ruby
+```
+
+#### Step 6: Add the SAML Directory as an Account Store
+
+Now you last thing you have to do is map the new Directory to your Application with an Account Store Mapping.
+
+##### Step 7: Configure SAML Assertion Mapping 
+
+The Identity Provider's SAML response contains assertions about the user's identity, which Stormpath can use to create and populate a new Account resource.
 
 ### Password Reset
 
