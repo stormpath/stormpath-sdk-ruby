@@ -141,7 +141,7 @@ class Stormpath::DataStore
 
       return if http_method == 'delete'
 
-      if result[HREF_PROP_NAME]
+      if result[HREF_PROP_NAME] and !resource.is_a? Stormpath::Provider::SamlMappingRules
         cache_walk result
       else
         result
@@ -305,8 +305,12 @@ class Stormpath::DataStore
           property = resource.get_property name, ignore_camelcasing: ignore_camelcasing
 
           # Special use cases are with Custom Data, Provider and ProviderData, their hashes should not be simplified
-          if property.kind_of?(Hash) and !resource_nested_submittable(resource, name)
+          if property.kind_of?(Hash) and !resource_nested_submittable(resource, name) and name != "items"
             property = to_simple_reference name, property
+          end
+
+          if name == "items"
+            property = property.map { |item| item.transform_keys { |key| key.to_s.camelize(:lower).to_sym }  }
           end
 
           properties.store name, property
