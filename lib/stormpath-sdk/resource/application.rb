@@ -21,7 +21,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   class LoadError < Stormpath::Error; end
 
-  prop_accessor :name, :description
+  prop_accessor :name, :description, :authorized_callback_uris
 
   belongs_to :tenant
 
@@ -112,13 +112,6 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
   end
 
-  def authorized_callback_uri(options)
-    policy = data_store.instantiate Stormpath::Resource::SamlPolicy
-    policy.set_options(options)
-
-    data_store.create href, policy, Stormpath::Resource::Application 
-  end
- 
   private
 
   def jwt_token_payload(options)
