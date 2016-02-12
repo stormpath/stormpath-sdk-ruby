@@ -272,35 +272,54 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'create directory with provider data' do
-    let(:directory) do
-      test_api_client.directories.create(
-        name: random_directory_name,
-        description: 'description_for_some_test_directory',
-        provider: {
-          provider_id: "saml",
-          sso_login_url:"https://yourIdp.com/saml2/sso/login",
-          sso_logout_url:"https://yourIdp.com/saml2/sso/logout",
-          encoded_x509_signing_cert:"-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
-          request_signature_algorithm:"RSA-SHA256"
-        }
-      )
+    context 'valida data' do
+      let(:directory) do
+        test_api_client.directories.create(
+          name: random_directory_name,
+          description: 'description_for_some_test_directory',
+          provider: {
+            provider_id: "saml",
+            sso_login_url:"https://yourIdp.com/saml2/sso/login",
+            sso_logout_url:"https://yourIdp.com/saml2/sso/logout",
+            encoded_x509_signing_cert:"-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
+            request_signature_algorithm:"RSA-SHA256"
+          }
+        )
+      end
+
+      after do
+        directory.delete if directory
+      end
+
+      it 'creates the directory with provider data' do
+        directory
+        expect(directory.provider.provider_id).to eq("saml")
+        expect(directory.provider.sso_login_url).to eq("https://yourIdp.com/saml2/sso/login")
+        expect(directory.provider.sso_logout_url).to eq("https://yourIdp.com/saml2/sso/logout")
+        expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256")
+
+        expect(directory.provider.attribute_statement_mappings_rules).not_to be_empty
+        expect(directory.provider.service_provider_metadata).not_to be_empty
+      end
     end
 
-    after do
-      directory.delete if directory
+    context 'invalid data' do
+      it 'raises Stormpath::Error' do
+        expect do
+          test_api_client.directories.create(
+            name: random_directory_name,
+            description: 'description_for_some_test_directory',
+            provider: {
+              provider_id: "saml",
+              sso_login_url:"",
+              sso_logout_url:"",
+              encoded_x509_signing_cert:"",
+              request_signature_algorithm:"RSA-SHA256"
+            }
+          )         
+        end.to raise_error Stormpath::Error
+      end
     end
-
-    it 'creates the directory with provider data' do
-      directory
-      expect(directory.provider.provider_id).to eq("saml")
-      expect(directory.provider.sso_login_url).to eq("https://yourIdp.com/saml2/sso/login")
-      expect(directory.provider.sso_logout_url).to eq("https://yourIdp.com/saml2/sso/logout")
-      expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256")
-
-      expect(directory.provider.attribute_statement_mappings_rules).not_to be_empty
-      expect(directory.provider.service_provider_metadata).not_to be_empty
-    end
-
   end
 
   describe '#create_account_with_custom_data' do
