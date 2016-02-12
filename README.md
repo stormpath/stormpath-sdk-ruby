@@ -594,7 +594,6 @@ Now you last thing you have to do is map the new Directory to your Application w
 The Identity Provider's SAML response contains assertions about the user's identity, which Stormpath can use to create and populate a new Account resource.
 
 ```xml 
-
   <saml:AttributeStatement>
     <saml:Attribute Name="uid" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
       <saml:AttributeValue xsi:type="xs:string">test</saml:AttributeValue>
@@ -610,6 +609,28 @@ The Identity Provider's SAML response contains assertions about the user's ident
 ```
 The Attribute Assertions (`<saml:AttributeStatement>`) are brought into Stormpath and become Account and customData attributes.
 
+SAML Assertion mapping is defined in an **attributeStatementMappingRules** object found inside the Directory's Provider object, or directly: `/v1/attributeStatementMappingRules/$RULES_ID`.
+
+##### Mapping Rules 
+
+The rules have three different components:
+
+- **name**: The SAML Attribute name 
+- **nameFormat**: The name format for this SAML Attribute, expressed as a Uniform Resource Name (URN). 
+- **accountAttributes**: This is an array of Stormpath Account or customData (`customData.$KEY_NAME`) attributes that will map to this SAML Attribute.
+
+In order to create the mapping rules, we simply send the following:
+
+```ruby
+mappings = Stormpath::Provider::SamlMappingRules.new(items: [
+  {
+    name: "uid",
+    account_attributes: ["username"]
+  }
+])
+
+dir.attribute_mappings_create(mappings)
+```
 
 ### Password Reset
 
