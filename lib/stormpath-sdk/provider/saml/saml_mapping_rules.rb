@@ -15,4 +15,8 @@
 #
 class Stormpath::Provider::SamlMappingRules < Stormpath::Provider::Provider
   prop_reader :href, :created_at, :modified_at, :items
+
+  def set_options(options)
+    set_property :href, options[:href]
+  end
 end
