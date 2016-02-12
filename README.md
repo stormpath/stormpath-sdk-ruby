@@ -527,6 +527,23 @@ You will need the following information from your IdP:
 Input the data you gathered in Step 1 above into your Directory's Provider resource, and then pass that along as part of the Directory creation HTTP POST:
 
 ```ruby
+directory.provider
+provider = "saml"
+request = Stormpath::Provider::AccountRequest.new(provider, :access_token, access_token)
+application.get_provider_account(request)
+
+client.directories.create(
+  name: "infinum_directory", 
+  description: "random description", 
+  provider: {
+    provider_id: "saml"
+  }
+)
+```
+
+to get the data about the provider just type
+```ruby
+directory.provider
 ```
 
 ##### Retrive Your Service Provider Metadata
@@ -536,7 +553,18 @@ Next you will have to configure your Stormpath-powered application as a Service 
 In order to retrieve the required values, start by sending a GET to the Directory's Provider:
 
 ```ruby
+directory.provider_metadata
 ```
+
+From this metadata, you will need two values:
+
+- **Assertion Consumer Service URL**: This is the location the IdP will send its response to.
+- **X509 Signing Certificate**: The certificate that is used to sign the requests sent to the IdP. If you retrieve XML, the certificate will be embedded. If you retrieve JSON, you'll have to follow a further /x509certificates link to retrieve it.
+
+You will also need two other values, which will always be the same:
+
+- **SAML Request Binding**: Set to HTTP-Redirect.
+- **SAML Response Binding**: Set to HTTP-Post.
 
 #### Step 4: Configure Your Service Provider in Your Identity Provider
 
@@ -553,6 +581,8 @@ The Stormpath `Application` Resource has two parts that are relevant to SAML:
 - an embedded ``samlPolicy`` object that contains information about the SAML flow configuration and endpoints.
 
 ```ruby
+application.authorized_callback_uris = ["https://myapplication.com/whatever/callback", "https://myapplication.com/whatever/callback2"]
+application.save
 ```
 
 #### Step 6: Add the SAML Directory as an Account Store
@@ -562,6 +592,24 @@ Now you last thing you have to do is map the new Directory to your Application w
 ##### Step 7: Configure SAML Assertion Mapping 
 
 The Identity Provider's SAML response contains assertions about the user's identity, which Stormpath can use to create and populate a new Account resource.
+
+```xml 
+
+  <saml:AttributeStatement>
+    <saml:Attribute Name="uid" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">test</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute Name="mail" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">jane@example.com</saml:AttributeValue>
+    </saml:Attribute>
+      <saml:Attribute Name="location" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">Tampa, FL</saml:AttributeValue>
+    </saml:Attribute>
+  </saml:AttributeStatement>
+
+```
+The Attribute Assertions (`<saml:AttributeStatement>`) are brought into Stormpath and become Account and customData attributes.
+
 
 ### Password Reset
 
