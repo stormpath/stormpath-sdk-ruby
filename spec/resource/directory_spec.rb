@@ -377,6 +377,38 @@ describe Stormpath::Resource::Directory, :vcr do
       expect(directory.provider_metadata.assertion_consumer_service_post_endpoint).not_to be_empty
       expect(directory.provider_metadata.x509_signing_cert).not_to be_empty
     end
+  end
+
+  describe 'saml mapping rules' do
+    let(:directory) do
+      test_api_client.directories.create(
+        name: random_directory_name,
+        description: 'description_for_some_test_directory',
+        provider: {
+          provider_id: "saml",
+          sso_login_url:"https://yourIdp.com/saml2/sso/login",
+          sso_logout_url:"https://yourIdp.com/saml2/sso/logout",
+          encoded_x509_signing_cert:"-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
+          request_signature_algorithm:"RSA-SHA256"
+        }
+      )
+    end
+
+    after do
+      directory.delete if directory
+    end 
+
+    it 'updates the directory mappings' do
+      mappings = Stormpath::Provider::SamlMappingRules.new(items: [
+        {
+          name: "uid",
+          account_attributes: ["username"]
+        }
+      ])
+
+      resposne = dir.attribute_mappings_create(mappings)
+      expect(response.items).to eq( [ { name: "uid", account_attributes: ["username"] } ] )
+    end
 
   end
 
