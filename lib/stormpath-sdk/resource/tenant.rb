@@ -20,6 +20,7 @@ class Stormpath::Resource::Tenant < Stormpath::Resource::Instance
 
   has_many :applications
   has_many :directories
+  has_many :organizations
   has_one :custom_data
 
 end
