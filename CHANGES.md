@@ -1,6 +1,14 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.0.1
+-------------
+
+Released on February 16, 2016
+
+-- Added missing organizations collection to the tenant resource.
+
+
 Version 1.0.0.beta.9
 --------------------
 
