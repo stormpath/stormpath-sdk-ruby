@@ -509,8 +509,7 @@ The broad strokes of the process are as follows:
 
 #### Configuring Stormpath as a Service Provider
 
-Configuration is stored in the Directory's Provider resource. Both of these resources must also be linked with an 
-AccountStoreMapping. Here we will explain to you the steps that are required to configure Stormpath as a SAML Service 
+Configuration is stored in the Directory's Provider resource. Here we will explain to you the steps that are required to configure Stormpath as a SAML Service 
 Provider.
 
 #### Step 1: Gather IDP Data
@@ -561,7 +560,7 @@ dir_provider.creted_at
 dir_provider.modified_at
 ```
 
-##### Retrive Your Service Provider Metadata
+##### Retrieve Your Service Provider Metadata
 
 Next you will have to configure your Stormpath-powered application as a Service Provider in your Identity Provider. This means that you will need to retrieve the correct metadata from Stormpath.
 
@@ -615,7 +614,7 @@ application.save
 
 #### Step 6: Add the SAML Directory as an Account Store
 
-Now you last thing you have to do is map the new Directory to your Application with an Account Store Mapping.
+The next step is to map the new Directory to your Application with an Account Store Mapping.
 
 ##### Step 7: Configure SAML Assertion Mapping 
 
@@ -657,7 +656,7 @@ mappings = Stormpath::Provider::SamlMappingRules.new(items: [
   }
 ])
 
-dir.attribute_mappings_create(mappings)
+dir.create_attribute_mappings(mappings)
 ```
 
 ### Password Reset
