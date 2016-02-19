@@ -406,7 +406,7 @@ describe Stormpath::Resource::Directory, :vcr do
         }
       ])
 
-      resposne = dir.attribute_mappings_create(mappings)
+      resposne = dir.create_attribute_mappings(mappings)
       expect(response.items).to eq( [ { name: "uid", account_attributes: ["username"] } ] )
     end
 
