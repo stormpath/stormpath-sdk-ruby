@@ -527,7 +527,6 @@ You will need the following information from your IdP:
 Input the data you gathered in Step 1 above into your Directory's Provider resource, and then pass that along as part of the Directory creation HTTP POST:
 
 ```ruby
-directory.provider
 provider = "saml"
 request = Stormpath::Provider::AccountRequest.new(provider, :access_token, access_token)
 application.get_provider_account(request)
@@ -546,6 +545,22 @@ to get the data about the provider just type
 directory.provider
 ```
 
+provider method returns instance of SamlProvider and you can access the following data
+
+```ruby
+dir_provider = directory.provider
+
+dir_provider.provider_id
+dir_provider.sso_login_url
+dir_provider.sso_logout_url
+dir_provider.encoded_x509_signing_cert
+dir_provider.request_signature_algorithm
+dir_provider.service_provider_metadata
+dir_provider.attribute_statement_mapping_rules
+dir_provider.creted_at
+dir_provider.modified_at
+```
+
 ##### Retrive Your Service Provider Metadata
 
 Next you will have to configure your Stormpath-powered application as a Service Provider in your Identity Provider. This means that you will need to retrieve the correct metadata from Stormpath.
@@ -554,6 +569,19 @@ In order to retrieve the required values, start by sending a GET to the Director
 
 ```ruby
 directory.provider_metadata
+```
+
+provider_metadata method returns instance of SamlProviderMetadata and you can access the following values
+
+```ruby
+dir_provider_metadata = directory.provider_metadata
+
+dir_provider_metadata.href
+dir_provider_metadata.entity_id
+dir_provider_metadata.x509_signing_cert
+dir_provider_metadata.assertion_consumer_service_post_endpoint
+dir_provider_metadata.created_at
+dir_provider_metadata.modified_at
 ```
 
 From this metadata, you will need two values:
