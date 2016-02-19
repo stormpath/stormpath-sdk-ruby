@@ -141,7 +141,7 @@ class Stormpath::DataStore
 
       return if http_method == 'delete'
 
-      if result[HREF_PROP_NAME] and !resource.is_a? Stormpath::Provider::SamlMappingRules
+      if result[HREF_PROP_NAME] and !resource_is_saml_mapping_rules? resource
         cache_walk result
       else
         result
@@ -309,7 +309,7 @@ class Stormpath::DataStore
             property = to_simple_reference name, property
           end
 
-          if name == "items"
+          if name == "items" and resource_is_saml_mapping_rules? resource
             property = property.map { |item| item.transform_keys { |key| key.to_s.camelize(:lower).to_sym }  }
           end
 
@@ -332,6 +332,10 @@ class Stormpath::DataStore
 
     def resource_is_custom_data resource, name
       resource.is_a? Stormpath::Resource::CustomData or name == 'customData'
+    end
+
+    def resource_is_saml_mapping_rules? resource
+      resource.is_a? Stormpath::Provider::SamlMappingRules
     end
 
 end
