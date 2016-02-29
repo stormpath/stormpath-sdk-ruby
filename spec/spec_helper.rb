@@ -92,6 +92,15 @@ module Stormpath
     def test_directory_with_verification
       test_api_client.directories.get test_directory_with_verification_url
     end
+
+    
+    def fixture_path
+      File.expand_path('../fixtures/response', __FILE__)
+    end
+
+    def fixture(file)
+      File.new(fixture_path + '/' + file)
+    end
   end
 
   module TestResourceHelpers
