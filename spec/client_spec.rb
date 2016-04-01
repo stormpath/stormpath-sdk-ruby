@@ -397,13 +397,11 @@ properties
           expect(groups_cache_summary).to eq [2, 1, 0, 0, 2]
         end
       end
-
     end
 
     context 'search' do
-
       let(:first_application_name) { random_application_name(1) }
-      let(:second_application_name ) { random_application_name(2) }
+      let(:second_application_name) { random_application_name(2) }
 
       let!(:applications) do
         [
@@ -625,6 +623,41 @@ properties
       after do
         directory.delete
       end
+    end
+  end
+
+  describe '#organization' do
+    context 'search' do
+      let(:organization_name) { random_organization_name }
+
+      let!(:organization) do
+        test_api_client.organizations.create(
+          name: organization_name,
+          name_key: "testorganization"
+        )
+      end
+
+      context 'by any attribute' do
+        let(:search_results) do
+          test_api_client.organizations.search(organization_name)
+        end
+
+        it 'returns the application' do
+          expect(search_results.count).to eq 1
+        end
+      end
+
+      context 'by an explicit attribute' do
+        let(:search_results) do
+          test_api_client.organizations.search(name: random_organization_name)
+        end
+
+        it 'returns the application' do
+          expect(search_results.count).to eq 1
+        end
+      end
+
+      after { organization.delete }
     end
   end
 
