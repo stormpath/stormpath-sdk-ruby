@@ -122,7 +122,7 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'without registration workflow' do
       it 'creates an account with workflow disabled' do
-        response = application.create_account account 
+        response = application.create_account account
 
         expect(response).to be_kind_of Stormpath::Resource::Account
         expect(response.email).to eq(account.email)
@@ -243,19 +243,76 @@ describe Stormpath::Resource::Application, :vcr do
 
   describe '#send_password_reset_email' do
     context 'given an email' do
-      context 'of an exisiting account on the application' do
+      context 'of an existing account on the application' do
         let(:account) { directory.accounts.create build_account  }
 
         let(:sent_to_account) { application.send_password_reset_email account.email }
 
-        after do
-          account.delete if account
-        end
+        after { account.delete if account }
 
         it 'sends a password reset request of the account' do
           expect(sent_to_account).to be
           expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
           expect(sent_to_account.email).to eq(account.email)
+        end
+      end
+
+      context 'of an existing account on the application with an account store href' do
+        let(:account) { directory.accounts.create build_account  }
+
+        let(:sent_to_account) do
+          application.send_password_reset_email(account.email, account_store: { href: directory.href })
+        end
+
+        after { account.delete if account }
+
+        it 'sends a password reset request of the account' do
+          expect(sent_to_account).to be
+          expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
+          expect(sent_to_account.email).to eq(account.email)
+        end
+      end
+
+      context 'of a non existing account on the application with an account store href' do
+        let(:account) { directory.accounts.create build_account  }
+
+        let(:other_directory) do
+          test_api_client.directories.create(
+            name: random_directory_name('password_reset_account_store_href'),
+            description: 'abc'
+          )
+        end
+
+        after do
+          account.delete
+          other_directory.delete
+        end
+
+        it 'sends a password reset request of the account' do
+          expect do
+            application.send_password_reset_email(account.email, account_store: { href: other_directory.href })
+          end.to raise_error Stormpath::Error
+        end
+      end
+
+      context 'of an existing account not mapped to the application' do
+        let(:account) { other_directory.accounts.create build_account  }
+
+        let(:other_directory) do
+          test_api_client.directories.create(
+            name: random_directory_name('password_reset_account_store_href')
+          )
+        end
+
+        after do
+          account.delete
+          other_directory.delete
+        end
+
+        it 'sends a password reset request of the account' do
+          expect do
+            application.send_password_reset_email account.email
+          end.to raise_error Stormpath::Error
         end
       end
 
@@ -326,7 +383,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'containes account data' do
-        expect(auth_request.account.href).to eq(account.href) 
+        expect(auth_request.account.href).to eq(account.href)
       end
     end
 
@@ -338,7 +395,7 @@ describe Stormpath::Resource::Application, :vcr do
         })
       end
 
-      let(:organization) do 
+      let(:organization) do
         test_api_client.organizations.create name: 'test_organization',
            name_key: "testorganization"
       end
@@ -381,10 +438,10 @@ describe Stormpath::Resource::Application, :vcr do
       let(:auth_request) { application.authenticate_account(username_password_request) }
 
       it 'returns stormpath error' do
-        expect { 
-          auth_request 
+        expect {
+          auth_request
         }.to raise_error(Stormpath::Error)
-      end 
+      end
     end
   end
 
@@ -506,7 +563,7 @@ describe Stormpath::Resource::Application, :vcr do
           expect(error.message).to eq("The specified callback URI (cb_uri) is not valid")
           expect(error.developer_message).to eq("The specified callback URI (cb_uri) is not valid. Make sure the "\
             "callback URI specified in your ID Site configuration matches the value specified.")
-        end 
+        end
       end
     end
   end
@@ -632,7 +689,7 @@ describe Stormpath::Resource::Application, :vcr do
         }, test_api_key_secret, 'HS256')
       }
 
-      it 'should error with the stormpath error' do  
+      it 'should error with the stormpath error' do
         expect {
           application.handle_id_site_callback(callback_uri_base + jwt_token)
         }.to raise_error(Stormpath::Error)
@@ -676,7 +733,7 @@ describe Stormpath::Resource::Application, :vcr do
       before do
         @site_result = application.handle_id_site_callback(callback_uri_base + jwt_token)
       end
-      
+
       it 'should return IdSiteResult object' do
         expect(@site_result).to be_kind_of(Stormpath::IdSite::IdSiteResult)
       end
@@ -691,7 +748,7 @@ describe Stormpath::Resource::Application, :vcr do
     before do
       application.accounts.create account_data
     end
-  
+
     context 'generate access token' do
       let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
       let(:authenticate_oauth) { application.authenticate_oauth(password_grant_request) }
@@ -741,7 +798,7 @@ describe Stormpath::Resource::Application, :vcr do
           .and_return(Stormpath::Oauth::IdSiteGrant.new({}, application.client))
 
         grant_request = Stormpath::Oauth::IdSiteGrantRequest.new jwt_token
-        response = application.authenticate_oauth(grant_request) 
+        response = application.authenticate_oauth(grant_request)
 
         expect(response).to be(Stormpath::Resource::AccessToken)
       end
@@ -777,12 +834,12 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'returens success on valid token' do
-        expect(authenticate_oauth.href).not_to be_empty 
-        expect(authenticate_oauth.account).not_to be_empty 
-        expect(authenticate_oauth.application).not_to be_empty 
-        expect(authenticate_oauth.jwt).not_to be_empty 
-        expect(authenticate_oauth.tenant).not_to be_empty 
-        expect(authenticate_oauth.expanded_jwt).not_to be_empty 
+        expect(authenticate_oauth.href).not_to be_empty
+        expect(authenticate_oauth.account).not_to be_empty
+        expect(authenticate_oauth.application).not_to be_empty
+        expect(authenticate_oauth.jwt).not_to be_empty
+        expect(authenticate_oauth.tenant).not_to be_empty
+        expect(authenticate_oauth.expanded_jwt).not_to be_empty
       end
     end
 

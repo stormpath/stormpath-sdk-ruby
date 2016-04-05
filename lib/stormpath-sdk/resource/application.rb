@@ -91,8 +91,8 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     id_site_result
   end
 
-  def send_password_reset_email email
-    password_reset_token = create_password_reset_token email;
+  def send_password_reset_email(email, options = {})
+    password_reset_token = create_password_reset_token(email, options)
     password_reset_token.account
   end
 
@@ -109,9 +109,9 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
 
   def authenticate_oauth(request)
-    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
+    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request)
   end
-  
+
   private
 
   def jwt_token_payload(options)
@@ -135,7 +135,9 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     client.data_store.api_key.id
   end
 
-  def create_password_reset_token email
-    password_reset_tokens.create email: email
+  def create_password_reset_token(email, options = {})
+    params = { email: email }
+    params.merge!(options) if options[:account_store]
+    password_reset_tokens.create(params)
   end
 end
