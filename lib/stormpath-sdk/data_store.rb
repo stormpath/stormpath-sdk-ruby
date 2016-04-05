@@ -119,7 +119,7 @@ class Stormpath::DataStore
 
       request = Request.new(http_method, href, query, Hash.new, body, @api_key)
 
-      if resource.try(:form_data?) 
+      if resource.try(:form_data?)
         apply_form_data_request_headers request
       else
         apply_default_request_headers request
@@ -213,7 +213,7 @@ class Stormpath::DataStore
         request.http_headers.store 'Content-Type', 'application/json'
       end
     end
-    
+
     def apply_form_data_request_headers(request)
       request.http_headers.store 'Content-Type', 'application/x-www-form-urlencoded'
       apply_default_user_agent(request)
@@ -277,7 +277,7 @@ class Stormpath::DataStore
       form_data = resource.try(:form_data?)
 
       if form_data
-        form_request_parse(resource) 
+        form_request_parse(resource)
       else
         MultiJson.dump(to_hash(resource))
       end
@@ -285,7 +285,7 @@ class Stormpath::DataStore
 
     def form_request_parse(resource)
       data = ""
-      
+
       property_names = resource.get_dirty_property_names
       property_names.each do |name|
         if name != "formData"
@@ -315,15 +315,15 @@ class Stormpath::DataStore
     end
 
     def to_simple_reference(property_name, hash)
-      assert_true hash.has_key?(HREF_PROP_NAME), "Nested resource '#{property_name}' must have an 'href' property."
+      assert_true hash.key?(HREF_PROP_NAME), "Nested resource '#{property_name}' must have an 'href' property."
 
       href = hash[HREF_PROP_NAME]
 
-      {HREF_PROP_NAME => href}
+      { HREF_PROP_NAME => href }
     end
 
     def resource_nested_submittable resource, name
-      ['provider', 'providerData'].include?(name) or resource_is_custom_data(resource, name)
+      ['provider', 'providerData', 'accountStore'].include?(name) or resource_is_custom_data(resource, name)
     end
 
     def resource_is_custom_data resource, name
