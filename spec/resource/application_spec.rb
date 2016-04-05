@@ -257,44 +257,6 @@ describe Stormpath::Resource::Application, :vcr do
         end
       end
 
-      context 'of an existing account on the application with an account store href' do
-        let(:account) { directory.accounts.create build_account  }
-
-        let(:sent_to_account) do
-          application.send_password_reset_email(account.email, account_store: { href: directory.href })
-        end
-
-        after { account.delete if account }
-
-        it 'sends a password reset request of the account' do
-          expect(sent_to_account).to be
-          expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
-          expect(sent_to_account.email).to eq(account.email)
-        end
-      end
-
-      context 'of a non existing account on the application with an account store href' do
-        let(:account) { directory.accounts.create build_account  }
-
-        let(:other_directory) do
-          test_api_client.directories.create(
-            name: random_directory_name('password_reset_account_store_href'),
-            description: 'abc'
-          )
-        end
-
-        after do
-          account.delete
-          other_directory.delete
-        end
-
-        it 'sends a password reset request of the account' do
-          expect do
-            application.send_password_reset_email(account.email, account_store: { href: other_directory.href })
-          end.to raise_error Stormpath::Error
-        end
-      end
-
       context 'of an existing account not mapped to the application' do
         let(:account) { other_directory.accounts.create build_account  }
 
@@ -320,6 +282,44 @@ describe Stormpath::Resource::Application, :vcr do
         it 'raises an exception' do
           expect do
             application.send_password_reset_email "test@example.com"
+          end.to raise_error Stormpath::Error
+        end
+      end
+
+      context 'of an existing account on the application with an account store href' do
+        let(:account) { directory.accounts.create build_account  }
+
+        let(:sent_to_account) do
+          application.send_password_reset_email(account.email, account_store: { href: directory.href })
+        end
+
+        after { account.delete if account }
+
+        it 'sends a password reset request of the account' do
+          expect(sent_to_account).to be
+          expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
+          expect(sent_to_account.email).to eq(account.email)
+        end
+      end
+
+      context 'of an existing account not mapped to the application with an account store href' do
+        let(:account) { directory.accounts.create build_account  }
+
+        let(:other_directory) do
+          test_api_client.directories.create(
+            name: random_directory_name('password_reset_account_store_href'),
+            description: 'abc'
+          )
+        end
+
+        after do
+          account.delete
+          other_directory.delete
+        end
+
+        it 'sends a password reset request of the account' do
+          expect do
+            application.send_password_reset_email(account.email, account_store: { href: other_directory.href })
           end.to raise_error Stormpath::Error
         end
       end
