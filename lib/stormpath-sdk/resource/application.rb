@@ -91,8 +91,8 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     id_site_result
   end
 
-  def send_password_reset_email(email, options = {})
-    password_reset_token = create_password_reset_token(email, options)
+  def send_password_reset_email(email, account_store: nil)
+    password_reset_token = create_password_reset_token(email, account_store: account_store)
     password_reset_token.account
   end
 
@@ -135,9 +135,9 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     client.data_store.api_key.id
   end
 
-  def create_password_reset_token(email, options = {})
+  def create_password_reset_token(email, account_store: nil)
     params = { email: email }
-    params.merge!(options) if options[:account_store]
+    params[:account_store] = account_store if account_store
     password_reset_tokens.create(params)
   end
 end
