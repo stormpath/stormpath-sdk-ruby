@@ -379,6 +379,23 @@ describe Stormpath::Resource::Application, :vcr do
           end
         end
 
+        describe 'using an organization href' do
+          let(:username_password_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new(
+              account.email, "P@$$w0rd",
+              account_store: { href: organization.href }
+            )
+          end
+
+          it 'returns login attempt response' do
+            expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
+          end
+
+          it 'containes account data' do
+            expect(auth_request.account.href).to eq(account.href)
+          end
+        end
+
         describe 'using an organization object' do
           let(:username_password_request) do
             Stormpath::Authentication::UsernamePasswordRequest.new(
@@ -404,6 +421,24 @@ describe Stormpath::Resource::Application, :vcr do
               account.email, "P@$$w0rd",
               account_store: { name_key: 'wrong-name-key' }
             )
+          end
+
+          it 'raises an error' do
+            expect { auth_request }.to raise_error(Stormpath::Error)
+          end
+        end
+
+        describe 'using an organization href' do
+          let(:username_password_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new(
+              account.email, "P@$$w0rd",
+              account_store: { href: other_organization.href }
+            )
+          end
+
+          let(:other_organization) do
+            test_api_client.organizations.create name: 'other_organization',
+               name_key: "other-organization"
           end
 
           it 'raises an error' do
