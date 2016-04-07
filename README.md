@@ -304,7 +304,7 @@ application.create_id_site_url({
 });
 ```
 
-##### Using Subdomains 
+##### Using Subdomains
 
 In some cases, you may want to show the organization that the user is logging into as a subdomain instead of an form field. To configure this, you need to use a [wildcard certificate][wildcard-certificate] when setting up your [custom domain with ID Site][custom-domain-with-id-site]. Otherwise, the Stormpath infrastructure will cause browser SSL errors.
 
@@ -379,8 +379,8 @@ Again, with all these methods, You will want your application to link to an inte
 > A JWT will expire after 60 seconds of creation.
 
 #### Exchange ID Site token for a Stormpath Access Token
-After the user has been authenticated via ID Site, a developer may want to control their authorization with an OAuth 2.0 Token. 
-This is done by passing the JWT similar to the way we passed the user’s credentials as described in [Generating an OAuth 2.0 Access Token][generate-oauth-access-token]. 
+After the user has been authenticated via ID Site, a developer may want to control their authorization with an OAuth 2.0 Token.
+This is done by passing the JWT similar to the way we passed the user’s credentials as described in [Generating an OAuth 2.0 Access Token][generate-oauth-access-token].
 The difference is that instead of using the password grant type and passing credentials, we will use the id_site_token type and pass the JWT we got from the ID Site
 more info [here][exchange-id-site-token].
 
@@ -484,6 +484,31 @@ begin
 rescue Stormpath::Error => e
   #If credentials are invalid or account doesn't exist
 end
+```
+
+The `UsernamePasswordRequest` can take an optional link to the application’s accountStore (directory or group) or the Organization nameKey. Specifying this attribute can speed up logins if you know exactly which of the application’s assigned account stores contains the account: Stormpath will not have to iterate over the assigned account stores to find the account to authenticate it. This can speed up logins significantly if you have many account stores (> 15) assigned to the application.
+
+The `UsernamePasswordRequest` can receive the AccountStore in three ways.
+
+Passing the organization, directory or group instance:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: organization
+```
+
+Passing the organization, directory or group href:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: { href: organization.href }
+```
+
+Passing the organization name_key:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: { name_key: organization.name_key }
 ```
 
 ### Password Reset
