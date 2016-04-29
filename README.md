@@ -486,6 +486,31 @@ rescue Stormpath::Error => e
 end
 ```
 
+The `UsernamePasswordRequest` can take an optional link to the application’s accountStore (directory or group) or the Organization nameKey. Specifying this attribute can speed up logins if you know exactly which of the application’s assigned account stores contains the account: Stormpath will not have to iterate over the assigned account stores to find the account to authenticate it. This can speed up logins significantly if you have many account stores (> 15) assigned to the application.
+
+The `UsernamePasswordRequest` can receive the AccountStore in three ways.
+
+Passing the organization, directory or group instance:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: organization
+```
+
+Passing the organization, directory or group href:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: { href: organization.href }
+```
+
+Passing the organization name_key:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: { name_key: organization.name_key }
+```
+
 ### Password Reset
 
 A password reset workflow, if configured on the directory the account is

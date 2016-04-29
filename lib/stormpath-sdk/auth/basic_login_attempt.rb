@@ -28,6 +28,10 @@ module Stormpath
       def account_store=(account_store)
         if account_store.kind_of? Stormpath::Resource::Base
           set_property ACCOUNT_STORE, {HREF_PROP_NAME => account_store.href}
+        elsif account_store.kind_of? Hash
+          set_property ACCOUNT_STORE, sanitize(account_store)
+        else
+          fail ArgumentError, 'account_store should be a Stormpath::Resource::Instance or a Hash'
         end
       end
 
