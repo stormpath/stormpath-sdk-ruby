@@ -15,6 +15,7 @@ describe Stormpath::Resource::Tenant, :vcr do
 
       expect(tenant.applications).to be_a Stormpath::Resource::Collection
       expect(tenant.directories).to be_a Stormpath::Resource::Collection
+      expect(tenant.organizations).to be_a Stormpath::Resource::Collection
       expect(tenant.custom_data).to be_a Stormpath::Resource::CustomData
     end
   end
