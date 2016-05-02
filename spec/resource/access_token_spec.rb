@@ -6,11 +6,15 @@ describe Stormpath::Resource::AccessToken, :vcr do
 
     let(:application) { test_application }
 
-    let(:account_data) { build_account }
+    let(:account_data) { build_account(email: email, password: password) }
+
+    let(:email) { random_email }
+
+    let(:password) { 'P@$$w0rd' }
 
     let(:account) { directory.accounts.create(account_data) }
 
-    let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
+    let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new email, password }
 
     let(:access_token) { application.authenticate_oauth(password_grant_request) }
 
