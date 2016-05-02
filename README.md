@@ -304,7 +304,7 @@ application.create_id_site_url({
 });
 ```
 
-##### Using Subdomains 
+##### Using Subdomains
 
 In some cases, you may want to show the organization that the user is logging into as a subdomain instead of an form field. To configure this, you need to use a [wildcard certificate][wildcard-certificate] when setting up your [custom domain with ID Site][custom-domain-with-id-site]. Otherwise, the Stormpath infrastructure will cause browser SSL errors.
 
@@ -379,8 +379,8 @@ Again, with all these methods, You will want your application to link to an inte
 > A JWT will expire after 60 seconds of creation.
 
 #### Exchange ID Site token for a Stormpath Access Token
-After the user has been authenticated via ID Site, a developer may want to control their authorization with an OAuth 2.0 Token. 
-This is done by passing the JWT similar to the way we passed the user’s credentials as described in [Generating an OAuth 2.0 Access Token][generate-oauth-access-token]. 
+After the user has been authenticated via ID Site, a developer may want to control their authorization with an OAuth 2.0 Token.
+This is done by passing the JWT similar to the way we passed the user’s credentials as described in [Generating an OAuth 2.0 Access Token][generate-oauth-access-token].
 The difference is that instead of using the password grant type and passing credentials, we will use the id_site_token type and pass the JWT we got from the ID Site
 more info [here][exchange-id-site-token].
 
@@ -486,6 +486,31 @@ rescue Stormpath::Error => e
 end
 ```
 
+The `UsernamePasswordRequest` can take an optional link to the application’s accountStore (directory or group) or the Organization nameKey. Specifying this attribute can speed up logins if you know exactly which of the application’s assigned account stores contains the account: Stormpath will not have to iterate over the assigned account stores to find the account to authenticate it. This can speed up logins significantly if you have many account stores (> 15) assigned to the application.
+
+The `UsernamePasswordRequest` can receive the AccountStore in three ways.
+
+Passing the organization, directory or group instance:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: organization
+```
+
+Passing the organization, directory or group href:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: { href: organization.href }
+```
+
+Passing the organization name_key:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: { name_key: organization.name_key }
+```
+
 ### Password Reset
 
 A password reset workflow, if configured on the directory the account is
@@ -576,6 +601,39 @@ Group membership can be created by:
 
 You will need to reload the account or group resource after these
 operations to ensure they've picked up the changes.
+
+### Working with Organizations
+
+An `Organization` is a top-level container for Account Stores. You can think of an Organization as a tenant for your multi-tenant application. This is different than your Stormpath Tenant, which represents your tenant in the Stormpath system. Organizations are powerful because you can group together account stores that represent a tenant.
+
+* Locate an organization
+
+  ```ruby
+    client.organizations.search(name: 'Finance Organization')
+  ```
+
+* Create an organization
+
+  ```ruby
+    client.organizations.create(name: 'Finance Organization', name_key: 'finance-organization')
+  ```
+
+* Adding an account store to an organization
+
+  ```ruby
+    client.organization_account_store_mappings.create(
+      account_store: { href: directory_or_group.href },
+      organization:  { href: organization.href }
+    )
+  ```
+
+* Adding an Organization to an Application as an Account Store
+
+  ```ruby
+    client.account_store_mappings.create application: application, account_store: organization
+  ```
+
+
 ### Add Custom Data to Accounts or Groups
 
 Account and Group resources have predefined fields that are useful to many applications, but you are likely to have your own custom data that you need to associate with an account or group as well.
