@@ -137,7 +137,20 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   def create_password_reset_token(email, account_store: nil)
     params = { email: email }
-    params[:account_store] = account_store if account_store
+    params[:account_store] = account_store_to_hash(account_store) if account_store
     password_reset_tokens.create(params)
+  end
+
+  def account_store_to_hash(account_store)
+    case account_store
+    when Stormpath::Resource::Organization
+      { name_key: account_store.name_key }
+    when Stormpath::Resource::Group, Stormpath::Resource::Directory
+      { href: account_store.href }
+    when Hash
+      account_store
+    else
+      fail ArgumentError, 'Account store has to be passed either as an resource or a hash'
+    end
   end
 end
