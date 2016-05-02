@@ -1,0 +1,12 @@
+{
+  "href": "https://api.stormpath.com/v1/samlServiceProviderMetadatas/5LRVP0EMfrpHYijuqgCUAq",
+  "createdAt": "2016-01-27T09:52:32.844Z",
+  "modifiedAt": "2016-01-27T09:52:32.844Z",
+  "entityId": "urn:stormpath:directory:5GbnGg4HIqoFdlRjHndYQC:provider:sp",
+  "assertionConsumerServicePostEndpoint": { 
+    "href": "https://api.stormpath.com/v1/directories/5GbnGg4HIqoFdlRjHndYQC/saml/sso/post" 
+  },
+  "x509SigningCert": { 
+    "href": "https://api.stormpath.com/v1/x509certificates/5LR5SeoE66qXOAfB1lRqYK" 
+  }
+}

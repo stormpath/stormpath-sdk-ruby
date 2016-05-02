@@ -21,7 +21,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   class LoadError < Stormpath::Error; end
 
-  prop_accessor :name, :description
+  prop_accessor :name, :description, :authorized_callback_uris
 
   belongs_to :tenant
 

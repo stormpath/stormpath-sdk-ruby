@@ -271,6 +271,174 @@ describe Stormpath::Resource::Directory, :vcr do
     end
   end
 
+  describe 'create directory with provider data' do
+    context 'valida data' do
+      let(:directory) do
+        test_api_client.directories.create(
+          name: random_directory_name,
+          description: 'description_for_some_test_directory',
+          provider: {
+            provider_id: "saml",
+            sso_login_url:"https://yourIdp.com/saml2/sso/login",
+            sso_logout_url:"https://yourIdp.com/saml2/sso/logout",
+            encoded_x509_signing_cert:"-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
+            request_signature_algorithm:"RSA-SHA256"
+          }
+        )
+      end
+
+      after do
+        directory.delete if directory
+      end
+
+      it 'creates the directory with provider data' do
+        stub_request(:post, "https://api.stormpath.com/v1/directories").
+          to_return(status:200, body:  fixture('create_saml_directory.json'), headers:{})
+
+        stub_request(:get, directory.href + "/provider").
+          to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers:{})
+
+        directory
+        expect(directory.provider.provider_id).to eq("saml")
+        expect(directory.provider.sso_login_url).to eq("https://yourIdp.com/saml2/sso/login")
+        expect(directory.provider.sso_logout_url).to eq("https://yourIdp.com/saml2/sso/logout")
+        expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256")
+      end
+    end
+
+    context 'invalid data' do
+      it 'raises Stormpath::Error' do
+        expect do
+          test_api_client.directories.create(
+            name: random_directory_name,
+            description: 'description_for_some_test_directory',
+            provider: {
+              provider_id: "saml",
+              sso_login_url:"",
+              sso_logout_url:"",
+              encoded_x509_signing_cert:"",
+              request_signature_algorithm:"RSA-SHA256"
+            }
+          )         
+        end.to raise_error Stormpath::Error
+      end
+    end
+  end
+
+  describe 'saml #provider' do
+    let(:directory) do
+      test_api_client.directories.create(
+        name: random_directory_name,
+        description: 'description_for_some_test_directory',
+        provider: {
+          provider_id: "saml",
+          sso_login_url:"https://yourIdp.com/saml2/sso/login",
+          sso_logout_url:"https://yourIdp.com/saml2/sso/logout",
+          encoded_x509_signing_cert:"-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
+          request_signature_algorithm:"RSA-SHA256"
+        }
+      )
+    end
+
+    after do
+      directory.delete if directory
+    end
+
+    it 'returnes provider data' do
+      stub_request(:post, "https://api.stormpath.com/v1/directories").
+        to_return(status:200, body: fixture('create_saml_directory.json'), headers:{})
+
+      stub_request(:get, directory.href + "/provider").
+        to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers:{})
+
+      directory
+      expect(directory.provider.href).not_to be_empty
+      expect(directory.provider.provider_id).to eq("saml") 
+      expect(directory.provider.sso_login_url).to eq("https://yourIdp.com/saml2/sso/login")
+      expect(directory.provider.sso_logout_url).to eq("https://yourIdp.com/saml2/sso/logout") 
+      expect(directory.provider.encoded_x509_signing_cert).not_to be_empty
+      expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256") 
+    end
+  end
+
+  describe 'saml #provider_metadata' do
+    let(:directory) do
+      test_api_client.directories.create(
+        name: random_directory_name,
+        description: 'description_for_some_test_directory',
+        provider: {
+          provider_id: "saml",
+          sso_login_url:"https://yourIdp.com/saml2/sso/login",
+          sso_logout_url:"https://yourIdp.com/saml2/sso/logout",
+          encoded_x509_signing_cert:"-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
+          request_signature_algorithm:"RSA-SHA256"
+        }
+      )
+    end
+
+    after do
+      directory.delete if directory
+    end 
+
+    it 'returnes provider metadata' do
+      stub_request(:post, "https://api.stormpath.com/v1/directories").
+        to_return(status:200, body: fixture('create_saml_directory.json'), headers:{})
+
+      stub_request(:get, directory.href + "/provider").
+        to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers:{})
+
+      stub_request(:get, directory.provider.service_provider_metadata["href"]).
+        to_return(status: 200, body: fixture('get_saml_directory_provider_metadata.json'), headers: {})
+
+      expect(directory.provider_metadata.href).not_to be_empty
+      expect(directory.provider_metadata.entity_id).not_to be_empty
+      expect(directory.provider_metadata.assertion_consumer_service_post_endpoint).not_to be_empty
+      expect(directory.provider_metadata.x509_signing_cert).not_to be_empty
+    end
+  end
+
+  describe 'saml mapping rules' do
+    let(:directory) do
+      test_api_client.directories.create(
+        name: random_directory_name,
+        description: 'description_for_some_test_directory',
+        provider: {
+          provider_id: "saml",
+          sso_login_url:"https://yourIdp.com/saml2/sso/login",
+          sso_logout_url:"https://yourIdp.com/saml2/sso/logout",
+          encoded_x509_signing_cert:"-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
+          request_signature_algorithm:"RSA-SHA256"
+        }
+      )
+    end
+
+    after do
+      directory.delete if directory
+    end 
+
+    it 'updates the directory mappings' do
+      mappings = Stormpath::Provider::SamlMappingRules.new(items: [
+        {
+          name: "uid",
+          account_attributes: ["username"]
+        }
+      ])
+
+      stub_request(:post, "https://api.stormpath.com/v1/directories").
+        to_return(status:200, body: fixture('create_saml_directory.json'), headers:{})
+
+      stub_request(:get, directory.href + "/provider").
+        to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers:{})
+      
+      stub_request(:post, directory.provider.attribute_statement_mapping_rules["href"]). 
+        to_return(status:200, body: fixture('create_saml_directory_mapping_rules.json'), headers:{})
+
+      response = directory.create_attribute_mappings(mappings)
+      expect(response.items).to eq( [ { "name" => "uid4", "name_format" => "nil", "account_attributes" => ["username"] } ] )
+    end
+
+  end
+
   describe '#create_account_with_custom_data' do
     let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
 
