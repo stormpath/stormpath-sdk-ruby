@@ -1,0 +1,26 @@
+{
+  "href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn",
+  "name":"test_directory_",
+  "description":"description_for_some_test_directory",
+  "status":"ENABLED",
+  "createdAt":"2016-02-05T11:48:28.970Z",
+  "modifiedAt":"2016-02-05T11:48:28.970Z",
+  "tenant":{"href":"https://api.stormpath.com/v1/tenants/3BoGKJZ6kwMlIqWCIYf8hr"},
+  "provider":{
+    "href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn/provider",
+    "provider_id": "saml",
+    "sso_login_url": "https://yourIdp.com/saml2/sso/login",
+    "sso_logout_url": "https://yourIdp.com/saml2/sso/logout",
+    "encoded_x509_signing_cert": "-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
+    "request_signature_algorithm": "RSA-SHA256"
+  },
+  "customData":{"href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn/customData"},
+  "passwordPolicy":{"href":"https://api.stormpath.com/v1/passwordPolicies/2uH3tJWHS4ZE5R7gcOzmGn"},
+  "accountCreationPolicy":{"href":"https://api.stormpath.com/v1/accountCreationPolicies/2uH3tJWHS4ZE5R7gcOzmGn"},
+  "accounts":{"href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn/accounts"},
+  "applicationMappings":{"href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn/applicationMappings"},
+  "applications":{"href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn/applications"},
+  "groups":{"href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn/groups"},
+  "organizations":{"href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn/organizations"},
+  "organizationMappings":{"href":"https://api.stormpath.com/v1/directories/2uH3tJWHS4ZE5R7gcOzmGn/organizationMappings"}
+}

@@ -99,6 +99,18 @@ describe Stormpath::Resource::Application, :vcr do
 
   end
 
+  describe 'edit authorized_callback_uris' do
+    let(:authorized_callback_uris) { ["https://myapplication.com/whatever/callback", "https://myapplication.com/whatever/callback2"] }
+
+    it 'changes authorized callback uris on application' do
+      application.authorized_callback_uris = authorized_callback_uris
+      response = application.save
+
+      expect(response).to eq application 
+      #expect(application.authorized_callback_uris).to eq(authorized_callback_uris)
+    end
+  end
+
 
   describe '#create_account' do
     let(:account) do
