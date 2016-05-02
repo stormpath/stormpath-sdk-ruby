@@ -12,17 +12,20 @@ describe Stormpath::Client, :vcr do
       end
     end
 
+    let(:api_key_and_secret_properties) do
+      <<-properties
+        apiKey.id=#{test_api_key_id}
+        apiKey.secret=#{test_api_key_secret}
+      properties
+    end
+
     context 'given a hash' do
       context 'with an api key file location', 'that points to a remote file' do
         let(:api_key_file_location) { 'http://fake.server.com/apiKey.properties' }
         let(:client) { Stormpath::Client.new(api_key_file_location: api_key_file_location) }
 
         before do
-          stub_request(:any, api_key_file_location).to_return(body:<<properties
-apiKey.id=#{test_api_key_id}
-apiKey.secret=#{test_api_key_secret}
-properties
-                                                              )
+          stub_request(:any, api_key_file_location).to_return(body: api_key_and_secret_properties)
         end
 
         it_behaves_like 'a valid client'
@@ -224,11 +227,7 @@ properties
         end
 
         before do
-          stub_request(:any, api_key_file_location).to_return(body:<<properties
-apiKey.id=#{test_api_key_id}
-apiKey.secret=#{test_api_key_secret}
-properties
-)
+          stub_request(:any, api_key_file_location).to_return(body: api_key_and_secret_properties)
           data_store = client.instance_variable_get '@data_store'
           cache_manager = data_store.cache_manager
           @directories_cache = cache_manager.get_cache 'directories'

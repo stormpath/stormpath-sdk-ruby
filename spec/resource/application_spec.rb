@@ -99,6 +99,18 @@ describe Stormpath::Resource::Application, :vcr do
 
   end
 
+  describe 'edit authorized_callback_uris' do
+    let(:authorized_callback_uris) { ["https://myapplication.com/whatever/callback", "https://myapplication.com/whatever/callback2"] }
+
+    it 'changes authorized callback uris on application' do
+      application.authorized_callback_uris = authorized_callback_uris
+      response = application.save
+
+      expect(response).to eq application 
+      #expect(application.authorized_callback_uris).to eq(authorized_callback_uris)
+    end
+  end
+
 
   describe '#create_account' do
     let(:account) do
@@ -122,7 +134,7 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'without registration workflow' do
       it 'creates an account with workflow disabled' do
-        response = application.create_account account 
+        response = application.create_account account
 
         expect(response).to be_kind_of Stormpath::Resource::Account
         expect(response.email).to eq(account.email)
@@ -326,7 +338,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'containes account data' do
-        expect(auth_request.account.href).to eq(account.href) 
+        expect(auth_request.account.href).to eq(account.href)
       end
     end
 
@@ -338,35 +350,131 @@ describe Stormpath::Resource::Application, :vcr do
         })
       end
 
-      let(:organization) do 
-        test_api_client.organizations.create name: 'test_organization',
-           name_key: "testorganization"
+      def create_application_account_store_mapping(application, account_store)
+        test_api_client.account_store_mappings.create(
+          application: application,
+          account_store: account_store
+        )
       end
 
-      let(:username_password_request) do
-        Stormpath::Authentication::UsernamePasswordRequest.new(
-          account.email,
-          "P@$$w0rd",
-          account_store: organization.name_key
-        )
+      let(:organization) do
+        test_api_client.organizations.create name: 'test_organization',
+           name_key: "testorganization"
       end
 
       let(:auth_request) { application.authenticate_account(username_password_request) }
 
       before do
         create_organization_account_store_mapping(organization, directory)
+        create_application_account_store_mapping(application, organization)
       end
 
       after do
         organization.delete if organization
       end
 
-      it 'returns login attempt response' do
-        expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
+      describe 'when sending the proper organization' do
+        describe 'using an organization name_key' do
+          let(:username_password_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new(
+              account.email, "P@$$w0rd",
+              account_store: { name_key: organization.name_key }
+            )
+          end
+
+          it 'returns login attempt response' do
+            expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
+          end
+
+          it 'containes account data' do
+            expect(auth_request.account.href).to eq(account.href)
+          end
+        end
+
+        describe 'using an organization href' do
+          let(:username_password_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new(
+              account.email, "P@$$w0rd",
+              account_store: { href: organization.href }
+            )
+          end
+
+          it 'returns login attempt response' do
+            expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
+          end
+
+          it 'containes account data' do
+            expect(auth_request.account.href).to eq(account.href)
+          end
+        end
+
+        describe 'using an organization object' do
+          let(:username_password_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new(
+              account.email, "P@$$w0rd",
+              account_store: organization
+            )
+          end
+
+          it 'returns login attempt response' do
+            expect(auth_request).to be_kind_of Stormpath::Authentication::AuthenticationResult
+          end
+
+          it 'containes account data' do
+            expect(auth_request.account.href).to eq(account.href)
+          end
+        end
       end
 
-      it 'containes account data' do
-        expect(auth_request.account.href).to eq(account.href)
+      describe 'when sending the wrong organization' do
+        describe 'using an organization name_key' do
+          let(:username_password_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new(
+              account.email, "P@$$w0rd",
+              account_store: { name_key: 'wrong-name-key' }
+            )
+          end
+
+          it 'raises an error' do
+            expect { auth_request }.to raise_error(Stormpath::Error)
+          end
+        end
+
+        describe 'using an organization href' do
+          let(:username_password_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new(
+              account.email, "P@$$w0rd",
+              account_store: { href: other_organization.href }
+            )
+          end
+
+          let(:other_organization) do
+            test_api_client.organizations.create name: 'other_organization',
+               name_key: "other-organization"
+          end
+
+          it 'raises an error' do
+            expect { auth_request }.to raise_error(Stormpath::Error)
+          end
+        end
+
+        describe 'using an organization object' do
+          let(:username_password_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new(
+              account.email, "P@$$w0rd",
+              account_store: other_organization
+            )
+          end
+
+          let(:other_organization) do
+            test_api_client.organizations.create name: 'other_organization',
+               name_key: "other-organization"
+          end
+
+          it 'raises an error' do
+            expect { auth_request }.to raise_error(Stormpath::Error)
+          end
+        end
       end
     end
 
@@ -381,10 +489,10 @@ describe Stormpath::Resource::Application, :vcr do
       let(:auth_request) { application.authenticate_account(username_password_request) }
 
       it 'returns stormpath error' do
-        expect { 
-          auth_request 
+        expect {
+          auth_request
         }.to raise_error(Stormpath::Error)
-      end 
+      end
     end
   end
 
@@ -506,7 +614,7 @@ describe Stormpath::Resource::Application, :vcr do
           expect(error.message).to eq("The specified callback URI (cb_uri) is not valid")
           expect(error.developer_message).to eq("The specified callback URI (cb_uri) is not valid. Make sure the "\
             "callback URI specified in your ID Site configuration matches the value specified.")
-        end 
+        end
       end
     end
   end
@@ -632,7 +740,7 @@ describe Stormpath::Resource::Application, :vcr do
         }, test_api_key_secret, 'HS256')
       }
 
-      it 'should error with the stormpath error' do  
+      it 'should error with the stormpath error' do
         expect {
           application.handle_id_site_callback(callback_uri_base + jwt_token)
         }.to raise_error(Stormpath::Error)
@@ -676,7 +784,7 @@ describe Stormpath::Resource::Application, :vcr do
       before do
         @site_result = application.handle_id_site_callback(callback_uri_base + jwt_token)
       end
-      
+
       it 'should return IdSiteResult object' do
         expect(@site_result).to be_kind_of(Stormpath::IdSite::IdSiteResult)
       end
@@ -691,7 +799,7 @@ describe Stormpath::Resource::Application, :vcr do
     before do
       application.accounts.create account_data
     end
-  
+
     context 'generate access token' do
       let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
       let(:authenticate_oauth) { application.authenticate_oauth(password_grant_request) }
@@ -741,7 +849,7 @@ describe Stormpath::Resource::Application, :vcr do
           .and_return(Stormpath::Oauth::IdSiteGrant.new({}, application.client))
 
         grant_request = Stormpath::Oauth::IdSiteGrantRequest.new jwt_token
-        response = application.authenticate_oauth(grant_request) 
+        response = application.authenticate_oauth(grant_request)
 
         expect(response).to be(Stormpath::Resource::AccessToken)
       end
@@ -777,12 +885,12 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'returens success on valid token' do
-        expect(authenticate_oauth.href).not_to be_empty 
-        expect(authenticate_oauth.account).not_to be_empty 
-        expect(authenticate_oauth.application).not_to be_empty 
-        expect(authenticate_oauth.jwt).not_to be_empty 
-        expect(authenticate_oauth.tenant).not_to be_empty 
-        expect(authenticate_oauth.expanded_jwt).not_to be_empty 
+        expect(authenticate_oauth.href).not_to be_empty
+        expect(authenticate_oauth.account).not_to be_empty
+        expect(authenticate_oauth.application).not_to be_empty
+        expect(authenticate_oauth.jwt).not_to be_empty
+        expect(authenticate_oauth.tenant).not_to be_empty
+        expect(authenticate_oauth.expanded_jwt).not_to be_empty
       end
     end
 

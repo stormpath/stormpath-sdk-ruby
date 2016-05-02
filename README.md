@@ -304,7 +304,7 @@ application.create_id_site_url({
 });
 ```
 
-##### Using Subdomains 
+##### Using Subdomains
 
 In some cases, you may want to show the organization that the user is logging into as a subdomain instead of an form field. To configure this, you need to use a [wildcard certificate][wildcard-certificate] when setting up your [custom domain with ID Site][custom-domain-with-id-site]. Otherwise, the Stormpath infrastructure will cause browser SSL errors.
 
@@ -379,8 +379,8 @@ Again, with all these methods, You will want your application to link to an inte
 > A JWT will expire after 60 seconds of creation.
 
 #### Exchange ID Site token for a Stormpath Access Token
-After the user has been authenticated via ID Site, a developer may want to control their authorization with an OAuth 2.0 Token. 
-This is done by passing the JWT similar to the way we passed the user’s credentials as described in [Generating an OAuth 2.0 Access Token][generate-oauth-access-token]. 
+After the user has been authenticated via ID Site, a developer may want to control their authorization with an OAuth 2.0 Token.
+This is done by passing the JWT similar to the way we passed the user’s credentials as described in [Generating an OAuth 2.0 Access Token][generate-oauth-access-token].
 The difference is that instead of using the password grant type and passing credentials, we will use the id_site_token type and pass the JWT we got from the ID Site
 more info [here][exchange-id-site-token].
 
@@ -486,6 +486,204 @@ rescue Stormpath::Error => e
 end
 ```
 
+The `UsernamePasswordRequest` can take an optional link to the application’s accountStore (directory or group) or the Organization nameKey. Specifying this attribute can speed up logins if you know exactly which of the application’s assigned account stores contains the account: Stormpath will not have to iterate over the assigned account stores to find the account to authenticate it. This can speed up logins significantly if you have many account stores (> 15) assigned to the application.
+
+The `UsernamePasswordRequest` can receive the AccountStore in three ways.
+
+Passing the organization, directory or group instance:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: organization
+```
+
+Passing the organization, directory or group href:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: { href: organization.href }
+```
+
+Passing the organization name_key:
+
+```ruby
+auth_request =
+  Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith', '4P@$$w0rd!', account_store: { name_key: organization.name_key }
+```
+
+### Authentication Against a SAML Directory
+
+SAML is an XML-based standard for exchanging authentication and authorization data between security domains.
+Stormpath enables you to allow customers to log-in by authenticating with an external SAML Identity Provider.
+
+#### Stormpath as a Service Provider
+
+The specific use case that Stormpath supports is user-initiated single sign-on. In this scenario, a user requests
+a protected resource (e.g. your application). Your application, with the help of Stormpath, then confirms the users
+identity in order to determine whether they are able to access the resource. In SAML terminology, the user is the User
+Agent, your application (along with Stormpath) is the Service Provider, and the third-party SAML authentication site
+is the Identity Provider or IdP.
+
+The broad strokes of the process are as follows:
+
+* User Agent requests access from Service Provider
+* Service Provider responds with redirect to Identity Provider
+* Identity Provider authenticates the user
+* Identity provider redirects user back to Service Provider along with SAML assertions.
+* Service Provider receives SAML assertions and either creates or retrieves Account information
+
+#### Configuring Stormpath as a Service Provider
+
+Configuration is stored in the Directory's Provider resource. Here we will explain to you the steps that are required to configure Stormpath as a SAML Service
+Provider.
+
+#### Step 1: Gather IDP Data
+
+You will need the following information from your IdP:
+
+- **SSO Login URL** - The URL at the IdP to which SAML authentication requests should be sent. This is often called an "SSO URL", "Login URL" or "Sign-in URL".
+- **SSO Logout URL** - The URL at the IdP to which SAML logout requests should be sent. This is often called a "Logout URL", "Global Logout URL" or "Single Logout URL".
+- **Signing Cert** - The IdP will digitally sign auth assertions and Stormpath will need to validate the signature. This will usually be in .pem or .crt format, but Stormpath requires the text value.
+- **Signing Algorithm** - You will need the name of the signing algorithm that your IdP uses. It will be either "RSA-SHA256" or "RSA-SHA1".
+
+#### Step 2: Configure Your SAML Directory
+
+Input the data you gathered in Step 1 above into your Directory's Provider resource, and then pass that along as part of the Directory creation HTTP POST:
+
+```ruby
+provider = "saml"
+request = Stormpath::Provider::AccountRequest.new(provider, :access_token, access_token)
+application.get_provider_account(request)
+
+client.directories.create(
+  name: "infinum_directory",
+  description: "random description",
+  provider: {
+    provider_id: "saml"
+  }
+)
+```
+
+to get the data about the provider just type
+```ruby
+directory.provider
+```
+
+provider method returns instance of SamlProvider and you can access the following data
+
+```ruby
+dir_provider = directory.provider
+
+dir_provider.provider_id
+dir_provider.sso_login_url
+dir_provider.sso_logout_url
+dir_provider.encoded_x509_signing_cert
+dir_provider.request_signature_algorithm
+dir_provider.service_provider_metadata
+dir_provider.attribute_statement_mapping_rules
+dir_provider.creted_at
+dir_provider.modified_at
+```
+
+##### Retrieve Your Service Provider Metadata
+
+Next you will have to configure your Stormpath-powered application as a Service Provider in your Identity Provider. This means that you will need to retrieve the correct metadata from Stormpath.
+
+In order to retrieve the required values, start by sending a GET to the Directory's Provider:
+
+```ruby
+directory.provider_metadata
+```
+
+provider_metadata method returns instance of SamlProviderMetadata and you can access the following values
+
+```ruby
+dir_provider_metadata = directory.provider_metadata
+
+dir_provider_metadata.href
+dir_provider_metadata.entity_id
+dir_provider_metadata.x509_signing_cert
+dir_provider_metadata.assertion_consumer_service_post_endpoint
+dir_provider_metadata.created_at
+dir_provider_metadata.modified_at
+```
+
+From this metadata, you will need two values:
+
+- **Assertion Consumer Service URL**: This is the location the IdP will send its response to.
+- **X509 Signing Certificate**: The certificate that is used to sign the requests sent to the IdP. If you retrieve XML, the certificate will be embedded. If you retrieve JSON, you'll have to follow a further /x509certificates link to retrieve it.
+
+You will also need two other values, which will always be the same:
+
+- **SAML Request Binding**: Set to HTTP-Redirect.
+- **SAML Response Binding**: Set to HTTP-Post.
+
+#### Step 4: Configure Your Service Provider in Your Identity Provider
+
+Log-in to your Identity Provider (Salesforce, OneLogin, etc) and enter the information you retrieved in
+the previous step into the relevant application configuration fields. The specific steps to follow here
+will depend entirely on what Identity Provider you use, and for more information you should consult your
+Identity Provider's SAML documentation.
+
+#### Step 5: Configure Your Application
+
+The Stormpath `Application` Resource has two parts that are relevant to SAML:
+
+- an ``authorizedCallbackUri`` Array that defines the authorized URIs that the IdP can return your user to. These should be URIs that you host yourself.
+- an embedded ``samlPolicy`` object that contains information about the SAML flow configuration and endpoints.
+
+```ruby
+application.authorized_callback_uris = ["https://myapplication.com/whatever/callback", "https://myapplication.com/whatever/callback2"]
+application.save
+```
+
+#### Step 6: Add the SAML Directory as an Account Store
+
+The next step is to map the new Directory to your Application with an Account Store Mapping.
+
+##### Step 7: Configure SAML Assertion Mapping
+
+The Identity Provider's SAML response contains assertions about the user's identity, which Stormpath can use to create and populate a new Account resource.
+
+```xml
+  <saml:AttributeStatement>
+    <saml:Attribute Name="uid" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">test</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute Name="mail" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">jane@example.com</saml:AttributeValue>
+    </saml:Attribute>
+      <saml:Attribute Name="location" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">Tampa, FL</saml:AttributeValue>
+    </saml:Attribute>
+  </saml:AttributeStatement>
+
+```
+The Attribute Assertions (`<saml:AttributeStatement>`) are brought into Stormpath and become Account and customData attributes.
+
+SAML Assertion mapping is defined in an **attributeStatementMappingRules** object found inside the Directory's Provider object, or directly: `/v1/attributeStatementMappingRules/$RULES_ID`.
+
+##### Mapping Rules
+
+The rules have three different components:
+
+- **name**: The SAML Attribute name
+- **nameFormat**: The name format for this SAML Attribute, expressed as a Uniform Resource Name (URN).
+- **accountAttributes**: This is an array of Stormpath Account or customData (`customData.$KEY_NAME`) attributes that will map to this SAML Attribute.
+
+In order to create the mapping rules, we simply send the following:
+
+```ruby
+mappings = Stormpath::Provider::SamlMappingRules.new(items: [
+  {
+    name: "uid",
+    account_attributes: ["username"]
+  }
+])
+
+dir.create_attribute_mappings(mappings)
+```
+
 ### Password Reset
 
 A password reset workflow, if configured on the directory the account is
@@ -576,6 +774,39 @@ Group membership can be created by:
 
 You will need to reload the account or group resource after these
 operations to ensure they've picked up the changes.
+
+### Working with Organizations
+
+An `Organization` is a top-level container for Account Stores. You can think of an Organization as a tenant for your multi-tenant application. This is different than your Stormpath Tenant, which represents your tenant in the Stormpath system. Organizations are powerful because you can group together account stores that represent a tenant.
+
+* Locate an organization
+
+  ```ruby
+    client.organizations.search(name: 'Finance Organization')
+  ```
+
+* Create an organization
+
+  ```ruby
+    client.organizations.create(name: 'Finance Organization', name_key: 'finance-organization')
+  ```
+
+* Adding an account store to an organization
+
+  ```ruby
+    client.organization_account_store_mappings.create(
+      account_store: { href: directory_or_group.href },
+      organization:  { href: organization.href }
+    )
+  ```
+
+* Adding an Organization to an Application as an Account Store
+
+  ```ruby
+    client.account_store_mappings.create application: application, account_store: organization
+  ```
+
+
 ### Add Custom Data to Accounts or Groups
 
 Account and Group resources have predefined fields that are useful to many applications, but you are likely to have your own custom data that you need to associate with an account or group as well.
