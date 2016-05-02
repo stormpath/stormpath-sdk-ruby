@@ -115,6 +115,10 @@ module Stormpath
       end
     end
 
+    def random_name_key(suffix='test')
+      "#{random_string}-namekey-#{suffix}"
+    end
+
     def random_email
       "#{random_string}@stormpath.com"
     end

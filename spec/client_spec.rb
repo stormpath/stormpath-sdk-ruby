@@ -659,6 +659,69 @@ properties
 
       after { organization.delete }
     end
+
+    context 'given a collection' do
+      let(:organization) do
+        test_api_client.organizations.create(
+            name: random_organization_name,
+            name_key: random_name_key,
+            description: 'A test description'
+        )
+      end
+
+      it 'returns the collection' do
+        expect(test_api_client.organizations).to be_kind_of(Stormpath::Resource::Collection)
+        expect(test_api_client.organizations.count).to be >= 1
+      end
+
+      after { organization.delete }
+    end
+
+    context 'given a collection with a limit' do
+      let!(:organization_1) do
+        test_api_client.organizations.create name: random_organization_name(1), name_key: random_name_key(1)
+      end
+
+      let!(:organization_2) do
+        test_api_client.organizations.create name: random_organization_name(2), name_key: random_name_key(2)
+      end
+
+      after do
+        organization_1.delete
+        organization_2.delete
+      end
+
+      it 'should retrieve the number of organizations described with the limit' do
+        expect(test_api_client.organizations.count).to be >= 2
+      end
+    end
+
+    describe '.create' do
+      let(:organization_name) { random_organization_name }
+
+      let(:organization_attributes) do
+        {
+          name: organization_name,
+          name_key: random_name_key,
+          description: 'A test description'
+        }
+      end
+
+      let(:organization) do
+        test_api_client.organizations.create organization_attributes
+      end
+
+      it 'creates an organization' do
+        expect(organization).to be
+        expect(organization.name).to eq(organization_attributes[:name])
+        expect(organization.name_key).to eq(organization_attributes[:name_key])
+        expect(organization.description).to eq(organization_attributes[:description])
+      end
+
+      after do
+        organization.delete
+      end
+    end
   end
 
   describe "#organization_account_store_mappings" do
