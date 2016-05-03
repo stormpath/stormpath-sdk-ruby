@@ -24,5 +24,19 @@ describe Stormpath::Resource::AccessToken, :vcr do
     it 'should be the same as the original account' do
       expect(access_token.account).to eq(account)
     end
+
+    it 'should be deleteable' do
+      access_token
+
+      expect(account.access_tokens.count).to eq(1)
+
+      jti = JWT.decode(access_token.access_token, test_api_client.data_store.api_key.secret).first['jti']
+
+      fetched_access_token = test_api_client.access_tokens.get(jti)
+
+      fetched_access_token.delete
+
+      expect(account.access_tokens.count).to eq(0)
+    end
   end
 end
