@@ -14,18 +14,22 @@ describe Stormpath::Resource::AccessToken, :vcr do
 
     let(:account) { directory.accounts.create(account_data) }
 
-    let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new email, password }
+    let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new(email, password) }
 
     let(:access_token) { application.authenticate_oauth(password_grant_request) }
 
-    before { account }
     after { account.delete }
 
     it 'should be the same as the original account' do
+      account
+
+      # Travis CI check
+      expect(application.authenticate_account(Stormpath::Authentication::UsernamePasswordRequest.new(email, password)).account).to eq(account)
       expect(access_token.account).to eq(account)
     end
 
     it 'should be deleteable' do
+      account
       access_token
 
       expect(account.access_tokens.count).to eq(1)
