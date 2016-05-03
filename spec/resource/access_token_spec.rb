@@ -4,11 +4,11 @@ describe Stormpath::Resource::AccessToken, :vcr do
   describe "instances should expose a method to get an account" do
     let(:directory) { test_api_client.directories.create name: random_directory_name }
 
-    let!(:account_store_mapping) do
+    let(:account_store_mapping) do
       test_api_client.account_store_mappings.create application: application, account_store: directory
     end
 
-    let(:application) { test_application }
+    let(:application) { test_api_client.applications.create name: random_application_name }
 
     let(:account_data) { build_account(email: email, password: password) }
 
@@ -27,6 +27,7 @@ describe Stormpath::Resource::AccessToken, :vcr do
 
     after { account.delete }
     after { directory.delete }
+    after { application.delete }
 
     it 'should be the same as the original account' do
       expect(access_token.account).to eq(account)
