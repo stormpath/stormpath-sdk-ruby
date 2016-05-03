@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe Stormpath::Resource::AccessToken, :vcr do
   describe "instances should expose a method to get an account" do
-    let(:directory) { test_directory }
+    let(:directory) { test_api_client.directories.create name: random_directory_name }
+
+    let!(:account_store_mapping) do
+      test_api_client.account_store_mappings.create application: application, account_store: directory
+    end
 
     let(:application) { test_application }
 
@@ -18,18 +22,17 @@ describe Stormpath::Resource::AccessToken, :vcr do
 
     let(:access_token) { application.authenticate_oauth(password_grant_request) }
 
+    before { account_store_mapping }
+    before { account }
+
     after { account.delete }
+    after { directory.delete }
 
     it 'should be the same as the original account' do
-      account
-
-      # Travis CI check
-      expect(application.authenticate_account(Stormpath::Authentication::UsernamePasswordRequest.new(email, password)).account).to eq(account)
       expect(access_token.account).to eq(account)
     end
 
     it 'should be deleteable' do
-      account
       access_token
 
       expect(account.access_tokens.count).to eq(1)
