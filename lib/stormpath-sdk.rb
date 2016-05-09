@@ -50,6 +50,7 @@ module Stormpath
     autoload :VerificationEmail, 'stormpath-sdk/resource/verification_email'
     autoload :OauthPolicy, 'stormpath-sdk/resource/oauth_policy'
     autoload :AccessToken, 'stormpath-sdk/resource/access_token'
+    autoload :RefreshToken, 'stormpath-sdk/resource/refresh_token'
     autoload :Organization, 'stormpath-sdk/resource/organization'
     autoload :OrganizationAccountStoreMapping, 'stormpath-sdk/resource/organization_account_store_mapping'
     autoload :AccountOverrides, 'stormpath-sdk/resource/account_overrides'
@@ -69,6 +70,7 @@ module Stormpath
     autoload :UsernamePasswordRequest, "stormpath-sdk/auth/username_password_request"
     autoload :BasicLoginAttempt, "stormpath-sdk/auth/basic_login_attempt"
     autoload :AuthenticationResult, "stormpath-sdk/auth/authentication_result"
+    autoload :JwtAuthenticationResult, "stormpath-sdk/auth/jwt_authentication_result"
     autoload :BasicAuthenticator, "stormpath-sdk/auth/basic_authenticator"
   end
 
@@ -110,7 +112,7 @@ module Stormpath
     autoload :IdSiteResult, 'stormpath-sdk/id_site/id_site_result'
     autoload :Error, 'stormpath-sdk/id_site/error'
   end
-  
+
   module Oauth
     autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
     autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"

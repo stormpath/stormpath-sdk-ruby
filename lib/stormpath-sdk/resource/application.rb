@@ -109,7 +109,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
 
   def authenticate_oauth(request)
-    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
+    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request)
   end
 
   private
