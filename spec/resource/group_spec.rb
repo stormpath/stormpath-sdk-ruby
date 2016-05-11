@@ -18,6 +18,11 @@ describe Stormpath::Resource::Group, :vcr do
         expect(group.send property_accessor).to be_a String
       end
 
+      [:created_at, :modified_at].each do |property_getter|
+        expect(group).to respond_to(property_getter)
+        expect(group.send property_getter).to be_a String
+      end
+
       expect(group.tenant).to be_a Stormpath::Resource::Tenant
       expect(group.directory).to be_a Stormpath::Resource::Directory
       expect(group.custom_data).to be_a Stormpath::Resource::CustomData

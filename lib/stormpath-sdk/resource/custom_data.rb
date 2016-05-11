@@ -16,6 +16,8 @@
 class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   include Stormpath::Resource::CustomDataHashMethods
 
+  prop_reader :created_at, :modified_at
+
   def [](property_name)
     get_property property_name, ignore_camelcasing: true
   end
@@ -23,7 +25,7 @@ class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
   def []=(property_name, property_value)
     set_property property_name, property_value, ignore_camelcasing: true
   end
-  
+
   def save
     if has_removed_properties?
       delete_removed_properties

@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Organization, :vcr do
 
-  let(:organization) do 
+  let(:organization) do
     test_api_client.organizations.create name: 'test_organization',
-       name_key: "testorganization"
+       name_key: "testorganization", description: 'test organization'
   end
 
   after do
@@ -16,6 +16,26 @@ describe Stormpath::Resource::Organization, :vcr do
       account_store: { href: account_store.href },
       organization: { href: organization.href }
     })
+  end
+
+  describe "instances should respond to attribute property methods" do
+    it do
+      [:name, :description, :name_key, :status].each do |property_accessor|
+        expect(organization).to respond_to(property_accessor)
+        expect(organization).to respond_to("#{property_accessor}=")
+        expect(organization.send property_accessor).to be_a String
+      end
+
+      [:created_at, :modified_at].each do |property_getter|
+        expect(organization).to respond_to(property_getter)
+        expect(organization.send property_getter).to be_a String
+      end
+
+      expect(organization.tenant).to be_a Stormpath::Resource::Tenant
+      expect(organization.custom_data).to be_a Stormpath::Resource::CustomData
+      expect(organization.groups).to be_a Stormpath::Resource::Collection
+      expect(organization.accounts).to be_a Stormpath::Resource::Collection
+    end
   end
 
   describe 'get resource' do
@@ -51,11 +71,11 @@ describe Stormpath::Resource::Organization, :vcr do
   describe 'associations' do
     context 'groups' do
 
-      let(:directory) { test_api_client.directories.create name: random_directory_name }    
-    
-      let(:group) { directory.groups.create name: "test_group" }    
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
 
-      before do 
+      let(:group) { directory.groups.create name: "test_group" }
+
+      before do
         create_organization_account_store_mapping(organization, group)
       end
 
@@ -68,14 +88,14 @@ describe Stormpath::Resource::Organization, :vcr do
         expect(organization.groups).to be_kind_of(Stormpath::Resource::Collection)
         expect(organization.groups).to include(group)
       end
-    end 
+    end
 
     context 'accounts' do
-      let(:directory) { test_api_client.directories.create name: random_directory_name }    
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
-    
-      before do 
+
+      before do
         create_organization_account_store_mapping(organization, directory)
       end
 
@@ -91,9 +111,9 @@ describe Stormpath::Resource::Organization, :vcr do
     end
 
     context 'tenant' do
-      let(:directory) { test_api_client.directories.create name: random_directory_name }    
-    
-      before do 
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
+
+      before do
         create_organization_account_store_mapping(organization, directory)
       end
 
@@ -136,12 +156,12 @@ describe Stormpath::Resource::Organization, :vcr do
 
   describe 'organization account store mapping' do
     context 'given an account_store is a directory' do
-      let(:directory) { test_api_client.directories.create name: random_directory_name }    
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       let(:organization_account_store_mapping) do
         create_organization_account_store_mapping(organization, directory)
       end
-  
+
       let(:reloaded_mapping) do
         test_api_client.account_store_mappings.get organization_account_store_mapping.href
       end
@@ -158,9 +178,9 @@ describe Stormpath::Resource::Organization, :vcr do
     end
 
     context 'given an account_store is a group' do
-      let(:directory) { test_api_client.directories.create name: random_directory_name }    
-    
-      let(:group) { directory.groups.create name: "test_group" }    
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
+
+      let(:group) { directory.groups.create name: "test_group" }
 
       let(:organization_account_store_mapping) do
         create_organization_account_store_mapping(organization, group)

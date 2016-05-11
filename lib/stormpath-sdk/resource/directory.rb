@@ -19,6 +19,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   include Stormpath::Resource::AccountOverrides
 
   prop_accessor :name, :description
+  prop_reader :created_at, :modified_at
 
   belongs_to :tenant
 
@@ -56,4 +57,3 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     data_store.create mappings.href, mappings, Stormpath::Provider::SamlMappingRules
   end
 end
-

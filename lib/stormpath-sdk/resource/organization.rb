@@ -4,6 +4,8 @@ class Stormpath::Resource::Organization < Stormpath::Resource::Instance
   prop_accessor :name, :description, :name_key, :status, :account_store_mappings,
     :default_account_store_mapping, :default_group_store_mapping
 
+  prop_reader :created_at, :modified_at
+
   has_many :groups
   has_many :accounts
   belongs_to :tenant

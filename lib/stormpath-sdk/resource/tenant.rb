@@ -16,7 +16,7 @@
 class Stormpath::Resource::Tenant < Stormpath::Resource::Instance
   include Stormpath::Resource::CustomDataStorage
 
-  prop_reader :name, :key
+  prop_reader :name, :key, :created_at, :modified_at
 
   has_many :applications
   has_many :directories
