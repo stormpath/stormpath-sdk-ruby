@@ -1,8 +1,10 @@
+require 'bundler/gem_tasks'
 require 'rubygems'
 require 'rubygems/package_task'
 require 'rspec/core/rake_task'
 require 'stormpath-sdk'
 require './support/api'
+
 
 spec = eval(File.read('stormpath-sdk.gemspec'))
 
