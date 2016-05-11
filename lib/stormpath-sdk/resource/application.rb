@@ -91,8 +91,8 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     id_site_result
   end
 
-  def send_password_reset_email email
-    password_reset_token = create_password_reset_token email;
+  def send_password_reset_email(email, account_store: nil)
+    password_reset_token = create_password_reset_token(email, account_store: account_store)
     password_reset_token.account
   end
 
@@ -109,7 +109,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
 
   def authenticate_oauth(request)
-    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request) 
+    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request)
   end
 
   private
@@ -135,7 +135,22 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     client.data_store.api_key.id
   end
 
-  def create_password_reset_token email
-    password_reset_tokens.create email: email
+  def create_password_reset_token(email, account_store: nil)
+    params = { email: email }
+    params[:account_store] = account_store_to_hash(account_store) if account_store
+    password_reset_tokens.create(params)
+  end
+
+  def account_store_to_hash(account_store)
+    case account_store
+    when Stormpath::Resource::Organization
+      { name_key: account_store.name_key }
+    when Stormpath::Resource::Group, Stormpath::Resource::Directory
+      { href: account_store.href }
+    when Hash
+      account_store
+    else
+      fail ArgumentError, 'Account store has to be passed either as an resource or a hash'
+    end
   end
 end

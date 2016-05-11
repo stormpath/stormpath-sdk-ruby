@@ -255,13 +255,156 @@ describe Stormpath::Resource::Application, :vcr do
 
   describe '#send_password_reset_email' do
     context 'given an email' do
-      context 'of an exisiting account on the application' do
+      context 'of an existing account on the application' do
         let(:account) { directory.accounts.create build_account  }
 
         let(:sent_to_account) { application.send_password_reset_email account.email }
 
+        after { account.delete if account }
+
+        it 'sends a password reset request of the account' do
+          expect(sent_to_account).to be
+          expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
+          expect(sent_to_account.email).to eq(account.email)
+        end
+      end
+
+      context 'of an existing account not mapped to the application' do
+        let(:account) { other_directory.accounts.create build_account  }
+
+        let(:other_directory) do
+          test_api_client.directories.create(
+            name: random_directory_name('password_reset_account_store_href')
+          )
+        end
+
         after do
-          account.delete if account
+          account.delete
+          other_directory.delete
+        end
+
+        it 'sends a password reset request of the account' do
+          expect do
+            application.send_password_reset_email account.email
+          end.to raise_error Stormpath::Error
+        end
+      end
+
+      context 'of a non exisitng account' do
+        it 'raises an exception' do
+          expect do
+            application.send_password_reset_email "test@example.com"
+          end.to raise_error Stormpath::Error
+        end
+      end
+
+      context 'of an existing account on the application with an account store href' do
+        let(:account) { directory.accounts.create build_account  }
+
+        let(:sent_to_account) do
+          application.send_password_reset_email(account.email, account_store: { href: directory.href })
+        end
+
+        after { account.delete if account }
+
+        it 'sends a password reset request of the account' do
+          expect(sent_to_account).to be
+          expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
+          expect(sent_to_account.email).to eq(account.email)
+        end
+      end
+
+      context 'of an existing account on the application with an account store resource object' do
+        let(:account) { directory.accounts.create build_account  }
+
+        let(:sent_to_account) do
+          application.send_password_reset_email(account.email, account_store: directory)
+        end
+
+        after { account.delete if account }
+
+        it 'sends a password reset request of the account' do
+          expect(sent_to_account).to be
+          expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
+          expect(sent_to_account.email).to eq(account.email)
+        end
+      end
+
+      context 'of an existing account not mapped to the application with an account store href' do
+        let(:account) { directory.accounts.create build_account  }
+
+        let(:other_directory) do
+          test_api_client.directories.create(
+            name: random_directory_name('password_reset_account_store_href'),
+            description: 'abc'
+          )
+        end
+
+        after do
+          account.delete
+          other_directory.delete
+        end
+
+        it 'sends a password reset request of the account' do
+          expect do
+            application.send_password_reset_email(account.email, account_store: { href: other_directory.href })
+          end.to raise_error Stormpath::Error
+        end
+      end
+
+      context 'of an existing account on the application with a non existant account store organization namekey' do
+        let(:account) { directory.accounts.create build_account  }
+
+        after do
+          account.delete
+        end
+
+        it 'sends a password reset request of the account' do
+          expect do
+            application.send_password_reset_email(account.email, account_store: { name_key: "NoKey" })
+          end.to raise_error Stormpath::Error
+        end
+      end
+
+      context 'of an existing account on the application with a right account store organization namekey' do
+        let(:account) { account_directory.accounts.create build_account  }
+
+        let(:account_directory) do
+          test_api_client.directories.create(
+            name: random_directory_name('password_reset_account_store_href')
+          )
+        end
+
+        let(:reloaded_account_directory) do
+          test_api_client.directories.get(account_directory.href)
+        end
+
+        let(:organization_name_key) { "#{random_string}-org-name-key" }
+
+        let(:organization) do
+          test_api_client.organizations.create(
+            name: "#{random_string}_organization_name",
+            name_key: organization_name_key
+          )
+        end
+
+        let(:sent_to_account) do
+          application.send_password_reset_email(account.email, account_store: { name_key: organization.name_key })
+        end
+
+        after do
+          account.delete
+          organization.delete
+          reloaded_account_directory.delete
+        end
+
+        before do
+          test_api_client.organization_account_store_mappings.create(
+            account_store: { href: account_directory.href },
+            organization: { href: organization.href }
+          )
+
+          test_api_client.account_store_mappings.create(application: application, account_store: organization)
         end
 
         it 'sends a password reset request of the account' do
@@ -271,10 +414,104 @@ describe Stormpath::Resource::Application, :vcr do
         end
       end
 
-      context 'of a non exisitng account' do
-        it 'raises an exception' do
+      context 'of an existing account on the application with a right account store organization resource object' do
+        let(:account) { account_directory.accounts.create build_account  }
+
+        let(:account_directory) do
+          test_api_client.directories.create(
+            name: random_directory_name('password_reset_account_store_href')
+          )
+        end
+
+        let(:reloaded_account_directory) do
+          test_api_client.directories.get(account_directory.href)
+        end
+
+        let(:organization_name_key) { "#{random_string}-org-name-key" }
+
+        let(:organization) do
+          test_api_client.organizations.create(
+            name: "#{random_string}_organization_name",
+            name_key: organization_name_key
+          )
+        end
+
+        let(:sent_to_account) do
+          application.send_password_reset_email(account.email, account_store: organization)
+        end
+
+        after do
+          account.delete
+          organization.delete
+          reloaded_account_directory.delete
+        end
+
+        before do
+          test_api_client.organization_account_store_mappings.create(
+            account_store: { href: account_directory.href },
+            organization: { href: organization.href }
+          )
+
+          test_api_client.account_store_mappings.create(application: application, account_store: organization)
+        end
+
+        it 'sends a password reset request of the account' do
+          expect(sent_to_account).to be
+          expect(sent_to_account).to be_kind_of Stormpath::Resource::Account
+          expect(sent_to_account.email).to eq(account.email)
+        end
+      end
+
+      context 'of an existing account on the application with a wrong account store organization namekey' do
+        let(:account) { account_directory.accounts.create build_account  }
+
+        let(:account_directory) do
+          test_api_client.directories.create(
+            name: random_directory_name('password_reset_account_store_href')
+          )
+        end
+
+        let(:reloaded_account_directory) do
+          test_api_client.directories.get(account_directory.href)
+        end
+
+        let(:organization_name_key) { "#{random_string}-org-name-key" }
+
+        let(:other_organization_name_key) { "#{random_string}-other-org-name-key" }
+
+        let(:organization) do
+          test_api_client.organizations.create(
+            name: "#{random_string}_organization_name",
+            name_key: organization_name_key
+          )
+        end
+
+        let(:other_organization) do
+          test_api_client.organizations.create(
+            name: "#{random_string}_other_organization_name",
+            name_key: other_organization_name_key
+          )
+        end
+
+        after do
+          account.delete
+          organization.delete
+          other_organization.delete
+          reloaded_account_directory.delete
+        end
+
+        before do
+          test_api_client.organization_account_store_mappings.create(
+            account_store: { href: account_directory.href },
+            organization: { href: organization.href }
+          )
+
+          test_api_client.account_store_mappings.create(application: application, account_store: organization)
+        end
+
+        it 'sends a password reset request of the account' do
           expect do
-            application.send_password_reset_email "test@example.com"
+            application.send_password_reset_email(account.email, account_store: { name_key: other_organization.name_key })
           end.to raise_error Stormpath::Error
         end
       end
