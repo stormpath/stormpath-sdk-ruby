@@ -396,13 +396,11 @@ properties
           expect(groups_cache_summary).to eq [2, 1, 0, 0, 2]
         end
       end
-
     end
 
     context 'search' do
-
       let(:first_application_name) { random_application_name(1) }
-      let(:second_application_name ) { random_application_name(2) }
+      let(:second_application_name) { random_application_name(2) }
 
       let!(:applications) do
         [
@@ -623,6 +621,104 @@ properties
 
       after do
         directory.delete
+      end
+    end
+  end
+
+  describe '#organization' do
+    context 'search' do
+      let(:organization_name) { random_organization_name }
+
+      let!(:organization) do
+        test_api_client.organizations.create(
+          name: organization_name,
+          name_key: "testorganization"
+        )
+      end
+
+      context 'by any attribute' do
+        let(:search_results) do
+          test_api_client.organizations.search(organization_name)
+        end
+
+        it 'returns the application' do
+          expect(search_results.count).to eq 1
+        end
+      end
+
+      context 'by an explicit attribute' do
+        let(:search_results) do
+          test_api_client.organizations.search(name: random_organization_name)
+        end
+
+        it 'returns the application' do
+          expect(search_results.count).to eq 1
+        end
+      end
+
+      after { organization.delete }
+    end
+
+    context 'given a collection' do
+      let(:organization) do
+        test_api_client.organizations.create(
+            name: random_organization_name,
+            name_key: random_name_key,
+            description: 'A test description'
+        )
+      end
+
+      it 'returns the collection' do
+        expect(test_api_client.organizations).to be_kind_of(Stormpath::Resource::Collection)
+        expect(test_api_client.organizations.count).to be >= 1
+      end
+
+      after { organization.delete }
+    end
+
+    context 'given a collection with a limit' do
+      let!(:organization_1) do
+        test_api_client.organizations.create name: random_organization_name(1), name_key: random_name_key(1)
+      end
+
+      let!(:organization_2) do
+        test_api_client.organizations.create name: random_organization_name(2), name_key: random_name_key(2)
+      end
+
+      after do
+        organization_1.delete
+        organization_2.delete
+      end
+
+      it 'should retrieve the number of organizations described with the limit' do
+        expect(test_api_client.organizations.count).to be >= 2
+      end
+    end
+
+    describe '.create' do
+      let(:organization_name) { random_organization_name }
+
+      let(:organization_attributes) do
+        {
+          name: organization_name,
+          name_key: random_name_key,
+          description: 'A test description'
+        }
+      end
+
+      let(:organization) do
+        test_api_client.organizations.create organization_attributes
+      end
+
+      it 'creates an organization' do
+        expect(organization).to be
+        expect(organization.name).to eq(organization_attributes[:name])
+        expect(organization.name_key).to eq(organization_attributes[:name_key])
+        expect(organization.description).to eq(organization_attributes[:description])
+      end
+
+      after do
+        organization.delete
       end
     end
   end

@@ -118,10 +118,14 @@ module Stormpath
   module RandomResourceNameGenerator
     include UUIDTools
 
-    %w(application directory group user).each do |resource|
+    %w(application directory organization group user).each do |resource|
       define_method "random_#{resource}_name" do |suffix=nil|
         "#{random_string}_#{resource}_#{suffix}"
       end
+    end
+
+    def random_name_key(suffix='test')
+      "#{random_string}-namekey-#{suffix}"
     end
 
     def random_email
