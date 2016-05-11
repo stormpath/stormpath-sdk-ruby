@@ -901,6 +901,13 @@ $ rake gem
 $ gem install pkg/stormpath-sdk-{version}.gem
 ```
 
+### Releasing the Gem
+
+1. Update the gem version following semantic versioning
+2. Update the version date
+3. Update the CHANGES.md
+4. Run `rake release`
+
 ## Quick Class Diagram
 
 ```
