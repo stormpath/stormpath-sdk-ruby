@@ -28,7 +28,7 @@ describe Stormpath::Resource::Account, :vcr do
         expect(account.send property_accessor).to be_a String
       end
 
-      [:created_at, :modified_at].each do |property_getter|
+      [:created_at, :modified_at, :password_modified_at].each do |property_getter|
         expect(account).to respond_to(property_getter)
         expect(account.send property_getter).to be_a String
       end
