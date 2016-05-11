@@ -1,6 +1,17 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.1.0
+-------------
+
+Released on May 11, 2016
+
+- Saml integration
+- Support for specifying an organization name_key on login attempts
+- Support for specifying the account store when reseting passwords
+- Add delegate to organizations
+- Add Organization docs to README
+
 Version 1.0.1
 -------------
 
