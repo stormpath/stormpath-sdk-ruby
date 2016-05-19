@@ -1,6 +1,14 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.1.1
+-------------
+
+Released on May 19, 2016
+
+- Add timestamps (created_at & modified_at) for account, application, custom_data,
+  directory, group, organization and tenant resource
+
 Version 1.1.0
 -------------
 
