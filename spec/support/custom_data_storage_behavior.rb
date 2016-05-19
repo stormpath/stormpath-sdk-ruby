@@ -71,6 +71,11 @@ shared_examples_for 'custom_data_storage' do
     expect(custom_data_storage.custom_data["modifiedAt"]).not_to eq(nil)
   end
 
+  it 'getters for timestamps work' do
+    expect(custom_data_storage.custom_data.created_at).not_to eq(nil)
+    expect(custom_data_storage.custom_data.modified_at).not_to eq(nil)
+  end
+
   RESERVED_FIELDS.each do |reserved_field|
     it "set reserved data #{reserved_field} should raise error" do
       custom_data_storage.custom_data[reserved_field] = 12

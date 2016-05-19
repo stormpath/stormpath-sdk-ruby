@@ -27,6 +27,11 @@ describe Stormpath::Resource::Application, :vcr do
       expect(application.send property_accessor).to be_a String
     end
 
+    [:created_at, :modified_at].each do |property_getter|
+      expect(application).to respond_to(property_getter)
+      expect(application.send property_getter).to be_a String
+    end
+
     expect(application.tenant).to be_a Stormpath::Resource::Tenant
     expect(application.default_account_store_mapping).to be_a Stormpath::Resource::AccountStoreMapping
     expect(application.default_group_store_mapping).to be_a Stormpath::Resource::AccountStoreMapping
@@ -106,7 +111,7 @@ describe Stormpath::Resource::Application, :vcr do
       application.authorized_callback_uris = authorized_callback_uris
       response = application.save
 
-      expect(response).to eq application 
+      expect(response).to eq application
       #expect(application.authorized_callback_uris).to eq(authorized_callback_uris)
     end
   end

@@ -19,7 +19,7 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
 
   prop_accessor :username, :email, :given_name, :middle_name, :surname
   prop_writer :password
-  prop_reader :full_name
+  prop_reader :full_name, :created_at, :modified_at, :password_modified_at
   prop_non_printable :password
 
   belongs_to :directory

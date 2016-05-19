@@ -28,6 +28,11 @@ describe Stormpath::Resource::Account, :vcr do
         expect(account.send property_accessor).to be_a String
       end
 
+      [:created_at, :modified_at, :password_modified_at].each do |property_getter|
+        expect(account).to respond_to(property_getter)
+        expect(account.send property_getter).to be_a String
+      end
+
       expect(account).to respond_to(:full_name)
       expect(account.full_name).to be_a String
       expect(account.full_name).to eq("#{given_name} #{middle_name} #{surname}")

@@ -8,9 +8,9 @@ describe Stormpath::Resource::Tenant, :vcr do
     it do
       expect(tenant).to be_a Stormpath::Resource::Tenant
 
-      [:name, :key].each do |property_accessor|
-        expect(tenant).to respond_to(property_accessor)
-        expect(tenant.send property_accessor).to be_a String
+      [:name, :key, :created_at, :modified_at].each do |property_getter|
+        expect(tenant).to respond_to(property_getter)
+        expect(tenant.send property_getter).to be_a String
       end
 
       expect(tenant.applications).to be_a Stormpath::Resource::Collection

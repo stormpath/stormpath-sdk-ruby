@@ -36,6 +36,11 @@ describe Stormpath::Resource::Directory, :vcr do
         expect(directory.send property_accessor).to be_a String
       end
 
+      [:created_at, :modified_at].each do |property_getter|
+        expect(directory).to respond_to(property_getter)
+        expect(directory.send property_getter).to be_a String
+      end
+
       expect(directory.tenant).to be_a Stormpath::Resource::Tenant
       expect(directory.groups).to be_a Stormpath::Resource::Collection
       expect(directory.accounts).to be_a Stormpath::Resource::Collection
@@ -179,10 +184,10 @@ describe Stormpath::Resource::Directory, :vcr do
 
       it 'creates an account' do
         expect(@account).to be_a Stormpath::Resource::Account
-        expect(@account.username).to eq("jlucpicard") 
-        expect(@account.email).to eq("captain@enterprise.com") 
-        expect(@account.given_name).to eq("Jean-Luc") 
-        expect(@account.surname).to eq("Picard") 
+        expect(@account.username).to eq("jlucpicard")
+        expect(@account.email).to eq("captain@enterprise.com")
+        expect(@account.given_name).to eq("Jean-Luc")
+        expect(@account.surname).to eq("Picard")
       end
 
       it 'can authenticate with the account credentials' do
@@ -192,8 +197,8 @@ describe Stormpath::Resource::Directory, :vcr do
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
         expect(auth_result.account).to be_a Stormpath::Resource::Account
         expect(auth_result.account.email).to eq("captain@enterprise.com")
-        expect(auth_result.account.given_name).to eq("Jean-Luc") 
-        expect(auth_result.account.surname).to eq("Picard") 
+        expect(auth_result.account.given_name).to eq("Jean-Luc")
+        expect(auth_result.account.surname).to eq("Picard")
       end
     end
 
@@ -211,10 +216,10 @@ describe Stormpath::Resource::Directory, :vcr do
 
       it 'creates an account' do
         expect(@account).to be_a Stormpath::Resource::Account
-        expect(@account.username).to eq("jlucpicard") 
-        expect(@account.email).to eq("captain@enterprise.com") 
-        expect(@account.given_name).to eq("Jean-Luc") 
-        expect(@account.surname).to eq("Picard") 
+        expect(@account.username).to eq("jlucpicard")
+        expect(@account.email).to eq("captain@enterprise.com")
+        expect(@account.given_name).to eq("Jean-Luc")
+        expect(@account.surname).to eq("Picard")
       end
 
       it 'can authenticate with the account credentials' do
@@ -224,8 +229,8 @@ describe Stormpath::Resource::Directory, :vcr do
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
         expect(auth_result.account).to be_a Stormpath::Resource::Account
         expect(auth_result.account.email).to eq("captain@enterprise.com")
-        expect(auth_result.account.given_name).to eq("Jean-Luc") 
-        expect(auth_result.account.surname).to eq("Picard") 
+        expect(auth_result.account.given_name).to eq("Jean-Luc")
+        expect(auth_result.account.surname).to eq("Picard")
       end
     end
 
@@ -243,7 +248,7 @@ describe Stormpath::Resource::Directory, :vcr do
       after do
         created_account_with_hash.delete if created_account_with_hash
       end
-      
+
       it 'creates an account with status ENABLED' do
         expect(created_account_with_hash.email).to eq(random_email)
         expect(created_account_with_hash.given_name).to eq('Ruby SDK')
@@ -319,7 +324,7 @@ describe Stormpath::Resource::Directory, :vcr do
               encoded_x509_signing_cert:"",
               request_signature_algorithm:"RSA-SHA256"
             }
-          )         
+          )
         end.to raise_error Stormpath::Error
       end
     end
@@ -353,11 +358,11 @@ describe Stormpath::Resource::Directory, :vcr do
 
       directory
       expect(directory.provider.href).not_to be_empty
-      expect(directory.provider.provider_id).to eq("saml") 
+      expect(directory.provider.provider_id).to eq("saml")
       expect(directory.provider.sso_login_url).to eq("https://yourIdp.com/saml2/sso/login")
-      expect(directory.provider.sso_logout_url).to eq("https://yourIdp.com/saml2/sso/logout") 
+      expect(directory.provider.sso_logout_url).to eq("https://yourIdp.com/saml2/sso/logout")
       expect(directory.provider.encoded_x509_signing_cert).not_to be_empty
-      expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256") 
+      expect(directory.provider.request_signature_algorithm).to eq("RSA-SHA256")
     end
   end
 
@@ -378,7 +383,7 @@ describe Stormpath::Resource::Directory, :vcr do
 
     after do
       directory.delete if directory
-    end 
+    end
 
     it 'returnes provider metadata' do
       stub_request(:post, "https://api.stormpath.com/v1/directories").
@@ -414,7 +419,7 @@ describe Stormpath::Resource::Directory, :vcr do
 
     after do
       directory.delete if directory
-    end 
+    end
 
     it 'updates the directory mappings' do
       mappings = Stormpath::Provider::SamlMappingRules.new(items: [
@@ -429,8 +434,8 @@ describe Stormpath::Resource::Directory, :vcr do
 
       stub_request(:get, directory.href + "/provider").
         to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers:{})
-      
-      stub_request(:post, directory.provider.attribute_statement_mapping_rules["href"]). 
+
+      stub_request(:post, directory.provider.attribute_statement_mapping_rules["href"]).
         to_return(status:200, body: fixture('create_saml_directory_mapping_rules.json'), headers:{})
 
       response = directory.create_attribute_mappings(mappings)
