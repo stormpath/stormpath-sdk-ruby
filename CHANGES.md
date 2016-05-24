@@ -1,6 +1,13 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.1.2
+-------------
+
+Released on May 24, 2016
+
+- Add AccessToken and RefreshToken resources
+
 Version 1.1.1
 -------------
 
