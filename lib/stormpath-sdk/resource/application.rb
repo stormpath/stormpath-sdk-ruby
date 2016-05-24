@@ -61,7 +61,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     base += '/logout' if options[:logout]
 
     if options[:callback_uri].empty?
-      raise Stormpath::IdSite::Error.new(:jwt_cb_uri_incorrect)
+      raise Stormpath::Oauth::Error.new(:jwt_cb_uri_incorrect)
     end
 
     token = JWT.encode(jwt_token_payload(options), client.data_store.api_key.secret, 'HS256')
@@ -80,13 +80,13 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     rescue JWT::ExpiredSignature => error
       # JWT raises error if the signature expired, we need to capture this and
       # rerase IdSite::Error
-      raise Stormpath::IdSite::Error.new(:jwt_expired)
+      raise Stormpath::Oauth::Error.new(:jwt_expired)
     end
 
     id_site_result = Stormpath::IdSite::IdSiteResult.new(jwt_response)
 
     if id_site_result.jwt_invalid?(api_key_id)
-      raise Stormpath::IdSite::Error.new(:jwt_invalid)
+      raise Stormpath::Oauth::Error.new(:jwt_invalid)
     end
 
     id_site_result

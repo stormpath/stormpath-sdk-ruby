@@ -50,6 +50,7 @@ module Stormpath
     autoload :VerificationEmail, 'stormpath-sdk/resource/verification_email'
     autoload :OauthPolicy, 'stormpath-sdk/resource/oauth_policy'
     autoload :AccessToken, 'stormpath-sdk/resource/access_token'
+    autoload :RefreshToken, 'stormpath-sdk/resource/refresh_token'
     autoload :Organization, 'stormpath-sdk/resource/organization'
     autoload :OrganizationAccountStoreMapping, 'stormpath-sdk/resource/organization_account_store_mapping'
     autoload :AccountOverrides, 'stormpath-sdk/resource/account_overrides'
@@ -108,9 +109,8 @@ module Stormpath
 
   module IdSite
     autoload :IdSiteResult, 'stormpath-sdk/id_site/id_site_result'
-    autoload :Error, 'stormpath-sdk/id_site/error'
   end
-  
+
   module Oauth
     autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
     autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"
@@ -119,6 +119,8 @@ module Stormpath
     autoload :RefreshGrantRequest, "stormpath-sdk/oauth/refresh_grant_request"
     autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
     autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
+    autoload :AccessTokenAuthenticationResult, "stormpath-sdk/oauth/access_token_authentication_result"
+    autoload :Error, 'stormpath-sdk/oauth/error'
     autoload :IdSiteGrantRequest, "stormpath-sdk/oauth/id_site_grant_request"
     autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
   end

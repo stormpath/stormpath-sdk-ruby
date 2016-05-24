@@ -1,12 +1,11 @@
-class Stormpath::Resource::AccessToken < Stormpath::Resource::Instance
-  prop_reader :access_token, :refresh_token, :token_type, :expires_in,
-    :stormpath_access_token_href
+module Stormpath
+  module Resource
+    class AccessToken < Stormpath::Resource::Instance
+      prop_reader :jwt, :expanded_jwt
 
-  alias_method :href, :stormpath_access_token_href
-
-  def delete
-    unless href.respond_to?(:empty) and href.empty?
-      data_store.delete self 
+      belongs_to :account
+      belongs_to :application
+      belongs_to :tenant
     end
   end
 end
