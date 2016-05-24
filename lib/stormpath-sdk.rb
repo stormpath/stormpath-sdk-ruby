@@ -109,7 +109,6 @@ module Stormpath
 
   module IdSite
     autoload :IdSiteResult, 'stormpath-sdk/id_site/id_site_result'
-    autoload :Error, 'stormpath-sdk/id_site/error'
   end
 
   module Oauth
@@ -121,6 +120,7 @@ module Stormpath
     autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
     autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
     autoload :AccessTokenAuthenticationResult, "stormpath-sdk/oauth/access_token_authentication_result"
+    autoload :Error, 'stormpath-sdk/oauth/error'
     autoload :IdSiteGrantRequest, "stormpath-sdk/oauth/id_site_grant_request"
     autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
   end

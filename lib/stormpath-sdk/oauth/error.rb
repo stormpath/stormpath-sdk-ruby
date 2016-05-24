@@ -1,5 +1,5 @@
 module Stormpath
-  module IdSite
+  module Oauth
     class Error < Stormpath::Error
       attr_accessor :status, :code, :message, :developer_message, :more_info
 
@@ -27,7 +27,7 @@ module Stormpath
             code: 10011,
             message: "Token is invalid",
             developer_message: "Token is no longer valid because it has expired"
-          }, 
+          },
           jwt_invalid: {
             status: 400,
             code: 10012,
@@ -39,4 +39,3 @@ module Stormpath
     end
   end
 end
-

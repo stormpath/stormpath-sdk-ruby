@@ -25,7 +25,7 @@ module Stormpath
         begin
           JWT.decode(access_token, data_store.api_key.secret).first
         rescue JWT::ExpiredSignature => error
-          raise Stormpath::IdSite::Error.new(:jwt_expired)
+          raise Stormpath::Oauth::Error.new(:jwt_expired)
         end
       end
     end
