@@ -70,7 +70,6 @@ module Stormpath
     autoload :UsernamePasswordRequest, "stormpath-sdk/auth/username_password_request"
     autoload :BasicLoginAttempt, "stormpath-sdk/auth/basic_login_attempt"
     autoload :AuthenticationResult, "stormpath-sdk/auth/authentication_result"
-    autoload :JwtAuthenticationResult, "stormpath-sdk/auth/jwt_authentication_result"
     autoload :BasicAuthenticator, "stormpath-sdk/auth/basic_authenticator"
   end
 
@@ -121,6 +120,7 @@ module Stormpath
     autoload :RefreshGrantRequest, "stormpath-sdk/oauth/refresh_grant_request"
     autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
     autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
+    autoload :AccessTokenAuthenticationResult, "stormpath-sdk/oauth/access_token_authentication_result"
     autoload :IdSiteGrantRequest, "stormpath-sdk/oauth/id_site_grant_request"
     autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
   end

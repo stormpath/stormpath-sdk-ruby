@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Stormpath::Authentication::JwtAuthenticationResult, :vcr do
+describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
   let(:account_data) { build_account(email: email, password: password) }
 
   let(:email) { random_email }

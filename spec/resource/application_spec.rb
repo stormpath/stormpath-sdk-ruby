@@ -805,7 +805,7 @@ describe Stormpath::Resource::Application, :vcr do
       let(:authenticate_oauth) { application.authenticate_oauth(password_grant_request) }
 
       it 'should return access token response' do
-        expect(authenticate_oauth).to be_kind_of(Stormpath::Authentication::JwtAuthenticationResult)
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
       end
 
       it 'response should contain token data' do
@@ -843,7 +843,7 @@ describe Stormpath::Resource::Application, :vcr do
       }
 
       it 'should create a jwtRequest that is signed wit the client secret' do
-        allow(application.client.data_store).to receive(:create).and_return(Stormpath::Authentication::JwtAuthenticationResult)
+        allow(application.client.data_store).to receive(:create).and_return(Stormpath::Oauth::AccessTokenAuthenticationResult)
         expect(application.client.data_store).to receive(:instantiate)
           .with(Stormpath::Oauth::IdSiteGrant)
           .and_return(Stormpath::Oauth::IdSiteGrant.new({}, application.client))
@@ -851,7 +851,7 @@ describe Stormpath::Resource::Application, :vcr do
         grant_request = Stormpath::Oauth::IdSiteGrantRequest.new jwt_token
         response = application.authenticate_oauth(grant_request)
 
-        expect(response).to be(Stormpath::Authentication::JwtAuthenticationResult)
+        expect(response).to be(Stormpath::Oauth::AccessTokenAuthenticationResult)
       end
     end
 
@@ -860,7 +860,7 @@ describe Stormpath::Resource::Application, :vcr do
       let(:authenticate_oauth) { application.authenticate_oauth(refresh_grant_request) }
 
       it 'should return access token response with refreshed token' do
-        expect(authenticate_oauth).to be_kind_of(Stormpath::Authentication::JwtAuthenticationResult)
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
       end
 
       it 'refreshed token is not the same as previous one' do
