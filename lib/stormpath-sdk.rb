@@ -25,8 +25,6 @@ module Stormpath
 
   module Resource
     autoload :Expansion, 'stormpath-sdk/resource/expansion'
-    autoload :Status, 'stormpath-sdk/resource/status'
-    autoload :AccountStatus, 'stormpath-sdk/resource/account_status'
     autoload :Utils, 'stormpath-sdk/resource/utils'
     autoload :Associations, 'stormpath-sdk/resource/associations'
     autoload :Base, 'stormpath-sdk/resource/base'
@@ -123,5 +121,9 @@ module Stormpath
     autoload :Error, 'stormpath-sdk/oauth/error'
     autoload :IdSiteGrantRequest, "stormpath-sdk/oauth/id_site_grant_request"
     autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
+  end
+
+  module Util
+    autoload :StatusPropertyDefiner, "stormpath-sdk/util/status_property_definer"
   end
 end

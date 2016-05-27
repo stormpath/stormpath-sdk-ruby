@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Stormpath::Resource::Status, :vcr do
+describe 'Stormpath::Resource::Status', :vcr do
 
   def authenticate_user
     auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'test@example.com', 'P@$$w0rd'
@@ -17,10 +17,6 @@ describe Stormpath::Resource::Status, :vcr do
   let(:account_store_mapping) { test_api_client.account_store_mappings.create application: application, account_store: directory }
 
   let!(:account) { directory.accounts.create email: 'test@example.com', password: 'P@$$w0rd', given_name: "Ruby SDK", surname: 'SDK' }
-
-  let(:status_hash) {{ "ENABLED" => "ENABLED", "DISABLED" => "DISABLED" }}
-
-  let(:account_status_hash) { status_hash.merge "UNVERIFIED" => "UNVERIFIED", "LOCKED" => "LOCKED"}
 
   let(:reloaded_account) { test_api_client.accounts.get account.href }
 
@@ -41,14 +37,6 @@ describe Stormpath::Resource::Status, :vcr do
 
     expect(account.respond_to? :status).to be_truthy
     expect(account.respond_to? :status=).to be_truthy
-  end
-
-  it "compare status hashes" do
-    expect(directory.status_hash).to eq(status_hash)
-    expect(application.status_hash).to eq(status_hash)
-
-    expect(group.status_hash).to eq(status_hash)
-    expect(account.status_hash).to eq(account_status_hash)
   end
 
   it "users status by default should be ENABLED" do

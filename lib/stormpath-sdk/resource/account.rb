@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Account < Stormpath::Resource::Instance
-  include Stormpath::Resource::AccountStatus
   include Stormpath::Resource::CustomDataStorage
 
   prop_accessor :username, :email, :given_name, :middle_name, :surname
@@ -35,6 +34,8 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
 
   has_many :access_tokens
   has_many :refresh_tokens
+
+  has_status(status_list: :account)
 
   def add_group group
     client.group_memberships.create group: group, account: self

@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Group < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
   include Stormpath::Resource::CustomDataStorage
 
   prop_accessor :name, :description
@@ -27,6 +26,8 @@ class Stormpath::Resource::Group < Stormpath::Resource::Instance
   has_many :account_memberships
 
   has_one :custom_data
+
+  has_status
 
   def add_account account
     client.group_memberships.create group: self, account: account
