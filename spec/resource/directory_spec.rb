@@ -87,6 +87,11 @@ describe Stormpath::Resource::Directory, :vcr do
       end
     end
 
+    context '#password_policy' do
+      it 'should be able to fetch the password policy' do
+        expect(directory.password_policy).to be_kind_of(Stormpath::Resource::PasswordPolicy)
+      end
+    end
   end
 
   describe '#create_account' do

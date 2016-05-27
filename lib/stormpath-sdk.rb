@@ -52,6 +52,9 @@ module Stormpath
     autoload :Organization, 'stormpath-sdk/resource/organization'
     autoload :OrganizationAccountStoreMapping, 'stormpath-sdk/resource/organization_account_store_mapping'
     autoload :AccountOverrides, 'stormpath-sdk/resource/account_overrides'
+    autoload :PasswordPolicy, 'stormpath-sdk/resource/password_policy'
+    autoload :EmailTemplate, 'stormpath-sdk/resource/email_template'
+    autoload :PasswordStrength, 'stormpath-sdk/resource/password_strength'
   end
 
   module Cache
