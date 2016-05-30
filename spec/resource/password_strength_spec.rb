@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Stormpath::Resource::PasswordPolicy, :vcr do
+describe Stormpath::Resource::PasswordStrength, :vcr do
   describe "instances should respond to attribute property methods" do
     let(:application) { test_application }
     let(:directory) { test_api_client.directories.create(name: random_directory_name) }
     let(:password_policy) { directory.password_policy }
-    let(:password_strength) { directory.password_strength }
+    let(:password_strength) { password_policy.strength }
 
     before do
       test_api_client.account_store_mappings.create(
@@ -36,10 +36,10 @@ describe Stormpath::Resource::PasswordPolicy, :vcr do
     end
 
     it 'can change reset_token_ttl' do
-      expect(directory.password_policy.reset_token_ttl).to eq(24)
-      password_policy.reset_token_ttl = 10
-      password_policy.save
-      expect(directory.password_policy.reset_token_ttl).to eq(10)
+      expect(password_policy.strength.min_length).to eq(8)
+      password_strength.min_length = 10
+      password_strength.save
+      expect(password_policy.strength.min_length).to eq(10)
     end
   end
 end
