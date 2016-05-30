@@ -35,11 +35,35 @@ describe Stormpath::Resource::PasswordStrength, :vcr do
       end
     end
 
-    it 'can change reset_token_ttl' do
+    it 'can change attributes' do
       expect(password_policy.strength.min_length).to eq(8)
+      expect(password_policy.strength.max_length).to eq(100)
+      expect(password_policy.strength.min_lower_case).to eq(1)
+      expect(password_policy.strength.min_upper_case).to eq(1)
+      expect(password_policy.strength.min_numeric).to eq(1)
+      expect(password_policy.strength.min_symbol).to eq(0)
+      expect(password_policy.strength.min_diacritic).to eq(0)
+      expect(password_policy.strength.prevent_reuse).to eq(0)
+
       password_strength.min_length = 10
+      password_strength.max_length = 99
+      password_strength.min_lower_case = 2
+      password_strength.min_upper_case = 2
+      password_strength.min_numeric = 2
+      password_strength.min_symbol = 1
+      password_strength.min_diacritic = 1
+      password_strength.prevent_reuse = 1
+
       password_strength.save
+
       expect(password_policy.strength.min_length).to eq(10)
+      expect(password_policy.strength.max_length).to eq(99)
+      expect(password_policy.strength.min_lower_case).to eq(2)
+      expect(password_policy.strength.min_upper_case).to eq(2)
+      expect(password_policy.strength.min_numeric).to eq(2)
+      expect(password_policy.strength.min_symbol).to eq(1)
+      expect(password_policy.strength.min_diacritic).to eq(1)
+      expect(password_policy.strength.prevent_reuse).to eq(1)
     end
   end
 end
