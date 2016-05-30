@@ -29,6 +29,9 @@ describe Stormpath::Resource::PasswordPolicy, :vcr do
       expect(password_policy.strength).to be_a Stormpath::Resource::PasswordStrength
       expect(password_policy.reset_email_templates).to be_a Stormpath::Resource::Collection
       expect(password_policy.reset_success_email_templates).to be_a Stormpath::Resource::Collection
+
+      expect(password_policy.reset_email_templates.first).to be_a Stormpath::Resource::EmailTemplate
+      expect(password_policy.reset_success_email_templates.first).to be_a Stormpath::Resource::EmailTemplate
     end
 
     it 'can change reset_token_ttl' do
