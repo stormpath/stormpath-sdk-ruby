@@ -43,11 +43,7 @@ describe Stormpath::Resource::EmailTemplate, :vcr do
       reset_email_template.html_body = "<p> You forgot your password! </p> ${sptoken}"
       reset_email_template.mime_type = "text/plain"
 
-      begin
-        reset_email_template.save
-      rescue => e
-        binding.pry
-      end
+      reset_email_template.save
 
       reloaded_reset_email_template = password_policy.reset_email_templates.first
 
