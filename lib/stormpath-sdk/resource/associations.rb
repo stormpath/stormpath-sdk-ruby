@@ -33,7 +33,8 @@ module Stormpath
         alias_method :belongs_to, :resource_prop_reader
 
         def has_many(name, options={}, &block)
-          item_class = options[:class] || "Stormpath::Resource::#{name.to_s.singularize.camelize}".constantize
+          options[:class_name] ||= name.to_s.singularize
+          item_class = "Stormpath::Resource::#{options[:class_name].to_s.camelize}".constantize
           property_name = name.to_s.camelize :lower
           can = Array.wrap(options[:can]) || []
 

@@ -14,14 +14,13 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Application < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
   include Stormpath::Resource::CustomDataStorage
   include Stormpath::Resource::AccountOverrides
   include UUIDTools
 
   class LoadError < Stormpath::Error; end
 
-  prop_accessor :name, :description, :authorized_callback_uris
+  prop_accessor :name, :description, :authorized_callback_uris, :status
   prop_reader :created_at, :modified_at
 
   belongs_to :tenant

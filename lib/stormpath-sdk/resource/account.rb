@@ -14,10 +14,9 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Account < Stormpath::Resource::Instance
-  include Stormpath::Resource::AccountStatus
   include Stormpath::Resource::CustomDataStorage
 
-  prop_accessor :username, :email, :given_name, :middle_name, :surname
+  prop_accessor :username, :email, :given_name, :middle_name, :surname, :status
   prop_writer :password
   prop_reader :full_name, :created_at, :modified_at, :password_modified_at
   prop_non_printable :password

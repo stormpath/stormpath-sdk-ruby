@@ -648,7 +648,7 @@ properties
 
       context 'by an explicit attribute' do
         let(:search_results) do
-          test_api_client.organizations.search(name: random_organization_name)
+          test_api_client.organizations.search(name: organization_name)
         end
 
         it 'returns the application' do

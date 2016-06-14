@@ -14,10 +14,9 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Group < Stormpath::Resource::Instance
-  include Stormpath::Resource::Status
   include Stormpath::Resource::CustomDataStorage
 
-  prop_accessor :name, :description
+  prop_accessor :name, :description, :status
   prop_reader :created_at, :modified_at
 
   belongs_to :tenant

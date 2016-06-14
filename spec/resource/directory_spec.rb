@@ -87,6 +87,11 @@ describe Stormpath::Resource::Directory, :vcr do
       end
     end
 
+    context '#password_policy' do
+      it 'should be able to fetch the password policy' do
+        expect(directory.password_policy).to be_kind_of(Stormpath::Resource::PasswordPolicy)
+      end
+    end
   end
 
   describe '#create_account' do
@@ -235,9 +240,11 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     context 'with account data as hash' do
+      let(:account_email) { random_email }
+
       let(:created_account_with_hash) do
         directory.create_account({
-          email: random_email,
+          email: account_email,
           given_name: 'Ruby SDK',
           password: 'P@$$w0rd',
           surname: 'SDK',
@@ -250,7 +257,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'creates an account with status ENABLED' do
-        expect(created_account_with_hash.email).to eq(random_email)
+        expect(created_account_with_hash.email).to eq(account_email)
         expect(created_account_with_hash.given_name).to eq('Ruby SDK')
         expect(created_account_with_hash.surname).to eq('SDK')
         expect(created_account_with_hash.status).to eq("ENABLED")
@@ -260,7 +267,9 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_directory_with_custom_data' do
-    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
+    let(:directory_name) { random_directory_name }
+
+    let(:directory) { test_api_client.directories.create name: directory_name, description: 'description_for_some_test_directory' }
 
     after do
       directory.delete if directory
@@ -270,7 +279,7 @@ describe Stormpath::Resource::Directory, :vcr do
       directory.custom_data["category"] = "classified"
 
       directory.save
-      expect(directory.name).to eq(random_directory_name)
+      expect(directory.name).to eq(directory_name)
       expect(directory.description).to eq('description_for_some_test_directory')
       expect(directory.custom_data["category"]).to eq("classified")
     end
