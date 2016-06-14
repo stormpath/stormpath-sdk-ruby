@@ -57,10 +57,6 @@ class Stormpath::Resource::Base
       @non_printable_properties ||= []
       Array.new @non_printable_properties
     end
-
-    def has_status(name: :status, status_list: :default)
-      Stormpath::Util::StatusPropertyDefiner.new(self, name, status_list).call
-    end
   end
 
   def initialize properties_or_url, client=nil, query=nil

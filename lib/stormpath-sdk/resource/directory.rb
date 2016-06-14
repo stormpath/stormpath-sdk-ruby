@@ -17,7 +17,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   include Stormpath::Resource::CustomDataStorage
   include Stormpath::Resource::AccountOverrides
 
-  prop_accessor :name, :description
+  prop_accessor :name, :description, :status
   prop_reader :created_at, :modified_at
 
   belongs_to :tenant
@@ -26,8 +26,6 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   has_many :groups, can: [:get, :create]
   has_one :custom_data
   has_one :password_policy
-
-  has_status
 
   def provider
     internal_instance = instance_variable_get "@_provider"

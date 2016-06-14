@@ -16,7 +16,7 @@
 class Stormpath::Resource::Group < Stormpath::Resource::Instance
   include Stormpath::Resource::CustomDataStorage
 
-  prop_accessor :name, :description
+  prop_accessor :name, :description, :status
   prop_reader :created_at, :modified_at
 
   belongs_to :tenant
@@ -26,8 +26,6 @@ class Stormpath::Resource::Group < Stormpath::Resource::Instance
   has_many :account_memberships
 
   has_one :custom_data
-
-  has_status
 
   def add_account account
     client.group_memberships.create group: self, account: account

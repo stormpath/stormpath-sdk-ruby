@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe 'Stormpath::Resource::Status', :vcr do
-
+describe 'status', :vcr do
   def authenticate_user
     auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'test@example.com', 'P@$$w0rd'
     account_store_mapping unless account_store_mapping
@@ -63,7 +62,6 @@ describe 'Stormpath::Resource::Status', :vcr do
 
   it 'assigning inappropriate status states should fail silently' do
     account.status = "INVALID_STATUS_VALUE"
-    expect(account.status).to eq("ENABLED")
+    expect { account.save }.to raise_error(Stormpath::Error)
   end
-
 end

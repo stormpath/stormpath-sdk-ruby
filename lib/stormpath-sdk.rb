@@ -125,8 +125,4 @@ module Stormpath
     autoload :IdSiteGrantRequest, "stormpath-sdk/oauth/id_site_grant_request"
     autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
   end
-
-  module Util
-    autoload :StatusPropertyDefiner, "stormpath-sdk/util/status_property_definer"
-  end
 end
