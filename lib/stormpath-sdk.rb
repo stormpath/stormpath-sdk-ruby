@@ -40,6 +40,7 @@ module Stormpath
     autoload :Account, 'stormpath-sdk/resource/account'
     autoload :AccountStore, 'stormpath-sdk/resource/account_store'
     autoload :AccountStoreMapping, 'stormpath-sdk/resource/account_store_mapping'
+    autoload :AccountCreationPolicy, 'stormpath-sdk/resource/account_creation_policy'
     autoload :Group, 'stormpath-sdk/resource/group'
     autoload :EmailVerificationToken, 'stormpath-sdk/resource/email_verification_token'
     autoload :GroupMembership, 'stormpath-sdk/resource/group_membership'
