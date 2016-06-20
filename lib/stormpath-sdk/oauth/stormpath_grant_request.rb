@@ -1,0 +1,33 @@
+module Stormpath
+  module Oauth
+    class StormpathGrantRequest
+      def initialize(account, application, api_key)
+        @account = account
+        @application = application
+        @api_key = api_key
+      end
+
+      def token
+        @token ||= JWT.encode(payload, api_key.secret, 'HS256')
+      end
+
+      def grant_type
+        'stormpath_token'
+      end
+
+      private
+
+      attr_accessor :account, :application, :api_key
+
+      def payload
+        {
+          sub: account.href,
+          iat: Time.now.to_i,
+          iss: application.href,
+          status: 'AUTHENTICATED',
+          aud: api_key.id
+        }
+      end
+    end
+  end
+end
