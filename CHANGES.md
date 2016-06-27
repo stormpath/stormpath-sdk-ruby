@@ -1,6 +1,16 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.1.3
+-------------
+
+Released on June 27, 2016
+
+- Add Password Policy, PasswordStrength, ResetEmailTemplates and ResetSuccessEmailTemplates
+- Add Account Creation Policy
+- Add Oauth Verification with Stormpath Tokens
+- Add Account Api Keys
+
 Version 1.1.2
 -------------
 
