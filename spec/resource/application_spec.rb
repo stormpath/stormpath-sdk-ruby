@@ -1037,14 +1037,37 @@ describe Stormpath::Resource::Application, :vcr do
     let(:account_data) { build_account }
     let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
     let(:aquire_token) { application.authenticate_oauth(password_grant_request) }
+    let(:account) { application.accounts.create account_data }
 
-    before do
-      application.accounts.create account_data
-    end
+    before { account }
 
     context 'generate access token' do
       let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
       let(:authenticate_oauth) { application.authenticate_oauth(password_grant_request) }
+
+      it 'should return access token response' do
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+      end
+
+      it 'response should contain token data' do
+        expect(authenticate_oauth.access_token).not_to be_empty
+        expect(authenticate_oauth.refresh_token).not_to be_empty
+        expect(authenticate_oauth.token_type).not_to be_empty
+        expect(authenticate_oauth.expires_in).not_to be_nil
+        expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+      end
+    end
+
+    context 'generate access token from stormpath_request' do
+      let(:stormpath_grant_request) do
+        Stormpath::Oauth::StormpathGrantRequest.new(
+          account,
+          application,
+          test_api_client.data_store.api_key
+        )
+      end
+
+      let(:authenticate_oauth) { application.authenticate_oauth(stormpath_grant_request) }
 
       it 'should return access token response' do
         expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)

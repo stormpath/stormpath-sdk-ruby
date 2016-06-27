@@ -10,23 +10,20 @@ module Stormpath
       def authenticate(parent_href, request)
         assert_not_nil parent_href, "parent_href must be specified"
 
-        grant_class = classes_by_grant_type[request.grant_type.to_sym]
-        attempt = @data_store.instantiate(grant_class)
+        clazz = GRANT_CLASSES_BY_TYPE[request.grant_type.to_sym]
+        attempt = @data_store.instantiate(clazz)
         attempt.set_options(request)
-
         href = parent_href + '/oauth/token'
+
         @data_store.create href, attempt, Stormpath::Oauth::AccessTokenAuthenticationResult
       end
 
-      private
-
-      def classes_by_grant_type
-        {
-          password: PasswordGrant,
-          refresh_token: RefreshToken,
-          id_site_token: IdSiteGrant
-        }
-      end
+      GRANT_CLASSES_BY_TYPE = {
+        password: PasswordGrant,
+        refresh_token: RefreshToken,
+        id_site_token: IdSiteGrant,
+        stormpath_token: StormpathTokenGrant
+      }.freeze
     end
   end
 end

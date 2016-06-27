@@ -41,6 +41,7 @@ module Stormpath
     autoload :AccountStore, 'stormpath-sdk/resource/account_store'
     autoload :AccountStoreMapping, 'stormpath-sdk/resource/account_store_mapping'
     autoload :ApiKey, 'stormpath-sdk/resource/api_key'
+    autoload :AccountCreationPolicy, 'stormpath-sdk/resource/account_creation_policy'
     autoload :Group, 'stormpath-sdk/resource/group'
     autoload :EmailVerificationToken, 'stormpath-sdk/resource/email_verification_token'
     autoload :GroupMembership, 'stormpath-sdk/resource/group_membership'
@@ -117,8 +118,10 @@ module Stormpath
     autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
     autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"
     autoload :RefreshToken, "stormpath-sdk/oauth/refresh_token"
+    autoload :StormpathTokenGrant, "stormpath-sdk/oauth/stormpath_token_grant"
     autoload :PasswordGrantRequest, "stormpath-sdk/oauth/password_grant_request"
     autoload :RefreshGrantRequest, "stormpath-sdk/oauth/refresh_grant_request"
+    autoload :StormpathGrantRequest, "stormpath-sdk/oauth/stormpath_grant_request"
     autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
     autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
     autoload :AccessTokenAuthenticationResult, "stormpath-sdk/oauth/access_token_authentication_result"
