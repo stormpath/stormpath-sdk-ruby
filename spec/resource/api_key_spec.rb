@@ -47,5 +47,10 @@ describe Stormpath::Resource::ApiKey, :vcr do
       fetched_api_key = application.api_keys.search(id: api_key.id).first
       expect(fetched_api_key).to eq(api_key)
     end
+
+    it 'accounts can fetch api keys' do
+      api_key
+      expect(account.api_keys.count).to eq(1)
+    end
   end
 end
