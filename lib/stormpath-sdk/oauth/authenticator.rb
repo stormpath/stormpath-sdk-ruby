@@ -7,7 +7,7 @@ module Stormpath
         @data_store = data_store
       end
 
-      def authenticate parent_href, request
+      def authenticate(parent_href, request)
         assert_not_nil parent_href, "parent_href must be specified"
 
         clazz = GRANT_CLASSES_BY_TYPE[request.grant_type.to_sym]
@@ -23,7 +23,7 @@ module Stormpath
         refresh_token: RefreshToken,
         id_site_token: IdSiteGrant,
         stormpath_token: StormpathTokenGrant
-      }
+      }.freeze
     end
   end
 end

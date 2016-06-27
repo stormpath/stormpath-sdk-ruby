@@ -35,6 +35,8 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   has_many :access_tokens
   has_many :refresh_tokens
 
+  has_many :api_keys, can: [:create]
+
   def add_group group
     client.group_memberships.create group: group, account: self
   end
