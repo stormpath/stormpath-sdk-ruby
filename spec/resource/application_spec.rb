@@ -1082,6 +1082,31 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
 
+    context 'generate access token from client credentials request' do
+      let(:account_api_key) { account.api_keys.create({}) }
+
+      let(:client_credentials_grant_request) do
+        Stormpath::Oauth::ClientCredentialsGrantRequest.new(
+          account_api_key.id,
+          account_api_key.secret
+        )
+      end
+
+      let(:authenticate_oauth) { application.authenticate_oauth(client_credentials_grant_request) }
+
+      it 'should return access token response' do
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+      end
+
+      it 'response should contain token data' do
+        expect(authenticate_oauth.access_token).not_to be_empty
+        expect(authenticate_oauth.refresh_token).not_to be_empty
+        expect(authenticate_oauth.token_type).not_to be_empty
+        expect(authenticate_oauth.expires_in).not_to be_nil
+        expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+      end
+    end
+
     context 'exchange id site token for access_token with invalid jwt' do
       let(:invalid_jwt_token) { 'invalid_token' }
 

@@ -128,5 +128,7 @@ module Stormpath
     autoload :Error, 'stormpath-sdk/oauth/error'
     autoload :IdSiteGrantRequest, "stormpath-sdk/oauth/id_site_grant_request"
     autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
+    autoload :ClientCredentialsGrantRequest, "stormpath-sdk/oauth/client_credentials_grant_request"
+    autoload :ClientCredentialsGrant, "stormpath-sdk/oauth/client_credentials_grant"
   end
 end
