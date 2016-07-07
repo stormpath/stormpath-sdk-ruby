@@ -284,18 +284,7 @@ class Stormpath::DataStore
     end
 
     def form_request_parse(resource)
-      data = ""
-
-      property_names = resource.get_dirty_property_names
-      property_names.each do |name|
-        if name != "formData"
-          property = resource.get_property name, ignore_camelcasing: true
-          data += name.underscore + '=' + property.to_s
-          data += '&' unless name == property_names.last
-        end
-      end
-
-      data
+      URI.encode_www_form(resource.form_properties.to_a)
     end
 
     def to_hash(resource)
