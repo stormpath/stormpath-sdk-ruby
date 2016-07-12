@@ -1,6 +1,13 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.1.4
+-------------
+
+Released on July 12, 2016
+
+- Add exchanging Client Credentials for Access Tokens
+
 Version 1.1.3
 -------------
 
