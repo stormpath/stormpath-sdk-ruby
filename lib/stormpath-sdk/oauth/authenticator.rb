@@ -22,7 +22,8 @@ module Stormpath
         password: PasswordGrant,
         refresh_token: RefreshToken,
         id_site_token: IdSiteGrant,
-        stormpath_token: StormpathTokenGrant
+        stormpath_token: StormpathTokenGrant,
+        client_credentials: ClientCredentialsGrant
       }.freeze
     end
   end

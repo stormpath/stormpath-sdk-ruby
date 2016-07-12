@@ -390,6 +390,30 @@ grant_request = Stormpath::Oauth::IdSiteGrantRequest.new jwt_token
 response = application.authenticate_oauth grant_request
 ```
 
+### Exchange Client Credentials for a Stormpath Access Token
+
+As a developer, I want to authenticate API Keys directly against my application endpoint, so that I can have Stormpath generate an application token that I can use for a session.
+
+Create an API Key for an account:
+
+```ruby
+account_api_key = account.api_keys.create({})
+```
+
+Then create an client credentials request and get a authentication result:
+
+```ruby
+client_credentials_grant_request = Stormpath::Oauth::ClientCredentialsGrantRequest.new(
+  account_api_key.id,
+  account_api_key.secret
+)
+
+authentication_result = application.authenticate_oauth(client_credentials_grant_request)
+
+puts authentication_result.access_token
+puts authentication_result.refresh_token
+```
+
 ### Registering Accounts
 
 Accounts are created on a directory instance. They can be created in two
