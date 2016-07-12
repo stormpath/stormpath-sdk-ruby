@@ -1157,7 +1157,7 @@ describe Stormpath::Resource::Application, :vcr do
         expect(authenticate_oauth.access_token).not_to be_equal(aquire_token.access_token)
       end
 
-      it 'returens success with data' do
+      it 'returns success with data' do
         expect(authenticate_oauth.access_token).not_to be_empty
         expect(authenticate_oauth.refresh_token).not_to be_empty
         expect(authenticate_oauth.token_type).not_to be_empty
@@ -1174,12 +1174,15 @@ describe Stormpath::Resource::Application, :vcr do
         expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyToken)
       end
 
-      it 'returens success on valid token' do
+      it 'returns success on valid token' do
         expect(authenticate_oauth.href).not_to be_empty
-        expect(authenticate_oauth.account).not_to be_empty
-        expect(authenticate_oauth.application).not_to be_empty
+        expect(authenticate_oauth.account).to be_a(Stormpath::Resource::Account)
+        expect(authenticate_oauth.account).to eq(account)
+        expect(authenticate_oauth.application).to be_a(Stormpath::Resource::Application)
+        expect(authenticate_oauth.application).to eq(application)
         expect(authenticate_oauth.jwt).not_to be_empty
-        expect(authenticate_oauth.tenant).not_to be_empty
+        expect(authenticate_oauth.tenant).to be_a(Stormpath::Resource::Tenant)
+        expect(authenticate_oauth.tenant).to eq(test_api_client.tenant)
         expect(authenticate_oauth.expanded_jwt).not_to be_empty
       end
     end
