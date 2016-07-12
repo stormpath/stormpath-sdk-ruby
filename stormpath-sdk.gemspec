@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency('multi_json', '>= 1.3.6')
   s.add_dependency('httpclient', '>= 2.2.5')
   s.add_dependency('uuidtools', '>= 2.1.3')
-  if RUBY_VERSION > '2.1'
+  if RUBY_VERSION < '2.2.2'
     s.add_dependency('activesupport', '>= 3.2.8', '< 5.0')
   else
     s.add_dependency('activesupport', '>= 3.2.8')
