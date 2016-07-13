@@ -1,6 +1,13 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.1.5
+-------------
+
+Released on July 13, 2016
+
+- Associate resources in VerifyToken class
+
 Version 1.1.4
 -------------
 
