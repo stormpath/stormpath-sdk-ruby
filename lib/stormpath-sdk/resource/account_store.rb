@@ -22,6 +22,8 @@ class Stormpath::Resource::AccountStore < Stormpath::Resource::Instance
       Stormpath::Resource::Directory.new(*args)
     elsif /group/.match href
       Stormpath::Resource::Group.new(*args)
+    elsif /organizations/.match href
+      Stormpath::Resource::Organization.new(*args)
     else
       raise "inappropriate type of an account store"
     end 
