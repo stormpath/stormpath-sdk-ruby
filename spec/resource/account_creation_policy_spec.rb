@@ -1,10 +1,28 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountCreationPolicy, :vcr do
-  describe "instances should respond to attribute property methods" do
+  describe 'instances should respond to attribute property methods' do
     let(:application) { test_application }
     let(:directory) { test_api_client.directories.create(name: random_directory_name) }
     let(:account_creation_policy) { directory.account_creation_policy }
+    let(:create_valid_account) do
+      directory.accounts.create(
+        username: 'cilim',
+        email: 'cilim@infinum.co',
+        given_name: 'Marko',
+        surname: 'Cilimkovic',
+        password: 'wonderfulWeatherIsntIt2'
+      )
+    end
+    let(:create_invalid_account) do
+      directory.accounts.create(
+        username: 'cilim',
+        email: 'cilim@infinum.hr',
+        given_name: 'Marko',
+        surname: 'Cilimkovic',
+        password: 'wonderfulWeatherIsntIt2'
+      )
+    end
 
     before do
       test_api_client.account_store_mappings.create(
@@ -16,10 +34,7 @@ describe Stormpath::Resource::AccountCreationPolicy, :vcr do
       )
     end
 
-    after do
-      directory.delete
-      @account.delete if @account
-    end
+    after { directory.delete }
 
     it do
       expect(account_creation_policy).to be_a Stormpath::Resource::AccountCreationPolicy
@@ -117,29 +132,16 @@ describe Stormpath::Resource::AccountCreationPolicy, :vcr do
 
         context 'when account whitelisted' do
           it 'should successfully create the account' do
-            @account = directory.accounts.create(
-              username: 'cilim',
-              email: 'cilim@infinum.co',
-              given_name: 'Marko',
-              surname: 'Cilimkovic',
-              password: 'wonderfulWeatherIsntIt2'
-            )
-
-            expect(@account).to be_a Stormpath::Resource::Account
-            expect(@account.username).to eq('cilim')
+            account = create_valid_account
+            expect(account).to be_a Stormpath::Resource::Account
+            expect(account.username).to eq('cilim')
           end
         end
 
         context 'when account not whitelisted' do
           it 'should raise error' do
             expect do
-              @account = directory.accounts.create(
-                username: 'cilim',
-                email: 'cilim@infinum.hr',
-                given_name: 'Marko',
-                surname: 'Cilimkovic',
-                password: 'wonderfulWeatherIsntIt2'
-              )
+              create_invalid_account
             end.to raise_error(Stormpath::Error, "Cannot create the Account because your email's domain is not allowed.")
           end
         end
@@ -167,19 +169,13 @@ describe Stormpath::Resource::AccountCreationPolicy, :vcr do
 
       context 'when account email in blacklisted and whitelisted domains' do
         it 'should not create the account' do
-          bothlisted = ['*gmail.com']
+          bothlisted = ['*infinum.hr']
           account_creation_policy.email_domain_blacklist = bothlisted
           account_creation_policy.email_domain_whitelist = bothlisted
           account_creation_policy.save
 
           expect do
-            @account = directory.accounts.create(
-              username: 'cilim',
-              email: 'cilim@gmail.com',
-              given_name: 'Marko',
-              surname: 'Cilimkovic',
-              password: 'wonderfulWeatherIsntIt2'
-            )
+            create_invalid_account
           end.to raise_error(Stormpath::Error, "Cannot create the Account because your email's domain is not allowed.")
         end
       end
