@@ -15,15 +15,15 @@
 #
 module Stormpath
   class Error < RuntimeError
+    attr_reader :status, :code, :developer_message, :more_info, :request_id
 
-    attr_reader :status, :code, :developer_message, :more_info
-
-    def initialize error = NilError.new
+    def initialize(error = NilError.new)
       super error.message
       @status = error.status
       @code = error.code
       @developer_message = error.developer_message
       @more_info = error.more_info
+      @request_id = error.request_id
     end
 
     private
@@ -34,7 +34,7 @@ module Stormpath
         def code; -1 end
         def developer_message; end
         def more_info; end
+        def request_id; end
       end
-
   end
 end
