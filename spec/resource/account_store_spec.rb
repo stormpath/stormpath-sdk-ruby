@@ -56,7 +56,7 @@ describe Stormpath::Resource::AccountStore, :vcr do
     end
   end
 
-  describe 'given an account_store_mapping and a organization' do
+  describe 'given an account_store_mapping and an organization' do
     let!(:account_store_mapping) { create_account_store_mapping(application, organization) }
     let(:reloaded_mapping) { application.account_store_mappings.get account_store_mapping.href }
 
