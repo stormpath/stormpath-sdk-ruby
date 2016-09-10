@@ -239,6 +239,38 @@ describe Stormpath::Resource::Directory, :vcr do
       end
     end
 
+    context "BCrypt 2A hashing algorithm" do
+      before do
+        account_store_mapping
+        @account = directory.accounts.create({
+          username: "jlucpicard",
+          email: "captain@enterprise.com",
+          given_name: "Jean-Luc",
+          surname: "Picard",
+          password: "$2a$10$MSZmiiPgvEvA8PIwITRWH.J86zsWEeWye0yrCLAQIkuhit26hSGdK"
+        }, password_format: 'mcf')
+      end
+
+      it 'creates an account' do
+        expect(@account).to be_a Stormpath::Resource::Account
+        expect(@account.username).to eq("jlucpicard")
+        expect(@account.email).to eq("captain@enterprise.com")
+        expect(@account.given_name).to eq("Jean-Luc")
+        expect(@account.surname).to eq("Picard")
+      end
+
+      it 'can authenticate with the account credentials' do
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'Testing12'
+        auth_result = application.authenticate_account auth_request
+
+        expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
+        expect(auth_result.account).to be_a Stormpath::Resource::Account
+        expect(auth_result.account.email).to eq("captain@enterprise.com")
+        expect(auth_result.account.given_name).to eq("Jean-Luc")
+        expect(auth_result.account.surname).to eq("Picard")
+      end
+    end
+
     context 'with account data as hash' do
       let(:account_email) { random_email }
 
