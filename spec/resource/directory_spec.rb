@@ -247,7 +247,7 @@ describe Stormpath::Resource::Directory, :vcr do
           email: "captain@enterprise.com",
           given_name: "Jean-Luc",
           surname: "Picard",
-          password: "$2a$10$MSZmiiPgvEvA8PIwITRWH.J86zsWEeWye0yrCLAQIkuhit26hSGdK"
+          password: "$2a$10$sWvxHJIvkARbp.u2yBpuJeGzNvpxYQo7AYxAJwFRH0HptXSWyqvwy"
         }, password_format: 'mcf')
       end
 
@@ -260,7 +260,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'can authenticate with the account credentials' do
-        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'Testing12'
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'NotSecure'
         auth_result = application.authenticate_account auth_request
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
