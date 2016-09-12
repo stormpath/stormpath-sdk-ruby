@@ -184,15 +184,6 @@ in the hash of values passed on Client initialization:
     api_key: { id: api_id, secret: api_secret }
   ```
 
-* By passing a composite application url to `Application.load`:
-
-  ```ruby
-  composite_url = "http://#{api_key_id}:#{api_key_secret}@api.stormpath.com/v1/applications/#{application_id}"
-
-  application = Stormpath::Resource::Application.load composite_url
-  client = application.client
-  ```
-
 ### Accessing Resources
 
 Most of the work you do with Stormpath is done through the applications
