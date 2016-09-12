@@ -478,8 +478,9 @@ end
 If you are moving from an existing user repository to Stormpath, you may have existing password hashes that you want to reuse to provide a seamless upgrade path for your end users.
 More info about this feature can be found [here][mcf-hash-password-doc]
 
-Example of creating an account with existing SHA-512 password hash. For details on other hashing algorithms chech the [documentation][stormpaht-hash-algorithm]
+Example of creating an account with existing SHA-512 password hash. For details on other hashing algorithms check the [documentation][stormpath-hash-algorithm]
 
+```ruby
 directory.accounts.create({
   username: "jlucpicard",
   email: "captain@enterprise.com",
@@ -487,6 +488,7 @@ directory.accounts.create({
   surname: "Picard",
   password: "$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg=="
 }, password_format: 'mcf')
+```
 
 ### Authentication
 
