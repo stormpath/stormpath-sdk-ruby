@@ -18,7 +18,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   include Stormpath::Resource::AccountOverrides
   include UUIDTools
 
-  class LoadError < Stormpath::Error; end
+  class LoadError < ArgumentError; end
 
   prop_accessor :name, :description, :authorized_callback_uris, :status
   prop_reader :created_at, :modified_at
@@ -39,7 +39,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   alias_method :oauth_policy, :o_auth_policy
 
-  def self.load composite_url
+  def self.load(composite_url)
     begin
       uri = URI(composite_url)
       api_key_id, api_key_secret = uri.userinfo.split(':')
@@ -52,7 +52,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
       application_path = uri.path.slice(/\/applications(.)*$/)
       client.applications.get(application_path)
     rescue
-      raise LoadError
+      raise LoadError, 'Check if your Stormpath API key secret has a forward slash in it. If so, generate a pair without it.'
     end
   end
 

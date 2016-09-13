@@ -54,13 +54,13 @@ describe Stormpath::Resource::Application, :vcr do
       credentialed_uri.to_s
     end
 
-    it "raises a LoadError with an invalid url" do
-      expect {
+    it 'raises a LoadError with an invalid url' do
+      expect do
         Stormpath::Resource::Application.load 'this is an invalid url'
-      }.to raise_error(Stormpath::Resource::Application::LoadError)
+      end.to raise_error(Stormpath::Resource::Application::LoadError)
     end
 
-    it "instantiates client and application objects from a composite URL" do
+    it 'instantiates client and application objects from a composite URL' do
       loaded_application = Stormpath::Resource::Application.load(url)
       expect(loaded_application).to eq(application)
     end
