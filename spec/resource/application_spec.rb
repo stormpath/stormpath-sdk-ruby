@@ -1100,7 +1100,6 @@ describe Stormpath::Resource::Application, :vcr do
 
       it 'response should contain token data' do
         expect(authenticate_oauth.access_token).not_to be_empty
-        expect(authenticate_oauth.refresh_token).not_to be_empty
         expect(authenticate_oauth.token_type).not_to be_empty
         expect(authenticate_oauth.expires_in).not_to be_nil
         expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
