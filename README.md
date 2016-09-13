@@ -192,6 +192,15 @@ in the hash of values passed on Client initialization:
   application = Stormpath::Resource::Application.load composite_url
   client = application.client
   ```
+  
+To change the base_url for the Enterprise product, pass the following option to `Stormpath::Client.new()` : 
+
+  ```ruby
+  client = Stormpath::Client.new(
+    api_key_file_location: '/some/path/to/apiKey.properties',
+    base_url: 'https://enterprise.stormpath.io/v1'
+  )
+  ```
 
 ### Accessing Resources
 
