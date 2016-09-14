@@ -63,6 +63,7 @@ class Stormpath::DataStore
   def create(parent_href, resource, return_type, options = {})
     #TODO assuming there is no ? in url
     parent_href = "#{parent_href}?#{URI.encode_www_form(options)}" unless options.empty?
+
     save_resource(parent_href, resource, return_type).tap do |returned_resource|
       if resource.kind_of? return_type
         resource.set_properties returned_resource.properties

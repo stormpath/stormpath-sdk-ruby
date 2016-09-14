@@ -16,4 +16,3 @@
 class Stormpath::Provider::GoogleProviderData < Stormpath::Provider::ProviderData
   prop_reader :access_token, :refresh_token
 end
-              

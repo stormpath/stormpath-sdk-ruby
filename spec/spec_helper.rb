@@ -3,7 +3,7 @@
 # issued before any of your application code is required!
 require 'simplecov'
 SimpleCov.start do
-  add_filter {|src| src.filename =~ /spec/ }
+  add_filter { |src| src.filename =~ /spec/ }
 end
 
 require 'stormpath-sdk'
@@ -76,7 +76,7 @@ module Stormpath
     end
 
     def test_missing_env_vars
-      TEST_ENV_REQUIRED_VARS.reject do |var, message|
+      TEST_ENV_REQUIRED_VARS.reject do |var, _message|
         ENV[var.to_s]
       end
     end
@@ -93,7 +93,6 @@ module Stormpath
       test_api_client.directories.get test_directory_with_verification_url
     end
 
-    
     def fixture_path
       File.expand_path('../fixtures/response', __FILE__)
     end
@@ -104,7 +103,7 @@ module Stormpath
   end
 
   module TestResourceHelpers
-    def build_account(opts={})
+    def build_account(opts = {})
       opts.tap do |o|
         o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'surname'
         o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || 'givenname'
@@ -119,12 +118,12 @@ module Stormpath
     include UUIDTools
 
     %w(application directory organization group user).each do |resource|
-      define_method "random_#{resource}_name" do |suffix=nil|
+      define_method "random_#{resource}_name" do |suffix = nil|
         "#{random_string}_#{resource}_#{suffix}"
       end
     end
 
-    def random_name_key(suffix='test')
+    def random_name_key(suffix = 'test')
       "#{random_string}-namekey-#{suffix}"
     end
 

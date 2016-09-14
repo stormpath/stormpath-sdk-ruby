@@ -36,8 +36,8 @@ module Stormpath
                  else
                    request.href
                  end
-  
-        if request.http_headers["Content-Type"] == "application/x-www-form-urlencoded" 
+
+        if request.http_headers["Content-Type"] == "application/x-www-form-urlencoded"
           @http_client.set_auth(request.href, request.api_key.id, request.api_key.secret)
         end
 
@@ -60,4 +60,3 @@ module Stormpath
     end
   end
 end
-
