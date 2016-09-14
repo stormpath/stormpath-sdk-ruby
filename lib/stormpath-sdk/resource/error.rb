@@ -14,10 +14,9 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Error < Stormpath::Resource::Base
+  prop_reader :status, :code, :message, :developer_message, :more_info, :request_id
 
-  prop_reader :status, :code, :message, :developer_message, :more_info
-
-  def initialize body
+  def initialize(body)
     super body, nil
   end
 end
