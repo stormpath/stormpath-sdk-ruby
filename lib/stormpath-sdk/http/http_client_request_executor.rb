@@ -36,14 +36,15 @@ module Stormpath
                  else
                    request.href
                  end
-  
-        if request.http_headers["Content-Type"] == "application/x-www-form-urlencoded" 
+
+        if request.http_headers["Content-Type"] == "application/x-www-form-urlencoded"
           @http_client.set_auth(request.href, request.api_key.id, request.api_key.secret)
         end
 
         method = @http_client.method(request.http_method.downcase)
 
         response = method.call domain, request.body, request.http_headers
+
 
         if response.redirect? and redirects_limit > 0
           request.href = response.http_header['location'][0]
@@ -60,4 +61,3 @@ module Stormpath
     end
   end
 end
-
