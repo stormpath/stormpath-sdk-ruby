@@ -1107,6 +1107,13 @@ describe Stormpath::Resource::Application, :vcr do
           expect(authenticate_oauth.expires_in).not_to be_nil
           expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
         end
+
+        it 'access and refresh token should contain org in payload' do
+          jw_access = JWT.decode(authenticate_oauth.access_token, test_api_client.data_store.api_key.secret)
+          jw_refresh = JWT.decode(authenticate_oauth.refresh_token, test_api_client.data_store.api_key.secret)
+          expect(jw_access.first).to include('org')
+          expect(jw_refresh.first).to include('org')
+        end
       end
     end
 
