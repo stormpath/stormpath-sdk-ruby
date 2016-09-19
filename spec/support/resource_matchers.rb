@@ -25,3 +25,10 @@ RSpec::Matchers.define :be_resource_collection do |expected|
     end
   end
 end
+
+RSpec::Matchers.define :have_stt_in_header do |expected|
+  match do |actual|
+    header = JSON.parse(Base64.decode64(actual.split('.').first))
+    header.include?('stt') && header['stt'] == expected
+  end
+end
