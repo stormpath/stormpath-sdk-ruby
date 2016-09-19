@@ -423,6 +423,45 @@ puts authentication_result.access_token
 puts authentication_result.refresh_token
 ```
 
+### Exchange ID site token for a Stormpath Access Token
+
+As a developer, I want to authenticate the user on ID Site but get an access token that I can store on the client to use to access my API.
+The oauth token endpoint will validate that:
+* the JWT is not tampered
+* has not expired
+* the account is still associated with the application and will return an access token
+* the status claim is either AUTHENTICATED or REGISTERED
+
+If you want to create a stormpath grant request with status <code>authenticated</code> you need to pass the account, application and api key id:
+
+```ruby
+stormpath_grant_request = Stormpath::Oauth::StormpathGrantRequest.new(
+  account,
+  application,
+  api_key_id
+)
+```
+
+If you have the status attribute set to <code>registered</code> then create the request like so:
+
+```ruby
+stormpath_grant_request = Stormpath::Oauth::StormpathGrantRequest.new(
+  account,
+  application,
+  api_key_id,
+  :registered
+)
+```
+
+And lastly authenticate with the created request instance:
+
+```ruby
+authentication_result = application.authenticate_oauth(stormpath_grant_request)
+
+puts authentication_result.access_token
+puts authentication_result.refresh_token
+```
+
 ### Registering Accounts
 
 Accounts are created on a directory instance. They can be created in two
