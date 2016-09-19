@@ -1106,6 +1106,106 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
 
+    context 'generate access token from stormpath_social grant request' do
+      let(:authenticate_oauth) { application.authenticate_oauth(social_grant_request) }
+
+      context 'google' do
+        let(:code) { '4/WByqYc1UOvcYluBOsFyFbm8_BIZHbjklC5iEz7AdXcA' }
+        let(:social_grant_request) do
+          Stormpath::Oauth::SocialGrantRequest.new(:google, code: code)
+        end
+        before do
+          stub_request(:post,
+          "https://#{test_api_key_id}:#{test_api_key_secret}@api.stormpath.com/v1/applications/#{application.href.split('/').last}/oauth/token")
+          .to_return(body: Stormpath::Test.mocked_social_grant_response)
+        end
+
+        it 'should return access token response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+        end
+
+        it 'response should contain token data' do
+          expect(authenticate_oauth.access_token).not_to be_empty
+          expect(authenticate_oauth.refresh_token).not_to be_empty
+          expect(authenticate_oauth.token_type).not_to be_empty
+          expect(authenticate_oauth.expires_in).not_to be_nil
+          expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+        end
+      end
+
+      context 'linkedin' do
+        let(:code) { '4/WByqYc1UOvcYluBOsFyFbm8_BIZHbjklC5iEz7AdXcA' }
+        let(:social_grant_request) do
+          Stormpath::Oauth::SocialGrantRequest.new(:linkedin, code: code)
+        end
+        before do
+          stub_request(:post,
+          "https://#{test_api_key_id}:#{test_api_key_secret}@api.stormpath.com/v1/applications/#{application.href.split('/').last}/oauth/token")
+          .to_return(body: Stormpath::Test.mocked_social_grant_response)
+        end
+
+        it 'should return access token response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+        end
+
+        it 'response should contain token data' do
+          expect(authenticate_oauth.access_token).not_to be_empty
+          expect(authenticate_oauth.refresh_token).not_to be_empty
+          expect(authenticate_oauth.token_type).not_to be_empty
+          expect(authenticate_oauth.expires_in).not_to be_nil
+          expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+        end
+      end
+
+      context 'facebook' do
+        let(:access_token) { '4/WByqYc1UOvcYluBOsFyFbm8_BIZHbjklC5iEz7AdXcA' }
+        let(:social_grant_request) do
+          Stormpath::Oauth::SocialGrantRequest.new(:google, access_token: access_token)
+        end
+        before do
+          stub_request(:post,
+          "https://#{test_api_key_id}:#{test_api_key_secret}@api.stormpath.com/v1/applications/#{application.href.split('/').last}/oauth/token")
+          .to_return(body: Stormpath::Test.mocked_social_grant_response)
+        end
+
+        it 'should return access token response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+        end
+
+        it 'response should contain token data' do
+          expect(authenticate_oauth.access_token).not_to be_empty
+          expect(authenticate_oauth.refresh_token).not_to be_empty
+          expect(authenticate_oauth.token_type).not_to be_empty
+          expect(authenticate_oauth.expires_in).not_to be_nil
+          expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+        end
+      end
+
+      context 'github' do
+        let(:access_token) { '4/WByqYc1UOvcYluBOsFyFbm8_BIZHbjklC5iEz7AdXcA' }
+        let(:social_grant_request) do
+          Stormpath::Oauth::SocialGrantRequest.new(:github, access_token: access_token)
+        end
+        before do
+          stub_request(:post,
+          "https://#{test_api_key_id}:#{test_api_key_secret}@api.stormpath.com/v1/applications/#{application.href.split('/').last}/oauth/token")
+          .to_return(body: Stormpath::Test.mocked_social_grant_response)
+        end
+
+        it 'should return access token response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+        end
+
+        it 'response should contain token data' do
+          expect(authenticate_oauth.access_token).not_to be_empty
+          expect(authenticate_oauth.refresh_token).not_to be_empty
+          expect(authenticate_oauth.token_type).not_to be_empty
+          expect(authenticate_oauth.expires_in).not_to be_nil
+          expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+        end
+      end
+    end
+
     context 'exchange id site token for access_token with invalid jwt' do
       let(:invalid_jwt_token) { 'invalid_token' }
 
