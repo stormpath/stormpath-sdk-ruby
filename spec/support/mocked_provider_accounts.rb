@@ -25,7 +25,7 @@ module Stormpath
     end
 
     def self.mocked_social_grant_response
-      MultiJson.dump(RESPONSE)
+      MultiJson.dump(STORMPATH_GRANT_RESPONSE)
     end
 
     FACEBOOK_ACCOUNT = {
@@ -133,7 +133,7 @@ module Stormpath
       refreshToken: "Ox8AAACn"
     }
 
-    RESPONSE = {
+    STORMPATH_GRANT_RESPONSE = {
       'access_token' => 'random_access_token',
       'refresh_token' => 'random_refresh_token',
       'token_type' => 'Bearer',
