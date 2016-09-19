@@ -4,13 +4,12 @@ module Stormpath
       prop_accessor :grant_type, :username, :password, :organization_name_key
 
       def form_properties
-        hash = {
-          grant_type: grant_type,
-          username: username,
-          password: password
-        }
-        hash[:organizationNameKey] = organization_name_key unless organization_name_key.nil?
-        hash
+        {}.tap do |form|
+          form[:grant_type] = grant_type
+          form[:username] = username
+          form[:password] = password
+          form[:organizationNameKey] = organization_name_key if organization_name_key.present?
+        end
       end
 
       def set_options(request)

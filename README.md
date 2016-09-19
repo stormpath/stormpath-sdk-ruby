@@ -387,6 +387,22 @@ Again, with all these methods, You will want your application to link to an inte
 > NOTE:
 > A JWT will expire after 60 seconds of creation.
 
+#### Fetch Stormpath Access Token with username and password
+Stormpath can generate a brand new Access Token using the password grant type: User's credentials.
+
+To fetch the oauth token use the following snippet
+```ruby
+grant_request = Stormpath::Oauth::PasswordGrantRequest.new(account.email, account.password)
+response = application.authenticate_oauth(grant_request)
+```
+
+Just like with logging-in a user, it is possible to generate a token against a particular Application’s Account Store or Organization. To do so, specify the Account Store’s href or Organization’s nameKey as a parameter in the request:
+
+```ruby
+grant_request = Stormpath::Oauth::PasswordGrantRequest.new(account.email, account.password, organization_name_key: 'storm-organization')
+response = application.authenticate_oauth(grant_request)
+```
+
 #### Exchange ID Site token for a Stormpath Access Token
 After the user has been authenticated via ID Site, a developer may want to control their authorization with an OAuth 2.0 Token.
 This is done by passing the JWT similar to the way we passed the user’s credentials as described in [Generating an OAuth 2.0 Access Token][generate-oauth-access-token].
