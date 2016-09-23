@@ -10,7 +10,7 @@ application.
 ## Install
 
 ```sh
-$ gem install stormpath-sdk --pre
+$ gem install stormpath-sdk
 ```
 
 ## Provision Your Stormpath Account
