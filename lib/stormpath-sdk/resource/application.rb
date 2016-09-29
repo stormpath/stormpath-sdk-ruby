@@ -41,18 +41,18 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   def self.load(composite_url)
     begin
-      uri = URI(composite_url)
-      api_key_id, api_key_secret = uri.userinfo.split(':')
+      builder = Stormpath::Util::UriBuilder.new(composite_url)
+      api_key_id, api_key_secret = builder.userinfo.split(':')
 
       client = Stormpath::Client.new api_key: {
         id: api_key_id,
         secret: api_key_secret
       }
 
-      application_path = uri.path.slice(/\/applications(.)*$/)
+      application_path = builder.uri.path.slice(/\/applications(.)*$/)
       client.applications.get(application_path)
     rescue
-      raise LoadError, 'Check if your Stormpath API key secret has a forward slash in it. If so, generate a pair without it.'
+      raise LoadError
     end
   end
 
