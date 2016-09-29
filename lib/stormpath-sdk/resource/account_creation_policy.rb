@@ -4,7 +4,9 @@ module Stormpath
       prop_accessor(
         :verification_email_status,
         :verification_success_email_status,
-        :welcome_email_status
+        :welcome_email_status,
+        :email_domain_whitelist,
+        :email_domain_blacklist
       )
 
       has_many :verification_email_templates, class_name: :emailTemplate

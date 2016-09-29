@@ -10,7 +10,7 @@ application.
 ## Install
 
 ```sh
-$ gem install stormpath-sdk --pre
+$ gem install stormpath-sdk
 ```
 
 ## Provision Your Stormpath Account
@@ -182,6 +182,24 @@ in the hash of values passed on Client initialization:
   ```ruby
   client = Stormpath::Client.new
     api_key: { id: api_id, secret: api_secret }
+  ```
+
+* By passing a composite application url to `Application.load`:
+
+  ```ruby
+  composite_url = "http://#{api_key_id}:#{api_key_secret}@api.stormpath.com/v1/applications/#{application_id}"
+
+  application = Stormpath::Resource::Application.load composite_url
+  client = application.client
+  ```
+
+To change the base_url for the Enterprise product, pass the following option to `Stormpath::Client.new()` :
+
+  ```ruby
+  client = Stormpath::Client.new(
+    api_key_file_location: '/some/path/to/apiKey.properties',
+    base_url: 'https://enterprise.stormpath.io/v1'
+  )
   ```
 
 ### Accessing Resources

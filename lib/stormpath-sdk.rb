@@ -130,5 +130,7 @@ module Stormpath
     autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
     autoload :ClientCredentialsGrantRequest, "stormpath-sdk/oauth/client_credentials_grant_request"
     autoload :ClientCredentialsGrant, "stormpath-sdk/oauth/client_credentials_grant"
+    autoload :SocialGrantRequest, 'stormpath-sdk/oauth/social_grant_request'
+    autoload :SocialGrant, 'stormpath-sdk/oauth/social_grant'
   end
 end
