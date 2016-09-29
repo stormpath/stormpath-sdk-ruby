@@ -277,7 +277,7 @@ describe Stormpath::Resource::Collection, :vcr do
 
       # !@#$%^&*()_-+=?><:]}[{'
       # 'jlpicard/!@$%^*()_-+&=?><:]}[{'
-      let(:username) { 'jlpicard/!@$%^ *()_-+=?><:]}[{' }
+      let(:username) { 'jlpicard/!@$%^ *()_-+=?><]}[{' }
 
       let!(:account) do
         directory.accounts.create username: username,
