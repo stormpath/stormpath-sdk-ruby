@@ -101,7 +101,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       after do
-        organization.delete if organization
+        organization.delete
       end
 
       it 'should be able to get organizations' do
