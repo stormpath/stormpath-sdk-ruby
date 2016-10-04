@@ -19,7 +19,7 @@ module Stormpath
       def uri
         begin
           @uri ||= URI(escaped_url)
-        rescue
+        rescue URI::InvalidURIError
           raise StandardError, 'Something is wrong with the composite url'
         end
       end
@@ -31,7 +31,7 @@ module Stormpath
       end
 
       def userinfo_pattern
-        /:\/\/(.*?)@api/m
+        /:\/\/(.*?)@api/
       end
     end
   end
