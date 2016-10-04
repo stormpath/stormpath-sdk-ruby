@@ -392,14 +392,14 @@ Stormpath can generate a brand new Access Token using the password grant type: U
 
 To fetch the oauth token use the following snippet
 ```ruby
-grant_request = Stormpath::Oauth::PasswordGrantRequest.new(account.email, account.password)
+grant_request = Stormpath::Oauth::PasswordGrantRequest.new(email, password)
 response = application.authenticate_oauth(grant_request)
 ```
 
 Just like with logging-in a user, it is possible to generate a token against a particular Application’s Account Store or Organization. To do so, specify the Account Store’s href or Organization’s nameKey as a parameter in the request:
 
 ```ruby
-grant_request = Stormpath::Oauth::PasswordGrantRequest.new(account.email, account.password, organization_name_key: 'storm-organization')
+grant_request = Stormpath::Oauth::PasswordGrantRequest.new(email, password, organization_name_key: 'my-stormpath-organization')
 response = application.authenticate_oauth(grant_request)
 ```
 

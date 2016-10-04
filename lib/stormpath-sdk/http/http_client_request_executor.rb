@@ -45,7 +45,6 @@ module Stormpath
 
         response = method.call domain, request.body, request.http_headers
 
-
         if response.redirect? and redirects_limit > 0
           request.href = response.http_header['location'][0]
           redirects_limit -= 1
