@@ -1,10 +1,11 @@
 module Stormpath
   module Oauth
     class StormpathGrantRequest
-      def initialize(account, application, api_key)
+      def initialize(account, application, api_key, status = :authenticated)
         @account = account
         @application = application
         @api_key = api_key
+        @status = status.to_s.upcase
       end
 
       def token
@@ -24,7 +25,7 @@ module Stormpath
           sub: account.href,
           iat: Time.now.to_i,
           iss: application.href,
-          status: 'AUTHENTICATED',
+          status: @status,
           aud: api_key.id
         }
       end
