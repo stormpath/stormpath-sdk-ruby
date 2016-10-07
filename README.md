@@ -202,6 +202,16 @@ To change the base_url for the Enterprise product, pass the following option to 
   )
   ```
 
+* By passing a composite application url to `Application.load`:
+
+  ```ruby
+  composite_url = "http://#{api_key_id}:#{api_key_secret}@api.stormpath.com/v1/applications/#{application_id}"
+
+  application = Stormpath::Resource::Application.load composite_url
+  client = application.client
+  ```
+
+
 ### Accessing Resources
 
 Most of the work you do with Stormpath is done through the applications
@@ -387,6 +397,22 @@ Again, with all these methods, You will want your application to link to an inte
 > NOTE:
 > A JWT will expire after 60 seconds of creation.
 
+#### Fetch Stormpath Access Token with username and password
+Stormpath can generate a brand new Access Token using the password grant type: User's credentials.
+
+To fetch the oauth token use the following snippet
+```ruby
+grant_request = Stormpath::Oauth::PasswordGrantRequest.new(email, password)
+response = application.authenticate_oauth(grant_request)
+```
+
+Just like with logging-in a user, it is possible to generate a token against a particular Application’s Account Store or Organization. To do so, specify the Account Store’s href or Organization’s nameKey as a parameter in the request:
+
+```ruby
+grant_request = Stormpath::Oauth::PasswordGrantRequest.new(email, password, organization_name_key: 'my-stormpath-organization')
+response = application.authenticate_oauth(grant_request)
+```
+
 #### Exchange ID Site token for a Stormpath Access Token
 After the user has been authenticated via ID Site, a developer may want to control their authorization with an OAuth 2.0 Token.
 This is done by passing the JWT similar to the way we passed the user’s credentials as described in [Generating an OAuth 2.0 Access Token][generate-oauth-access-token].
@@ -418,6 +444,45 @@ client_credentials_grant_request = Stormpath::Oauth::ClientCredentialsGrantReque
 )
 
 authentication_result = application.authenticate_oauth(client_credentials_grant_request)
+
+puts authentication_result.access_token
+puts authentication_result.refresh_token
+```
+
+### Exchange ID site token for a Stormpath Access Token
+
+As a developer, I want to authenticate the user on ID Site but get an access token that I can store on the client to use to access my API.
+The oauth token endpoint will validate that:
+* the JWT is not tampered
+* has not expired
+* the account is still associated with the application and will return an access token
+* the status claim is either AUTHENTICATED or REGISTERED
+
+If you want to create a stormpath grant request with status <code>authenticated</code> you need to pass the account, application and api key id:
+
+```ruby
+stormpath_grant_request = Stormpath::Oauth::StormpathGrantRequest.new(
+  account,
+  application,
+  api_key_id
+)
+```
+
+If you have the status attribute set to <code>registered</code> then create the request like so:
+
+```ruby
+stormpath_grant_request = Stormpath::Oauth::StormpathGrantRequest.new(
+  account,
+  application,
+  api_key_id,
+  :registered
+)
+```
+
+And lastly authenticate with the created request instance:
+
+```ruby
+authentication_result = application.authenticate_oauth(stormpath_grant_request)
 
 puts authentication_result.access_token
 puts authentication_result.refresh_token

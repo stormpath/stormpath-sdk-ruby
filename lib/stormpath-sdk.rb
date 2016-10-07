@@ -16,6 +16,7 @@ require 'active_support/core_ext/array/wrap'
 require "stormpath-sdk/version" unless defined? Stormpath::VERSION
 
 require "stormpath-sdk/util/assert"
+require "stormpath-sdk/util/uri_builder"
 
 module Stormpath
   autoload :Error, 'stormpath-sdk/error'
