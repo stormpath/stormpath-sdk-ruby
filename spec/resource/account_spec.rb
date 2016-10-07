@@ -45,6 +45,8 @@ describe Stormpath::Resource::Account, :vcr do
       expect(account.groups).to be_a Stormpath::Resource::Collection
       expect(account.group_memberships).to be_a Stormpath::Resource::Collection
       expect(account.applications).to be_a Stormpath::Resource::Collection
+      expect(account.phones).to be_a Stormpath::Resource::Collection
+      expect(account.factors).to be_a Stormpath::Resource::Collection
     end
   end
 
@@ -117,7 +119,122 @@ describe Stormpath::Resource::Account, :vcr do
 
         expect(account.groups).not_to include(group)
       end
+    end
+  end
 
+  describe 'managing phones' do
+    let(:application) do
+      test_api_client.applications.create(name: random_application_name, description: 'Dummy desc.')
+    end
+
+    let(:directory) { test_api_client.directories.create name: random_directory_name }
+
+    before do
+      test_api_client.account_store_mappings.create(application: application,
+                                                    account_store: directory,
+                                                    list_index: 1,
+                                                    is_default_account_store: true,
+                                                    is_default_group_store: true)
+      phone
+    end
+
+    let(:account) do
+      directory.accounts.create(email: 'test@example.com',
+                                givenName: 'Ruby SDK',
+                                password: 'P@$$w0rd',
+                                surname: 'SDK',
+                                username: 'rubysdk')
+    end
+    let(:phone) do
+      account.phones.create(
+        number: '+385958142457',
+        name: 'Markos test phone',
+        description: 'this is a testing phone number'
+      )
+    end
+
+    it 'can fetch phones' do
+      expect(account.phones).to include(phone)
+    end
+
+    it 'can fetch a specific phone' do
+      expect(account.phones.get(phone.href)).to be_a Stormpath::Resource::Phone
+    end
+
+    it 'raises error if phone with same number created' do
+      expect do
+        account.phones.create(
+          number: '+385958142457',
+          name: 'Markos test duplicate phone'
+        )
+      end.to raise_error(Stormpath::Error, 'An existing phone with that number already exists for this Account.')
+    end
+
+    after do
+      application.delete if application
+      directory.delete if directory
+      account.delete if account
+    end
+  end
+
+  describe 'managing factors' do
+    let(:application) do
+      test_api_client.applications.create(name: random_application_name, description: 'Dummy desc.')
+    end
+
+    let(:directory) { test_api_client.directories.create name: random_directory_name }
+
+    before do
+      test_api_client.account_store_mappings.create(application: application,
+                                                    account_store: directory,
+                                                    list_index: 1,
+                                                    is_default_account_store: true,
+                                                    is_default_group_store: true)
+      factor
+    end
+
+    let(:account) do
+      directory.accounts.create(email: 'test@example.com',
+                                givenName: 'Ruby SDK',
+                                password: 'P@$$w0rd',
+                                surname: 'SDK',
+                                username: 'rubysdk')
+    end
+    let(:phone) do
+      account.phones.create(
+        number: '+385958142457',
+        name: 'Markos test phone',
+        description: 'this is a testing phone number'
+      )
+    end
+    let(:factor) do
+      account.factors.create(
+        type: 'SMS',
+        phone: {
+          number: '+385958142457',
+          name: 'Markos test phone',
+          description: 'this is a testing phone number'
+        }
+      )
+    end
+
+    it 'can fetch factors' do
+      expect(account.factors).to include(factor)
+    end
+
+    it 'can fetch a specific factor' do
+      expect(account.factors.get(factor.href)).to be_a Stormpath::Resource::Factor
+    end
+
+    it 'creates a phone with a factor' do
+      expect(account.phones.count).to eq 1
+    end
+
+    after do
+      application.delete if application
+      directory.delete if directory
+      account.delete if account
+      factor.delete if factor
     end
   end
 
@@ -149,5 +266,4 @@ describe Stormpath::Resource::Account, :vcr do
       end
     end
   end
-
 end

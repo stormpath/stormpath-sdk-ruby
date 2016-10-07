@@ -14,7 +14,8 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Factor < Stormpath::Resource::Instance
-  prop_reader :type, :verification_status, :status
+  prop_accessor :type
+  prop_reader :verification_status, :status
 
   has_many :challenges, can: [:get, :create]
   belongs_to :account

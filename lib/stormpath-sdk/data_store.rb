@@ -17,7 +17,7 @@ class Stormpath::DataStore
   include Stormpath::Http
   include Stormpath::Util::Assert
 
-  DEFAULT_SERVER_HOST = "api.stormpath.com"
+  DEFAULT_SERVER_HOST = "dev.i.stormpath.com"
   DEFAULT_API_VERSION = 1
   DEFAULT_BASE_URL = "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
@@ -125,7 +125,6 @@ class Stormpath::DataStore
       else
         apply_default_request_headers request
       end
-
       response = @request_executor.execute_request request
 
       result = response.body.length > 0 ? MultiJson.load(response.body) : ''
@@ -295,7 +294,8 @@ class Stormpath::DataStore
           property = resource.get_property name, ignore_camelcasing: ignore_camelcasing
 
           # Special use cases are with Custom Data, Provider and ProviderData, their hashes should not be simplified
-          if property.kind_of?(Hash) and !resource_nested_submittable(resource, name) and name != "items"
+          # As of the implementation for MFA, Phone resource is added too
+          if property.kind_of?(Hash) and !resource_nested_submittable(resource, name) and name != "items" and name != 'phone'
             property = to_simple_reference name, property
           end
 

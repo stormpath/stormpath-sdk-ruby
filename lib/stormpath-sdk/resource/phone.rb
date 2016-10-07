@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Phone < Stormpath::Resource::Instance
-  prop_accessor :number, :name, :description, :verification_status, :status
-  prop_reader :created_at, :modified_at
+  prop_accessor :number, :name, :description
+  prop_reader :verification_status, :status, :created_at, :modified_at
 
   belongs_to :account
 end
