@@ -87,6 +87,32 @@ describe Stormpath::Resource::Directory, :vcr do
       end
     end
 
+    context '#organizations' do
+      let(:organization) do
+        test_api_client.organizations.create(name: 'Test organization name',
+                                             name_key: 'test-organization-name-key')
+      end
+
+      let!(:organization_account_store_mappings) do
+        test_api_client.organization_account_store_mappings.create(
+          account_store: { href: directory.href },
+          organization: { href: organization.href }
+        )
+      end
+
+      after do
+        organization.delete
+      end
+
+      it 'should be able to get organizations' do
+        expect(directory.organizations).to include(organization)
+      end
+
+      it 'should be able to get specific organization with organization href' do
+        expect(directory.organizations.get(organization.href)).to eq organization
+      end
+    end
+
     context '#password_policy' do
       it 'should be able to fetch the password policy' do
         expect(directory.password_policy).to be_kind_of(Stormpath::Resource::PasswordPolicy)

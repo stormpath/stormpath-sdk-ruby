@@ -24,6 +24,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
 
   has_many :accounts, can: [:get, :create]
   has_many :groups, can: [:get, :create]
+  has_many :organizations, can: :get
   has_one :custom_data
   has_one :password_policy
   has_one :account_creation_policy
