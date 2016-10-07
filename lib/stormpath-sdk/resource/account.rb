@@ -37,6 +37,9 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
 
   has_many :api_keys, can: [:create]
 
+  has_many :phones, can: [:get, :create]
+  has_many :factors, can: [:get, :create]
+
   def add_group group
     client.group_memberships.create group: group, account: self
   end
