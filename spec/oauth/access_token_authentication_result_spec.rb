@@ -22,6 +22,10 @@ describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
     expect(jwt_authentication_result.account).to eq(account)
   end
 
+  it 'jwt access token should contain the stt header' do
+    expect(jwt_authentication_result.access_token).to have_stt_in_header('access')
+  end
+
   it 'should be able to delete the access token' do
     jwt_authentication_result
 
@@ -34,6 +38,10 @@ describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
     fetched_access_token.delete
 
     expect(account.access_tokens.count).to eq(0)
+  end
+
+  it 'jwt refresh token should contain the stt header' do
+    expect(jwt_authentication_result.refresh_token).to have_stt_in_header('refresh')
   end
 
   it 'should be able to delete the refresh token' do
