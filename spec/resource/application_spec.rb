@@ -1041,20 +1041,79 @@ describe Stormpath::Resource::Application, :vcr do
 
     before { account }
 
-    context 'generate access token' do
+    context 'generate access token from password grant request' do
       let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
       let(:authenticate_oauth) { application.authenticate_oauth(password_grant_request) }
 
-      it 'should return access token response' do
-        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+      context 'without organization_name_key' do
+        it 'should return access token response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+        end
+
+        it 'response should contain token data' do
+          expect(authenticate_oauth.access_token).not_to be_empty
+          expect(authenticate_oauth.refresh_token).not_to be_empty
+          expect(authenticate_oauth.token_type).not_to be_empty
+          expect(authenticate_oauth.expires_in).not_to be_nil
+          expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+        end
       end
 
-      it 'response should contain token data' do
-        expect(authenticate_oauth.access_token).not_to be_empty
-        expect(authenticate_oauth.refresh_token).not_to be_empty
-        expect(authenticate_oauth.token_type).not_to be_empty
-        expect(authenticate_oauth.expires_in).not_to be_nil
-        expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+      context 'with the organization name key' do
+        let!(:organization) do
+          test_api_client.organizations.create name: 'rspec-test-org', name_key: 'rspec-test-org'
+        end
+        let(:account_directory) do
+          test_api_client.directories.create(
+            name: 'rspec-directory'
+          )
+        end
+        let(:reloaded_account_directory) do
+          test_api_client.directories.get(account_directory.href)
+        end
+        let(:password_grant_request) do
+          Stormpath::Oauth::PasswordGrantRequest.new(account_data[:email],
+                                                     account_data[:password],
+                                                     organization_name_key: 'rspec-test-org')
+        end
+
+        after do
+          organization.delete
+          reloaded_account_directory.delete
+        end
+
+        before do
+          test_api_client.account_store_mappings.create(
+            application: application,
+            account_store: organization
+          )
+
+          test_api_client.organization_account_store_mappings.create(
+            account_store: { href: account_directory.href },
+            organization: { href: organization.href }
+          )
+
+          account_directory.accounts.create account_data
+        end
+
+        it 'should return access token response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+        end
+
+        it 'response should contain token data' do
+          expect(authenticate_oauth.access_token).not_to be_empty
+          expect(authenticate_oauth.refresh_token).not_to be_empty
+          expect(authenticate_oauth.token_type).not_to be_empty
+          expect(authenticate_oauth.expires_in).not_to be_nil
+          expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+        end
+
+        it 'access and refresh token should contain org in payload' do
+          jw_access = JWT.decode(authenticate_oauth.access_token, test_api_client.data_store.api_key.secret)
+          jw_refresh = JWT.decode(authenticate_oauth.refresh_token, test_api_client.data_store.api_key.secret)
+          expect(jw_access.first).to include('org')
+          expect(jw_refresh.first).to include('org')
+        end
       end
     end
 
