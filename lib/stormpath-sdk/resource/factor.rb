@@ -18,6 +18,8 @@ class Stormpath::Resource::Factor < Stormpath::Resource::Instance
   prop_reader :verification_status, :status
 
   has_many :challenges, can: [:get, :create]
+  has_one :most_recent_challenge, class_name: :challenge
+  has_one :phone
+
   belongs_to :account
-  belongs_to :phone
 end

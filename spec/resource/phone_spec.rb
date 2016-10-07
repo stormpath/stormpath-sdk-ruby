@@ -40,7 +40,7 @@ describe Stormpath::Resource::Phone, :vcr do
     end
   end
 
-  describe 'account_associations' do
+  describe 'phone associations' do
     let(:app) do
       test_api_client.applications.create(name: random_application_name, description: 'Dummy desc.')
     end

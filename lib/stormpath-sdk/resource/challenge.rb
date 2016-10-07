@@ -18,4 +18,5 @@ class Stormpath::Resource::Challenge < Stormpath::Resource::Instance
   prop_reader :status, :created_at, :modified_at
 
   belongs_to :factor
+  belongs_to :account
 end
