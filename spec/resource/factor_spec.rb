@@ -80,9 +80,6 @@ describe Stormpath::Resource::Factor, :vcr do
       )
     end
 
-    let!(:challenge) { factor.challenges.create(message: 'Enter code: ${code}') }
-    let!(:most_recent_challenge) { factor.challenges.create(message: 'Enter new code: ${code}') }
-
     it 'should belong_to account' do
       expect(factor.account).to eq(account)
     end
@@ -91,14 +88,23 @@ describe Stormpath::Resource::Factor, :vcr do
       expect(factor.phone.number).to eq(phone_number)
     end
 
-    it 'should have a collection of challenges' do
-      expect(factor.challenges).to be_a Stormpath::Resource::Collection
-      expect(factor.challenges).to include(challenge)
-    end
+    context 'challenges' do
+      let(:challenge) { factor.challenges.create(message: 'Enter code: ${code}') }
 
-    xit 'should have the most recent challenge' do
-      # TODO: check this why it's failing
-      expect(factor.most_recent_challenge).to eq(most_recent_challenge)
+      before do
+        challenge
+      end
+
+      it 'should have a collection of challenges' do
+        expect(factor.challenges).to be_a Stormpath::Resource::Collection
+        expect(factor.challenges).to include(challenge)
+      end
+
+      it 'should have the most recent challenge' do
+        most_recent_challenge = factor.challenges.create(message: 'Enter new code: ${code}')
+        reloaded_factor = account.factors.get(factor.href)
+        expect(reloaded_factor.most_recent_challenge).to eq(most_recent_challenge)
+      end
     end
 
     after do
