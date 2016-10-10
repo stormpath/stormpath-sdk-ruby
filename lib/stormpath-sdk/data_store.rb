@@ -100,6 +100,20 @@ class Stormpath::DataStore
     return nil
   end
 
+  def execute_raw_request(href, body)
+    request = Request.new('POST', href, nil, {}, body.to_json, @api_key)
+    apply_default_request_headers(request)
+    response = @request_executor.execute_request(request)
+    result = response.body.length > 0 ? MultiJson.load(response.body) : ''
+
+    if response.error?
+      error = Stormpath::Resource::Error.new result
+      raise Stormpath::Error.new(error)
+    end
+
+    cache_walk(result)
+  end
+
   private
 
     def needs_to_be_fully_qualified?(href)
