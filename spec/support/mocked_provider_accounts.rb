@@ -150,21 +150,21 @@ module Stormpath
     }.freeze
 
     FACTOR_RESPONSE = {
-      'href' => 'https://dev.i.stormpath.com/v1/factors/29300284904',
+      'href' => 'https://api.stormpath.com/v1/factors/29300284904',
       'type' => 'SMS',
       'verificationStatus' => 'UNVERIFIED',
       'status' => 'ENABLED',
       'account' => {
-        'href' => 'https://dev.i.stormpath.com/v1/accounts/20959204030'
+        'href' => 'https://api.stormpath.com/v1/accounts/20959204030'
       },
       'phone' => {
-        'href' => 'https://dev.i.stormpath.com/v1/phones/28394029583'
+        'href' => 'https://api.stormpath.com/v1/phones/28394029583'
       },
       'mostRecentChallenge' => {
-        'href' => 'https://dev.i.stormpath.com/v1/challenges/28390384032'
+        'href' => 'https://api.stormpath.com/v1/challenges/28390384032'
       },
       'challenges' => {
-        'href' => 'https://dev.i.stormpath.com/v1/factors/29300284904/challenges'
+        'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges'
       }
     }.freeze
   end

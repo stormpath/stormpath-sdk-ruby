@@ -70,6 +70,10 @@ module Stormpath
       @test_api_client ||= Stormpath::Client.new api_key: test_api_key
     end
 
+    def test_host
+      Stormpath::DataStore::DEFAULT_SERVER_HOST
+    end
+
     def get_cache_data href
       data_store = test_api_client.send :data_store
       data_store.send :cache_for, href

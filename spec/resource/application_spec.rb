@@ -1295,11 +1295,11 @@ describe Stormpath::Resource::Application, :vcr do
     context 'generate access token from challenge factor grant request' do
       before do
         stub_request(:post,
-                     "https://#{test_api_key_id}:#{test_api_key_secret}@dev.i.stormpath.com/v1/accounts/#{account.href.split('/').last}/factors?challenge=true")
+                     "https://#{test_api_key_id}:#{test_api_key_secret}@#{test_host}/v1/accounts/#{account.href.split('/').last}/factors?challenge=true")
           .to_return(body: Stormpath::Test.mocked_factor_response)
 
         stub_request(:post,
-                     "https://#{test_api_key_id}:#{test_api_key_secret}@dev.i.stormpath.com/v1/applications/#{application.href.split('/').last}/oauth/token")
+                     "https://#{test_api_key_id}:#{test_api_key_secret}@#{test_host}/v1/applications/#{application.href.split('/').last}/oauth/token")
           .to_return(body: Stormpath::Test.mocked_challenge_factor_grant_response)
       end
       let(:account_data) { build_account }
@@ -1317,7 +1317,7 @@ describe Stormpath::Resource::Application, :vcr do
                                        description: 'This is a testing phone number' },
                               challenge: { message: 'Enter code please: ' })
       end
-      let(:challenge) { 'https://dev.i.stormpath.com/v1/challenges/29300284904' }
+      let(:challenge) { "https://#{test_host}/v1/challenges/29300284904" }
       let(:code) { '123456' }
 
       it 'should return access token response' do
