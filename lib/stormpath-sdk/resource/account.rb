@@ -64,8 +64,7 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
     instance_variable_set "@_provider_data", provider_data
   end
 
-  def create_factor
-    # TODO: reuse CreateFactor class so we dont need to pass the client instance to it
+  def create_factor(type, options = {})
+    Stormpath::Authentication::CreateFactor.new(client, self, type, options).save
   end
-
 end

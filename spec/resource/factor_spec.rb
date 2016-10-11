@@ -107,11 +107,6 @@ describe Stormpath::Resource::Factor, :vcr do
       end
     end
 
-    context 'create factor with challenge' do
-      xit 'it should have a challenge without explicitly creating it' do
-      end
-    end
-
     after do
       application.delete if application
       account.delete if account

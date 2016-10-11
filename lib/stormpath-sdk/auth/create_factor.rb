@@ -27,7 +27,7 @@ module Stormpath
       end
 
       def save
-        data_store.execute_raw_request(href, resource)
+        data_store.execute_raw_request(href, resource, Stormpath::Resource::Factor)
       end
 
       private

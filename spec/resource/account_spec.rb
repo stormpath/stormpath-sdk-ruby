@@ -190,7 +190,6 @@ describe Stormpath::Resource::Account, :vcr do
                                                     list_index: 1,
                                                     is_default_account_store: true,
                                                     is_default_group_store: true)
-      factor
     end
 
     let(:account) do
@@ -219,15 +218,67 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     it 'can fetch factors' do
+      factor
       expect(account.factors).to include(factor)
     end
 
     it 'can fetch a specific factor' do
+      factor
       expect(account.factors.get(factor.href)).to be_a Stormpath::Resource::Factor
     end
 
     it 'creates a phone with a factor' do
+      factor
       expect(account.phones.count).to eq 1
+    end
+
+    after do
+      application.delete if application
+      directory.delete if directory
+      account.delete if account
+      factor.delete if factor
+    end
+  end
+
+  describe '#create_factor' do
+    let(:application) do
+      test_api_client.applications.create(name: random_application_name, description: 'Dummy desc.')
+    end
+
+    let(:directory) { test_api_client.directories.create name: random_directory_name }
+
+    before do
+      test_api_client.account_store_mappings.create(application: application,
+                                                    account_store: directory,
+                                                    list_index: 1,
+                                                    is_default_account_store: true,
+                                                    is_default_group_store: true)
+    end
+
+    let(:account) do
+      directory.accounts.create(email: 'test@example.com',
+                                givenName: 'Ruby SDK',
+                                password: 'P@$$w0rd',
+                                surname: 'SDK',
+                                username: 'rubysdk')
+    end
+    let(:phone) do
+      account.phones.create(
+        number: '+385958142457',
+        name: 'Markos test phone',
+        description: 'this is a testing phone number'
+      )
+    end
+    let(:factor) do
+      account.create_factor('SMS',
+                            phone: { number: '+385958142457',
+                                     name: 'Rspec test phone',
+                                     description: 'This is a testing phone number' },
+                            challenge: { message: 'Enter code please: ' })
+    end
+
+    it 'factor should have challenges' do
+      expect(factor.challenges.count).to be 1
     end
 
     after do

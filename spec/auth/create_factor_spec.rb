@@ -11,49 +11,53 @@ describe 'CreateFactor', vcr: true do
                               username: 'rubysdk')
   end
 
-  context 'with valid attributes' do
-    context 'with challenge' do
-      let(:factor) do
-        Stormpath::Authentication::CreateFactor.new(client,
-                                                    account,
-                                                    'SMS',
-                                                    phone: { number: '+385958142457',
-                                                             name: 'Rspec test phone',
-                                                             description: 'This is a testing phone number' },
-                                                    challenge: { message: 'Enter code please: ' })
-      end
-
-      it 'should create factor' do
-        factor.save
-      end
-
-      it 'should create challenge' do
-        factor.save
-        expect(factor.challenges.count).to be 1
-      end
+  context 'with challenge' do
+    let(:factor) do
+      Stormpath::Authentication::CreateFactor.new(
+        client,
+        account,
+        'SMS',
+        phone: { number: '+385958142457',
+                 name: 'Rspec test phone',
+                 description: 'This is a testing phone number' },
+        challenge: { message: 'Enter code please: ' }
+      ).save
     end
 
-    context 'without challenge' do
-      let(:factor) do
-        Stormpath::Authentication::CreateFactor.new(client,
-                                                    account,
-                                                    'SMS',
-                                                    phone: { number: '+385958142457',
-                                                             name: 'Rspec test phone',
-                                                             description: 'This is a testing phone number' })
-      end
-
-      it 'should create factor' do
-        factor.save # TODO: currently it returns a hash of the created resource 'factor' => we need to convert it into a Factor resource
-      end
-
-      it 'should not create challenge' do
-        factor.save
-        expect(factor.challenges.count).to be 0
-      end
+    it 'should create factor' do
+      expect(factor.href).to be
+      binding.pry
     end
 
+    it 'should create challenge' do
+      expect(factor.challenges.count).to be 1
+    end
 
+    after { factor.delete }
+  end
+
+  context 'without challenge' do
+    let(:factor) do
+      Stormpath::Authentication::CreateFactor.new(
+        client,
+        account,
+        'SMS',
+        phone: { number: '+385958142457',
+                 name: 'Rspec test phone',
+                 description: 'This is a testing phone number' }
+      ).save
+    end
+
+    it 'should create factor' do
+      binding.pry
+      expect(factor.href).to be
+    end
+
+    it 'should not create challenge' do
+      expect(factor.challenges.count).to be 0
+    end
+
+    after { factor.delete }
   end
 
   after do
