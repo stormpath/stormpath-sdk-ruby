@@ -26,7 +26,6 @@ describe 'CreateFactor', vcr: true do
 
     it 'should create factor' do
       expect(factor.href).to be
-      binding.pry
     end
 
     it 'should create challenge' do
@@ -49,7 +48,6 @@ describe 'CreateFactor', vcr: true do
     end
 
     it 'should create factor' do
-      binding.pry
       expect(factor.href).to be
     end
 

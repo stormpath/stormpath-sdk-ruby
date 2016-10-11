@@ -28,6 +28,14 @@ module Stormpath
       MultiJson.dump(STORMPATH_GRANT_RESPONSE)
     end
 
+    def self.mocked_challenge_factor_grant_response
+      MultiJson.dump(STORMPATH_GRANT_RESPONSE)
+    end
+
+    def self.mocked_factor_response
+      MultiJson.dump(FACTOR_RESPONSE)
+    end
+
     FACEBOOK_ACCOUNT = {
       href: "https://api.stormpath.com/v1/accounts/7jdiPam0PWES317hwRR5a7",
       username: "damir.svrtan",
@@ -139,6 +147,25 @@ module Stormpath
       'token_type' => 'Bearer',
       'expires_in' => 3600,
       'stormpath_access_token_href' => 'random_href'
+    }.freeze
+
+    FACTOR_RESPONSE = {
+      'href' => 'https://dev.i.stormpath.com/v1/factors/29300284904',
+      'type' => 'SMS',
+      'verificationStatus' => 'UNVERIFIED',
+      'status' => 'ENABLED',
+      'account' => {
+        'href' => 'https://dev.i.stormpath.com/v1/accounts/20959204030'
+      },
+      'phone' => {
+        'href' => 'https://dev.i.stormpath.com/v1/phones/28394029583'
+      },
+      'mostRecentChallenge' => {
+        'href' => 'https://dev.i.stormpath.com/v1/challenges/28390384032'
+      },
+      'challenges' => {
+        'href' => 'https://dev.i.stormpath.com/v1/factors/29300284904/challenges'
+      }
     }.freeze
   end
 end

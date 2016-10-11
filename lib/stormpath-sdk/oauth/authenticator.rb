@@ -24,7 +24,8 @@ module Stormpath
         id_site_token: IdSiteGrant,
         stormpath_token: StormpathTokenGrant,
         client_credentials: ClientCredentialsGrant,
-        stormpath_social: SocialGrant
+        stormpath_social: SocialGrant,
+        stormpath_factor_challenge: ChallengeFactorGrant
       }.freeze
     end
   end

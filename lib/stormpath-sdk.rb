@@ -137,5 +137,7 @@ module Stormpath
     autoload :ClientCredentialsGrant, "stormpath-sdk/oauth/client_credentials_grant"
     autoload :SocialGrantRequest, 'stormpath-sdk/oauth/social_grant_request'
     autoload :SocialGrant, 'stormpath-sdk/oauth/social_grant'
+    autoload :ChallengeFactorGrantRequest, 'stormpath-sdk/oauth/challenge_factor_grant_request'
+    autoload :ChallengeFactorGrant, 'stormpath-sdk/oauth/challenge_factor_grant'
   end
 end
