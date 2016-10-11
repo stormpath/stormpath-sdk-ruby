@@ -14,3 +14,8 @@ tmp/*
 .bundle/
 dump.rdb
 .ruby-version
+
+!spec/fixtures/vcr_cassettes/CreateFactor
+!spec/fixtures/vcr_cassettes/Stormpath_Resource_Account
+!spec/fixtures/vcr_cassettes/Stormpath_Resource_Challenge
+!spec/fixtures/vcr_cassettes/Stormpath_Resource_Factor
