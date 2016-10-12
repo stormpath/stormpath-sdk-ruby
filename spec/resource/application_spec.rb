@@ -761,9 +761,21 @@ describe Stormpath::Resource::Application, :vcr do
       account.delete if account
     end
 
-    it 'retrieves the account with the reset password' do
-      expect(reset_password_account).to be
-      expect(reset_password_account.email).to eq(account.email)
+    context 'with decoded password reset token' do
+      it 'retrieves the account with the reset password' do
+        expect(reset_password_account).to be
+        expect(reset_password_account.email).to eq(account.email)
+      end
+    end
+
+    context 'with encoded password reset token' do
+      let(:password_reset_token) do
+        URI.encode(application.password_reset_tokens.create(email: account.email).token, '.')
+      end
+      it 'retrieves the account with the reset password' do
+        expect(reset_password_account).to be
+        expect(reset_password_account.email).to eq(account.email)
+      end
     end
 
     context 'and if the password is changed' do
