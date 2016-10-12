@@ -1,0 +1,1275 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://dev.i.stormpath.com/v1/tenants/current
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:21 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151721Z
+  response:
+    status:
+      code: 302
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Date:
+      - Tue, 11 Oct 2016 15:17:20 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cd7f4c60-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:22 GMT
+- request:
+    method: get
+    uri: https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:22 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151722Z
+  response:
+    status:
+      code: 200
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:20 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cda39d40-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo",
+          "name" : "cuddly-talon",
+          "key" : "cuddly-talon",
+          "createdAt" : "2016-10-06T14:27:32.021Z",
+          "modifiedAt" : "2016-10-06T14:27:32.559Z",
+          "customData" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/customData"
+          },
+          "organizations" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/organizations"
+          },
+          "applications" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/applications"
+          },
+          "directories" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/directories"
+          },
+          "accounts" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/accounts"
+          },
+          "agents" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/agents"
+          },
+          "groups" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/groups"
+          },
+          "idSites" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/idSites"
+          },
+          "smtpServers" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/smtpServers"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:23 GMT
+- request:
+    method: post
+    uri: https://dev.i.stormpath.com/v1/applications
+    body:
+      encoding: UTF-8
+      string: '{"name":"test_application_","description":"Dummy desc."}'
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:23 GMT
+      Content-Length:
+      - 56
+      Content-Type:
+      - application/json
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151723Z
+  response:
+    status:
+      code: 201
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:20 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cdc99bd0-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u",
+          "name" : "test_application_",
+          "description" : "Dummy desc.",
+          "status" : "ENABLED",
+          "createdAt" : "2016-10-11T15:17:20.538Z",
+          "modifiedAt" : "2016-10-11T15:17:20.543Z",
+          "tenant" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo"
+          },
+          "defaultAccountStoreMapping" : null,
+          "defaultGroupStoreMapping" : null,
+          "customData" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/customData"
+          },
+          "oAuthPolicy" : {
+            "href" : "https://dev.i.stormpath.com/v1/oAuthPolicies/6GKT4ioN7MaRfm7Q3Sip4u"
+          },
+          "samlPolicy" : {
+            "href" : "https://dev.i.stormpath.com/v1/samlPolicies/6GKT4ioN7MaRfm7Q3Sip4u"
+          },
+          "accountLinkingPolicy" : {
+            "href" : "https://dev.i.stormpath.com/v1/accountLinkingPolicies/6GKogzHHsuwUYOE5uHjzfo"
+          },
+          "webConfig" : {
+            "href" : "https://dev.i.stormpath.com/v1/webConfigs/6GKoh2bMnVFTBDJx6XbGHs"
+          },
+          "accounts" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/accounts"
+          },
+          "groups" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/groups"
+          },
+          "accountStoreMappings" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/accountStoreMappings"
+          },
+          "loginAttempts" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/loginAttempts"
+          },
+          "passwordResetTokens" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/passwordResetTokens"
+          },
+          "apiKeys" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/apiKeys"
+          },
+          "verificationEmails" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/verificationEmails"
+          },
+          "authTokens" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/authTokens"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:23 GMT
+- request:
+    method: get
+    uri: https://dev.i.stormpath.com/v1/tenants/current
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:23 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151723Z
+  response:
+    status:
+      code: 302
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Date:
+      - Tue, 11 Oct 2016 15:17:20 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cdf2f5c0-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:23 GMT
+- request:
+    method: get
+    uri: https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:23 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151723Z
+  response:
+    status:
+      code: 200
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:20 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - ce176db0-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo",
+          "name" : "cuddly-talon",
+          "key" : "cuddly-talon",
+          "createdAt" : "2016-10-06T14:27:32.021Z",
+          "modifiedAt" : "2016-10-06T14:27:32.559Z",
+          "customData" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/customData"
+          },
+          "organizations" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/organizations"
+          },
+          "applications" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/applications"
+          },
+          "directories" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/directories"
+          },
+          "accounts" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/accounts"
+          },
+          "agents" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/agents"
+          },
+          "groups" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/groups"
+          },
+          "idSites" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/idSites"
+          },
+          "smtpServers" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/smtpServers"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:23 GMT
+- request:
+    method: post
+    uri: https://dev.i.stormpath.com/v1/directories
+    body:
+      encoding: UTF-8
+      string: '{"name":"test_directory_"}'
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:23 GMT
+      Content-Length:
+      - 26
+      Content-Type:
+      - application/json
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151723Z
+  response:
+    status:
+      code: 201
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:21 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - ce3c33c0-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe",
+          "name" : "test_directory_",
+          "description" : null,
+          "status" : "ENABLED",
+          "createdAt" : "2016-10-11T15:17:21.288Z",
+          "modifiedAt" : "2016-10-11T15:17:21.288Z",
+          "tenant" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo"
+          },
+          "provider" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/provider"
+          },
+          "customData" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/customData"
+          },
+          "passwordPolicy" : {
+            "href" : "https://dev.i.stormpath.com/v1/passwordPolicies/6HAYgOtA6kVmsP0Gk08xCe"
+          },
+          "accountCreationPolicy" : {
+            "href" : "https://dev.i.stormpath.com/v1/accountCreationPolicies/6HAYgOtA6kVmsP0Gk08xCe"
+          },
+          "accounts" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/accounts"
+          },
+          "applicationMappings" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/applicationMappings"
+          },
+          "applications" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/applications"
+          },
+          "groups" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/groups"
+          },
+          "organizations" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/organizations"
+          },
+          "organizationMappings" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/organizationMappings"
+          },
+          "accountSchema" : {
+            "href" : "https://dev.i.stormpath.com/v1/schemas/6HAhKxjCZY3W9S9Kf6YOrM"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:24 GMT
+- request:
+    method: post
+    uri: https://dev.i.stormpath.com/v1/accountStoreMappings
+    body:
+      encoding: UTF-8
+      string: '{"application":{"href":"https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u"},"accountStore":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe","name":"test_directory_","description":null,"status":"ENABLED","createdAt":"2016-10-11T15:17:21.288Z","modifiedAt":"2016-10-11T15:17:21.288Z","tenant":{"href":"https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo"},"provider":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/provider"},"customData":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/customData"},"passwordPolicy":{"href":"https://dev.i.stormpath.com/v1/passwordPolicies/6HAYgOtA6kVmsP0Gk08xCe"},"accountCreationPolicy":{"href":"https://dev.i.stormpath.com/v1/accountCreationPolicies/6HAYgOtA6kVmsP0Gk08xCe"},"accounts":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/accounts"},"applicationMappings":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/applicationMappings"},"applications":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/applications"},"groups":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/groups"},"organizations":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/organizations"},"organizationMappings":{"href":"https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/organizationMappings"},"accountSchema":{"href":"https://dev.i.stormpath.com/v1/schemas/6HAhKxjCZY3W9S9Kf6YOrM"}},"listIndex":1,"isDefaultAccountStore":true,"isDefaultGroupStore":true}'
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:24 GMT
+      Content-Length:
+      - 1619
+      Content-Type:
+      - application/json
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151724Z
+  response:
+    status:
+      code: 201
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:21 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/accountStoreMappings/6HU5FH0R3mQOCp24S5CWXE
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - ce665100-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/accountStoreMappings/6HU5FH0R3mQOCp24S5CWXE",
+          "listIndex" : 0,
+          "isDefaultAccountStore" : true,
+          "isDefaultGroupStore" : true,
+          "application" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u"
+          },
+          "accountStore" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:24 GMT
+- request:
+    method: post
+    uri: https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe/accounts
+    body:
+      encoding: UTF-8
+      string: '{"email":"test@example.com","givenName":"Ruby SDK","password":"P@$$w0rd","surname":"SDK","username":"rubysdk"}'
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:24 GMT
+      Content-Length:
+      - 110
+      Content-Type:
+      - application/json
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151724Z
+  response:
+    status:
+      code: 201
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:21 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - ce8ec090-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56",
+          "username" : "rubysdk",
+          "email" : "test@example.com",
+          "givenName" : "Ruby SDK",
+          "middleName" : null,
+          "surname" : "SDK",
+          "fullName" : "Ruby SDK SDK",
+          "status" : "ENABLED",
+          "emailVerificationStatus" : "UNVERIFIED",
+          "createdAt" : "2016-10-11T15:17:21.831Z",
+          "modifiedAt" : "2016-10-11T15:17:21.831Z",
+          "passwordModifiedAt" : "2016-10-11T15:17:21.000Z",
+          "emailVerificationToken" : null,
+          "customData" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/customData"
+          },
+          "providerData" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/providerData"
+          },
+          "directory" : {
+            "href" : "https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe"
+          },
+          "tenant" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo"
+          },
+          "groups" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/groups"
+          },
+          "applications" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/applications"
+          },
+          "groupMemberships" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/groupMemberships"
+          },
+          "apiKeys" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/apiKeys"
+          },
+          "accessTokens" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/accessTokens"
+          },
+          "refreshTokens" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/refreshTokens"
+          },
+          "linkedAccounts" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/linkedAccounts"
+          },
+          "accountLinks" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/accountLinks"
+          },
+          "phones" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/phones"
+          },
+          "factors" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/factors"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:24 GMT
+- request:
+    method: post
+    uri: https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56/factors
+    body:
+      encoding: UTF-8
+      string: '{"type":"SMS","phone":{"number":"+385958142457","name":"Markos test
+        phone","description":"this is a testing phone number"}}'
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:24 GMT
+      Content-Length:
+      - 123
+      Content-Type:
+      - application/json
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151724Z
+  response:
+    status:
+      code: 201
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:21 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - ceb693e0-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS",
+          "type" : "SMS",
+          "createdAt" : "2016-10-11T15:17:22.094Z",
+          "modifiedAt" : "2016-10-11T15:17:22.094Z",
+          "status" : "ENABLED",
+          "verificationStatus" : "UNVERIFIED",
+          "account" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56"
+          },
+          "challenges" : {
+            "href" : "https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS/challenges"
+          },
+          "phone" : {
+            "href" : "https://dev.i.stormpath.com/v1/phones/6I4yLN9J0be6bS1UOLOnuO"
+          },
+          "mostRecentChallenge" : null
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:25 GMT
+- request:
+    method: post
+    uri: https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS/challenges
+    body:
+      encoding: UTF-8
+      string: '{"message":"Enter code: ${code}"}'
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:25 GMT
+      Content-Length:
+      - 33
+      Content-Type:
+      - application/json
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151725Z
+  response:
+    status:
+      code: 201
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:22 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/challenges/6IODc25qXzfs1mMkcZF2Me
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cee12650-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/challenges/6IODc25qXzfs1mMkcZF2Me",
+          "createdAt" : "2016-10-11T15:17:22.370Z",
+          "modifiedAt" : "2016-10-11T15:17:22.370Z",
+          "status" : "CREATED",
+          "message" : "Enter code: ${code}",
+          "account" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56"
+          },
+          "factor" : {
+            "href" : "https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:25 GMT
+- request:
+    method: post
+    uri: https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS/challenges
+    body:
+      encoding: UTF-8
+      string: '{"message":"Enter new code: ${code}"}'
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:25 GMT
+      Content-Length:
+      - 37
+      Content-Type:
+      - application/json
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151725Z
+  response:
+    status:
+      code: 201
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:22 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/challenges/6IghK6oNCMWKiM4WmBF5uW
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cf074bf0-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/challenges/6IghK6oNCMWKiM4WmBF5uW",
+          "createdAt" : "2016-10-11T15:17:22.635Z",
+          "modifiedAt" : "2016-10-11T15:17:22.635Z",
+          "status" : "CREATED",
+          "message" : "Enter new code: ${code}",
+          "account" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56"
+          },
+          "factor" : {
+            "href" : "https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:25 GMT
+- request:
+    method: get
+    uri: https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:25 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151725Z
+  response:
+    status:
+      code: 200
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:22 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cf316930-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS",
+          "type" : "SMS",
+          "createdAt" : "2016-10-11T15:17:22.094Z",
+          "modifiedAt" : "2016-10-11T15:17:22.636Z",
+          "status" : "ENABLED",
+          "verificationStatus" : "UNVERIFIED",
+          "account" : {
+            "href" : "https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56"
+          },
+          "challenges" : {
+            "href" : "https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS/challenges"
+          },
+          "phone" : {
+            "href" : "https://dev.i.stormpath.com/v1/phones/6I4yLN9J0be6bS1UOLOnuO"
+          },
+          "mostRecentChallenge" : {
+            "href" : "https://dev.i.stormpath.com/v1/challenges/6IghK6oNCMWKiM4WmBF5uW"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:25 GMT
+- request:
+    method: get
+    uri: https://dev.i.stormpath.com/v1/tenants/current
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:25 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151725Z
+  response:
+    status:
+      code: 302
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Date:
+      - Tue, 11 Oct 2016 15:17:22 GMT
+      Location:
+      - https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cf56a470-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:26 GMT
+- request:
+    method: get
+    uri: https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:26 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151726Z
+  response:
+    status:
+      code: 200
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:22 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cf7aa730-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo",
+          "name" : "cuddly-talon",
+          "key" : "cuddly-talon",
+          "createdAt" : "2016-10-06T14:27:32.021Z",
+          "modifiedAt" : "2016-10-06T14:27:32.559Z",
+          "customData" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/customData"
+          },
+          "organizations" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/organizations"
+          },
+          "applications" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/applications"
+          },
+          "directories" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/directories"
+          },
+          "accounts" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/accounts"
+          },
+          "agents" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/agents"
+          },
+          "groups" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/groups"
+          },
+          "idSites" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/idSites"
+          },
+          "smtpServers" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo/smtpServers"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:26 GMT
+- request:
+    method: get
+    uri: https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:26 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151726Z
+  response:
+    status:
+      code: 200
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 11 Oct 2016 15:17:23 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cfa16910-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u",
+          "name" : "test_application_",
+          "description" : "Dummy desc.",
+          "status" : "ENABLED",
+          "createdAt" : "2016-10-11T15:17:20.538Z",
+          "modifiedAt" : "2016-10-11T15:17:21.566Z",
+          "tenant" : {
+            "href" : "https://dev.i.stormpath.com/v1/tenants/8Mi5LmTT8up4m2AGa2gdo"
+          },
+          "defaultAccountStoreMapping" : {
+            "href" : "https://dev.i.stormpath.com/v1/accountStoreMappings/6HU5FH0R3mQOCp24S5CWXE"
+          },
+          "defaultGroupStoreMapping" : {
+            "href" : "https://dev.i.stormpath.com/v1/accountStoreMappings/6HU5FH0R3mQOCp24S5CWXE"
+          },
+          "customData" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/customData"
+          },
+          "oAuthPolicy" : {
+            "href" : "https://dev.i.stormpath.com/v1/oAuthPolicies/6GKT4ioN7MaRfm7Q3Sip4u"
+          },
+          "samlPolicy" : {
+            "href" : "https://dev.i.stormpath.com/v1/samlPolicies/6GKT4ioN7MaRfm7Q3Sip4u"
+          },
+          "accountLinkingPolicy" : {
+            "href" : "https://dev.i.stormpath.com/v1/accountLinkingPolicies/6GKogzHHsuwUYOE5uHjzfo"
+          },
+          "webConfig" : {
+            "href" : "https://dev.i.stormpath.com/v1/webConfigs/6GKoh2bMnVFTBDJx6XbGHs"
+          },
+          "accounts" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/accounts"
+          },
+          "groups" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/groups"
+          },
+          "accountStoreMappings" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/accountStoreMappings"
+          },
+          "loginAttempts" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/loginAttempts"
+          },
+          "passwordResetTokens" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/passwordResetTokens"
+          },
+          "apiKeys" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/apiKeys"
+          },
+          "verificationEmails" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/verificationEmails"
+          },
+          "authTokens" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/authTokens"
+          },
+          "idSiteModel" : {
+            "href" : "https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u/idSiteModel"
+          }
+        }
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:26 GMT
+- request:
+    method: delete
+    uri: https://dev.i.stormpath.com/v1/applications/6GKT4ioN7MaRfm7Q3Sip4u
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:26 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151726Z
+  response:
+    status:
+      code: 204
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Date:
+      - Tue, 11 Oct 2016 15:17:23 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cfc8c730-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:26 GMT
+- request:
+    method: delete
+    uri: https://dev.i.stormpath.com/v1/accounts/6HmYxLixi9GqtOjqbhCa56
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:26 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151726Z
+  response:
+    status:
+      code: 204
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Date:
+      - Tue, 11 Oct 2016 15:17:23 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - cfefd730-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:27 GMT
+- request:
+    method: delete
+    uri: https://dev.i.stormpath.com/v1/directories/6HAYgOtA6kVmsP0Gk08xCe
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:27 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151727Z
+  response:
+    status:
+      code: 204
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Date:
+      - Tue, 11 Oct 2016 15:17:23 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - d0175c60-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:27 GMT
+- request:
+    method: delete
+    uri: https://dev.i.stormpath.com/v1/factors/6I4yLQTNvBx5EH7LabG4WS
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - stormpath-sdk-ruby/1.1.5 ruby/2.3.1-p112 darwin/15
+      Accept:
+      - application/json
+      Date:
+      - Tue, 11 Oct 2016 15:17:27 GMT
+      Host:
+      - dev.i.stormpath.com
+      X-Stormpath-Date:
+      - 20161011T151727Z
+  response:
+    status:
+      code: 204
+      message:
+    headers:
+      Cache-Control:
+      - private, no-cache, no-store, max-age=0, no-transform
+      Date:
+      - Tue, 11 Oct 2016 15:17:24 GMT
+      Pragma:
+      - no-cache
+      Stormpath-Request-Id:
+      - d03d8200-8fc5-11e6-ab0c-d628598d3bfc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Tue, 11 Oct 2016 15:17:27 GMT
+recorded_with: VCR 2.9.3
