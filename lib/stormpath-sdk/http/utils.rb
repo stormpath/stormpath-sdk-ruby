@@ -24,7 +24,7 @@ module Stormpath
 
       def encode_url(value, path, canonical)
         value = value.to_s
-        return encoded_chars?(value) ? URI.escape(URI.decode(value)) : URI.escape(value) if path
+        return encoded_chars?(value) ? URI.encode(URI.decode(value)) : URI.encode(value) if path
 
         CGI.escape(value.to_s).tap do |encoded|
           str_map = { '+' => '%20', '%7E' => '~' }
