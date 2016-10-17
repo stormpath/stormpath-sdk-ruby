@@ -364,6 +364,44 @@ describe Stormpath::Resource::Collection, :vcr do
       end
     end
 
-  end
+    context 'search accounts by custom data' do
+      let(:directory) {test_api_client.directories.create name: random_directory_name }
 
+      let(:account) do
+        directory.accounts.create username: "jlpicard",
+           email: "capt@enterprise.com",
+           givenName: "Jean-Luc",
+           surname: "Picard",
+           password: "hakunaMatata179Enterprise"
+      end
+
+      let(:account2) do
+        directory.accounts.create username: "jlpicard2",
+           email: "capt2@enterprise.com",
+           givenName: "Jean-Luc2",
+           surname: "Picard2",
+           password: "hakunaMatata179Enterprise"
+      end
+
+      after do
+        directory.delete
+      end
+
+      it 'should search accounts by custom data attribute' do
+        account.custom_data['targetAttribute'] = 'findMe'
+        account2.custom_data['targetAttribute'] = 'findMe'
+        account.save
+        account2.save
+        expect(directory.accounts.search('customData.targetAttribute' => 'findMe').count).to eq(2)
+      end
+
+      it 'should be able to fetch custom data attributes with snake case' do
+        account.custom_data['target_attribute'] = 'findMe'
+        account2.custom_data['target_attribute'] = 'findMe'
+        account.save
+        account2.save
+        expect(directory.accounts.search('customData.target_attribute' => 'findMe').count).to eq(2)
+      end
+    end
+  end
 end
