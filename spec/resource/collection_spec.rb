@@ -365,42 +365,60 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context 'search accounts by custom data' do
-      let(:directory) {test_api_client.directories.create name: random_directory_name }
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       let(:account) do
-        directory.accounts.create username: "jlpicard",
-           email: "capt@enterprise.com",
-           givenName: "Jean-Luc",
-           surname: "Picard",
-           password: "hakunaMatata179Enterprise"
+        directory.accounts.create(
+          username: 'jlpicard',
+          email: 'capt@enterprise.com',
+          givenName: 'Jean-Luc',
+          surname: 'Picard',
+          password: 'hakunaMatata179Enterprise'
+        )
       end
 
       let(:account2) do
-        directory.accounts.create username: "jlpicard2",
-           email: "capt2@enterprise.com",
-           givenName: "Jean-Luc2",
-           surname: "Picard2",
-           password: "hakunaMatata179Enterprise"
+        directory.accounts.create(
+          username: 'jlpicard2',
+          email: 'capt2@enterprise.com',
+          givenName: 'Jean-Luc2',
+          surname: 'Picard2',
+          password: 'hakunaMatata179Enterprise'
+        )
       end
 
       after do
         directory.delete
       end
 
-      it 'should search accounts by custom data attribute' do
-        account.custom_data['targetAttribute'] = 'findMe'
-        account2.custom_data['targetAttribute'] = 'findMe'
-        account.save
-        account2.save
-        expect(directory.accounts.search('customData.targetAttribute' => 'findMe').count).to eq(2)
+      context 'camelCase' do
+        before do
+          account.custom_data['targetAttribute'] = 'findMe'
+          account2.custom_data['targetAttribute'] = 'findMe'
+          account.save
+          account2.save
+        end
+
+        it 'should search accounts by custom data attribute' do
+          expect(account.custom_data['targetAttribute']).to eq 'findMe'
+          expect(directory.accounts.count).to eq 2
+          expect(directory.accounts.search('customData.targetAttribute' => 'findMe').count).to eq(2)
+        end
       end
 
-      it 'should be able to fetch custom data attributes with snake case' do
-        account.custom_data['target_attribute'] = 'findMe'
-        account2.custom_data['target_attribute'] = 'findMe'
-        account.save
-        account2.save
-        expect(directory.accounts.search('customData.target_attribute' => 'findMe').count).to eq(2)
+      context 'snake_case' do
+        before do
+          account.custom_data['target_attribute'] = 'findMe'
+          account2.custom_data['target_attribute'] = 'findMe'
+          account.save
+          account2.save
+        end
+
+        it 'should be able to fetch custom data attributes with snake case' do
+          expect(account.custom_data['target_attribute']).to eq 'findMe'
+          expect(directory.accounts.count).to eq 2
+          expect(directory.accounts.search('customData.target_attribute' => 'findMe').count).to eq(2)
+        end
       end
     end
   end

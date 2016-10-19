@@ -21,12 +21,11 @@ module Stormpath
       attr_accessor :http_method, :href, :query_string, :http_headers, :body, :api_key
 
       def initialize(http_method, href, query_string, http_headers, body, api_key)
-
         splitted = href.split '?'
 
         @query_string = query_string || {}
 
-        if splitted and splitted.length > 1
+        if splitted && splitted.length > 1
           @href = splitted[0]
           query_string_str = splitted[1]
           query_string_arr = query_string_str.split '&'
@@ -43,33 +42,36 @@ module Stormpath
         @body = body
         @api_key = api_key
 
-        if body
-          @http_headers.store 'Content-Length', @body.bytesize
-        end
-
+        @http_headers.store 'Content-Length', @body.bytesize if body
       end
 
       def resource_uri
         URI href
       end
 
-      def to_s_query_string canonical
+      def to_s_query_string(canonical)
         result = ''
 
         unless @query_string.empty?
-          Hash[@query_string.sort].each do |key, value|
-
+          Hash[@query_string.sort_by(&:to_s)].each do |key, value|
             enc_key = encode_url key, false, canonical
             enc_value = encode_url value, false, canonical
 
             result << '&' unless result.empty?
-            result << enc_key.camelize(:lower) << '='<< enc_value
+            result << camelize(enc_key) << '=' << enc_value
           end
         end
 
         result
       end
 
+      def camelize(key)
+        custom_data_params?(key) ? key : key.camelize(:lower)
+      end
+
+      def custom_data_params?(key)
+        key.starts_with?('customData.')
+      end
     end
   end
 end
