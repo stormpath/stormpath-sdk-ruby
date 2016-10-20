@@ -1352,23 +1352,45 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'validate access token' do
-      let(:access_token) { aquire_token.access_token }
-      let(:authenticate_oauth) { Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token) }
+      context 'remotely' do
+        let(:access_token) { aquire_token.access_token }
+        let(:authenticate_oauth) do
+          Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token)
+        end
 
-      it 'should return authentication result response' do
-        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyToken)
+        it 'should return authentication result response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyToken)
+        end
+
+        it 'returns success on valid token' do
+          expect(authenticate_oauth.href).not_to be_empty
+          expect(authenticate_oauth.account).to be_a(Stormpath::Resource::Account)
+          expect(authenticate_oauth.account).to eq(account)
+          expect(authenticate_oauth.application).to be_a(Stormpath::Resource::Application)
+          expect(authenticate_oauth.application).to eq(application)
+          expect(authenticate_oauth.jwt).not_to be_empty
+          expect(authenticate_oauth.tenant).to be_a(Stormpath::Resource::Tenant)
+          expect(authenticate_oauth.tenant).to eq(test_api_client.tenant)
+          expect(authenticate_oauth.expanded_jwt).not_to be_empty
+        end
       end
 
-      it 'returns success on valid token' do
-        expect(authenticate_oauth.href).not_to be_empty
-        expect(authenticate_oauth.account).to be_a(Stormpath::Resource::Account)
-        expect(authenticate_oauth.account).to eq(account)
-        expect(authenticate_oauth.application).to be_a(Stormpath::Resource::Application)
-        expect(authenticate_oauth.application).to eq(application)
-        expect(authenticate_oauth.jwt).not_to be_empty
-        expect(authenticate_oauth.tenant).to be_a(Stormpath::Resource::Tenant)
-        expect(authenticate_oauth.tenant).to eq(test_api_client.tenant)
-        expect(authenticate_oauth.expanded_jwt).not_to be_empty
+      context 'locally' do
+        let(:access_token) { aquire_token.access_token }
+        let(:authenticate_oauth) do
+          Stormpath::Oauth::VerifyAccessToken.new(application, local: true).verify(access_token)
+        end
+
+        it 'should return local access token verification result' do
+          expect(authenticate_oauth)
+            .to be_kind_of(Stormpath::Oauth::LocalAccessTokenVerificationResult)
+        end
+
+        it 'should return result with jwt and account' do
+          expect(authenticate_oauth.account).to eq(account)
+          expect(authenticate_oauth.jwt.first['iss']).to eq(application.href)
+          expect(authenticate_oauth.jwt.first['sub']).to eq(account.href)
+        end
       end
     end
 
