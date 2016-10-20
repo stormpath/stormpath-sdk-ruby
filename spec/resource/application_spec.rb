@@ -552,6 +552,11 @@ describe Stormpath::Resource::Application, :vcr do
     it 'returns verification email' do
       expect(verification_emails).to be_kind_of Stormpath::Resource::VerificationEmail
     end
+
+    it 'resends verification email' do
+      expect(application.verification_emails.resend(login: account.email))
+        .to be_kind_of Stormpath::Resource::VerificationEmail
+    end
   end
 
   describe 'create_login_attempt' do

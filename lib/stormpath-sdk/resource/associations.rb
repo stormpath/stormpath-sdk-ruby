@@ -56,6 +56,7 @@ module Stormpath
                       end
                     data_store.create href, resource, item_class, options
                   end
+                  alias_method :resend, :create if can.include?(:resend)
                 end#can.include? :create
 
                 if can.include? :get
