@@ -102,6 +102,66 @@ describe Stormpath::Resource::AccountCreationPolicy, :vcr do
       expect(directory.account_creation_policy.email_domain_blacklist).not_to include '*e1ppe.ro'
     end
 
+    describe 'adding and removing from whitelist' do
+      before do
+        whitelisted = ['*infinum.co', '*infinum.hr']
+        account_creation_policy.email_domain_whitelist = whitelisted
+        account_creation_policy.save
+      end
+
+      context 'add to whitelist' do
+        it 'should add to whitelist' do
+          account_creation_policy.add_to_whitelist('*stormpath.com')
+          expect(directory.account_creation_policy.email_domain_whitelist).to include '*stormpath.com'
+          expect(directory.account_creation_policy.email_domain_whitelist.count).to eq 3
+
+          account_creation_policy.add_to_whitelist('*gmail.com', '*hotmail.com')
+          expect(directory.account_creation_policy.email_domain_whitelist.count).to eq 5
+        end
+
+        it 'should throw error if no emails present' do
+          expect do
+            account_creation_policy.add_to_whitelist
+          end.to raise_error(ArgumentError, "emails can't be blank when add_to whitelist")
+        end
+      end
+
+      context 'remove from whitelist' do
+        it 'should remove from whitelist' do
+          account_creation_policy.remove_from_whitelist('*infinum.hr')
+          expect(directory.account_creation_policy.email_domain_whitelist).not_to include '*infinum.hr'
+          expect(directory.account_creation_policy.email_domain_whitelist.count).to eq 1
+        end
+      end
+    end
+
+    describe 'adding and removing from blacklist' do
+      before do
+        blacklist = ['*infinum.co', '*infinum.hr']
+        account_creation_policy.email_domain_blacklist = blacklist
+        account_creation_policy.save
+      end
+
+      context 'add to blacklist' do
+        it 'should add to blacklist' do
+          account_creation_policy.add_to_blacklist('*stormpath.com')
+          expect(directory.account_creation_policy.email_domain_blacklist).to include '*stormpath.com'
+          expect(directory.account_creation_policy.email_domain_blacklist.count).to eq 3
+
+          account_creation_policy.add_to_blacklist('*gmail.com', '*hotmail.com')
+          expect(directory.account_creation_policy.email_domain_blacklist.count).to eq 5
+        end
+      end
+
+      context 'remove from blacklist' do
+        it 'should remove from blacklist' do
+          account_creation_policy.remove_from_blacklist('*infinum.hr')
+          expect(directory.account_creation_policy.email_domain_blacklist).not_to include '*infinum.hr'
+          expect(directory.account_creation_policy.email_domain_blacklist.count).to eq 1
+        end
+      end
+    end
+
     context 'when domain not string' do
       it 'should raise error' do
         blacklisted = ['*spam.com', 12345]
