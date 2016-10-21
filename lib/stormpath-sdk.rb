@@ -75,6 +75,8 @@ module Stormpath
     autoload :BasicLoginAttempt, 'stormpath-sdk/auth/basic_login_attempt'
     autoload :AuthenticationResult, 'stormpath-sdk/auth/authentication_result'
     autoload :BasicAuthenticator, 'stormpath-sdk/auth/basic_authenticator'
+    autoload :HttpBasicAuthentication, 'stormpath-sdk/auth/http_basic_authentication'
+    autoload :HttpBearerAuthentication, 'stormpath-sdk/auth/http_bearer_authentication'
   end
 
   module Provider
