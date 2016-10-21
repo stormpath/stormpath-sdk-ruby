@@ -12,6 +12,7 @@ require 'webmock/rspec'
 require 'vcr'
 require 'jwt'
 require 'uuidtools'
+require 'memcached'
 
 Dir['./spec/support/*.rb'].each { |file| require file }
 
