@@ -216,35 +216,39 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'create account with password import MCF feature' do
-    let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
-    let(:application) { test_api_client.applications.get app.href }
-    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
-    let!(:account_store_mapping) {create_account_store_mapping(application,directory,true)}
-
-    after do
-      application.delete if application
-      directory.delete if directory
-      @account.delete if @account
+    let(:directory) do
+      test_api_client.directories.create(name: random_directory_name,
+                                         description: 'description_for_some_test_directory')
     end
 
-    context "MD5 hashing algorithm" do
-      before do
-        account_store_mapping
-        @account = directory.accounts.create({
-          username: "jlucpicard",
-          email: "captain@enterprise.com",
-          given_name: "Jean-Luc",
-          surname: "Picard",
-          password: "$stormpath2$MD5$1$OGYyMmM5YzVlMDEwODEwZTg3MzM4ZTA2YjljZjMxYmE=$EuFAr2NTM83PrizVAYuOvw=="
-        }, password_format: 'mcf')
+    before do
+      create_account_store_mapping(application, directory, true)
+    end
+
+    after do
+      directory.delete if directory
+      account.delete if account
+    end
+
+    context 'MD5 hashing algorithm' do
+      let!(:account) do
+        directory.accounts.create(
+          {
+            username: 'jlucpicard',
+            email: 'captain@enterprise.com',
+            given_name: 'Jean-Luc',
+            surname: 'Picard',
+            password: '$stormpath2$MD5$1$OGYyMmM5YzVlMDEwODEwZTg3MzM4ZTA2YjljZjMxYmE=$EuFAr2NTM83PrizVAYuOvw=='
+          }, password_format: 'mcf'
+        )
       end
 
       it 'creates an account' do
-        expect(@account).to be_a Stormpath::Resource::Account
-        expect(@account.username).to eq("jlucpicard")
-        expect(@account.email).to eq("captain@enterprise.com")
-        expect(@account.given_name).to eq("Jean-Luc")
-        expect(@account.surname).to eq("Picard")
+        expect(account).to be_a Stormpath::Resource::Account
+        expect(account.username).to eq('jlucpicard')
+        expect(account.email).to eq('captain@enterprise.com')
+        expect(account.given_name).to eq('Jean-Luc')
+        expect(account.surname).to eq('Picard')
       end
 
       it 'can authenticate with the account credentials' do
@@ -253,30 +257,31 @@ describe Stormpath::Resource::Directory, :vcr do
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
         expect(auth_result.account).to be_a Stormpath::Resource::Account
-        expect(auth_result.account.email).to eq("captain@enterprise.com")
-        expect(auth_result.account.given_name).to eq("Jean-Luc")
-        expect(auth_result.account.surname).to eq("Picard")
+        expect(auth_result.account.email).to eq('captain@enterprise.com')
+        expect(auth_result.account.given_name).to eq('Jean-Luc')
+        expect(auth_result.account.surname).to eq('Picard')
       end
     end
 
-    context "SHA-512 hashing algorithm" do
-      before do
-        account_store_mapping
-        @account = directory.accounts.create({
-          username: "jlucpicard",
-          email: "captain@enterprise.com",
-          given_name: "Jean-Luc",
-          surname: "Picard",
-          password: "$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg=="
-        }, password_format: 'mcf')
+    context 'SHA-512 hashing algorithm' do
+      let!(:account) do
+        directory.accounts.create(
+          {
+            username: 'jlucpicard',
+            email: 'captain@enterprise.com',
+            given_name: 'Jean-Luc',
+            surname: 'Picard',
+            password: '$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg=='
+          }, password_format: 'mcf'
+        )
       end
 
       it 'creates an account' do
-        expect(@account).to be_a Stormpath::Resource::Account
-        expect(@account.username).to eq("jlucpicard")
-        expect(@account.email).to eq("captain@enterprise.com")
-        expect(@account.given_name).to eq("Jean-Luc")
-        expect(@account.surname).to eq("Picard")
+        expect(account).to be_a Stormpath::Resource::Account
+        expect(account.username).to eq('jlucpicard')
+        expect(account.email).to eq('captain@enterprise.com')
+        expect(account.given_name).to eq('Jean-Luc')
+        expect(account.surname).to eq('Picard')
       end
 
       it 'can authenticate with the account credentials' do
@@ -285,30 +290,31 @@ describe Stormpath::Resource::Directory, :vcr do
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
         expect(auth_result.account).to be_a Stormpath::Resource::Account
-        expect(auth_result.account.email).to eq("captain@enterprise.com")
-        expect(auth_result.account.given_name).to eq("Jean-Luc")
-        expect(auth_result.account.surname).to eq("Picard")
+        expect(auth_result.account.email).to eq('captain@enterprise.com')
+        expect(auth_result.account.given_name).to eq('Jean-Luc')
+        expect(auth_result.account.surname).to eq('Picard')
       end
     end
 
-    context "BCrypt 2A hashing algorithm" do
-      before do
-        account_store_mapping
-        @account = directory.accounts.create({
-          username: "jlucpicard",
-          email: "captain@enterprise.com",
-          given_name: "Jean-Luc",
-          surname: "Picard",
-          password: "$2a$10$sWvxHJIvkARbp.u2yBpuJeGzNvpxYQo7AYxAJwFRH0HptXSWyqvwy"
-        }, password_format: 'mcf')
+    context 'BCrypt 2A hashing algorithm' do
+      let!(:account) do
+        directory.accounts.create(
+          {
+            username: 'jlucpicard',
+            email: 'captain@enterprise.com',
+            given_name: 'Jean-Luc',
+            surname: 'Picard',
+            password: '$2a$10$sWvxHJIvkARbp.u2yBpuJeGzNvpxYQo7AYxAJwFRH0HptXSWyqvwy'
+          }, password_format: 'mcf'
+        )
       end
 
       it 'creates an account' do
-        expect(@account).to be_a Stormpath::Resource::Account
-        expect(@account.username).to eq("jlucpicard")
-        expect(@account.email).to eq("captain@enterprise.com")
-        expect(@account.given_name).to eq("Jean-Luc")
-        expect(@account.surname).to eq("Picard")
+        expect(account).to be_a Stormpath::Resource::Account
+        expect(account.username).to eq('jlucpicard')
+        expect(account.email).to eq('captain@enterprise.com')
+        expect(account.given_name).to eq('Jean-Luc')
+        expect(account.surname).to eq('Picard')
       end
 
       it 'can authenticate with the account credentials' do
@@ -317,16 +323,16 @@ describe Stormpath::Resource::Directory, :vcr do
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
         expect(auth_result.account).to be_a Stormpath::Resource::Account
-        expect(auth_result.account.email).to eq("captain@enterprise.com")
-        expect(auth_result.account.given_name).to eq("Jean-Luc")
-        expect(auth_result.account.surname).to eq("Picard")
+        expect(auth_result.account.email).to eq('captain@enterprise.com')
+        expect(auth_result.account.given_name).to eq('Jean-Luc')
+        expect(auth_result.account.surname).to eq('Picard')
       end
     end
 
     context 'with account data as hash' do
       let(:account_email) { random_email }
 
-      let(:created_account_with_hash) do
+      let(:account) do
         directory.create_account({
           email: account_email,
           given_name: 'Ruby SDK',
@@ -336,15 +342,11 @@ describe Stormpath::Resource::Directory, :vcr do
         })
       end
 
-      after do
-        created_account_with_hash.delete if created_account_with_hash
-      end
-
       it 'creates an account with status ENABLED' do
-        expect(created_account_with_hash.email).to eq(account_email)
-        expect(created_account_with_hash.given_name).to eq('Ruby SDK')
-        expect(created_account_with_hash.surname).to eq('SDK')
-        expect(created_account_with_hash.status).to eq("ENABLED")
+        expect(account.email).to eq(account_email)
+        expect(account.given_name).to eq('Ruby SDK')
+        expect(account.surname).to eq('SDK')
+        expect(account.status).to eq("ENABLED")
       end
     end
 
@@ -592,8 +594,6 @@ describe Stormpath::Resource::Directory, :vcr do
 
     let(:directory) { test_api_client.directories.create name: random_directory_name }
 
-    let(:application) { test_api_client.applications.create name: random_application_name }
-
     let!(:group) { directory.groups.create name: 'someGroup' }
 
     let!(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
@@ -603,7 +603,6 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     after do
-      application.delete if application
       directory.delete if directory
     end
 

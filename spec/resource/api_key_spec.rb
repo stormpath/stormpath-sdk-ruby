@@ -5,6 +5,7 @@ describe Stormpath::Resource::ApiKey, :vcr do
     test_api_client.applications.create(name: random_application_name('ruby_api_key_spec'),
                                         description: 'Dummy desc.')
   end
+  let(:directory) { test_api_client.directories.create(name: random_directory_name) }
   let(:tenant) { application.tenant }
 
   let(:account) do
@@ -18,8 +19,19 @@ describe Stormpath::Resource::ApiKey, :vcr do
 
   let(:api_key) { account.api_keys.create({}) }
 
+  before do
+    test_api_client.account_store_mappings.create(
+      application: application,
+      account_store: directory,
+      list_index: 1,
+      is_default_account_store: true,
+      is_default_group_store: false
+    )
+  end
+
   after do
     application.delete
+    directory.delete
     account.delete
   end
 
