@@ -949,9 +949,9 @@ account they automatically create and destroy resources.
 
 The following environment variables need to be set:
 
-* <code>STORMPATH_SDK_TEST_API_KEY_ID</code> - The <code>id</code> from
+* <code>STORMPATH_CLIENT_APIKEY_ID</code> - The <code>id</code> from
   your Stormpath API key.
-* <code>STORMPATH_SDK_TEST_API_KEY_SECRET</code> - The
+* <code>STORMPATH_CLIENT_APIKEY_SECRET</code> - The
   <code>secret</code> from your Stormpath API key.
 
 ### Running
