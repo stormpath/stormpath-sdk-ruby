@@ -959,8 +959,6 @@ The following environment variables need will then need to be set:
   <code>secret</code> from your Stormpath API key.
 * <code>STORMPATH_SDK_TEST_APPLICATION_URL</code> - The URL to the
   application created above.
-* <code>STORMPATH_SDK_TEST_DIRECTORY_URL</code> - The URL to the first
-  directory created above.
 
 ### Running
 

@@ -123,8 +123,9 @@ describe Stormpath::Resource::Account, :vcr do
 
   describe '#save' do
     context 'when property values have changed' do
+      let(:directory) { test_api_client.directories.create name: random_directory_name }
       let(:account) do
-        test_directory.accounts.create build_account
+        directory.accounts.create build_account
       end
       let(:account_uri) do
         account.href
@@ -142,6 +143,7 @@ describe Stormpath::Resource::Account, :vcr do
 
       after do
         account.delete if account
+        directory.delete if directory
       end
 
       it 'saves changes to the account' do
@@ -149,5 +151,4 @@ describe Stormpath::Resource::Account, :vcr do
       end
     end
   end
-
 end
