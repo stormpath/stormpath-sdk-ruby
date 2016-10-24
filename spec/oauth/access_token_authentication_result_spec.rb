@@ -1,22 +1,41 @@
 require 'spec_helper'
 
 describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
+  let(:application) do
+    test_api_client.applications.create(name: random_application_name, description: 'Dummy desc.')
+  end
+  let(:directory) do
+    test_api_client.directories.create(name: random_directory_name('ruby'),
+                                       description: 'ruby sdk test dir')
+  end
+
+  before do
+    test_api_client.account_store_mappings.create(application: application,
+                                                  account_store: directory,
+                                                  list_index: 1,
+                                                  is_default_account_store: true,
+                                                  is_default_group_store: false)
+    account
+  end
   let(:account_data) { build_account(email: email, password: password) }
 
   let(:email) { random_email }
 
   let(:password) { 'P@$$w0rd' }
 
-  let(:account) { test_application.accounts.create(account_data) }
+  let(:account) { application.accounts.create(account_data) }
 
   let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new(email, password) }
 
   let(:jwt_authentication_result) do
-    test_application.authenticate_oauth(password_grant_request)
+    application.authenticate_oauth(password_grant_request)
   end
 
-  before { account }
-  after { account.delete }
+  after do
+    application.delete if application
+    directory.delete if directory
+    account.delete if account
+  end
 
   it 'instances should expose a method to get an account' do
     expect(jwt_authentication_result.account).to eq(account)

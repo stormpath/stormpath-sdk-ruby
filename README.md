@@ -945,20 +945,14 @@ account.custom_data.delete
 ### Setup
 
 The functional tests of the SDK run against a Stormpath tenant. In that
-account, create:
+account they automatically create and destroy resources.
 
-* An application reserved for testing.
-* A directory reserved for test accounts. _Be sure to associate this
-  directory to the test application as a login source_.
-
-The following environment variables need will then need to be set:
+The following environment variables need to be set:
 
 * <code>STORMPATH_SDK_TEST_API_KEY_ID</code> - The <code>id</code> from
   your Stormpath API key.
 * <code>STORMPATH_SDK_TEST_API_KEY_SECRET</code> - The
   <code>secret</code> from your Stormpath API key.
-* <code>STORMPATH_SDK_TEST_APPLICATION_URL</code> - The URL to the
-  application created above.
 
 ### Running
 

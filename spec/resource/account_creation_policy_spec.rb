@@ -2,7 +2,10 @@ require 'spec_helper'
 
 describe Stormpath::Resource::AccountCreationPolicy, :vcr do
   describe 'instances should respond to attribute property methods' do
-    let(:application) { test_application }
+    let(:application) do
+      test_api_client.applications.create(name: random_application_name('ruby_account_policy'),
+                                          description: 'Dummy desc.')
+    end
     let(:directory) { test_api_client.directories.create(name: random_directory_name) }
     let(:account_creation_policy) { directory.account_creation_policy }
     let(:create_valid_account) do
@@ -34,7 +37,10 @@ describe Stormpath::Resource::AccountCreationPolicy, :vcr do
       )
     end
 
-    after { directory.delete }
+    after do
+      application.delete
+      directory.delete
+    end
 
     it do
       expect(account_creation_policy).to be_a Stormpath::Resource::AccountCreationPolicy

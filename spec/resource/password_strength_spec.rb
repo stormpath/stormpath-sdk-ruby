@@ -1,8 +1,16 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::PasswordStrength, :vcr do
-  describe "instances should respond to attribute property methods" do
-    let(:application) { test_application }
+  let(:application) do
+    test_api_client.applications.create(name: random_application_name('ruby_password_strength'),
+                                        description: 'Dummy desc.')
+  end
+
+  after do
+    application.delete
+  end
+
+  describe 'instances should respond to attribute property methods' do
     let(:directory) { test_api_client.directories.create(name: random_directory_name) }
     let(:password_policy) { directory.password_policy }
     let(:password_strength) { password_policy.strength }
@@ -22,14 +30,14 @@ describe Stormpath::Resource::PasswordStrength, :vcr do
     it do
       expect(password_strength).to be_a Stormpath::Resource::PasswordStrength
 
-      [ :min_length,
-        :max_length,
-        :min_lower_case,
-        :min_upper_case,
-        :min_numeric,
-        :min_symbol,
-        :min_diacritic,
-        :prevent_reuse].each do |property_accessor|
+      [:min_length,
+       :max_length,
+       :min_lower_case,
+       :min_upper_case,
+       :min_numeric,
+       :min_symbol,
+       :min_diacritic,
+       :prevent_reuse].each do |property_accessor|
         expect(password_strength).to respond_to(property_accessor)
         expect(password_strength).to respond_to("#{property_accessor}=")
       end

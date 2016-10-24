@@ -1,8 +1,16 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::PasswordPolicy, :vcr do
-  describe "instances should respond to attribute property methods" do
-    let(:application) { test_application }
+  let(:application) do
+    test_api_client.applications.create(name: random_application_name('ruby_password_policy'),
+                                        description: 'Dummy desc.')
+  end
+
+  after do
+    application.delete
+  end
+
+  describe 'instances should respond to attribute property methods' do
     let(:directory) { test_api_client.directories.create(name: random_directory_name) }
     let(:password_policy) { directory.password_policy }
 
@@ -42,17 +50,17 @@ describe Stormpath::Resource::PasswordPolicy, :vcr do
     end
 
     it 'can change reset_email_status' do
-      expect(directory.password_policy.reset_email_status).to eq("ENABLED")
-      password_policy.reset_email_status = "DISABLED"
+      expect(directory.password_policy.reset_email_status).to eq('ENABLED')
+      password_policy.reset_email_status = 'DISABLED'
       password_policy.save
-      expect(directory.password_policy.reset_email_status).to eq("DISABLED")
+      expect(directory.password_policy.reset_email_status).to eq('DISABLED')
     end
 
     it 'can change reset_success_email_status' do
-      expect(directory.password_policy.reset_success_email_status).to eq("ENABLED")
-      password_policy.reset_success_email_status = "DISABLED"
+      expect(directory.password_policy.reset_success_email_status).to eq('ENABLED')
+      password_policy.reset_success_email_status = 'DISABLED'
       password_policy.save
-      expect(directory.password_policy.reset_success_email_status).to eq("DISABLED")
+      expect(directory.password_policy.reset_success_email_status).to eq('DISABLED')
     end
   end
 end

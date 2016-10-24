@@ -36,9 +36,8 @@ module Stormpath
   module TestApiKeyHelpers
     TEST_ENV_REQUIRED_VARS = {
       STORMPATH_SDK_TEST_API_KEY_ID: 'The id from your Stormpath API Key',
-      STORMPATH_SDK_TEST_API_KEY_SECRET: 'The secret from your Stormpath API Key',
-      STORMPATH_SDK_TEST_APPLICATION_URL: 'The REST URL of a Stormpath Application reserved for testing.'
-    }
+      STORMPATH_SDK_TEST_API_KEY_SECRET: 'The secret from your Stormpath API Key'
+    }.freeze
 
     def test_api_key_id
       ENV['STORMPATH_SDK_TEST_API_KEY_ID']
@@ -48,19 +47,15 @@ module Stormpath
       ENV['STORMPATH_SDK_TEST_API_KEY_SECRET']
     end
 
-    def test_application_url
-      ENV['STORMPATH_SDK_TEST_APPLICATION_URL']
-    end
-
     def test_api_key
-      Stormpath::ApiKey.new test_api_key_id, test_api_key_secret
+      Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret)
     end
 
     def test_api_client
-      @test_api_client ||= Stormpath::Client.new api_key: test_api_key
+      @test_api_client ||= Stormpath::Client.new(api_key: test_api_key)
     end
 
-    def get_cache_data href
+    def get_cache_data(href)
       data_store = test_api_client.send :data_store
       data_store.send :cache_for, href
     end
@@ -69,10 +64,6 @@ module Stormpath
       TEST_ENV_REQUIRED_VARS.reject do |var, _message|
         ENV[var.to_s]
       end
-    end
-
-    def test_application
-      test_api_client.applications.get test_application_url
     end
 
     def fixture_path
