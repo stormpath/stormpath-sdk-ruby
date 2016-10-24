@@ -132,6 +132,11 @@ describe Stormpath::Resource::Organization, :vcr do
         expect(org_account).to be_kind_of(Stormpath::Resource::Account)
         expect(organization.accounts).to include(org_account)
       end
+
+      it 'can get a specific account' do
+        expect(org_account).to be_kind_of(Stormpath::Resource::Account)
+        expect(organization.accounts.get(org_account.href)).to eq org_account
+      end
     end
 
     context 'tenant' do
