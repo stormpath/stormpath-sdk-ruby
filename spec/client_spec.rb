@@ -754,7 +754,33 @@ properties
 
   describe '#accounts.verify_account_email' do
     context 'given a verfication token of an account' do
-      let(:directory) { test_directory_with_verification }
+      let(:application) do
+        test_api_client.applications.create(name: random_application_name('rubysdk'),
+                                            description: 'test app for client spec')
+      end
+      let(:directory_with_verification) do
+        test_api_client.directories.create(name: random_directory_name('ruby'),
+                                           description: 'email verification enabled')
+      end
+
+      before do
+        test_api_client.account_store_mappings.create(application: application,
+                                                      account_store: directory_with_verification,
+                                                      list_index: 1,
+                                                      is_default_account_store: false,
+                                                      is_default_group_store: false)
+
+        directory_with_verification.account_creation_policy.verification_email_status = 'ENABLED'
+        directory_with_verification.account_creation_policy.verification_success_email_status = 'ENABLED'
+        directory_with_verification.account_creation_policy.welcome_email_status = 'ENABLED'
+        directory_with_verification.account_creation_policy.save
+      end
+
+      after do
+        application.delete if application
+        account.delete if account
+        directory_with_verification.delete
+      end
 
       let(:account) do
         account = Stormpath::Resource::Account.new({
@@ -764,7 +790,7 @@ properties
           surname: 'SDK',
           username: random_user_name
         })
-        directory.create_account account
+        directory_with_verification.create_account account
       end
 
       let(:verification_token) do
@@ -773,10 +799,6 @@ properties
 
       let(:verified_account) do
         test_api_client.accounts.verify_email_token verification_token
-      end
-
-      after do
-        account.delete if account
       end
 
       it 'returns the account' do

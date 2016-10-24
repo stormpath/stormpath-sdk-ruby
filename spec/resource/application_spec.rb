@@ -5,7 +5,6 @@ describe Stormpath::Resource::Application, :vcr do
   let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
   let(:application) { test_api_client.applications.get app.href }
   let(:directory) { test_api_client.directories.create name: random_directory_name }
-  let(:directory_with_verification) { test_directory_with_verification }
 
   before do
    test_api_client.account_store_mappings.create({ application: app, account_store: directory,
@@ -524,21 +523,32 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe '#verification_emails' do
-    let(:directory_with_verification) { test_directory_with_verification }
+    let(:directory_with_verification) do
+      test_api_client.directories.create(name: random_directory_name('ruby'),
+                                         description: 'email verification enabled')
+    end
 
     before do
-      test_api_client.account_store_mappings.create({ application: app, account_store: directory_with_verification,
-        list_index: 1, is_default_account_store: false, is_default_group_store: false })
+      test_api_client.account_store_mappings.create(application: app,
+                                                    account_store: directory_with_verification,
+                                                    list_index: 1,
+                                                    is_default_account_store: false,
+                                                    is_default_group_store: false)
+
+      directory_with_verification.account_creation_policy.verification_email_status = 'ENABLED'
+      directory_with_verification.account_creation_policy.verification_success_email_status = 'ENABLED'
+      directory_with_verification.account_creation_policy.welcome_email_status = 'ENABLED'
+      directory_with_verification.account_creation_policy.save
     end
 
     let(:account) do
-      directory_with_verification.accounts.create({
+      directory_with_verification.accounts.create(
         email: random_email,
         given_name: 'Ruby SDK',
         password: 'P@$$w0rd',
         surname: 'SDK',
         username: random_user_name
-      })
+      )
     end
 
     let(:verification_emails) do
@@ -547,6 +557,7 @@ describe Stormpath::Resource::Application, :vcr do
 
     after do
       account.delete if account
+      directory_with_verification.delete
     end
 
     it 'returns verification email' do

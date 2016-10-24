@@ -1,30 +1,33 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Directory, :vcr do
-  def create_account_store_mapping(application, account_store, is_default_group_store=false)
-    test_api_client.account_store_mappings.create({
+  def create_account_store_mapping(application, account_store, is_default_group_store = false)
+    test_api_client.account_store_mappings.create(
       application: application,
       account_store: account_store,
       list_index: 0,
       is_default_account_store: true,
       is_default_group_store: is_default_group_store
-     })
+    )
   end
 
-  describe "instances should respond to attribute property methods" do
-    let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
-    let(:application) { test_api_client.applications.get app.href }
-    let(:directory) { test_api_client.directories.create name: random_directory_name, description: 'description_for_some_test_directory' }
-    let(:directory_with_verification) { test_directory_with_verification }
+  let(:application) do
+    test_api_client.applications.create(name: random_application_name('rubysdk'),
+                                        description: 'test app for directory spec')
+  end
 
-    before do
-      test_api_client.account_store_mappings.create({ application: app, account_store: directory_with_verification,
-        list_index: 1, is_default_account_store: false, is_default_group_store: false })
+  after do
+    application.delete if application
+  end
+
+  describe 'instances should respond to attribute property methods' do
+    let(:directory) do
+      test_api_client.directories.create(name: random_directory_name,
+                                         description: 'description_for_some_test_directory')
     end
 
     after do
       directory.delete if directory
-      application.delete if application
     end
 
     it do
@@ -155,36 +158,59 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     context 'with registration workflow' do
+      let(:directory_with_verification) do
+        test_api_client.directories.create(name: random_directory_name('ruby'),
+                                           description: 'email verification enabled')
+      end
 
-      let(:created_account_with_reg_workflow) { test_directory_with_verification.create_account account }
+      before do
+        test_api_client.account_store_mappings.create(application: application,
+                                                      account_store: directory_with_verification,
+                                                      list_index: 1,
+                                                      is_default_account_store: false,
+                                                      is_default_group_store: false)
+
+        directory_with_verification.account_creation_policy.verification_email_status = 'ENABLED'
+        directory_with_verification.account_creation_policy.verification_success_email_status = 'ENABLED'
+        directory_with_verification.account_creation_policy.welcome_email_status = 'ENABLED'
+        directory_with_verification.account_creation_policy.save
+      end
 
       after do
-        created_account_with_reg_workflow.delete if created_account_with_reg_workflow
+        directory_with_verification.delete
       end
 
-      it 'creates an account with status UNVERIFIED' do
-        expect(created_account_with_reg_workflow).to be
-        expect(created_account_with_reg_workflow.username).to eq(account.username)
-        expect(created_account_with_reg_workflow).to eq(account)
-        expect(created_account_with_reg_workflow.status).to eq("UNVERIFIED")
-        expect(created_account_with_reg_workflow.email_verification_token.href).to be
+      context 'enabled on account creation' do
+        let(:created_account_with_reg_workflow) { directory_with_verification.create_account account }
+
+        after do
+          created_account_with_reg_workflow.delete if created_account_with_reg_workflow
+        end
+
+        it 'creates an account with status UNVERIFIED' do
+          expect(created_account_with_reg_workflow).to be
+          expect(created_account_with_reg_workflow.username).to eq(account.username)
+          expect(created_account_with_reg_workflow).to eq(account)
+          expect(created_account_with_reg_workflow.status).to eq('UNVERIFIED')
+          expect(created_account_with_reg_workflow.email_verification_token.href).to be
+        end
+
       end
 
-    end
+      context 'disabled on account creation' do
+        let(:created_account_with_reg_workflow) { directory_with_verification.create_account account, false }
 
-    context 'with registration workflow but set it to false on account creation' do
-      let(:created_account_with_reg_workflow) { test_directory_with_verification.create_account account, false }
+        after do
+          created_account_with_reg_workflow.delete if created_account_with_reg_workflow
+        end
 
-      after do
-        created_account_with_reg_workflow.delete if created_account_with_reg_workflow
-      end
-
-      it 'creates an account with status ENABLED' do
-        expect(created_account_with_reg_workflow).to be
-        expect(created_account_with_reg_workflow.username).to eq(account.username)
-        expect(created_account_with_reg_workflow).to eq(account)
-        expect(created_account_with_reg_workflow.status).to eq("ENABLED")
-        expect(created_account_with_reg_workflow.email_verification_token).not_to be
+        it 'creates an account with status ENABLED' do
+          expect(created_account_with_reg_workflow).to be
+          expect(created_account_with_reg_workflow.username).to eq(account.username)
+          expect(created_account_with_reg_workflow).to eq(account)
+          expect(created_account_with_reg_workflow.status).to eq("ENABLED")
+          expect(created_account_with_reg_workflow.email_verification_token).not_to be
+        end
       end
     end
   end

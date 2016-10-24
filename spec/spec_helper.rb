@@ -35,11 +35,10 @@ end
 module Stormpath
   module TestApiKeyHelpers
     TEST_ENV_REQUIRED_VARS = {
-      STORMPATH_SDK_TEST_API_KEY_ID: 'The id form your Stormpath API Key',
+      STORMPATH_SDK_TEST_API_KEY_ID: 'The id from your Stormpath API Key',
       STORMPATH_SDK_TEST_API_KEY_SECRET: 'The secret from your Stormpath API Key',
       STORMPATH_SDK_TEST_APPLICATION_URL: 'The REST URL of a Stormpath Application reserved for testing.',
       STORMPATH_SDK_TEST_DIRECTORY_URL: 'The REST URL of a Stormpath Directory associated to the test Application.',
-      STORMPATH_SDK_TEST_DIRECTORY_WITH_VERIFICATION_URL: 'The REST URL of a Stormpath Directory configured for email verification, associated to the test Application.'
     }
 
     def test_api_key_id
@@ -52,10 +51,6 @@ module Stormpath
 
     def test_directory_url
       ENV['STORMPATH_SDK_TEST_DIRECTORY_URL']
-    end
-
-    def test_directory_with_verification_url
-      ENV['STORMPATH_SDK_TEST_DIRECTORY_WITH_VERIFICATION_URL']
     end
 
     def test_application_url
@@ -87,10 +82,6 @@ module Stormpath
 
     def test_directory
       test_api_client.directories.get test_directory_url
-    end
-
-    def test_directory_with_verification
-      test_api_client.directories.get test_directory_with_verification_url
     end
 
     def fixture_path
@@ -170,5 +161,4 @@ RSpec.configure do |c|
       raise set_up_message
     end
   end
-
 end

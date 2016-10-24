@@ -17,16 +17,4 @@ RSpec::Core::RakeTask.new do |t|
   t.rspec_opts = ['-c']
 end
 
-task :default => :spec
-
-namespace :api do
-  task :clean do
-    Stormpath::Support::Api.destroy_resources(
-      ENV['STORMPATH_SDK_TEST_API_KEY_ID'],
-      ENV['STORMPATH_SDK_TEST_API_KEY_SECRET'],
-      ENV['STORMPATH_SDK_TEST_APPLICATION_URL'],
-      ENV['STORMPATH_SDK_TEST_DIRECTORY_URL'],
-      ENV['STORMPATH_SDK_TEST_DIRECTORY_WITH_VERIFICATION_URL']
-    )
-  end
-end
+task default: :spec

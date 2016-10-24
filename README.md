@@ -950,9 +950,6 @@ account, create:
 * An application reserved for testing.
 * A directory reserved for test accounts. _Be sure to associate this
   directory to the test application as a login source_.
-* Another directory reserved for test accounts with the account
-  verification workflow turned on. _Be sure to associate this directory
-  to the test application as a login source_.
 
 The following environment variables need will then need to be set:
 
@@ -964,8 +961,6 @@ The following environment variables need will then need to be set:
   application created above.
 * <code>STORMPATH_SDK_TEST_DIRECTORY_URL</code> - The URL to the first
   directory created above.
-* <code>STORMPATH_SDK_TEST_DIRECTORY_WITH_VERIFICATION_URL</code> - The
-  URL to the second directory created above.
 
 ### Running
 
