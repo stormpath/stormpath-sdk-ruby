@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Stormpath::Resource::Organization, :vcr do
 
   let(:organization) do
-    test_api_client.organizations.create name: 'test_organization',
+    test_api_client.organizations.create name: 'test_ruby_organization',
        name_key: "testorganization", description: 'test organization'
   end
 
@@ -11,11 +11,13 @@ describe Stormpath::Resource::Organization, :vcr do
     organization.delete if organization
   end
 
-  def create_organization_account_store_mapping(organization, account_store)
-    test_api_client.organization_account_store_mappings.create({
+  def create_organization_account_store_mapping(organization, account_store, options = {})
+    test_api_client.organization_account_store_mappings.create(
       account_store: { href: account_store.href },
-      organization: { href: organization.href }
-    })
+      organization: { href: organization.href },
+      is_default_account_store: options[:default_account_store] || false,
+      is_default_group_store: options[:default_group_store] || false
+    )
   end
 
   describe "instances should respond to attribute property methods" do
@@ -93,10 +95,27 @@ describe Stormpath::Resource::Organization, :vcr do
     context 'accounts' do
       let(:directory) { test_api_client.directories.create name: random_directory_name }
 
-      let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
+      let(:account) do
+        directory.accounts.create(
+          email: 'rubysdk@example.com',
+          given_name: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK'
+        )
+      end
+      let(:org_account) do
+        organization.accounts.create(
+          email: 'rubysdk2@example.com',
+          given_name: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK'
+        )
+      end
 
       before do
-        create_organization_account_store_mapping(organization, directory)
+        create_organization_account_store_mapping(organization,
+                                                  directory,
+                                                  default_account_store: true)
       end
 
       after do
@@ -104,9 +123,19 @@ describe Stormpath::Resource::Organization, :vcr do
         directory.delete if directory
       end
 
-      it 'returns a collection of groups' do
+      it 'returns a collection of accounts' do
         expect(organization.accounts).to be_kind_of(Stormpath::Resource::Collection)
         expect(organization.accounts).to include(account)
+      end
+
+      it 'can create another account' do
+        expect(org_account).to be_kind_of(Stormpath::Resource::Account)
+        expect(organization.accounts).to include(org_account)
+      end
+
+      it 'can get a specific account' do
+        expect(org_account).to be_kind_of(Stormpath::Resource::Account)
+        expect(organization.accounts.get(org_account.href)).to eq org_account
       end
     end
 

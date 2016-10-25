@@ -7,7 +7,7 @@ class Stormpath::Resource::Organization < Stormpath::Resource::Instance
   prop_reader :created_at, :modified_at
 
   has_many :groups
-  has_many :accounts
+  has_many :accounts, can: [:get, :create]
   belongs_to :tenant
 
   has_one :custom_data
