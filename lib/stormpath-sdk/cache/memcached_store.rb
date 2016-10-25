@@ -4,12 +4,17 @@ module Stormpath
   module Cache
     class MemcachedStore
       def initialize(opts = {})
-        @memcached = Memcached.new(opts)
+        options = nil if opts.blank?
+        @memcached = Memcached.new(options)
       end
 
       def get(key)
-        entry = @memcached.get(key)
-        entry && Stormpath::Cache::CacheEntry.from_h(MultiJson.load(entry))
+        begin
+          entry = @memcached.get(key)
+          entry && Stormpath::Cache::CacheEntry.from_h(MultiJson.load(entry))
+        rescue Memcached::NotFound
+          nil
+        end
       end
 
       def put(key, entry)
