@@ -4,7 +4,7 @@ shared_examples 'a data store' do
   let(:factory)           { Stormpath::Test::ResourceFactory.new }
   let(:request_executor)  { Stormpath::Test::TestRequestExecutor.new }
   let(:data_store) do
-    Stormpath::DataStore.new(request_executor, test_api_key, { store: store }, nil, nil)
+    Stormpath::DataStore.new(request_executor, test_api_key, { store: store }, nil)
   end
   let(:application_cache) { data_store.cache_manager.get_cache 'applications' }
   let(:tenant_cache)      { data_store.cache_manager.get_cache 'tenants' }
