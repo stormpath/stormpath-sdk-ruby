@@ -16,8 +16,8 @@ module Stormpath
       end
 
       def validate_access_token
-        raise Stormpath::Oauth::Error, :jwt_invalid if decoded_jwt.second['stt'] != 'access'
-        raise Stormpath::Oauth::Error, :jwt_invalid if decoded_jwt.first['iss'] == application.href
+        raise Stormpath::Oauth::Error, :jwt_invalid unless decoded_jwt.second['stt'] == 'access'
+        raise Stormpath::Oauth::Error, :jwt_invalid unless decoded_jwt.first['iss'] == application.href
       end
 
       def decoded_jwt
