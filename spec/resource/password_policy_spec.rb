@@ -15,13 +15,7 @@ describe Stormpath::Resource::PasswordPolicy, :vcr do
     let(:password_policy) { directory.password_policy }
 
     before do
-      test_api_client.account_store_mappings.create(
-        application: application,
-        account_store: directory,
-        list_index: 1,
-        is_default_account_store: false,
-        is_default_group_store: false
-      )
+      map_account_store(application, directory, 1, false, false)
     end
 
     after { directory.delete }

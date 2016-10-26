@@ -32,3 +32,9 @@ RSpec::Matchers.define :have_stt_in_header do |expected|
     header.include?('stt') && header['stt'] == expected
   end
 end
+
+RSpec::Matchers.define :be_boolean do
+  match do |actual|
+    actual == true || actual == false
+  end
+end

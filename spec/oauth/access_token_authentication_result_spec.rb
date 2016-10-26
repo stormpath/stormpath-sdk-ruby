@@ -10,20 +10,16 @@ describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
   end
 
   before do
-    test_api_client.account_store_mappings.create(application: application,
-                                                  account_store: directory,
-                                                  list_index: 1,
-                                                  is_default_account_store: true,
-                                                  is_default_group_store: false)
-    account
+    map_account_store(application, directory, 1, true, false)
   end
+  
   let(:account_data) { build_account(email: email, password: password) }
 
   let(:email) { random_email }
 
   let(:password) { 'P@$$w0rd' }
 
-  let(:account) { application.accounts.create(account_data) }
+  let!(:account) { application.accounts.create(account_data) }
 
   let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new(email, password) }
 

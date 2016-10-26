@@ -1,16 +1,6 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Directory, :vcr do
-  def create_account_store_mapping(application, account_store, is_default_group_store = false)
-    test_api_client.account_store_mappings.create(
-      application: application,
-      account_store: account_store,
-      list_index: 0,
-      is_default_account_store: true,
-      is_default_group_store: is_default_group_store
-    )
-  end
-
   let(:application) do
     test_api_client.applications.create(name: random_application_name('rubysdk'),
                                         description: 'test app for directory spec')
@@ -97,10 +87,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       let!(:organization_account_store_mappings) do
-        test_api_client.organization_account_store_mappings.create(
-          account_store: { href: directory.href },
-          organization: { href: organization.href }
-        )
+        map_organization_store(directory, organization)
       end
 
       after do
@@ -164,16 +151,8 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       before do
-        test_api_client.account_store_mappings.create(application: application,
-                                                      account_store: directory_with_verification,
-                                                      list_index: 1,
-                                                      is_default_account_store: false,
-                                                      is_default_group_store: false)
-
-        directory_with_verification.account_creation_policy.verification_email_status = 'ENABLED'
-        directory_with_verification.account_creation_policy.verification_success_email_status = 'ENABLED'
-        directory_with_verification.account_creation_policy.welcome_email_status = 'ENABLED'
-        directory_with_verification.account_creation_policy.save
+        map_account_store(application, directory_with_verification, 1, false, false)
+        enable_email_verification(directory_with_verification)
       end
 
       after do
@@ -222,7 +201,7 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     before do
-      create_account_store_mapping(application, directory, true)
+      map_account_store(application, directory, 0, true, true)
     end
 
     after do
@@ -599,7 +578,7 @@ describe Stormpath::Resource::Directory, :vcr do
     let!(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
 
     let!(:account_store_mapping) do
-      test_api_client.account_store_mappings.create({ application: application, account_store: directory })
+      map_account_store(application, directory, 0, true, true)
     end
 
     after do

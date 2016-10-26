@@ -7,8 +7,7 @@ describe Stormpath::Resource::Application, :vcr do
   let(:directory) { test_api_client.directories.create name: random_directory_name }
 
   before do
-   test_api_client.account_store_mappings.create({ application: app, account_store: directory,
-      list_index: 1, is_default_account_store: true, is_default_group_store: true })
+    map_account_store(app, directory, 1, true, true)
   end
 
   after do
@@ -235,7 +234,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       before do
-        test_api_client.account_store_mappings.create({ application: application, account_store: group })
+        map_account_store(application, group, 0, true, false)
       end
 
       after do
@@ -403,12 +402,8 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         before do
-          test_api_client.organization_account_store_mappings.create(
-            account_store: { href: account_directory.href },
-            organization: { href: organization.href }
-          )
-
-          test_api_client.account_store_mappings.create(application: application, account_store: organization)
+          map_organization_store(account_directory, organization)
+          map_account_store(application, organization, 0, true, true)
         end
 
         it 'sends a password reset request of the account' do
@@ -451,12 +446,8 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         before do
-          test_api_client.organization_account_store_mappings.create(
-            account_store: { href: account_directory.href },
-            organization: { href: organization.href }
-          )
-
-          test_api_client.account_store_mappings.create(application: application, account_store: organization)
+          map_organization_store(account_directory, organization)
+          map_account_store(application, organization, 0, true, true)
         end
 
         it 'sends a password reset request of the account' do
@@ -505,12 +496,8 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         before do
-          test_api_client.organization_account_store_mappings.create(
-            account_store: { href: account_directory.href },
-            organization: { href: organization.href }
-          )
-
-          test_api_client.account_store_mappings.create(application: application, account_store: organization)
+          map_organization_store(account_directory, organization)
+          map_account_store(application, organization, 0, true, true)
         end
 
         it 'sends a password reset request of the account' do
@@ -529,16 +516,8 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     before do
-      test_api_client.account_store_mappings.create(application: app,
-                                                    account_store: directory_with_verification,
-                                                    list_index: 1,
-                                                    is_default_account_store: false,
-                                                    is_default_group_store: false)
-
-      directory_with_verification.account_creation_policy.verification_email_status = 'ENABLED'
-      directory_with_verification.account_creation_policy.verification_success_email_status = 'ENABLED'
-      directory_with_verification.account_creation_policy.welcome_email_status = 'ENABLED'
-      directory_with_verification.account_creation_policy.save
+      map_account_store(app, directory_with_verification, 1, false, false)
+      enable_email_verification(directory_with_verification)
     end
 
     let(:account) do
@@ -596,30 +575,16 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'with organization as account store option' do
-      def create_organization_account_store_mapping(organization, account_store)
-        test_api_client.organization_account_store_mappings.create({
-          account_store: { href: account_store.href },
-          organization: { href: organization.href }
-        })
-      end
-
-      def create_application_account_store_mapping(application, account_store)
-        test_api_client.account_store_mappings.create(
-          application: application,
-          account_store: account_store
-        )
-      end
-
       let(:organization) do
-        test_api_client.organizations.create name: 'test_organization',
-           name_key: "testorganization"
+        test_api_client.organizations.create(name: 'test_organization',
+                                             name_key: 'testorganization')
       end
 
       let(:auth_request) { application.authenticate_account(username_password_request) }
 
       before do
-        create_organization_account_store_mapping(organization, directory)
-        create_application_account_store_mapping(application, organization)
+        map_organization_store(directory, organization)
+        map_account_store(application, organization, 0, true, false)
       end
 
       after do
@@ -1094,16 +1059,8 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         before do
-          test_api_client.account_store_mappings.create(
-            application: application,
-            account_store: organization
-          )
-
-          test_api_client.organization_account_store_mappings.create(
-            account_store: { href: account_directory.href },
-            organization: { href: organization.href }
-          )
-
+          map_account_store(application, organization, 0, true, true)
+          map_organization_store(account_directory, organization)
           account_directory.accounts.create account_data
         end
 

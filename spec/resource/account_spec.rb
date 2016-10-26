@@ -54,8 +54,7 @@ describe Stormpath::Resource::Account, :vcr do
     let(:directory) { test_api_client.directories.create name: random_directory_name }
 
     before do
-      test_api_client.account_store_mappings.create({ application: app, account_store: directory,
-        list_index: 1, is_default_account_store: true, is_default_group_store: true })
+      map_account_store(app, directory, 1, true, true)
     end
 
     let(:account) do

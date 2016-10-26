@@ -732,10 +732,7 @@ properties
     let(:directory) { test_api_client.directories.create name: random_directory_name }
 
     let(:organization_account_store_mappings) do
-      test_api_client.organization_account_store_mappings.create({
-        account_store: { href: directory.href },
-        organization: { href: organization.href }
-      })
+      map_organization_store(directory, organization)
     end
 
     after do
@@ -764,16 +761,8 @@ properties
       end
 
       before do
-        test_api_client.account_store_mappings.create(application: application,
-                                                      account_store: directory_with_verification,
-                                                      list_index: 1,
-                                                      is_default_account_store: false,
-                                                      is_default_group_store: false)
-
-        directory_with_verification.account_creation_policy.verification_email_status = 'ENABLED'
-        directory_with_verification.account_creation_policy.verification_success_email_status = 'ENABLED'
-        directory_with_verification.account_creation_policy.welcome_email_status = 'ENABLED'
-        directory_with_verification.account_creation_policy.save
+        map_account_store(application, directory_with_verification, 1, false, false)
+        enable_email_verification(directory_with_verification)
       end
 
       after do

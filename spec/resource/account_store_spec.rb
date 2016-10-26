@@ -1,16 +1,6 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountStore, :vcr do
-  def create_account_store_mapping(application, account_store, is_default_group_store = false)
-    test_api_client.account_store_mappings.create(
-      application: application,
-      account_store: account_store,
-      list_index: 0,
-      is_default_account_store: true,
-      is_default_group_store: is_default_group_store
-    )
-  end
-
   let(:application) do
     test_api_client.applications.create name: random_application_name,
                                         description: 'testApplication for AccountStoreMappings'
@@ -37,7 +27,7 @@ describe Stormpath::Resource::AccountStore, :vcr do
   end
 
   describe 'given an account_store_mapping and a directory' do
-    let!(:account_store_mapping) { create_account_store_mapping(application, directory, true) }
+    let!(:account_store_mapping) { map_account_store(application, directory, 0, true, true) }
     let(:reloaded_mapping) { application.account_store_mappings.get account_store_mapping.href }
 
     it 'should return a directory' do
@@ -47,7 +37,7 @@ describe Stormpath::Resource::AccountStore, :vcr do
   end
 
   describe 'given an account_store_mapping and a group' do
-    let!(:account_store_mapping) { create_account_store_mapping(application, group) }
+    let!(:account_store_mapping) { map_account_store(application, group, 0, true, false) }
     let(:reloaded_mapping) { application.account_store_mappings.get account_store_mapping.href }
 
     it 'should return a group' do
@@ -57,7 +47,7 @@ describe Stormpath::Resource::AccountStore, :vcr do
   end
 
   describe 'given an account_store_mapping and an organization' do
-    let!(:account_store_mapping) { create_account_store_mapping(application, organization) }
+    let!(:account_store_mapping) { map_account_store(application, organization, 0, true, false) }
     let(:reloaded_mapping) { application.account_store_mappings.get account_store_mapping.href }
 
     it 'should return an organization' do
@@ -69,7 +59,7 @@ describe Stormpath::Resource::AccountStore, :vcr do
   describe 'given an undefined account_store_mapping' do
     it 'should raise an error' do
       expect do
-        create_account_store_mapping(application, 'undefined')
+        map_account_store(application, 'undefined', 0, true, false)
       end.to raise_error
     end
   end

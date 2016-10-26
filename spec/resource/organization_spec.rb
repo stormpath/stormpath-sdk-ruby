@@ -11,13 +11,6 @@ describe Stormpath::Resource::Organization, :vcr do
     organization.delete if organization
   end
 
-  def create_organization_account_store_mapping(organization, account_store)
-    test_api_client.organization_account_store_mappings.create({
-      account_store: { href: account_store.href },
-      organization: { href: organization.href }
-    })
-  end
-
   describe "instances should respond to attribute property methods" do
     it do
       [:name, :description, :name_key, :status].each do |property_accessor|
@@ -76,7 +69,7 @@ describe Stormpath::Resource::Organization, :vcr do
       let(:group) { directory.groups.create name: "test_group" }
 
       before do
-        create_organization_account_store_mapping(organization, group)
+        map_organization_store(group, organization)
       end
 
       after do
@@ -96,7 +89,7 @@ describe Stormpath::Resource::Organization, :vcr do
       let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
 
       before do
-        create_organization_account_store_mapping(organization, directory)
+        map_organization_store(directory, organization)
       end
 
       after do
@@ -114,7 +107,7 @@ describe Stormpath::Resource::Organization, :vcr do
       let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       before do
-        create_organization_account_store_mapping(organization, directory)
+        map_organization_store(directory, organization)
       end
 
       after do
@@ -159,7 +152,7 @@ describe Stormpath::Resource::Organization, :vcr do
       let(:directory) { test_api_client.directories.create name: random_directory_name }
 
       let(:organization_account_store_mapping) do
-        create_organization_account_store_mapping(organization, directory)
+        map_organization_store(directory, organization)
       end
 
       let(:reloaded_mapping) do
@@ -183,7 +176,7 @@ describe Stormpath::Resource::Organization, :vcr do
       let(:group) { directory.groups.create name: "test_group" }
 
       let(:organization_account_store_mapping) do
-        create_organization_account_store_mapping(organization, group)
+        map_organization_store(group, organization)
       end
 
       let(:reloaded_mapping) do

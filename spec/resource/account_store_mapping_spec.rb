@@ -1,17 +1,6 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountStoreMapping, :vcr do
-
-  def create_account_store_mapping(application, account_store, options={})
-    test_api_client.account_store_mappings.create({
-      application: application,
-      account_store: account_store,
-      list_index: options[:list_index] || 0,
-      is_default_account_store: options[:is_default_account_store] || false,
-      is_default_group_store: options[:is_default_group_store] || false
-     })
-  end
-
   let(:directory_name) { random_directory_name }
 
   let(:directory) { test_api_client.directories.create name: directory_name, description: 'testDirectory for AccountStoreMappings' }
@@ -24,7 +13,9 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   end
 
   describe "instances" do
-    let(:account_store_mapping) {create_account_store_mapping(application,directory, is_default_account_store: true)}
+    let!(:account_store_mapping) do
+      map_account_store(application, directory, 0, true, false)
+    end
 
     it do
       [:list_index, :is_default_account_store, :is_default_group_store, :default_account_store, :default_group_store ].each do |prop_accessor|
@@ -51,7 +42,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
 
 
   describe 'given an application' do
-    let(:reloaded_application) { test_api_client.applications.get application.href}
+    let(:reloaded_application) { test_api_client.applications.get application.href }
 
     context 'on application creation' do
       it 'there should be no default account/group store' do
@@ -61,33 +52,33 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     end
 
     it 'should retrive a default account store mapping one is created' do
-      account_store_mapping = create_account_store_mapping(application,directory, is_default_account_store: true, is_default_group_store: true)
+      account_store_mapping = map_account_store(application, directory, 0, true, true)
       expect(reloaded_application.default_account_store_mapping).to eq(account_store_mapping)
     end
 
     it 'should retrive a default group store mapping when one is created' do
-      account_store_mapping = create_account_store_mapping(application,directory, is_default_account_store: true, is_default_group_store: true)
+      account_store_mapping = map_account_store(application, directory, 0, true, true)
       expect(reloaded_application.default_group_store_mapping).to eq(account_store_mapping)
     end
 
     it 'change the default account store mapping, the application needs to be reloaded' do
-      account_store_mapping = create_account_store_mapping(application,directory, is_default_account_store: true)
+      account_store_mapping = map_account_store(application, directory, 0, true, false)
       expect(application.default_account_store_mapping).to eq(nil)
       expect(reloaded_application.default_account_store_mapping).to eq(account_store_mapping)
     end
 
     it 'change the default group store mapping, the application needs to be reloaded' do
-      account_store_mapping = create_account_store_mapping(application,directory, is_default_account_store: true, is_default_group_store: true)
+      account_store_mapping = map_account_store(application, directory, 0, true, true)
       expect(application.default_group_store_mapping).to eq(nil)
       expect(reloaded_application.default_group_store_mapping).to eq(account_store_mapping)
     end
 
     context 'remove the added default account/group store mapping' do
-      let(:re_reloaded_application) { test_api_client.applications.get application.href}
+      let(:re_reloaded_application) { test_api_client.applications.get application.href }
 
       it 'there should not be a default account store mapping in the beginning and the end' do
         expect(application.default_account_store_mapping).to eq(nil)
-        account_store_mapping = create_account_store_mapping(application,directory, is_default_account_store: true)
+        account_store_mapping = map_account_store(application, directory, 0, true, false)
 
         expect(application.default_account_store_mapping).to eq(nil)
         expect(reloaded_application.default_account_store_mapping).to eq(account_store_mapping)
@@ -102,7 +93,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
 
       it 'there should not be a default group store mapping in the beginning and the end' do
         expect(application.default_account_store_mapping).to eq(nil)
-        account_store_mapping = create_account_store_mapping(application,directory, is_default_group_store: true)
+        account_store_mapping = map_account_store(application, directory, 0, false, true)
 
         expect(application.default_group_store_mapping).to eq(nil)
         expect(reloaded_application.default_group_store_mapping).to eq(account_store_mapping)
@@ -119,7 +110,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   end
 
   describe "given a directory" do
-    before { create_account_store_mapping(application, directory) }
+    before { map_account_store(application, directory, 0, false, false) }
 
     it 'add an account store mapping' do
       expect(application.account_store_mappings.count).to eq(1)
@@ -136,7 +127,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
 
     context 'add an account store mapping' do
       it 'being a default account store' do
-        account_store_mapping = create_account_store_mapping(application, group, is_default_account_store: true)
+        account_store_mapping = map_account_store(application, group, 0, true, false)
         expect(application.default_account_store_mapping).to eq(nil)
         expect(application.account_store_mappings.count).to eq(1)
         expect(reloaded_application.default_account_store_mapping).to eq(account_store_mapping)
@@ -144,7 +135,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
 
       it 'being a default group store, should raise an error' do
         expect do
-          create_account_store_mapping(application, group, is_default_group_store: true)
+          map_account_store(application, group, 0, false, true)
         end.to raise_error Stormpath::Error
       end
 
@@ -153,7 +144,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   end
 
   describe "update attribute default_group_store" do
-    let(:account_store_mapping) { create_account_store_mapping(application, directory, is_default_account_store: true) }
+    let(:account_store_mapping) { map_account_store(application, directory, 0, true, false) }
     let(:reloaded_mapping){ application.account_store_mappings.get account_store_mapping.href }
 
     it 'should go from true to false' do
@@ -165,7 +156,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   end
 
   describe "given a mapping" do
-    let!(:account_store_mapping) { create_account_store_mapping(application, directory, is_default_account_store: true) }
+    let!(:account_store_mapping) { map_account_store(application, directory, 0, true, false) }
     let(:reloaded_application) { test_api_client.applications.get application.href}
 
     it 'function delete should destroy it' do
@@ -183,5 +174,4 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
       end
     end
   end
-
 end

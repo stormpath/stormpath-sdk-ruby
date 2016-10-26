@@ -20,13 +20,7 @@ describe Stormpath::Resource::ApiKey, :vcr do
   let(:api_key) { account.api_keys.create({}) }
 
   before do
-    test_api_client.account_store_mappings.create(
-      application: application,
-      account_store: directory,
-      list_index: 1,
-      is_default_account_store: true,
-      is_default_group_store: false
-    )
+    map_account_store(application, directory, 1, true, false)
   end
 
   after do
