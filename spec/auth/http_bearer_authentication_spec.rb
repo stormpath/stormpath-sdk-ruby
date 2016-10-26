@@ -44,22 +44,9 @@ describe 'HttpBearerAuthentication', vcr: true do
 
   describe 'remote authentication' do
     context 'with a valid bearer authorization header' do
-      it 'should return VerifyToken result' do
-        expect(authenticate_remotely).to be_kind_of(Stormpath::Oauth::VerifyToken)
-      end
-
-      it 'should contain account' do
-        expect(authenticate_remotely.account).to eq(account)
-      end
-    end
-
-    context 'with an invalid bearer authorization header' do
-      let(:bearer_authorization_header) { 'Bearer bad_access_token' }
-
-      it 'should raise error' do
-        expect do
-          authenticate_remotely
-        end.to raise_error(Stormpath::Error)
+      it 'should return account' do
+        expect(authenticate_remotely).to be_kind_of(Stormpath::Resource::Account)
+        expect(authenticate_remotely).to eq(account)
       end
     end
 
@@ -86,13 +73,9 @@ describe 'HttpBearerAuthentication', vcr: true do
 
   describe 'local authentication' do
     context 'with a valid bearer authorization header' do
-      it 'should return LocalAccessTokenVerificationResult' do
-        expect(authenticate_locally)
-          .to be_kind_of(Stormpath::Oauth::LocalAccessTokenVerificationResult)
-      end
-
-      it 'should be able to fetch account from result' do
-        expect(authenticate_locally.account).to eq(account)
+      it 'should return account' do
+        expect(authenticate_locally).to be_kind_of(Stormpath::Resource::Account)
+        expect(authenticate_locally).to eq(account)
       end
     end
   end

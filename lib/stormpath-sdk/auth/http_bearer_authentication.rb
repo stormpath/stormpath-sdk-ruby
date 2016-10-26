@@ -7,16 +7,14 @@ module Stormpath
       def initialize(application, authorization_header, options = {})
         @application = application
         @authorization_header = authorization_header
-        @local = options[:local]
+        @local = options[:local] || false
         raise Stormpath::Error if authorization_header.nil?
       end
 
       def authenticate!
-        if local
-          Stormpath::Oauth::LocalAccessTokenVerification.new(application, bearer_access_token).verify
-        else
-          Stormpath::Oauth::RemoteAccessTokenVerification.new(application, bearer_access_token).verify
-        end
+        Stormpath::Oauth::VerifyAccessToken.new(application, local: local)
+                                           .verify(bearer_access_token)
+                                           .account
       end
 
       private
