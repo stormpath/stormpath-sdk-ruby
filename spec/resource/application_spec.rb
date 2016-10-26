@@ -1359,7 +1359,7 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         it 'should return authentication result response' do
-          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyToken)
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyTokenResult)
         end
 
         it 'returns success on valid token' do
@@ -1386,10 +1386,8 @@ describe Stormpath::Resource::Application, :vcr do
             .to be_kind_of(Stormpath::Oauth::LocalAccessTokenVerificationResult)
         end
 
-        it 'should return result with jwt and account' do
+        it 'should return result that contains account' do
           expect(authenticate_oauth.account).to eq(account)
-          expect(authenticate_oauth.jwt.first['iss']).to eq(application.href)
-          expect(authenticate_oauth.jwt.first['sub']).to eq(account.href)
         end
       end
     end

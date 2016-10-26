@@ -128,7 +128,7 @@ module Stormpath
     autoload :VerifyAccessToken, 'stormpath-sdk/oauth/verify_access_token'
     autoload :RemoteAccessTokenVerification, 'stormpath-sdk/oauth/remote_access_token_verification'
     autoload :LocalAccessTokenVerification, 'stormpath-sdk/oauth/local_access_token_verification'
-    autoload :VerifyToken, 'stormpath-sdk/oauth/verify_token'
+    autoload :VerifyTokenResult, 'stormpath-sdk/oauth/verify_token_result'
     autoload :AccessTokenAuthenticationResult, 'stormpath-sdk/oauth/access_token_authentication_result'
     autoload :Error, 'stormpath-sdk/oauth/error'
     autoload :IdSiteGrantRequest, 'stormpath-sdk/oauth/id_site_grant_request'
