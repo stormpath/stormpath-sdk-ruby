@@ -40,5 +40,5 @@ RSpec.configure do |c|
   c.include Stormpath::Test::RandomResourceNameGenerator
   c.include Stormpath::Test::ResourceHelpers
 
-  Stormpath::Test::ApiKeyHelpers.check_env_variable_names
+  Stormpath::Test::EnvNamesWarning.check_env_variable_names
 end
