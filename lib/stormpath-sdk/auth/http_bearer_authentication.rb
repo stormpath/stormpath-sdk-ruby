@@ -14,7 +14,6 @@ module Stormpath
       def authenticate!
         Stormpath::Oauth::VerifyAccessToken.new(application, local: local)
                                            .verify(bearer_access_token)
-                                           .account
       end
 
       private

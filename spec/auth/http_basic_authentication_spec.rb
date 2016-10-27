@@ -36,8 +36,12 @@ describe 'HttpBasicAuthentication', vcr: true do
   end
 
   describe 'with valid api key id and secret' do
-    it 'should return the associated account' do
-      expect(authenticate).to eq account
+    it 'should return the apikey resource' do
+      expect(authenticate).to be_kind_of Stormpath::Resource::ApiKey
+    end
+
+    it 'should return the account' do
+      expect(authenticate.account).to eq(account)
     end
   end
 

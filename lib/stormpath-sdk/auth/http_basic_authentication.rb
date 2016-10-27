@@ -13,7 +13,7 @@ module Stormpath
       def authenticate!
         raise Stormpath::Error if fetched_api_key.nil?
         raise Stormpath::Error if fetched_api_key.secret != api_key_secret
-        fetched_api_key.account
+        fetched_api_key
       end
 
       private
