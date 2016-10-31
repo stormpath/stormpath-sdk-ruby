@@ -402,7 +402,7 @@ describe Stormpath::Resource::Collection, :vcr do
         it 'should search accounts by custom data attribute' do
           expect(account.custom_data['targetAttribute']).to eq 'findMe'
           expect(directory.accounts.count).to eq 2
-          sleep 2
+          sleep 5
           expect(directory.accounts.search('customData.targetAttribute' => 'findMe').count).to eq(2)
         end
       end
@@ -418,7 +418,7 @@ describe Stormpath::Resource::Collection, :vcr do
         it 'should be able to fetch custom data attributes with snake case' do
           expect(account.custom_data['target_attribute']).to eq 'findMe'
           expect(directory.accounts.count).to eq 2
-          sleep 2
+          sleep 5
           expect(directory.accounts.search('customData.target_attribute' => 'findMe').count).to eq(2)
         end
       end
