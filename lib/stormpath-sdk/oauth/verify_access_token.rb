@@ -1,14 +1,19 @@
 module Stormpath
   module Oauth
     class VerifyAccessToken
-      def initialize(application)
-        @href = application.href
-        @data_store = application.client.data_store
+      attr_reader :application, :verify_locally
+
+      def initialize(application, options = {})
+        @application = application
+        @verify_locally = options[:local] || false
       end
 
-      def verify authorization_token
-        href = @href + '/authTokens/' + authorization_token 
-        @data_store.get_resource href, VerifyToken 
+      def verify(access_token)
+        if verify_locally
+          LocalAccessTokenVerification.new(application, access_token).verify
+        else
+          RemoteAccessTokenVerification.new(application, access_token).verify
+        end
       end
     end
   end

@@ -1,22 +1,22 @@
-require "base64"
-require "httpclient"
-require "multi_json"
-require "openssl"
-require "open-uri"
-require "uri"
-require "uuidtools"
-require "jwt"
-require "yaml"
+require 'base64'
+require 'httpclient'
+require 'multi_json'
+require 'openssl'
+require 'open-uri'
+require 'uri'
+require 'uuidtools'
+require 'jwt'
+require 'yaml'
 require 'active_support'
-require "active_support/core_ext"
+require 'active_support/core_ext'
 require 'active_support/core_ext/module/delegation'
 require 'active_support/core_ext/kernel/singleton_class'
 require 'active_support/core_ext/array/wrap'
 
-require "stormpath-sdk/version" unless defined? Stormpath::VERSION
+require 'stormpath-sdk/version' unless defined? Stormpath::VERSION
 
-require "stormpath-sdk/util/assert"
-require "stormpath-sdk/util/uri_builder"
+require 'stormpath-sdk/util/assert'
+require 'stormpath-sdk/util/uri_builder'
 
 module Stormpath
   autoload :Error, 'stormpath-sdk/error'
@@ -67,21 +67,24 @@ module Stormpath
     autoload :CacheStats, 'stormpath-sdk/cache/cache_stats'
     autoload :MemoryStore, 'stormpath-sdk/cache/memory_store'
     autoload :RedisStore, 'stormpath-sdk/cache/redis_store'
+    autoload :MemcachedStore, 'stormpath-sdk/cache/memcached_store'
     autoload :DisabledCacheStore, 'stormpath-sdk/cache/disabled_cache_store'
   end
 
   module Authentication
-    autoload :UsernamePasswordRequest, "stormpath-sdk/auth/username_password_request"
-    autoload :BasicLoginAttempt, "stormpath-sdk/auth/basic_login_attempt"
-    autoload :AuthenticationResult, "stormpath-sdk/auth/authentication_result"
-    autoload :BasicAuthenticator, "stormpath-sdk/auth/basic_authenticator"
+    autoload :UsernamePasswordRequest, 'stormpath-sdk/auth/username_password_request'
+    autoload :BasicLoginAttempt, 'stormpath-sdk/auth/basic_login_attempt'
+    autoload :AuthenticationResult, 'stormpath-sdk/auth/authentication_result'
+    autoload :BasicAuthenticator, 'stormpath-sdk/auth/basic_authenticator'
+    autoload :HttpBasicAuthentication, 'stormpath-sdk/auth/http_basic_authentication'
+    autoload :HttpBearerAuthentication, 'stormpath-sdk/auth/http_bearer_authentication'
   end
 
   module Provider
-    autoload :AccountResolver, "stormpath-sdk/provider/account_resolver"
-    autoload :AccountAccess, "stormpath-sdk/provider/account_access"
-    autoload :AccountResult, "stormpath-sdk/provider/account_result"
-    autoload :AccountRequest, "stormpath-sdk/provider/account_request"
+    autoload :AccountResolver, 'stormpath-sdk/provider/account_resolver'
+    autoload :AccountAccess, 'stormpath-sdk/provider/account_access'
+    autoload :AccountResult, 'stormpath-sdk/provider/account_result'
+    autoload :AccountRequest, 'stormpath-sdk/provider/account_request'
     autoload :Provider, 'stormpath-sdk/provider/provider'
     autoload :ProviderData, 'stormpath-sdk/provider/provider_data'
     autoload :FacebookProvider, 'stormpath-sdk/provider/facebook/facebook_provider'
@@ -101,13 +104,13 @@ module Stormpath
   end
 
   module Http
-    autoload :Utils, "stormpath-sdk/http/utils"
-    autoload :Request, "stormpath-sdk/http/request"
-    autoload :Response, "stormpath-sdk/http/response"
-    autoload :HttpClientRequestExecutor, "stormpath-sdk/http/http_client_request_executor"
+    autoload :Utils, 'stormpath-sdk/http/utils'
+    autoload :Request, 'stormpath-sdk/http/request'
+    autoload :Response, 'stormpath-sdk/http/response'
+    autoload :HttpClientRequestExecutor, 'stormpath-sdk/http/http_client_request_executor'
 
     module Authc
-      autoload :Sauthc1Signer, "stormpath-sdk/http/authc/sauthc1_signer"
+      autoload :Sauthc1Signer, 'stormpath-sdk/http/authc/sauthc1_signer'
     end
   end
 
@@ -116,21 +119,23 @@ module Stormpath
   end
 
   module Oauth
-    autoload :Authenticator, "stormpath-sdk/oauth/authenticator"
-    autoload :PasswordGrant, "stormpath-sdk/oauth/password_grant"
-    autoload :RefreshToken, "stormpath-sdk/oauth/refresh_token"
-    autoload :StormpathTokenGrant, "stormpath-sdk/oauth/stormpath_token_grant"
-    autoload :PasswordGrantRequest, "stormpath-sdk/oauth/password_grant_request"
-    autoload :RefreshGrantRequest, "stormpath-sdk/oauth/refresh_grant_request"
-    autoload :StormpathGrantRequest, "stormpath-sdk/oauth/stormpath_grant_request"
-    autoload :VerifyAccessToken, "stormpath-sdk/oauth/verify_access_token"
-    autoload :VerifyToken, "stormpath-sdk/oauth/verify_token"
-    autoload :AccessTokenAuthenticationResult, "stormpath-sdk/oauth/access_token_authentication_result"
+    autoload :Authenticator, 'stormpath-sdk/oauth/authenticator'
+    autoload :PasswordGrant, 'stormpath-sdk/oauth/password_grant'
+    autoload :RefreshToken, 'stormpath-sdk/oauth/refresh_token'
+    autoload :StormpathTokenGrant, 'stormpath-sdk/oauth/stormpath_token_grant'
+    autoload :PasswordGrantRequest, 'stormpath-sdk/oauth/password_grant_request'
+    autoload :RefreshGrantRequest, 'stormpath-sdk/oauth/refresh_grant_request'
+    autoload :StormpathGrantRequest, 'stormpath-sdk/oauth/stormpath_grant_request'
+    autoload :VerifyAccessToken, 'stormpath-sdk/oauth/verify_access_token'
+    autoload :RemoteAccessTokenVerification, 'stormpath-sdk/oauth/remote_access_token_verification'
+    autoload :LocalAccessTokenVerification, 'stormpath-sdk/oauth/local_access_token_verification'
+    autoload :VerifyTokenResult, 'stormpath-sdk/oauth/verify_token_result'
+    autoload :AccessTokenAuthenticationResult, 'stormpath-sdk/oauth/access_token_authentication_result'
     autoload :Error, 'stormpath-sdk/oauth/error'
-    autoload :IdSiteGrantRequest, "stormpath-sdk/oauth/id_site_grant_request"
-    autoload :IdSiteGrant, "stormpath-sdk/oauth/id_site_grant"
-    autoload :ClientCredentialsGrantRequest, "stormpath-sdk/oauth/client_credentials_grant_request"
-    autoload :ClientCredentialsGrant, "stormpath-sdk/oauth/client_credentials_grant"
+    autoload :IdSiteGrantRequest, 'stormpath-sdk/oauth/id_site_grant_request'
+    autoload :IdSiteGrant, 'stormpath-sdk/oauth/id_site_grant'
+    autoload :ClientCredentialsGrantRequest, 'stormpath-sdk/oauth/client_credentials_grant_request'
+    autoload :ClientCredentialsGrant, 'stormpath-sdk/oauth/client_credentials_grant'
     autoload :SocialGrantRequest, 'stormpath-sdk/oauth/social_grant_request'
     autoload :SocialGrant, 'stormpath-sdk/oauth/social_grant'
   end

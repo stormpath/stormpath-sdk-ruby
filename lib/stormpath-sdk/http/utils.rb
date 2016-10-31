@@ -16,24 +16,27 @@
 module Stormpath
   module Http
     module Utils
-
       def default_port?(uri)
         scheme = uri.scheme.downcase
         port = uri.port
-        port <= 0 || (port == 80 && scheme.eql?("http")) || (port == 443 && scheme.eql?("https"))
+        port <= 0 || (port == 80 && scheme.eql?('http')) || (port == 443 && scheme.eql?('https'))
       end
 
       def encode_url(value, path, canonical)
-        return URI.escape(value.to_s) if path
+        value = value.to_s
+        return encoded_chars?(value) ? URI.encode(URI.decode(value)) : URI.encode(value) if path
 
         CGI.escape(value.to_s).tap do |encoded|
-          str_map = {'+' => '%20', '%7E' => '~' }
+          str_map = { '+' => '%20', '%7E' => '~' }
           str_map.each do |key, str_value|
             encoded.gsub!(key, str_value) if encoded.include? key
           end
         end
       end
 
+      def encoded_chars?(string)
+        string.include?('%2E')
+      end
     end
   end
 end

@@ -1,6 +1,26 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.2.0
+-------------
+
+Released on October 27, 2016
+
+- Add memcached store as option for the cache store
+- Implement http basic and bearer access token validation
+- Add get and create method on organizations accounts collection
+- Implement option to verify access_token locally and adjust current interface for it
+- Fix bug with searching accounts by custom data attributes
+- Fix bug when loading application that has a forward slash in client_id or client_secret
+- Add organizations endpoint on directory
+- Add option to exchange stormpath_token for an access_token with the registered status
+- Add support for organizationNameKey for oauth token exchange
+- Create social grant request as a new type of grant requests
+- Add request id to error resources
+- Support blacklisting/whitelisting domains in account creation policies for directories
+- Add 'Organization' as a valid type of account store
+
+
 Version 1.1.5
 -------------
 

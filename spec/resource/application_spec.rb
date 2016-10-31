@@ -737,9 +737,21 @@ describe Stormpath::Resource::Application, :vcr do
       account.delete if account
     end
 
-    it 'retrieves the account with the reset password' do
-      expect(reset_password_account).to be
-      expect(reset_password_account.email).to eq(account.email)
+    context 'with decoded password reset token' do
+      it 'retrieves the account with the reset password' do
+        expect(reset_password_account).to be
+        expect(reset_password_account.email).to eq(account.email)
+      end
+    end
+
+    context 'with encoded password reset token' do
+      let(:password_reset_token) do
+        URI.encode(application.password_reset_tokens.create(email: account.email).token, '.')
+      end
+      it 'retrieves the account with the reset password' do
+        expect(reset_password_account).to be
+        expect(reset_password_account.email).to eq(account.email)
+      end
     end
 
     context 'and if the password is changed' do
@@ -1320,23 +1332,43 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'validate access token' do
-      let(:access_token) { aquire_token.access_token }
-      let(:authenticate_oauth) { Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token) }
+      context 'remotely' do
+        let(:access_token) { aquire_token.access_token }
+        let(:authenticate_oauth) do
+          Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token)
+        end
 
-      it 'should return authentication result response' do
-        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyToken)
+        it 'should return authentication result response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyTokenResult)
+        end
+
+        it 'returns success on valid token' do
+          expect(authenticate_oauth.href).not_to be_empty
+          expect(authenticate_oauth.account).to be_a(Stormpath::Resource::Account)
+          expect(authenticate_oauth.account).to eq(account)
+          expect(authenticate_oauth.application).to be_a(Stormpath::Resource::Application)
+          expect(authenticate_oauth.application).to eq(application)
+          expect(authenticate_oauth.jwt).not_to be_empty
+          expect(authenticate_oauth.tenant).to be_a(Stormpath::Resource::Tenant)
+          expect(authenticate_oauth.tenant).to eq(test_api_client.tenant)
+          expect(authenticate_oauth.expanded_jwt).not_to be_empty
+        end
       end
 
-      it 'returns success on valid token' do
-        expect(authenticate_oauth.href).not_to be_empty
-        expect(authenticate_oauth.account).to be_a(Stormpath::Resource::Account)
-        expect(authenticate_oauth.account).to eq(account)
-        expect(authenticate_oauth.application).to be_a(Stormpath::Resource::Application)
-        expect(authenticate_oauth.application).to eq(application)
-        expect(authenticate_oauth.jwt).not_to be_empty
-        expect(authenticate_oauth.tenant).to be_a(Stormpath::Resource::Tenant)
-        expect(authenticate_oauth.tenant).to eq(test_api_client.tenant)
-        expect(authenticate_oauth.expanded_jwt).not_to be_empty
+      context 'locally' do
+        let(:access_token) { aquire_token.access_token }
+        let(:authenticate_oauth) do
+          Stormpath::Oauth::VerifyAccessToken.new(application, local: true).verify(access_token)
+        end
+
+        it 'should return local access token verification result' do
+          expect(authenticate_oauth)
+            .to be_kind_of(Stormpath::Oauth::LocalAccessTokenVerificationResult)
+        end
+
+        it 'should return result that contains account' do
+          expect(authenticate_oauth.account).to eq(account)
+        end
       end
     end
 

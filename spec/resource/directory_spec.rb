@@ -76,7 +76,30 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'should be able to create and get a group' do
-        expect(directory.groups.get group.href).to be
+        expect(directory.groups.get(group.href)).to be
+      end
+
+      context 'search' do
+        before do
+          directory.groups.create(name: 'US group', description: 'Described groups from United S.')
+          directory.groups.create(name: 'EU group', description: 'Described groups from Europe')
+        end
+
+        it 'should return groups by name' do
+          expect(directory.groups.search(name: 'US group').count).to eq 1
+        end
+
+        it 'should return groups by description' do
+          expect(directory.groups.search(description: 'Described groups from Europe').count).to eq 1
+        end
+
+        it 'should return groups when searching name with asterisks' do
+          expect(directory.groups.search(name: '*US*').count).to eq 1
+        end
+
+        it 'should return groups when searching description with asterisks' do
+          expect(directory.groups.search(description: '*groups*').count).to eq 2
+        end
       end
     end
 

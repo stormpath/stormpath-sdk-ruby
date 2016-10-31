@@ -1,6 +1,6 @@
 module Stormpath
   module Oauth
-    class VerifyToken < Stormpath::Resource::Base
+    class VerifyTokenResult < Stormpath::Resource::Base
       prop_reader :href, :jwt, :expanded_jwt
 
       belongs_to :account
