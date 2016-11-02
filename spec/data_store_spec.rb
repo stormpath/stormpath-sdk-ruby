@@ -4,7 +4,7 @@ shared_examples 'a data store' do
   let(:factory)           { Stormpath::Test::ResourceFactory.new }
   let(:request_executor)  { Stormpath::Test::TestRequestExecutor.new }
   let(:data_store) do
-    Stormpath::DataStore.new(request_executor, test_api_key, { store: store }, nil)
+    Stormpath::DataStore.new(request_executor, test_api_key, store, nil)
   end
   let(:application_cache) { data_store.cache_manager.get_cache 'applications' }
   let(:tenant_cache)      { data_store.cache_manager.get_cache 'tenants' }
@@ -182,12 +182,12 @@ end
 
 describe Stormpath::DataStore do
   context 'redis store' do
-    let(:store) { Stormpath::Cache::RedisStore }
+    let(:store) { { store: Stormpath::Cache::RedisStore, store_opts: { read_timeout: 6.0 } } }
     it_should_behave_like 'a data store'
   end
 
   context 'memcached store' do
-    let(:store) { Stormpath::Cache::MemcachedStore }
+    let(:store) { { store: Stormpath::Cache::MemcachedStore, store_opts: { host: 'localhost:11211', prefix_key: 'mem' } } }
     it_should_behave_like 'a data store'
   end
 end
