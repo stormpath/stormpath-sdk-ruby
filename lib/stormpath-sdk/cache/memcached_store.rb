@@ -3,10 +3,11 @@ require 'memcached'
 module Stormpath
   module Cache
     class MemcachedStore
+      DEFAULT_SERVER_HOST = 'localhost:11211'.freeze
       attr_reader :memcached, :options
 
       def initialize(opts = {})
-        @options = opts.blank? ? { host: 'localhost:11211' } : opts
+        @options = opts.blank? ? { host: DEFAULT_SERVER_HOST } : opts
         @memcached = Memcached.new(options[:host], options_without_host)
       end
 
