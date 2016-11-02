@@ -182,7 +182,7 @@ end
 
 describe Stormpath::DataStore do
   context 'redis store' do
-    let(:store) { { store: Stormpath::Cache::RedisStore, store_opts: { port: 7777 } } }
+    let(:store) { { store: Stormpath::Cache::RedisStore, store_opts: { read_timeout: 6.0 } } }
     it_should_behave_like 'a data store'
   end
 
