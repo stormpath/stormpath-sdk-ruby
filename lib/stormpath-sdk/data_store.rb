@@ -42,6 +42,7 @@ class Stormpath::DataStore
     CACHE_REGIONS.each do |region|
       region_opts = regions_opts[region.to_sym] || {}
       region_opts[:store] ||= cache_opts[:store]
+      region_opts[:store_opts] ||= cache_opts[:store_opts]
       @cache_manager.create_cache region, region_opts
     end
   end
