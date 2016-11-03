@@ -3,14 +3,7 @@ require 'spec_helper'
 describe 'HttpBasicAuthentication', vcr: true do
   let(:application) { test_api_client.applications.create(name: 'ruby sdk test app') }
   let(:directory) { test_api_client.directories.create(name: random_directory_name) }
-  let(:account) do
-    application.accounts.create(
-      email: 'test@example.com',
-      given_name: 'Ruby SDK',
-      password: 'P@$$w0rd',
-      surname: 'SDK'
-    )
-  end
+  let(:account) { application.accounts.create(build_account) }
   let(:api_key) { account.api_keys.create({}) }
   let(:api_key_id) { api_key.id }
   let(:api_key_secret) { api_key.secret }
