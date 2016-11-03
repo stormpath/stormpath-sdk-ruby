@@ -79,6 +79,50 @@ describe Stormpath::Resource::Account, :vcr do
       expect(account.tenant).to eq(account.directory.tenant)
     end
 
+    describe 'linked accounts' do
+      let(:directory2) { test_api_client.directories.create name: 'ruby sdk dir 2' }
+      before do
+        test_api_client.account_store_mappings.create(
+          application: app,
+          account_store: directory2,
+          list_index: 2,
+          is_default_account_store: false,
+          is_default_group_store: false
+        )
+        account
+      end
+
+      after do
+        directory2.delete
+      end
+
+      let!(:account2) do
+        directory2.accounts.create(
+          email: 'test2@example.com',
+          givenName: 'Ruby SDK',
+          password: 'P@$$w0rd',
+          surname: 'SDK',
+          username: 'rubysdk2'
+        )
+      end
+
+      let!(:link_accounts) do
+        test_api_client.account_links.create(
+          left_account: {
+            href: account.href
+          },
+          right_account: {
+            href: account2.href
+          }
+        )
+      end
+
+      it 'should contain 1 linked account' do
+        expect(account.linked_accounts.count).to eq 1
+        expect(account.linked_accounts.first).to eq account2
+      end
+    end
+
     after do
       application.delete if application
       account.delete if account
