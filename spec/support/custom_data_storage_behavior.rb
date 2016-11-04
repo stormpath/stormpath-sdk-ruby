@@ -24,10 +24,7 @@ end
 
 shared_examples_for 'group_custom_data' do
   context 'group' do
-    let(:custom_data_storage) do
-      directory.groups.create name: random_group_name
-    end
-
+    let(:custom_data_storage) { directory.groups.create(build_group) }
     let(:custom_data_storage_w_nested_custom_data) do
       directory.groups.create(
         name: 'ruby group',
@@ -367,7 +364,7 @@ shared_examples_for 'custom_data_storage' do
     if custom_data_storage.is_a? Stormpath::Resource::Account
       custom_data_storage.given_name = 'Capt'
     else
-      custom_data_storage.name = random_group_name
+      custom_data_storage.name = 'random_group_name'
     end
 
     custom_data_storage.save

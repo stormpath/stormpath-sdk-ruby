@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Stormpath::Resource::ApiKey, :vcr do
   let(:application) { test_api_client.applications.create(build_application) }
-  let(:directory) { test_api_client.directories.create(name: random_directory_name) }
+  let(:directory) { test_api_client.directories.create(build_directory) }
   let(:tenant) { application.tenant }
   let(:account) { application.accounts.create(build_account) }
   let(:api_key) { account.api_keys.create({}) }

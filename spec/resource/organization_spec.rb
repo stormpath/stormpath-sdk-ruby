@@ -77,8 +77,8 @@ describe Stormpath::Resource::Organization, :vcr do
     end
 
     context 'accounts' do
-      let(:account) { directory.accounts.create(build_account(email: 'rubysdk@example.com')) }
-      let(:org_account) { directory.accounts.create(build_account(email: 'rubysdk2@example.com')) }
+      let(:account) { directory.accounts.create(build_account(email: 'rubysdk')) }
+      let(:org_account) { directory.accounts.create(build_account(email: 'rubysdk2')) }
 
       before { map_organization_store(directory, organization, true) }
 

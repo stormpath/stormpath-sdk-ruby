@@ -1,17 +1,12 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::PasswordStrength, :vcr do
-  let(:application) do
-    test_api_client.applications.create(name: random_application_name('ruby_password_strength'),
-                                        description: 'Dummy desc.')
-  end
+  let(:application) { test_api_client.applications.create(build_account) }
 
-  after do
-    application.delete
-  end
+  after { application.delete }
 
   describe 'instances should respond to attribute property methods' do
-    let(:directory) { test_api_client.directories.create(name: random_directory_name) }
+    let(:directory) { test_api_client.directories.create(build_directory) }
     let(:password_policy) { directory.password_policy }
     let(:password_strength) { password_policy.strength }
 

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe 'Directory and Account status', :vcr do
+describe 'StatusOnDirectoryAndAccount', :vcr do
   let(:auth_request) do
-    Stormpath::Authentication::UsernamePasswordRequest.new('test@example.com', 'P@$$w0rd')
+    Stormpath::Authentication::UsernamePasswordRequest.new("rubytest#{default_domain}", 'P@$$w0rd')
   end
   let(:authenticate_user) do
     application.authenticate_account(auth_request)
@@ -11,7 +11,7 @@ describe 'Directory and Account status', :vcr do
   let(:application) { test_api_client.applications.create(build_application) }
   let(:group) { directory.groups.create(build_group) }
   let!(:account) do
-    directory.accounts.create(build_account(email: 'test@example.com', password: 'P@$$w0rd'))
+    directory.accounts.create(build_account(email: 'rubytest', password: 'P@$$w0rd'))
   end
   let(:reloaded_account) { test_api_client.accounts.get account.href }
   before { map_account_store(application, directory, 0, true, true) }

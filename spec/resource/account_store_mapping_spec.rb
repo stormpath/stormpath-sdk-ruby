@@ -1,11 +1,9 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountStoreMapping, :vcr do
-  let(:directory_name) { random_directory_name }
-
-  let(:directory) { test_api_client.directories.create name: directory_name, description: 'testDirectory for AccountStoreMappings' }
-
-  let(:application) { test_api_client.applications.create name: random_application_name, description: 'testApplication for AccountStoreMappings' }
+  let(:directory_name) { 'rubysdktestdir' }
+  let(:directory) { test_api_client.directories.create(build_directory(name: directory_name)) }
+  let(:application) { test_api_client.applications.create(build_application) }
 
   after do
     application.delete if application

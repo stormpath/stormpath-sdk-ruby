@@ -89,7 +89,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create stormpath directory with empty provider credentials' do
-    let(:name) { random_directory_name('Stormpath') }
+    let(:name) { 'Stormpath' }
     let(:description) { 'Directory for testing Stormpath directories.' }
     let(:provider_id) { 'stormpath' }
 
@@ -107,7 +107,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create facebook directory with provider credentials' do
-    let(:name) { random_directory_name('Facebook') }
+    let(:name) { 'Facebook' }
     let(:description) { 'Directory for testing Facebook directories.' }
 
     let(:provider_id) { 'facebook' }
@@ -122,7 +122,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create google directory with provider credentials' do
-    let(:name) { random_directory_name('Google') }
+    let(:name) { 'Google' }
     let(:description) { 'Directory for testing Google directories.' }
 
     let(:provider_id) { 'google' }
@@ -143,7 +143,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create linkedin directory with provider credentials' do
-    let(:name) { random_directory_name('Linkedin') }
+    let(:name) { 'Linkedin' }
     let(:description) { 'Directory for testing Linkedin directories.' }
 
     let(:provider_id) { 'linkedin' }
@@ -158,7 +158,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create github directory with provider credentials' do
-    let(:name) { random_directory_name('Github') }
+    let(:name) { 'Github' }
     let(:description) { 'Directory for testing Github directories.' }
 
     let(:provider_id) { 'github' }

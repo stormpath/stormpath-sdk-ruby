@@ -1,23 +1,10 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountStore, :vcr do
-  let(:application) do
-    test_api_client.applications.create name: random_application_name,
-                                        description: 'testApplication for AccountStoreMappings'
-  end
-
-  let(:directory) do
-    test_api_client.directories.create name: random_directory_name,
-                                       description: 'testDirectory for AccountStoreMappings'
-  end
-
-  let(:group) do
-    directory.groups.create name: 'testGroup', description: 'testGroup for AccountStoreMappings'
-  end
-
-  let(:organization) do
-    test_api_client.organizations.create name: 'testOrganization', name_key: 'test-organization'
-  end
+  let(:application) { test_api_client.applications.create(build_application) }
+  let(:directory) { test_api_client.directories.create(build_directory) }
+  let(:group) { directory.groups.create(build_group) }
+  let(:organization) { test_api_client.organizations.create(build_organization) }
 
   after do
     application.delete if application

@@ -309,8 +309,8 @@ properties
       let(:accounts_cache_summary) { cache_manager.get_cache('accounts').stats.summary }
       let(:directories_cache_summary) { cache_manager.get_cache('directories').stats.summary }
       let(:groups_cache_summary) { cache_manager.get_cache('groups').stats.summary }
-      let(:directory) { client.directories.create name: random_directory_name }
-      let(:group) { directory.groups.create(name: random_group_name) }
+      let(:directory) { client.directories.create(build_directory) }
+      let(:group) { directory.groups.create(build_group) }
       let(:account) { directory.accounts.create(build_account) }
 
       before { group.add_account(account) }
@@ -338,10 +338,7 @@ properties
         let(:cached_account) do
           client.accounts.get account.href, Stormpath::Resource::Expansion.new('groups')
         end
-
-        let(:group) do
-          directory.groups.create name: random_group_name
-        end
+        let(:group) { directory.groups.create(build_group) }
 
         before { client.data_store.initialize_cache({}) }
 
@@ -353,19 +350,16 @@ properties
     end
 
     context 'search' do
-      let(:first_application_name) { random_application_name(1) }
-      let(:second_application_name) { random_application_name(2) }
-
       let!(:applications) do
         [
-          test_api_client.applications.create(name: first_application_name, description: 'foo'),
-          test_api_client.applications.create(name: second_application_name, description: 'foo')
+          test_api_client.applications.create(build_application(name: 'rubytestapp1')),
+          test_api_client.applications.create(build_application(name: 'rubytestapp2'))
         ]
       end
 
       context 'by any attribute' do
         let(:search_results) do
-          test_api_client.applications.search(first_application_name)
+          test_api_client.applications.search('rubytestapp1')
         end
 
         it 'returns the application' do
@@ -375,7 +369,7 @@ properties
 
       context 'by an explicit attribute' do
         let(:search_results) do
-          test_api_client.applications.search(name: first_application_name)
+          test_api_client.applications.search(name: 'rubytestapp1')
         end
 
         it 'returns the application' do
@@ -387,7 +381,7 @@ properties
     end
 
     describe '.create' do
-      let(:application_name) { random_application_name }
+      let(:application_name) { 'rubytestapp' }
 
       let(:application_attributes) do
         {

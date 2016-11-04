@@ -105,7 +105,7 @@ describe Stormpath::Resource::Account, :vcr do
 
   describe '#save' do
     context 'when property values have changed' do
-      let(:directory) { test_api_client.directories.create name: random_directory_name }
+      let(:directory) { test_api_client.directories.create(build_directory) }
       let(:account) { directory.accounts.create(build_account) }
       let(:account_uri) { account.href }
       let(:new_surname) { 'NewSurname' }

@@ -1,21 +1,13 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Group, :vcr do
-  let(:directory) do
-    test_api_client.directories.create(name: random_directory_name('ruby'),
-                                       description: 'dir for group spec')
-  end
-
-  after do
-    directory.delete if directory
-  end
+  let(:directory) { test_api_client.directories.create(build_directory) }
+  after { directory.delete }
 
   describe 'instances should respond to attribute property methods' do
     let(:group) { directory.groups.create name: 'RubyTestGroup', description: 'testDescription' }
 
-    after do
-      group.delete if group
-    end
+    after { group.delete }
 
     it do
       [:name, :description, :status].each do |property_accessor|
@@ -48,21 +40,14 @@ describe Stormpath::Resource::Group, :vcr do
 
   describe '#add_or_remove_account' do
     context 'given an account' do
-      let(:group) { directory.groups.create name: 'someGroup' }
-      let(:account) do
-        directory.accounts.create(email: 'rubysdk@example.com',
-                                  given_name: 'Ruby SDK',
-                                  password: 'P@$$w0rd',
-                                  surname: 'SDK')
-      end
+      let(:group) { directory.groups.create(build_group) }
+      let(:account) { directory.accounts.create(build_account) }
 
-      before do
-        group.add_account(account)
-      end
+      before { group.add_account(account) }
 
       after do
-        group.delete if group
-        account.delete if account
+        group.delete
+        account.delete
       end
 
       it 'adds the account to the group' do
@@ -75,9 +60,7 @@ describe Stormpath::Resource::Group, :vcr do
 
       it 'adds and removes the group from the account' do
         expect(group.accounts).to include(account)
-
         group.remove_account(account)
-
         expect(group.accounts).not_to include(account)
       end
     end
