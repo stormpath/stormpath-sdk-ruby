@@ -1,6 +1,14 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.3.0
+-------------
+
+Released on November 04, 2016
+
+- Implement manual account linking
+
+
 Version 1.2.1
 -------------
 
