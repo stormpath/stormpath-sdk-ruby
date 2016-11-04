@@ -1,27 +1,12 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::ApiKey, :vcr do
-  let(:application) do
-    test_api_client.applications.create(name: random_application_name('ruby_api_key_spec'),
-                                        description: 'Dummy desc.')
-  end
+  let(:application) { test_api_client.applications.create(build_application) }
   let(:directory) { test_api_client.directories.create(name: random_directory_name) }
   let(:tenant) { application.tenant }
-
-  let(:account) do
-    application.accounts.create(
-      email: 'test@example.com',
-      given_name: 'Ruby SDK',
-      password: 'P@$$w0rd',
-      surname: 'SDK'
-    )
-  end
-
+  let(:account) { application.accounts.create(build_account) }
   let(:api_key) { account.api_keys.create({}) }
-
-  before do
-    map_account_store(application, directory, 1, true, false)
-  end
+  before { map_account_store(application, directory, 1, true, false) }
 
   after do
     application.delete

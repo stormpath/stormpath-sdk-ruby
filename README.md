@@ -79,13 +79,13 @@ If you have not already done so, register as a developer on
 1.  **Create an account for a user** on the directory.
 
     ```ruby
-    account = directory.accounts.create({
+    account = directory.accounts.create(
       given_name: 'John',
       surname: 'Smith',
       email: 'john.smith@example.com',
       username: 'johnsmith',
       password: '4P@$$w0rd!'
-    })
+    )
     ```
 
 1.  **Update an account**
@@ -517,13 +517,13 @@ ways:
   on the directory:
 
   ```ruby
-  account = directory.accounts.create({
+  account = directory.accounts.create(
     given_name: 'John',
     surname: 'Smith',
     email: 'john.smith@example.com',
     username: 'johnsmith',
     password: '4P@$$w0rd!'
-  })
+  )
   ```
 
 Both these methods can take either a <code>Hash</code> of the account

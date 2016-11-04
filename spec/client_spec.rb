@@ -33,7 +33,7 @@ describe Stormpath::Client, :vcr do
 
       context 'with an api key file location', 'that points to a file' do
         after do
-          File.delete(api_key_file_location) if File.exists?(api_key_file_location)
+          File.delete(api_key_file_location) if File.exist?(api_key_file_location)
         end
 
         context 'by default' do
@@ -59,10 +59,10 @@ properties
             File.join(File.dirname(__FILE__), 'testApiKey.fooId.properties')
           end
           let(:client) do
-            Stormpath::Client.new({
+            Stormpath::Client.new(
               api_key_file_location: api_key_file_location,
               api_key_id_property_name: 'foo.id'
-            })
+            )
           end
 
           before do
@@ -82,10 +82,10 @@ properties
             File.join(File.dirname(__FILE__), 'testApiKey.barBazSecret.properties')
           end
           let(:client) do
-            Stormpath::Client.new({
+            Stormpath::Client.new(
               api_key_file_location: api_key_file_location,
               api_key_secret_property_name: 'bar.baz'
-            })
+            )
           end
 
           before do
@@ -105,9 +105,9 @@ properties
             File.join(File.dirname(__FILE__), 'testApiKey.noApiKeyId.properties')
           end
           let(:client) do
-            Stormpath::Client.new({
+            Stormpath::Client.new(
               api_key_file_location: api_key_file_location,
-            })
+            )
           end
 
           before do
@@ -132,11 +132,7 @@ properties
           let(:api_key_file_location) do
             File.join(File.dirname(__FILE__), 'testApiKey.noApiKeySecret.properties')
           end
-          let(:client) do
-            Stormpath::Client.new({
-              api_key_file_location: api_key_file_location,
-            })
-          end
+          let(:client) { Stormpath::Client.new(api_key_file_location: api_key_file_location) }
 
           before do
             File.open(api_key_file_location, 'w') do |f|
@@ -147,11 +143,14 @@ properties
           end
 
           it 'raises an error' do
-            expect { client }.to raise_error ArgumentError,
-              "No API secret in properties. Please provide a 'apiKey.secret' property in '" +
-              api_key_file_location +
-              "' or pass in an 'api_key_secret_property_name' to the Stormpath::Client " +
-              "constructor to specify an alternative property."
+            expect { client }
+              .to raise_error(
+                ArgumentError,
+                "No API secret in properties. Please provide a 'apiKey.secret' property in '" +
+                api_key_file_location +
+                "' or pass in an 'api_key_secret_property_name' to the Stormpath::Client " \
+                'constructor to specify an alternative property.'
+              )
           end
         end
 
@@ -159,17 +158,15 @@ properties
           let(:api_key_file_location) do
             'no_such_file'
           end
-          let(:client) do
-            Stormpath::Client.new({
-              api_key_file_location: api_key_file_location,
-            })
-          end
+          let(:client) { Stormpath::Client.new(api_key_file_location: api_key_file_location) }
 
           it 'raises an error' do
-            expect { client }.to raise_error ArgumentError,
+            expect { client }.to raise_error(
+              ArgumentError,
               "No API Key file could be found or loaded from '" +
               api_key_file_location +
               "'."
+            )
           end
         end
       end
@@ -177,7 +174,9 @@ properties
       context 'with a base url' do
         context 'creates a client that connects to that base' do
           let(:api_key) { Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret) }
-          let(:client) { Stormpath::Client.new(api_key: api_key, base_url: "https://api.stormpath.com/v1") }
+          let(:client) do
+            Stormpath::Client.new(api_key: api_key, base_url: 'https://api.stormpath.com/v1')
+          end
 
           it_behaves_like 'a valid client'
         end
@@ -193,11 +192,12 @@ properties
 
         context 'as a hash' do
           let(:client) do
-            Stormpath::Client.new({
-              api_key: { id: test_api_key_id,
-                         secret: test_api_key_secret
+            Stormpath::Client.new(
+              api_key: {
+                id: test_api_key_id,
+                secret: test_api_key_secret
               }
-            })
+            )
           end
 
           it_behaves_like 'a valid client'
@@ -206,24 +206,26 @@ properties
 
       context 'with no api key', 'and no api key file location' do
         it 'raises an error' do
-          expect { Stormpath::Client.new({}) }.to raise_error ArgumentError,
+          expect { Stormpath::Client.new({}) }.to raise_error(
+            ArgumentError,
             /^No API key has been provided\./
+          )
         end
       end
 
       context 'with cache configuration' do
         let(:api_key_file_location) { 'http://fake.server.com/apiKey.properties' }
         let(:client) do
-          Stormpath::Client.new( {
+          Stormpath::Client.new(
             api_key_file_location: api_key_file_location,
             cache: {
               store: Stormpath::Test::FakeStore1,
               regions: {
                 directories: { ttl_seconds: 40, tti_seconds: 20 },
-                groups:      { ttl_seconds: 80, tti_seconds: 40, store: Stormpath::Test::FakeStore2 }
+                groups: { ttl_seconds: 80, tti_seconds: 40, store: Stormpath::Test::FakeStore2 }
               }
             }
-          })
+          )
         end
 
         before do
@@ -271,16 +273,9 @@ properties
 
   describe '#applications' do
     context 'by default' do
-      let(:applications) do
-        test_api_client.applications
-      end
+      let(:applications) { test_api_client.applications }
 
-      let(:application) do
-        applications.create(
-          name: 'Client Applications Test',
-          description: 'A test description'
-        )
-      end
+      let(:application) { applications.create(build_application) }
 
       it 'returns the collection' do
         expect(applications).to be_kind_of(Stormpath::Resource::Collection)
@@ -295,7 +290,7 @@ properties
     context 'pagination' do
       let!(:applications) do
         (0..2).to_a.map do |index|
-          test_api_client.applications.create name: random_application_name(index), description: 'foo'
+          test_api_client.applications.create(build_application(name: "ruby-sdk-test-#{index}"))
         end
       end
 
@@ -304,58 +299,21 @@ properties
         expect(test_api_client.applications.offset(1).limit(2).count).to be >= 2
       end
 
-      after do
-        applications.each do |application|
-          application.delete
-        end
-      end
+      after { applications.each(&:delete) }
     end
 
     context 'expansion' do
-      let(:client) do
-        # every time a client is instantiated a new cache is created, so make
-        # sure we use the same client across each "it" block
-        test_api_client
-      end
+      let(:client) { test_api_client }
+      let(:data_store) { client.instance_variable_get '@data_store' }
+      let(:cache_manager) { data_store.cache_manager }
+      let(:accounts_cache_summary) { cache_manager.get_cache('accounts').stats.summary }
+      let(:directories_cache_summary) { cache_manager.get_cache('directories').stats.summary }
+      let(:groups_cache_summary) { cache_manager.get_cache('groups').stats.summary }
+      let(:directory) { client.directories.create name: random_directory_name }
+      let(:group) { directory.groups.create(name: random_group_name) }
+      let(:account) { directory.accounts.create(build_account) }
 
-      let(:cache_manager) do
-        data_store = client.instance_variable_get '@data_store'
-        cache_manager = data_store.cache_manager
-      end
-
-      let(:accounts_cache_summary) do
-        cache_manager.get_cache('accounts').stats.summary
-      end
-
-      let(:directories_cache_summary) do
-        cache_manager.get_cache('directories').stats.summary
-      end
-
-      let(:groups_cache_summary) do
-        cache_manager.get_cache('groups').stats.summary
-      end
-
-      let(:directory) do
-        client.directories.create name: random_directory_name
-      end
-
-      let(:group) do
-        directory.groups.create name: random_group_name
-      end
-
-      let(:account) do
-        directory.accounts.create({
-          email: 'rubysdk@example.com',
-          given_name: 'Ruby SDK',
-          password: 'P@$$w0rd',
-          surname: 'SDK',
-          username: 'rubysdk'
-        })
-      end
-
-      before do
-        group.add_account account
-      end
+      before { group.add_account(account) }
 
       after do
         group.delete if group
@@ -368,9 +326,7 @@ properties
           client.accounts.get account.href, Stormpath::Resource::Expansion.new('directory')
         end
 
-        before do
-          client.data_store.initialize_cache(Hash.new)
-        end
+        before { client.data_store.initialize_cache({}) }
 
         it 'caches the nested resource' do
           expect(cached_account.directory.name).to be
@@ -387,9 +343,7 @@ properties
           directory.groups.create name: random_group_name
         end
 
-        before do
-          client.data_store.initialize_cache(Hash.new)
-        end
+        before { client.data_store.initialize_cache({}) }
 
         it 'caches the nested resource' do
           expect(cached_account.groups.first.name).to eq(group.name)
@@ -429,11 +383,7 @@ properties
         end
       end
 
-      after do
-        applications.each do |application|
-          application.delete
-        end
-      end
+      after { applications.each(&:delete) }
     end
 
     describe '.create' do
@@ -447,9 +397,7 @@ properties
       end
 
       context do
-        let(:application) do
-          test_api_client.applications.create application_attributes
-        end
+        let(:application) { test_api_client.applications.create application_attributes }
 
         it 'creates that application' do
           expect(application).to be
@@ -457,9 +405,7 @@ properties
           expect(application.description).to eq(application_attributes[:description])
         end
 
-        after do
-          application.delete
-        end
+        after { application.delete }
       end
 
       describe 'auto directory creation' do
@@ -471,22 +417,19 @@ properties
 
         context 'login source' do
           let(:options) { { createDirectory: true } }
-
           let!(:account) do
             application.accounts.create(
-                given_name: 'John',
-                surname: 'Smith 2',
-                email: 'john.smith2@example.com',
-                username: 'johnsmith2',
-                password: '4P@$$w0rd!'
+              build_account(username: 'johnsmith2', password: '4P@$$w0rd!')
             )
           end
+          let(:auth_request) do
+            Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith2', '4P@$$w0rd!'
+          end
+          let(:auth_result) { application.authenticate_account(auth_request) }
 
           before { application }
 
           it 'serves as the accounts store and login source' do
-            auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith2', '4P@$$w0rd!'
-            auth_result = application.authenticate_account auth_request
             expect(account).to eq(auth_result.account)
           end
         end
@@ -502,7 +445,7 @@ properties
           context 'and existing directory' do
             it 'resolves naming conflict by adding (n) to directory name' do
               test_api_client.directories.each { |d| d.delete if "#{application_name} Directory" == d.name }
-              test_api_client.directories.create({name: "#{application_name} Directory"})
+              test_api_client.directories.create(name: "#{application_name} Directory")
               application
               expect(directories.map(&:name)).to include("#{application_name} Directory (2)")
             end
@@ -558,39 +501,24 @@ properties
 
   describe '#directories' do
     context 'given a collection' do
-      let(:directories) do
-        test_api_client.directories
-      end
-
-      let(:directory) do
-        directories.create(
-          name: 'Client Directories Test',
-          description: 'A test description'
-        )
-      end
+      let(:directories) { test_api_client.directories }
+      let(:directory) { directories.create(build_directory) }
 
       it 'returns the collection' do
         expect(directories).to be_kind_of(Stormpath::Resource::Collection)
         expect(directories.count).to be >= 1
       end
 
-      after do
-        directory.delete
-      end
+      after { directory.delete }
     end
 
     context 'given a collection with a limit' do
-      let!(:directory_1) do
-        test_api_client.directories.create name: random_directory_name(1)
-      end
-
-      let!(:directory_2) do
-        test_api_client.directories.create name: random_directory_name(2)
-      end
+      let!(:directory_1) { test_api_client.directories.create(build_directory) }
+      let!(:directory_2) { test_api_client.directories.create(build_directory) }
 
       after do
-        directory_1.delete if directory_1
-        directory_2.delete if directory_2
+        directory_1.delete
+        directory_2.delete
       end
 
       it 'should retrieve the number of directories described with the limit' do
@@ -599,46 +527,29 @@ properties
     end
 
     describe '.create' do
-
-      let(:directory_name) { random_directory_name }
-
-      let(:directory_attributes) do
-        {
-          name: directory_name,
-          description: 'A test description'
-        }
-      end
-
       let(:directory) do
-        test_api_client.directories.create directory_attributes
+        test_api_client.directories.create(build_directory(name: 'ruby', description: 'ruby'))
       end
 
       it 'creates that application' do
         expect(directory).to be
-        expect(directory.name).to eq(directory_attributes[:name])
-        expect(directory.description).to eq(directory_attributes[:description])
+        expect(directory.name).to eq('ruby')
+        expect(directory.description).to eq('ruby')
       end
 
-      after do
-        directory.delete
-      end
+      after { directory.delete }
     end
   end
 
   describe '#organization' do
     context 'search' do
-      let(:organization_name) { random_organization_name }
-
       let!(:organization) do
-        test_api_client.organizations.create(
-          name: organization_name,
-          name_key: "testorganization"
-        )
+        test_api_client.organizations.create(build_organization(name: 'ruby-org'))
       end
 
       context 'by any attribute' do
         let(:search_results) do
-          test_api_client.organizations.search(organization_name)
+          test_api_client.organizations.search('ruby-org')
         end
 
         it 'returns the application' do
@@ -647,9 +558,7 @@ properties
       end
 
       context 'by an explicit attribute' do
-        let(:search_results) do
-          test_api_client.organizations.search(name: organization_name)
-        end
+        let(:search_results) { test_api_client.organizations.search(name: 'ruby-org') }
 
         it 'returns the application' do
           expect(search_results.count).to eq 1
@@ -660,13 +569,7 @@ properties
     end
 
     context 'given a collection' do
-      let(:organization) do
-        test_api_client.organizations.create(
-            name: random_organization_name,
-            name_key: random_name_key,
-            description: 'A test description'
-        )
-      end
+      let(:organization) { test_api_client.organizations.create(build_organization) }
 
       it 'returns the collection' do
         expect(test_api_client.organizations).to be_kind_of(Stormpath::Resource::Collection)
@@ -677,13 +580,8 @@ properties
     end
 
     context 'given a collection with a limit' do
-      let!(:organization_1) do
-        test_api_client.organizations.create name: random_organization_name(1), name_key: random_name_key(1)
-      end
-
-      let!(:organization_2) do
-        test_api_client.organizations.create name: random_organization_name(2), name_key: random_name_key(2)
-      end
+      let!(:organization_1) { test_api_client.organizations.create(build_organization) }
+      let!(:organization_2) { test_api_client.organizations.create(build_organization) }
 
       after do
         organization_1.delete
@@ -696,51 +594,35 @@ properties
     end
 
     describe '.create' do
-      let(:organization_name) { random_organization_name }
-
-      let(:organization_attributes) do
-        {
-          name: organization_name,
-          name_key: random_name_key,
-          description: 'A test description'
-        }
-      end
-
       let(:organization) do
-        test_api_client.organizations.create organization_attributes
+        test_api_client.organizations.create(build_organization(name: 'ruby',
+                                                                name_key: 'ruby-org',
+                                                                description: 'ruby-org'))
       end
 
       it 'creates an organization' do
         expect(organization).to be
-        expect(organization.name).to eq(organization_attributes[:name])
-        expect(organization.name_key).to eq(organization_attributes[:name_key])
-        expect(organization.description).to eq(organization_attributes[:description])
+        expect(organization.name).to eq('ruby')
+        expect(organization.name_key).to eq('ruby-org')
+        expect(organization.description).to eq('ruby-org')
       end
 
-      after do
-        organization.delete
-      end
+      after { organization.delete }
     end
   end
 
-  describe "#organization_account_store_mappings" do
-    let(:organization) do
-      test_api_client.organizations.create name: 'test_organization',
-      name_key: "testorganization"
-    end
+  describe '#organization_account_store_mappings' do
+    let(:organization) { test_api_client.organizations.create(build_organization) }
+    let(:directory) { test_api_client.directories.create(build_directory) }
 
-    let(:directory) { test_api_client.directories.create name: random_directory_name }
-
-    let(:organization_account_store_mappings) do
-      map_organization_store(directory, organization)
-    end
+    let(:organization_account_store_mappings) { map_organization_store(directory, organization) }
 
     after do
-      organization.delete if organization
-      directory.delete if directory
+      organization.delete
+      directory.delete
     end
 
-    it "returns the mapping" do
+    it 'returns the mapping' do
       expect(organization_account_store_mappings.is_default_account_store).to eq(false)
       expect(organization_account_store_mappings.is_default_group_store).to eq(false)
       expect(organization_account_store_mappings.organization).to eq(organization)
@@ -751,13 +633,9 @@ properties
 
   describe '#accounts.verify_account_email' do
     context 'given a verfication token of an account' do
-      let(:application) do
-        test_api_client.applications.create(name: random_application_name('rubysdk'),
-                                            description: 'test app for client spec')
-      end
+      let(:application) { test_api_client.applications.create(build_application) }
       let(:directory_with_verification) do
-        test_api_client.directories.create(name: random_directory_name('ruby'),
-                                           description: 'email verification enabled')
+        test_api_client.directories.create(build_directory(description: 'verification enabled'))
       end
 
       before do
@@ -766,29 +644,17 @@ properties
       end
 
       after do
-        application.delete if application
-        account.delete if account
+        application.delete
+        account.delete
         directory_with_verification.delete
       end
 
       let(:account) do
-        account = Stormpath::Resource::Account.new({
-          email: random_email,
-          givenName: 'Ruby SDK',
-          password: 'P@$$w0rd',
-          surname: 'SDK',
-          username: random_user_name
-        })
-        directory_with_verification.create_account account
+        directory_with_verification.create_account(Stormpath::Resource::Account.new(build_account))
       end
+      let(:verification_token) { account.email_verification_token.token }
 
-      let(:verification_token) do
-        account.email_verification_token.token
-      end
-
-      let(:verified_account) do
-        test_api_client.accounts.verify_email_token verification_token
-      end
+      let(:verified_account) { test_api_client.accounts.verify_email_token verification_token }
 
       it 'returns the account' do
         expect(verified_account).to be

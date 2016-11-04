@@ -1,36 +1,21 @@
 require 'spec_helper'
 
 describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
-  let(:application) do
-    test_api_client.applications.create(name: random_application_name, description: 'Dummy desc.')
+  let(:application) { test_api_client.applications.create(build_application) }
+  let(:directory) { test_api_client.directories.create(build_directory) }
+  before { map_account_store(application, directory, 1, true, false) }
+  let!(:account) do
+    application.accounts.create(build_account(email: 'ruby25', password: 'P@$$w0rd'))
   end
-  let(:directory) do
-    test_api_client.directories.create(name: random_directory_name('ruby'),
-                                       description: 'ruby sdk test dir')
+  let(:password_grant_request) do
+    Stormpath::Oauth::PasswordGrantRequest.new("ruby25#{default_domain}", 'P@$$w0rd')
   end
-
-  before do
-    map_account_store(application, directory, 1, true, false)
-  end
-  
-  let(:account_data) { build_account(email: email, password: password) }
-
-  let(:email) { random_email }
-
-  let(:password) { 'P@$$w0rd' }
-
-  let!(:account) { application.accounts.create(account_data) }
-
-  let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new(email, password) }
-
-  let(:jwt_authentication_result) do
-    application.authenticate_oauth(password_grant_request)
-  end
+  let(:jwt_authentication_result) { application.authenticate_oauth(password_grant_request) }
 
   after do
-    application.delete if application
-    directory.delete if directory
-    account.delete if account
+    application.delete
+    directory.delete
+    account.delete
   end
 
   it 'instances should expose a method to get an account' do

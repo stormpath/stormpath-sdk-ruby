@@ -1,42 +1,40 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Account, :vcr do
-
-  describe "instances should respond to attribute property methods" do
-    let(:directory) { test_api_client.directories.create name: random_directory_name }
-    let(:given_name) { 'Ruby SDK' }
-    let(:middle_name) { 'Gruby' }
-    let(:surname) { 'SDK' }
+  describe 'instances should respond to attribute property methods' do
+    let(:directory) { test_api_client.directories.create(build_directory) }
     let(:account) do
-      directory.accounts.create email: 'test@example.com',
-          given_name: given_name,
-          password: 'P@$$w0rd',
-          middle_name: middle_name,
-          surname: surname,
-          username: 'rubysdk'
+      directory.accounts.create(
+        email: "ruby#{default_domain}",
+        given_name: 'ruby',
+        password: 'P@$$w0rd',
+        middle_name: 'ruby',
+        surname: 'ruby',
+        username: 'rubysdk'
+      )
     end
 
     after do
-      account.delete if account
-      directory.delete if directory
+      account.delete
+      directory.delete
     end
 
     it do
       [:given_name, :username, :middle_name, :surname, :email, :status].each do |property_accessor|
         expect(account).to respond_to(property_accessor)
         expect(account).to respond_to("#{property_accessor}=")
-        expect(account.send property_accessor).to be_a String
+        expect(account.send(property_accessor)).to be_a String
       end
 
       [:created_at, :modified_at, :password_modified_at].each do |property_getter|
         expect(account).to respond_to(property_getter)
-        expect(account.send property_getter).to be_a String
+        expect(account.send(property_getter)).to be_a String
       end
 
       expect(account).to respond_to(:full_name)
       expect(account.full_name).to be_a String
-      expect(account.full_name).to eq("#{given_name} #{middle_name} #{surname}")
-      expect(account).to respond_to("password=")
+      expect(account.full_name).to eq('ruby ruby ruby')
+      expect(account).to respond_to('password=')
 
       expect(account.tenant).to be_a Stormpath::Resource::Tenant
       expect(account.directory).to be_a Stormpath::Resource::Directory
@@ -49,21 +47,10 @@ describe Stormpath::Resource::Account, :vcr do
   end
 
   describe 'account_associations' do
-    let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
-    let(:application) { test_api_client.applications.get app.href }
-    let(:directory) { test_api_client.directories.create name: random_directory_name }
-
-    before do
-      map_account_store(app, directory, 1, true, true)
-    end
-
-    let(:account) do
-      directory.accounts.create email: 'test@example.com',
-          givenName: 'Ruby SDK',
-          password: 'P@$$w0rd',
-          surname: 'SDK',
-          username: 'rubysdk'
-    end
+    let(:application) { test_api_client.applications.create(build_application) }
+    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:account) { directory.accounts.create(build_account) }
+    before { map_account_store(application, directory, 1, true, true) }
 
     it 'should belong_to directory' do
       expect(account.directory).to eq(directory)
@@ -85,20 +72,17 @@ describe Stormpath::Resource::Account, :vcr do
     end
   end
 
-  describe "#add_or_remove_group" do
-    context "given a group" do
-      let(:directory) { test_api_client.directories.create name: random_directory_name }
-
-      let(:group) { directory.groups.create name: 'testGroup' }
-
-      let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd', surname: 'SDK' }) }
-
-      before { account.add_group group }
+  describe '#add_or_remove_group' do
+    context 'given a group' do
+      let(:directory) { test_api_client.directories.create(build_directory) }
+      let(:group) { directory.groups.create(build_group) }
+      let(:account) { directory.accounts.create(build_account) }
+      before { account.add_group(group) }
 
       after do
-        account.delete if account
-        group.delete if group
-        directory.delete if directory
+        account.delete
+        group.delete
+        directory.delete
       end
 
       it 'adds the group to the account' do
@@ -116,33 +100,26 @@ describe Stormpath::Resource::Account, :vcr do
 
         expect(account.groups).not_to include(group)
       end
-
     end
   end
 
   describe '#save' do
     context 'when property values have changed' do
       let(:directory) { test_api_client.directories.create name: random_directory_name }
-      let(:account) do
-        directory.accounts.create build_account
-      end
-      let(:account_uri) do
-        account.href
-      end
-      let(:new_surname) do
-        "NewSurname"
-      end
-      let(:reloaded_account) { test_api_client.accounts.get account_uri }
+      let(:account) { directory.accounts.create(build_account) }
+      let(:account_uri) { account.href }
+      let(:new_surname) { 'NewSurname' }
+      let(:reloaded_account) { test_api_client.accounts.get(account_uri) }
 
       before do
-        account = test_api_client.accounts.get account_uri
+        account = test_api_client.accounts.get(account_uri)
         account.surname = new_surname
         account.save
       end
 
       after do
-        account.delete if account
-        directory.delete if directory
+        account.delete
+        directory.delete
       end
 
       it 'saves changes to the account' do

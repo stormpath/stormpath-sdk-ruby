@@ -3,38 +3,46 @@ module Stormpath
     module ResourceHelpers
       def build_account(opts = {})
         opts.tap do |o|
-          o[:email]      = (!opts[:email].blank? && opts[:email]) || "ruby-test-#{random_number}@testmail.stormpath.com"
-          o[:username]   = (!opts[:username].blank? && opts[:username]) || "ruby-test-#{random_number}"
+          if !opts[:email].blank? && opts[:email]
+            o[:email] = "#{opts[:email]}#{default_domain}"
+          else
+            o[:email] = "ruby#{random_number}#{default_domain}"
+          end
+          o[:username]   = (!opts[:username].blank? && opts[:username]) || "ruby#{random_number}"
           o[:password]   = (!opts[:password].blank? && opts[:password]) || 'P@$$w0rd'
           o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'surname'
           o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || 'givenname'
         end
       end
 
+      def default_domain
+        '@testmail.stormpath.com'
+      end
+
       def build_application(opts = {})
         opts.tap do |o|
-          o[:name]          = (!opts[:name].blank? && opts[:name]) || "ruby-test-#{random_number}-app"
-          o[:description]   = (!opts[:description].blank? && opts[:description]) || "ruby-test-#{random_number}-desc"
+          o[:name]          = (!opts[:name].blank? && opts[:name]) || "ruby#{random_number}-app"
+          o[:description]   = (!opts[:description].blank? && opts[:description]) || "ruby#{random_number}-desc"
         end
       end
 
       def build_directory(opts = {})
         opts.tap do |o|
-          o[:name]          = (!opts[:name].blank? && opts[:name]) || "ruby-test-#{random_number}-dir"
-          o[:description]   = (!opts[:description].blank? && opts[:description]) || "ruby-test-#{random_number}-desc"
+          o[:name]          = (!opts[:name].blank? && opts[:name]) || "ruby#{random_number}-dir"
+          o[:description]   = (!opts[:description].blank? && opts[:description]) || "ruby#{random_number}-desc"
         end
       end
 
       def build_organization(opts = {})
         opts.tap do |o|
-          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby-test-#{random_number}-org"
-          o[:name_key]  = (!opts[:name_key].blank? && opts[:name_key]) || "ruby-test-#{random_number}-org"
+          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby#{random_number}-org"
+          o[:name_key]  = (!opts[:name_key].blank? && opts[:name_key]) || "ruby#{random_number}-org"
         end
       end
 
       def build_group(opts = {})
         opts.tap do |o|
-          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby-test-#{random_number}-group"
+          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby#{random_number}-group"
         end
       end
 
