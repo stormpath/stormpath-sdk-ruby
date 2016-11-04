@@ -36,6 +36,8 @@ module Stormpath
     autoload :CustomDataStorage, 'stormpath-sdk/resource/custom_data_storage'
     autoload :CustomDataHashMethods, 'stormpath-sdk/resource/custom_data_hash_methods'
     autoload :Tenant, 'stormpath-sdk/resource/tenant'
+    autoload :LinkedAccount, 'stormpath-sdk/resource/linked_account'
+    autoload :AccountLink, 'stormpath-sdk/resource/account_link'
     autoload :Application, 'stormpath-sdk/resource/application'
     autoload :Directory, 'stormpath-sdk/resource/directory'
     autoload :Account, 'stormpath-sdk/resource/account'
