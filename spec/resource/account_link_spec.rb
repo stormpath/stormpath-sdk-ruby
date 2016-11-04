@@ -4,17 +4,17 @@ describe Stormpath::Resource::AccountLink, :vcr do
   let(:application) do
     test_api_client.applications.create(name: 'ruby sdk app', description: 'ruby sdk desc')
   end
-  let(:good_dir) do
+  let(:directory1) do
     test_api_client.directories.create(name: 'ruby sdk dir 1')
   end
-  let(:bad_dir) do
+  let(:directory2) do
     test_api_client.directories.create(name: 'ruby sdk dir 2')
   end
 
   before do
     test_api_client.account_store_mappings.create(
       application: application,
-      account_store: good_dir,
+      account_store: directory1,
       list_index: 1,
       is_default_account_store: true,
       is_default_group_store: false
@@ -22,35 +22,35 @@ describe Stormpath::Resource::AccountLink, :vcr do
 
     test_api_client.account_store_mappings.create(
       application: application,
-      account_store: bad_dir,
+      account_store: directory2,
       list_index: 2,
       is_default_account_store: false,
       is_default_group_store: false
     )
   end
 
-  let!(:dr_jekyll) do
-    good_dir.accounts.create(build_account(email: 'jekyll@example.com', username: 'dr_jekyll'))
+  let!(:account1) do
+    directory1.accounts.create(build_account(email: 'jekyll@example.com', username: 'account1'))
   end
-  let!(:mr_hyde) do
-    bad_dir.accounts.create(build_account(email: 'hyde@example.com', username: 'mr_hyde'))
+  let!(:account2) do
+    directory2.accounts.create(build_account(email: 'hyde@example.com', username: 'account2'))
   end
 
   let!(:account_link) do
     test_api_client.account_links.create(
       left_account: {
-        href: dr_jekyll.href
+        href: account1.href
       },
       right_account: {
-        href: mr_hyde.href
+        href: account2.href
       }
     )
   end
 
   after do
     application.delete
-    good_dir.delete
-    bad_dir.delete
+    directory1.delete
+    directory2.delete
   end
 
   describe 'instances should respond to attribute property methods' do
@@ -73,11 +73,11 @@ describe Stormpath::Resource::AccountLink, :vcr do
 
   describe 'account link associations' do
     it 'should belong_to right account' do
-      expect(account_link.right_account).to eq(mr_hyde)
+      expect(account_link.right_account).to eq(account2)
     end
 
     it 'should belong_to left account' do
-      expect(account_link.left_account).to eq(dr_jekyll)
+      expect(account_link.left_account).to eq(account1)
     end
   end
 end
