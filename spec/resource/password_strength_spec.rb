@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::PasswordStrength, :vcr do
-  let(:application) { test_api_client.applications.create(build_account) }
+  let(:application) { test_api_client.applications.create(build_application) }
 
   after { application.delete }
 

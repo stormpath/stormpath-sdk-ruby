@@ -285,13 +285,13 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     context 'with account data as hash' do
-      let(:account_email) { "rubysdk#{default_domain}" }
+      let(:account_email) { 'rubysdk' }
       let(:account) { directory.create_account(build_account(email: account_email)) }
 
       it 'creates an account with status ENABLED' do
-        expect(account.email).to eq(account_email)
-        expect(account.given_name).to eq('Ruby SDK')
-        expect(account.surname).to eq('SDK')
+        expect(account.email).to eq("#{account_email}#{default_domain}")
+        expect(account.given_name).to eq('givenname')
+        expect(account.surname).to eq('surname')
         expect(account.status).to eq('ENABLED')
       end
     end

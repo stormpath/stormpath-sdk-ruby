@@ -2,11 +2,12 @@ require 'spec_helper'
 include UUIDTools
 
 describe Stormpath::Resource::Application, :vcr do
-  let(:application) { test_api_client.applications.create(build_application) }
+  let(:app) { test_api_client.applications.create(build_application) }
+  let(:application) { test_api_client.applications.get app.href }
   let(:directory) { test_api_client.directories.create(build_directory) }
 
   before do
-    map_account_store(application, directory, 1, true, true)
+    map_account_store(app, directory, 1, true, true)
   end
 
   after do
@@ -66,7 +67,7 @@ describe Stormpath::Resource::Application, :vcr do
   describe 'application_associations' do
 
     context '#accounts' do
-      let(:account) { application.accounts.create(build_account)}
+      let(:account) { application.accounts.create(build_account) }
 
       after do
         account.delete if account
