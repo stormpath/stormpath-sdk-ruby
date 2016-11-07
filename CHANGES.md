@@ -1,6 +1,15 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.3.1
+-------------
+
+Released on November 07, 2016
+
+- Add oauth jwt errors
+- Refactor and DRY up specs
+
+
 Version 1.3.0
 -------------
 
