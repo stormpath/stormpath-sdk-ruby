@@ -26,12 +26,12 @@ module Stormpath
 
       def validate_jwt_is_an_access_token
         return if decoded_jwt.second['stt'] == 'access'
-        raise ArgumentError, 'Token is not an access token'
+        raise Stormpath::Oauth::Error, :jwt_invalid_stt
       end
 
       def validate_jwt_has_a_valid_issuer
         return if decoded_jwt.first['iss'] == application.href
-        raise ArgumentError, 'Token issuer is invalid'
+        raise Stormpath::Oauth::Error, :jwt_invalid_issuer
       end
     end
 
