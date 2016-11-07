@@ -1,28 +1,25 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::GroupMembership, :vcr do
-  it "should be the same as AccountMembership" do
+  it 'should be the same as AccountMembership' do
     expect(Stormpath::Resource::GroupMembership).to eq(Stormpath::Resource::AccountMembership)
   end
 
   describe '#add_account' do
-    context "given an account and a group" do
-
-      let(:directory) { test_api_client.directories.create name: random_directory_name }
-
-      let(:group) { directory.groups.create name: 'someGroup' }
-
-      let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd', surname: 'SDK' }) }
+    context 'given an account and a group' do
+      let(:directory) { test_api_client.directories.create(build_directory) }
+      let(:group) { directory.groups.create(build_group) }
+      let(:account) { directory.accounts.create(build_account) }
 
       before { group.add_account account }
 
       after do
-        group.delete if group
-        directory.delete if directory
-        account.delete if account
+        group.delete
+        account.delete
+        directory.delete
       end
 
-      it ", group membership and account membership should correspond to each other" do
+      it 'group membership and account membership should correspond to each other' do
         expect(group.account_memberships.count).to eq(1)
         expect(account.group_memberships.count).to eq(1)
         expect(group.accounts).to include(account)

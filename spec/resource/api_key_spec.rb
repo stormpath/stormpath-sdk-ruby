@@ -1,23 +1,20 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::ApiKey, :vcr do
-  let(:application) { test_application }
+  let(:application) { test_api_client.applications.create(build_application) }
+  let(:directory) { test_api_client.directories.create(build_directory) }
   let(:tenant) { application.tenant }
+  let(:account) { application.accounts.create(build_account) }
+  let(:api_key) { account.api_keys.create({}) }
+  before { map_account_store(application, directory, 1, true, false) }
 
-  let(:account) do
-    application.accounts.create(
-      email: 'test@example.com',
-      given_name: 'Ruby SDK',
-      password: 'P@$$w0rd',
-      surname: 'SDK'
-    )
+  after do
+    application.delete
+    directory.delete
+    account.delete
   end
 
-  let(:api_key) { account.api_keys.create({}) }
-
-  after { account.delete }
-
-  describe "instances should respond to attribute property methods" do
+  describe 'instances should respond to attribute property methods' do
     it do
       [:name, :description, :status].each do |property_accessor|
         expect(api_key).to respond_to(property_accessor)
@@ -26,7 +23,7 @@ describe Stormpath::Resource::ApiKey, :vcr do
 
       [:id, :secret].each do |property_getter|
         expect(api_key).to respond_to(property_getter)
-        expect(api_key.send property_getter).to be_a String
+        expect(api_key.send(property_getter)).to be_a String
       end
 
       expect(api_key.tenant).to be_a Stormpath::Resource::Tenant

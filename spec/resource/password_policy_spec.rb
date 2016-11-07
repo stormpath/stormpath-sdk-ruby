@@ -1,19 +1,16 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::PasswordPolicy, :vcr do
-  describe "instances should respond to attribute property methods" do
-    let(:application) { test_application }
-    let(:directory) { test_api_client.directories.create(name: random_directory_name) }
+  let(:application) { test_api_client.applications.create(build_application) }
+
+  after { application.delete }
+
+  describe 'instances should respond to attribute property methods' do
+    let(:directory) { test_api_client.directories.create(build_directory) }
     let(:password_policy) { directory.password_policy }
 
     before do
-      test_api_client.account_store_mappings.create(
-        application: application,
-        account_store: directory,
-        list_index: 1,
-        is_default_account_store: false,
-        is_default_group_store: false
-      )
+      map_account_store(application, directory, 1, false, false)
     end
 
     after { directory.delete }
@@ -42,17 +39,17 @@ describe Stormpath::Resource::PasswordPolicy, :vcr do
     end
 
     it 'can change reset_email_status' do
-      expect(directory.password_policy.reset_email_status).to eq("ENABLED")
-      password_policy.reset_email_status = "DISABLED"
+      expect(directory.password_policy.reset_email_status).to eq('ENABLED')
+      password_policy.reset_email_status = 'DISABLED'
       password_policy.save
-      expect(directory.password_policy.reset_email_status).to eq("DISABLED")
+      expect(directory.password_policy.reset_email_status).to eq('DISABLED')
     end
 
     it 'can change reset_success_email_status' do
-      expect(directory.password_policy.reset_success_email_status).to eq("ENABLED")
-      password_policy.reset_success_email_status = "DISABLED"
+      expect(directory.password_policy.reset_success_email_status).to eq('ENABLED')
+      password_policy.reset_success_email_status = 'DISABLED'
       password_policy.save
-      expect(directory.password_policy.reset_success_email_status).to eq("DISABLED")
+      expect(directory.password_policy.reset_success_email_status).to eq('DISABLED')
     end
   end
 end
