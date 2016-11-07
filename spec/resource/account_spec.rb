@@ -4,14 +4,10 @@ describe Stormpath::Resource::Account, :vcr do
   describe 'instances should respond to attribute property methods' do
     let(:directory) { test_api_client.directories.create(build_directory) }
     let(:account) do
-      directory.accounts.create(
-        email: "ruby#{default_domain}",
-        given_name: 'ruby',
-        password: 'P@$$w0rd',
-        middle_name: 'ruby',
-        surname: 'ruby',
-        username: 'rubysdk'
-      )
+      directory.accounts.create(build_account(email: 'ruby',
+                                              given_name: 'ruby',
+                                              surname: 'ruby',
+                                              middle_name: 'ruby'))
     end
 
     after do
@@ -66,32 +62,15 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     describe 'linked accounts' do
-      let(:directory2) { test_api_client.directories.create name: 'ruby sdk dir 2' }
+      let(:directory2) { test_api_client.directories.create(build_directory) }
       before do
-        test_api_client.account_store_mappings.create(
-          application: app,
-          account_store: directory2,
-          list_index: 2,
-          is_default_account_store: false,
-          is_default_group_store: false
-        )
+        map_account_store(application, directory2, 2, false, false)
         account
       end
 
-      after do
-        directory2.delete
-      end
+      after { directory2.delete }
 
-      let!(:account2) do
-        directory2.accounts.create(
-          email: 'test2@example.com',
-          givenName: 'Ruby SDK',
-          password: 'P@$$w0rd',
-          surname: 'SDK',
-          username: 'rubysdk2'
-        )
-      end
-
+      let!(:account2) { directory2.accounts.create(build_account) }
       let!(:link_accounts) do
         test_api_client.account_links.create(
           left_account: {

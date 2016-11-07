@@ -116,7 +116,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   end
 
   describe "given a group" do
-    let(:group) { directory.groups.create name: 'testGroup', description: 'testGroup for AccountStoreMappings' }
+    let(:group) { directory.groups.create(build_group) }
     let(:reloaded_application) { test_api_client.applications.get application.href }
 
     after do

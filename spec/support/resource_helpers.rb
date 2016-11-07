@@ -4,6 +4,9 @@ module Stormpath
       def build_account(opts = {})
         opts.tap do |o|
           if !opts[:email].blank? && opts[:email]
+            if opts[:email].include?('@')
+              raise ArgumentError, "Invalid email format. Please send the email without the domain. For example, 'anakin.skywalker', instead of 'anakin.skywalker@darkside.com'"
+            end
             o[:email] = "#{opts[:email]}#{default_domain}"
           else
             o[:email] = "ruby#{random_number}#{default_domain}"
@@ -12,6 +15,8 @@ module Stormpath
           o[:password]   = (!opts[:password].blank? && opts[:password]) || 'P@$$w0rd'
           o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'surname'
           o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || 'givenname'
+          o[:middle_name] = (!opts[:middle_name].blank? && opts[:middle_name]) || 'middle_name'
+          o[:status] = (!opts[:status].blank? && opts[:status]) || 'ENABLED'
         end
       end
 
