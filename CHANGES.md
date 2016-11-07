@@ -1,6 +1,22 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.3.0
+-------------
+
+Released on November 04, 2016
+
+- Implement manual account linking
+
+
+Version 1.2.1
+-------------
+
+Released on November 02, 2016
+
+- Fix bug with passing store options to cache store
+
+
 Version 1.2.0
 -------------
 
