@@ -8,7 +8,7 @@ describe Stormpath::Resource::Factor, :vcr do
       account.factors.create(
         type: 'SMS',
         phone: {
-          number: '202-555-0173',
+          number: '2025550173',
           name: 'test phone',
           description: 'this is a testing phone number'
         }
@@ -46,7 +46,7 @@ describe Stormpath::Resource::Factor, :vcr do
 
     before { map_account_store(app, directory, 1, true, true) }
     let(:account) { directory.accounts.create(build_account) }
-    let(:phone_number) { '202-555-0173' }
+    let(:phone_number) { '2025550173' }
 
     let(:factor) do
       account.factors.create(

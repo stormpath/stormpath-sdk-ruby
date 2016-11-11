@@ -11,7 +11,7 @@ describe 'CreateFactor', vcr: true do
         client,
         account,
         'SMS',
-        phone: { number: '202-555-0173',
+        phone: { number: '2025550173',
                  name: 'Rspec test phone',
                  description: 'This is a testing phone number' },
         challenge: { message: 'Enter code please: ' }
@@ -30,7 +30,7 @@ describe 'CreateFactor', vcr: true do
         client,
         account,
         'SMS',
-        phone: { number: '202-555-0173',
+        phone: { number: '2025550173',
                  name: 'Rspec test phone',
                  description: 'This is a testing phone number' }
       ).save
