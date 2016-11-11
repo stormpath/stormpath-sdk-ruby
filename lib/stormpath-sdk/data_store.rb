@@ -104,8 +104,8 @@ class Stormpath::DataStore
   def execute_raw_request(href, body, klass)
     request = Request.new('POST', href, nil, {}, body.to_json, @api_key)
     apply_default_request_headers(request)
-
     response = @request_executor.execute_request(request)
+    warn "RESPONSE IS #{response}"
     result = response.body.length > 0 ? MultiJson.load(response.body) : ''
 
     if response.error?

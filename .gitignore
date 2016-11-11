@@ -3,14 +3,7 @@
 pkg/*
 Gemfile.lock
 coverage
-
-spec/fixtures/vcr_cassettes/*
-
-!spec/fixtures/vcr_cassettes/CreateFactor
-!spec/fixtures/vcr_cassettes/Stormpath_Resource_Challenge
-!spec/fixtures/vcr_cassettes/Stormpath_Resource_Factor
-!spec/fixtures/vcr_cassettes/Stormpath_Resource_Account/_create_factor
-
+spec/fixtures/vcr_cassettes
 *.ipr
 *.iws
 *.iml
