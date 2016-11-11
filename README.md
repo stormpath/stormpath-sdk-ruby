@@ -79,13 +79,13 @@ If you have not already done so, register as a developer on
 1.  **Create an account for a user** on the directory.
 
     ```ruby
-    account = directory.accounts.create({
+    account = directory.accounts.create(
       given_name: 'John',
       surname: 'Smith',
       email: 'john.smith@example.com',
       username: 'johnsmith',
       password: '4P@$$w0rd!'
-    })
+    )
     ```
 
 1.  **Update an account**
@@ -517,13 +517,13 @@ ways:
   on the directory:
 
   ```ruby
-  account = directory.accounts.create({
+  account = directory.accounts.create(
     given_name: 'John',
     surname: 'Smith',
     email: 'john.smith@example.com',
     username: 'johnsmith',
     password: '4P@$$w0rd!'
-  })
+  )
   ```
 
 Both these methods can take either a <code>Hash</code> of the account
@@ -945,27 +945,14 @@ account.custom_data.delete
 ### Setup
 
 The functional tests of the SDK run against a Stormpath tenant. In that
-account, create:
+account they automatically create and destroy resources.
 
-* An application reserved for testing.
-* A directory reserved for test accounts. _Be sure to associate this
-  directory to the test application as a login source_.
-* Another directory reserved for test accounts with the account
-  verification workflow turned on. _Be sure to associate this directory
-  to the test application as a login source_.
+The following environment variables need to be set:
 
-The following environment variables need will then need to be set:
-
-* <code>STORMPATH_SDK_TEST_API_KEY_ID</code> - The <code>id</code> from
+* <code>STORMPATH_CLIENT_APIKEY_ID</code> - The <code>id</code> from
   your Stormpath API key.
-* <code>STORMPATH_SDK_TEST_API_KEY_SECRET</code> - The
+* <code>STORMPATH_CLIENT_APIKEY_SECRET</code> - The
   <code>secret</code> from your Stormpath API key.
-* <code>STORMPATH_SDK_TEST_APPLICATION_URL</code> - The URL to the
-  application created above.
-* <code>STORMPATH_SDK_TEST_DIRECTORY_URL</code> - The URL to the first
-  directory created above.
-* <code>STORMPATH_SDK_TEST_DIRECTORY_WITH_VERIFICATION_URL</code> - The
-  URL to the second directory created above.
 
 ### Running
 

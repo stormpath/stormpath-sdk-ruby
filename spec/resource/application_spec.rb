@@ -2,14 +2,12 @@ require 'spec_helper'
 include UUIDTools
 
 describe Stormpath::Resource::Application, :vcr do
-  let(:app) { test_api_client.applications.create name: random_application_name, description: 'Dummy desc.' }
+  let(:app) { test_api_client.applications.create(build_application) }
   let(:application) { test_api_client.applications.get app.href }
-  let(:directory) { test_api_client.directories.create name: random_directory_name }
-  let(:directory_with_verification) { test_directory_with_verification }
+  let(:directory) { test_api_client.directories.create(build_directory) }
 
   before do
-   test_api_client.account_store_mappings.create({ application: app, account_store: directory,
-      list_index: 1, is_default_account_store: true, is_default_group_store: true })
+    map_account_store(app, directory, 1, true, true)
   end
 
   after do
@@ -69,7 +67,7 @@ describe Stormpath::Resource::Application, :vcr do
   describe 'application_associations' do
 
     context '#accounts' do
-      let(:account) { application.accounts.create build_account}
+      let(:account) { application.accounts.create(build_account) }
 
       after do
         account.delete if account
@@ -86,11 +84,9 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context '#groups' do
-      let(:group) { application.groups.create name: random_group_name }
+      let(:group) { application.groups.create(build_group) }
 
-      after do
-        group.delete if group
-      end
+      after { group.delete }
 
       it 'should be able to create a group' do
         expect(application.groups).to include(group)
@@ -118,15 +114,7 @@ describe Stormpath::Resource::Application, :vcr do
 
 
   describe '#create_account' do
-    let(:account) do
-      Stormpath::Resource::Account.new({
-        email: random_email,
-        given_name: 'Ruby SDK',
-        password: 'P@$$w0rd',
-        surname: 'SDK',
-        username: random_user_name
-      })
-    end
+    let(:account) { Stormpath::Resource::Account.new(build_account) }
 
     context 'with registration workflow' do
       it 'creates an account with worflow enabled' do
@@ -209,10 +197,8 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'given a wrong directory' do
-      let(:new_directory) { test_api_client.directories.create name: random_directory_name('new') }
-
+      let(:new_directory) { test_api_client.directories.create(build_directory) }
       let(:account) { new_directory.accounts.create build_account(password: 'P@$$w0rd') }
-
       let(:login_request) do
         Stormpath::Authentication::UsernamePasswordRequest.new account.username, password, account_store: directory
       end
@@ -227,7 +213,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'given a group' do
-      let(:group) {directory.groups.create name: random_group_name }
+      let(:group) {directory.groups.create(build_group) }
 
       let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
 
@@ -236,7 +222,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       before do
-        test_api_client.account_store_mappings.create({ application: application, account_store: group })
+        map_account_store(application, group, 0, true, false)
       end
 
       after do
@@ -276,12 +262,7 @@ describe Stormpath::Resource::Application, :vcr do
 
       context 'of an existing account not mapped to the application' do
         let(:account) { other_directory.accounts.create build_account  }
-
-        let(:other_directory) do
-          test_api_client.directories.create(
-            name: random_directory_name('password_reset_account_store_href')
-          )
-        end
+        let(:other_directory) { test_api_client.directories.create(build_directory) }
 
         after do
           account.delete
@@ -337,13 +318,7 @@ describe Stormpath::Resource::Application, :vcr do
 
       context 'of an existing account not mapped to the application with an account store href' do
         let(:account) { directory.accounts.create build_account  }
-
-        let(:other_directory) do
-          test_api_client.directories.create(
-            name: random_directory_name('password_reset_account_store_href'),
-            description: 'abc'
-          )
-        end
+        let(:other_directory) { test_api_client.directories.create(build_directory) }
 
         after do
           account.delete
@@ -373,22 +348,17 @@ describe Stormpath::Resource::Application, :vcr do
 
       context 'of an existing account on the application with a right account store organization namekey' do
         let(:account) { account_directory.accounts.create build_account  }
-
-        let(:account_directory) do
-          test_api_client.directories.create(
-            name: random_directory_name('password_reset_account_store_href')
-          )
-        end
+        let(:account_directory) { test_api_client.directories.create(build_directory) }
 
         let(:reloaded_account_directory) do
           test_api_client.directories.get(account_directory.href)
         end
 
-        let(:organization_name_key) { "#{random_string}-org-name-key" }
+        let(:organization_name_key) { 'ruby-test-org-name-key' }
 
         let(:organization) do
           test_api_client.organizations.create(
-            name: "#{random_string}_organization_name",
+            name: "ruby_test_organization_name",
             name_key: organization_name_key
           )
         end
@@ -404,12 +374,8 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         before do
-          test_api_client.organization_account_store_mappings.create(
-            account_store: { href: account_directory.href },
-            organization: { href: organization.href }
-          )
-
-          test_api_client.account_store_mappings.create(application: application, account_store: organization)
+          map_organization_store(account_directory, organization)
+          map_account_store(application, organization, 0, true, true)
         end
 
         it 'sends a password reset request of the account' do
@@ -421,26 +387,11 @@ describe Stormpath::Resource::Application, :vcr do
 
       context 'of an existing account on the application with a right account store organization resource object' do
         let(:account) { account_directory.accounts.create build_account  }
-
-        let(:account_directory) do
-          test_api_client.directories.create(
-            name: random_directory_name('password_reset_account_store_href')
-          )
-        end
-
+        let(:account_directory) { test_api_client.directories.create(build_directory) }
         let(:reloaded_account_directory) do
           test_api_client.directories.get(account_directory.href)
         end
-
-        let(:organization_name_key) { "#{random_string}-org-name-key" }
-
-        let(:organization) do
-          test_api_client.organizations.create(
-            name: "#{random_string}_organization_name",
-            name_key: organization_name_key
-          )
-        end
-
+        let(:organization) { test_api_client.organizations.create(build_organization) }
         let(:sent_to_account) do
           application.send_password_reset_email(account.email, account_store: organization)
         end
@@ -452,12 +403,8 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         before do
-          test_api_client.organization_account_store_mappings.create(
-            account_store: { href: account_directory.href },
-            organization: { href: organization.href }
-          )
-
-          test_api_client.account_store_mappings.create(application: application, account_store: organization)
+          map_organization_store(account_directory, organization)
+          map_account_store(application, organization, 0, true, true)
         end
 
         it 'sends a password reset request of the account' do
@@ -469,34 +416,12 @@ describe Stormpath::Resource::Application, :vcr do
 
       context 'of an existing account on the application with a wrong account store organization namekey' do
         let(:account) { account_directory.accounts.create build_account  }
-
-        let(:account_directory) do
-          test_api_client.directories.create(
-            name: random_directory_name('password_reset_account_store_href')
-          )
-        end
-
+        let(:account_directory) { test_api_client.directories.create(build_directory) }
         let(:reloaded_account_directory) do
           test_api_client.directories.get(account_directory.href)
         end
-
-        let(:organization_name_key) { "#{random_string}-org-name-key" }
-
-        let(:other_organization_name_key) { "#{random_string}-other-org-name-key" }
-
-        let(:organization) do
-          test_api_client.organizations.create(
-            name: "#{random_string}_organization_name",
-            name_key: organization_name_key
-          )
-        end
-
-        let(:other_organization) do
-          test_api_client.organizations.create(
-            name: "#{random_string}_other_organization_name",
-            name_key: other_organization_name_key
-          )
-        end
+        let(:organization) { test_api_client.organizations.create(build_organization) }
+        let(:other_organization) { test_api_client.organizations.create(build_organization) }
 
         after do
           account.delete
@@ -506,12 +431,8 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         before do
-          test_api_client.organization_account_store_mappings.create(
-            account_store: { href: account_directory.href },
-            organization: { href: organization.href }
-          )
-
-          test_api_client.account_store_mappings.create(application: application, account_store: organization)
+          map_organization_store(account_directory, organization)
+          map_account_store(application, organization, 0, true, true)
         end
 
         it 'sends a password reset request of the account' do
@@ -524,29 +445,21 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe '#verification_emails' do
-    let(:directory_with_verification) { test_directory_with_verification }
+    let(:directory_with_verification) { test_api_client.directories.create(build_directory) }
 
     before do
-      test_api_client.account_store_mappings.create({ application: app, account_store: directory_with_verification,
-        list_index: 1, is_default_account_store: false, is_default_group_store: false })
+      map_account_store(application, directory_with_verification, 1, false, false)
+      enable_email_verification(directory_with_verification)
     end
 
-    let(:account) do
-      directory_with_verification.accounts.create({
-        email: random_email,
-        given_name: 'Ruby SDK',
-        password: 'P@$$w0rd',
-        surname: 'SDK',
-        username: random_user_name
-      })
-    end
-
+    let(:account) { directory_with_verification.accounts.create(build_account) }
     let(:verification_emails) do
       application.verification_emails.create(login: account.email)
     end
 
     after do
       account.delete if account
+      directory_with_verification.delete
     end
 
     it 'returns verification email' do
@@ -555,15 +468,7 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe 'create_login_attempt' do
-    let(:account) do
-      directory.accounts.create({
-        email: random_email,
-        given_name: 'Ruby SDK',
-        password: 'P@$$w0rd',
-        surname: 'SDK',
-        username: random_user_name
-      })
-    end
+    let(:account) { directory.accounts.create(build_account) }
 
     context 'valid credentials' do
       let(:username_password_request) do
@@ -585,30 +490,16 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'with organization as account store option' do
-      def create_organization_account_store_mapping(organization, account_store)
-        test_api_client.organization_account_store_mappings.create({
-          account_store: { href: account_store.href },
-          organization: { href: organization.href }
-        })
-      end
-
-      def create_application_account_store_mapping(application, account_store)
-        test_api_client.account_store_mappings.create(
-          application: application,
-          account_store: account_store
-        )
-      end
-
       let(:organization) do
-        test_api_client.organizations.create name: 'test_organization',
-           name_key: "testorganization"
+        test_api_client.organizations.create(name: 'test_organization',
+                                             name_key: 'testorganization')
       end
 
       let(:auth_request) { application.authenticate_account(username_password_request) }
 
       before do
-        create_organization_account_store_mapping(organization, directory)
-        create_application_account_store_mapping(application, organization)
+        map_organization_store(directory, organization)
+        map_account_store(application, organization, 0, true, false)
       end
 
       after do
@@ -739,20 +630,10 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe '#verify_password_reset_token' do
-    let(:account) do
-      directory.accounts.create({
-        email: random_email,
-        given_name: 'Ruby SDK',
-        password: 'P@$$w0rd',
-        surname: 'SDK',
-        username: random_user_name
-      })
-    end
-
+    let(:account) { directory.accounts.create(build_account) }
     let(:password_reset_token) do
       application.password_reset_tokens.create(email: account.email).token
     end
-
     let(:reset_password_account) do
       application.verify_password_reset_token password_reset_token
     end
@@ -761,9 +642,21 @@ describe Stormpath::Resource::Application, :vcr do
       account.delete if account
     end
 
-    it 'retrieves the account with the reset password' do
-      expect(reset_password_account).to be
-      expect(reset_password_account.email).to eq(account.email)
+    context 'with decoded password reset token' do
+      it 'retrieves the account with the reset password' do
+        expect(reset_password_account).to be
+        expect(reset_password_account.email).to eq(account.email)
+      end
+    end
+
+    context 'with encoded password reset token' do
+      let(:password_reset_token) do
+        URI.encode(application.password_reset_tokens.create(email: account.email).token, '.')
+      end
+      it 'retrieves the account with the reset password' do
+        expect(reset_password_account).to be
+        expect(reset_password_account.email).to eq(account.email)
+      end
     end
 
     context 'and if the password is changed' do
@@ -772,8 +665,6 @@ describe Stormpath::Resource::Application, :vcr do
       let(:login_request) do
         Stormpath::Authentication::UsernamePasswordRequest.new account.username, new_password
       end
-
-      let(:expected_email) { 'test2@example.com' }
 
       let(:authentication_result) do
         application.authenticate_account login_request
@@ -1083,16 +974,8 @@ describe Stormpath::Resource::Application, :vcr do
         end
 
         before do
-          test_api_client.account_store_mappings.create(
-            application: application,
-            account_store: organization
-          )
-
-          test_api_client.organization_account_store_mappings.create(
-            account_store: { href: account_directory.href },
-            organization: { href: organization.href }
-          )
-
+          map_account_store(application, organization, 0, true, true)
+          map_organization_store(account_directory, organization)
           account_directory.accounts.create account_data
         end
 
@@ -1312,7 +1195,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
       let(:factor) do
         account.create_factor('SMS',
-                              phone: { number: '+385958142457',
+                              phone: { number: '202-555-0173',
                                        name: 'Rspec test phone',
                                        description: 'This is a testing phone number' },
                               challenge: { message: 'Enter code please: ' })
@@ -1393,23 +1276,43 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'validate access token' do
-      let(:access_token) { aquire_token.access_token }
-      let(:authenticate_oauth) { Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token) }
+      context 'remotely' do
+        let(:access_token) { aquire_token.access_token }
+        let(:authenticate_oauth) do
+          Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token)
+        end
 
-      it 'should return authentication result response' do
-        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyToken)
+        it 'should return authentication result response' do
+          expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::VerifyTokenResult)
+        end
+
+        it 'returns success on valid token' do
+          expect(authenticate_oauth.href).not_to be_empty
+          expect(authenticate_oauth.account).to be_a(Stormpath::Resource::Account)
+          expect(authenticate_oauth.account).to eq(account)
+          expect(authenticate_oauth.application).to be_a(Stormpath::Resource::Application)
+          expect(authenticate_oauth.application).to eq(application)
+          expect(authenticate_oauth.jwt).not_to be_empty
+          expect(authenticate_oauth.tenant).to be_a(Stormpath::Resource::Tenant)
+          expect(authenticate_oauth.tenant).to eq(test_api_client.tenant)
+          expect(authenticate_oauth.expanded_jwt).not_to be_empty
+        end
       end
 
-      it 'returns success on valid token' do
-        expect(authenticate_oauth.href).not_to be_empty
-        expect(authenticate_oauth.account).to be_a(Stormpath::Resource::Account)
-        expect(authenticate_oauth.account).to eq(account)
-        expect(authenticate_oauth.application).to be_a(Stormpath::Resource::Application)
-        expect(authenticate_oauth.application).to eq(application)
-        expect(authenticate_oauth.jwt).not_to be_empty
-        expect(authenticate_oauth.tenant).to be_a(Stormpath::Resource::Tenant)
-        expect(authenticate_oauth.tenant).to eq(test_api_client.tenant)
-        expect(authenticate_oauth.expanded_jwt).not_to be_empty
+      context 'locally' do
+        let(:access_token) { aquire_token.access_token }
+        let(:authenticate_oauth) do
+          Stormpath::Oauth::VerifyAccessToken.new(application, local: true).verify(access_token)
+        end
+
+        it 'should return local access token verification result' do
+          expect(authenticate_oauth)
+            .to be_kind_of(Stormpath::Oauth::LocalAccessTokenVerificationResult)
+        end
+
+        it 'should return result that contains account' do
+          expect(authenticate_oauth.account).to eq(account)
+        end
       end
     end
 

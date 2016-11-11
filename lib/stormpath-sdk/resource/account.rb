@@ -30,6 +30,9 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
   has_many :group_memberships
   has_many :applications
 
+  has_many :linked_accounts, class_name: :Account
+  has_many :account_links
+
   has_one :custom_data
 
   has_many :access_tokens

@@ -37,6 +37,27 @@ module Stormpath
             message: 'Token is invalid',
             developer_message: 'Token is invalid because the issued at time (iat) is after the current time',
             request_id: 'Oauth error UUID'
+          },
+          jwt_invalid_issuer: {
+            status: 400,
+            code: 10014,
+            message: 'Token is invalid',
+            developer_message: 'Token is invalid because the issuer of the token does not match the Application validating the token.',
+            request_id: 'Oauth error UUID'
+          },
+          jwt_invalid_signature: {
+            status: 400,
+            code: 10017,
+            message: 'Token is invalid',
+            developer_message: 'Token is invalid because verifying the signature of a JWT failed.',
+            request_id: 'Oauth error UUID'
+          },
+          jwt_invalid_stt: {
+            status: 400,
+            code: nil,
+            message: 'Token is invalid',
+            developer_message: "Token is invalid because the stt header doesn't match the right type",
+            request_id: 'Oauth error UUID'
           }
         }
       end

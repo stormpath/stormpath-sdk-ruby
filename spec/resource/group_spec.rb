@@ -1,26 +1,24 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Group, :vcr do
+  let(:directory) { test_api_client.directories.create(build_directory) }
+  after { directory.delete }
 
-  describe "instances should respond to attribute property methods" do
-    let(:directory) { test_directory }
+  describe 'instances should respond to attribute property methods' do
+    let(:group) { directory.groups.create name: 'RubyTestGroup', description: 'testDescription' }
 
-    let(:group) { directory.groups.create name: 'someTestGroup', description: 'someTestDescription' }
-
-    after do
-      group.delete if group
-    end
+    after { group.delete }
 
     it do
       [:name, :description, :status].each do |property_accessor|
         expect(group).to respond_to(property_accessor)
         expect(group).to respond_to("#{property_accessor}=")
-        expect(group.send property_accessor).to be_a String
+        expect(group.send(property_accessor)).to be_a String
       end
 
       [:created_at, :modified_at].each do |property_getter|
         expect(group).to respond_to(property_getter)
-        expect(group.send property_getter).to be_a String
+        expect(group.send(property_getter)).to be_a String
       end
 
       expect(group.tenant).to be_a Stormpath::Resource::Tenant
@@ -32,36 +30,27 @@ describe Stormpath::Resource::Group, :vcr do
   end
 
   describe '#create_group_with_custom_data' do
-    let(:directory) { test_directory }
-
     it 'creates a directory with custom data' do
-      directory.custom_data["category"] = "classified"
+      directory.custom_data['category'] = 'classified'
 
       directory.save
-      expect(directory.custom_data["category"]).to eq("classified")
+      expect(directory.custom_data['category']).to eq('classified')
     end
   end
 
   describe '#add_or_remove_account' do
-    context "given an account" do
+    context 'given an account' do
+      let(:group) { directory.groups.create(build_group) }
+      let(:account) { directory.accounts.create(build_account) }
 
-      let(:directory) { test_api_client.directories.create name: random_directory_name }
-
-      let(:group) { directory.groups.create name: 'someGroup' }
-
-      let(:account) { directory.accounts.create({ email: 'rubysdk@example.com', given_name: 'Ruby SDK', password: 'P@$$w0rd',surname: 'SDK' }) }
-
-      before do
-        group.add_account account
-      end
+      before { group.add_account(account) }
 
       after do
-        group.delete if group
-        directory.delete if directory
-        account.delete if account
+        group.delete
+        account.delete
       end
 
-      it "adds the account to the group" do
+      it 'adds the account to the group' do
         expect(group.accounts).to include(account)
       end
 
@@ -71,12 +60,9 @@ describe Stormpath::Resource::Group, :vcr do
 
       it 'adds and removes the group from the account' do
         expect(group.accounts).to include(account)
-
-        group.remove_account account
-
+        group.remove_account(account)
         expect(group.accounts).not_to include(account)
       end
-
     end
   end
 end

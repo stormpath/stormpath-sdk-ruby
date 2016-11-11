@@ -17,7 +17,7 @@ class Stormpath::DataStore
   include Stormpath::Http
   include Stormpath::Util::Assert
 
-  DEFAULT_SERVER_HOST = "dev.i.stormpath.com"
+  DEFAULT_SERVER_HOST = "api.stormpath.com"
   DEFAULT_API_VERSION = 1
   DEFAULT_BASE_URL = "https://" + DEFAULT_SERVER_HOST + "/v" + DEFAULT_API_VERSION.to_s
   HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
@@ -42,6 +42,7 @@ class Stormpath::DataStore
     CACHE_REGIONS.each do |region|
       region_opts = regions_opts[region.to_sym] || {}
       region_opts[:store] ||= cache_opts[:store]
+      region_opts[:store_opts] ||= cache_opts[:store_opts]
       @cache_manager.create_cache region, region_opts
     end
   end
@@ -103,6 +104,7 @@ class Stormpath::DataStore
   def execute_raw_request(href, body, klass)
     request = Request.new('POST', href, nil, {}, body.to_json, @api_key)
     apply_default_request_headers(request)
+
     response = @request_executor.execute_request(request)
     result = response.body.length > 0 ? MultiJson.load(response.body) : ''
 
@@ -140,6 +142,7 @@ class Stormpath::DataStore
       else
         apply_default_request_headers request
       end
+
       response = @request_executor.execute_request request
 
       result = response.body.length > 0 ? MultiJson.load(response.body) : ''

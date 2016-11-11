@@ -6,7 +6,7 @@ describe Stormpath::Resource::CustomData, :vcr do
   end
 
   context 'wuth caching regions' do
-    let(:directory) { test_api_client.directories.create name: random_directory_name }
+    let(:directory) { test_api_client.directories.create(build_directory) }
 
     it_behaves_like 'account_custom_data'
     it_behaves_like 'group_custom_data'
@@ -17,7 +17,7 @@ describe Stormpath::Resource::CustomData, :vcr do
       @disabled_cache_client ||= Stormpath::Client.new({api_key: test_api_key, cache: { store: Stormpath::Cache::DisabledCacheStore }})
     end
 
-    let(:directory) { disabled_cache_client.directories.create name: random_directory_name }
+    let(:directory) { disabled_cache_client.directories.create(build_directory) }
 
     it_behaves_like 'account_custom_data'
     it_behaves_like 'group_custom_data'

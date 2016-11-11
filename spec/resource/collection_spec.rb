@@ -169,7 +169,7 @@ describe Stormpath::Resource::Collection, :vcr do
 
   context 'live examples' do
     context 'testing limits and offsets' do
-      let(:directory) {test_api_client.directories.create name: random_directory_name }
+      let(:directory) { test_api_client.directories.create(build_directory) }
 
       let(:groups) do
         ('A'..'Z').map do |letter|
@@ -211,7 +211,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context 'testing limits and offsets with name checking' do
-      let(:directory) {test_api_client.directories.create name: random_directory_name }
+      let(:directory) { test_api_client.directories.create(build_directory) }
 
       let!(:groups) do
         ('1'..'100').map do |number|
@@ -273,7 +273,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context '#wild characters search' do
-      let(:directory) {test_api_client.directories.create name: random_directory_name }
+      let(:directory) { test_api_client.directories.create(build_directory) }
 
       # !@#$%^&*()_-+=?><:]}[{'
       # 'jlpicard/!@$%^*()_-+&=?><:]}[{'
@@ -281,7 +281,7 @@ describe Stormpath::Resource::Collection, :vcr do
 
       let!(:account) do
         directory.accounts.create username: username,
-           email: "capt@enterprise.com",
+           email: "captain#{default_domain}",
            givenName: "Jean-Luc",
            surname: "Picard",
            password: "hakunaMatata179Enterprise"
@@ -300,20 +300,20 @@ describe Stormpath::Resource::Collection, :vcr do
       end
 
       it 'should search accounts by email' do
-        expect(directory.accounts.search(email: "capt@enterprise.com").count).to eq(1)
+        expect(directory.accounts.search(email: "captain#{default_domain}").count).to eq(1)
       end
 
       it 'should search accounts by any column (aiming at email)' do
-        expect(directory.accounts.search("capt@enterprise.com").count).to eq(1)
+        expect(directory.accounts.search("captain#{default_domain}").count).to eq(1)
       end
     end
 
     context '#asterisk search on one attribute' do
-      let(:directory) {test_api_client.directories.create name: random_directory_name }
+      let(:directory) { test_api_client.directories.create(build_directory) }
 
       let!(:account) do
         directory.accounts.create username: "jlpicard",
-           email: "capt@enterprise.com",
+           email: "captain#{default_domain}",
            givenName: "Jean-Luc",
            surname: "Picard",
            password: "hakunaMatata179Enterprise"
@@ -337,11 +337,11 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context '#asterisk search on multiple attribute' do
-      let(:directory) {test_api_client.directories.create name: random_directory_name }
+      let(:directory) { test_api_client.directories.create(build_directory) }
 
       let!(:account) do
         directory.accounts.create username: "jlpicard",
-           email: "capt@enterprise.com",
+           email: "captain#{default_domain}",
            givenName: "Jean-Luc",
            surname: "Picard",
            password: "hakunaMatata179Enterprise"
@@ -352,7 +352,7 @@ describe Stormpath::Resource::Collection, :vcr do
       end
 
       it 'should search accounts by username with asterisk at the beginning' do
-        expect(directory.accounts.search(username: "*card", email: "*enterprise.com").count).to eq(1)
+        expect(directory.accounts.search(username: "*card", email: "*stormpath.com").count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the end' do
@@ -360,10 +360,68 @@ describe Stormpath::Resource::Collection, :vcr do
       end
 
       it 'should search accounts by username with asterisk at the beginning and the end' do
-        expect(directory.accounts.search(username: "*pic*", email: "*enterprise*").count).to eq(1)
+        expect(directory.accounts.search(username: "*pic*", email: "*stormpath*").count).to eq(1)
       end
     end
 
-  end
+    context 'search accounts by custom data' do
+      let(:directory) { test_api_client.directories.create(build_directory) }
 
+      let(:account) do
+        directory.accounts.create(
+          username: 'jlpicard',
+          email: "capt#{default_domain}",
+          givenName: 'Jean-Luc',
+          surname: 'Picard',
+          password: 'hakunaMatata179Enterprise'
+        )
+      end
+
+      let(:account2) do
+        directory.accounts.create(
+          username: 'jlpicard2',
+          email: "capt2#{default_domain}",
+          givenName: 'Jean-Luc2',
+          surname: 'Picard2',
+          password: 'hakunaMatata179Enterprise'
+        )
+      end
+
+      after do
+        directory.delete
+      end
+
+      context 'camelCase' do
+        before do
+          account.custom_data['targetAttribute'] = 'findMe'
+          account2.custom_data['targetAttribute'] = 'findMe'
+          account.save
+          account2.save
+        end
+
+        it 'should search accounts by custom data attribute' do
+          expect(account.custom_data['targetAttribute']).to eq 'findMe'
+          expect(directory.accounts.count).to eq 2
+          sleep 5
+          expect(directory.accounts.search('customData.targetAttribute' => 'findMe').count).to eq(2)
+        end
+      end
+
+      context 'snake_case' do
+        before do
+          account.custom_data['target_attribute'] = 'findMe'
+          account2.custom_data['target_attribute'] = 'findMe'
+          account.save
+          account2.save
+        end
+
+        it 'should be able to fetch custom data attributes with snake case' do
+          expect(account.custom_data['target_attribute']).to eq 'findMe'
+          expect(directory.accounts.count).to eq 2
+          sleep 5
+          expect(directory.accounts.search('customData.target_attribute' => 'findMe').count).to eq(2)
+        end
+      end
+    end
+  end
 end

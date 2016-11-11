@@ -2,26 +2,20 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Phone, :vcr do
   describe 'instances should respond to attribute property methods' do
-    let(:directory) { test_api_client.directories.create name: random_directory_name }
-    let(:account) do
-      directory.accounts.create(email: 'test@example.com',
-                                given_name: 'Ruby SDK',
-                                password: 'P@$$w0rd',
-                                surname: 'SDK',
-                                username: 'rubysdk')
-    end
+    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:account) { directory.accounts.create(build_account) }
     let(:phone) do
       account.phones.create(
-        number: '+385958142457',
-        name: 'Markos test phone',
+        number: '202-555-0173',
+        name: 'test phone',
         description: 'this is a testing phone number'
       )
     end
 
     after do
-      phone.delete if phone
-      account.delete if account
-      directory.delete if directory
+      phone.delete
+      account.delete
+      directory.delete
     end
 
     it do
@@ -41,32 +35,16 @@ describe Stormpath::Resource::Phone, :vcr do
   end
 
   describe 'phone associations' do
-    let(:app) do
-      test_api_client.applications.create(name: random_application_name, description: 'Dummy desc.')
-    end
+    let(:app) { test_api_client.applications.create(build_application) }
     let(:application) { test_api_client.applications.get app.href }
-    let(:directory) { test_api_client.directories.create name: random_directory_name }
+    let(:directory) { test_api_client.directories.create(build_directory) }
 
-    before do
-      test_api_client.account_store_mappings.create(application: app,
-                                                    account_store: directory,
-                                                    list_index: 1,
-                                                    is_default_account_store: true,
-                                                    is_default_group_store: true)
-    end
-
-    let(:account) do
-      directory.accounts.create(email: 'test@example.com',
-                                givenName: 'Ruby SDK',
-                                password: 'P@$$w0rd',
-                                surname: 'SDK',
-                                username: 'rubysdk')
-    end
-
+    before { map_account_store(app, directory, 1, true, true) }
+    let(:account) { directory.accounts.create(build_account) }
     let(:phone) do
       account.phones.create(
-        number: '+385958142457',
-        name: 'Markos test phone',
+        number: '202-555-0173',
+        name: 'test phone',
         description: 'this is a testing phone number'
       )
     end
