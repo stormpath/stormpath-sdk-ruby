@@ -6,7 +6,7 @@ describe Stormpath::Resource::Phone, :vcr do
     let(:account) { directory.accounts.create(build_account) }
     let(:phone) do
       account.phones.create(
-        number: '2025550173',
+        number: '+12025550173',
         name: 'test phone',
         description: 'this is a testing phone number'
       )
@@ -43,7 +43,7 @@ describe Stormpath::Resource::Phone, :vcr do
     let(:account) { directory.accounts.create(build_account) }
     let(:phone) do
       account.phones.create(
-        number: '2025550173',
+        number: '+12025550173',
         name: 'test phone',
         description: 'this is a testing phone number'
       )

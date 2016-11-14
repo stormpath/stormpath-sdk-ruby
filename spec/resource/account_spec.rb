@@ -140,7 +140,7 @@ describe Stormpath::Resource::Account, :vcr do
     let(:account) { directory.accounts.create(build_account) }
     let(:phone) do
       account.phones.create(
-        number: '2025550173',
+        number: '+12025550173',
         name: 'test phone',
         description: 'this is a testing phone number'
       )
@@ -157,7 +157,7 @@ describe Stormpath::Resource::Account, :vcr do
     it 'raises error if phone with same number created' do
       expect do
         account.phones.create(
-          number: '2025550173',
+          number: '+12025550173',
           name: 'test duplicate phone'
         )
       end.to raise_error(Stormpath::Error, 'An existing phone with that number already exists for this Account.')
@@ -180,7 +180,7 @@ describe Stormpath::Resource::Account, :vcr do
     let(:account) { directory.accounts.create(build_account) }
     let(:phone) do
       account.phones.create(
-        number: '2025550173',
+        number: '+12025550173',
         name: 'test phone',
         description: 'this is a testing phone number'
       )
@@ -189,7 +189,7 @@ describe Stormpath::Resource::Account, :vcr do
       account.factors.create(
         type: 'SMS',
         phone: {
-          number: '2025550173',
+          number: '+12025550173',
           name: 'test phone',
           description: 'this is a testing phone number'
         }
@@ -229,14 +229,14 @@ describe Stormpath::Resource::Account, :vcr do
     let(:account) { directory.accounts.create(build_account) }
     let(:phone) do
       account.phones.create(
-        number: '2025550173',
+        number: '+12025550173',
         name: 'test phone',
         description: 'this is a testing phone number'
       )
     end
     let(:factor) do
       account.create_factor('SMS',
-                            phone: { number: '2025550173',
+                            phone: { number: '+12025550173',
                                      name: 'Rspec test phone',
                                      description: 'This is a testing phone number' },
                             challenge: { message: 'Enter code please: ' })
