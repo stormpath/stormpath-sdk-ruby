@@ -184,7 +184,7 @@ describe Stormpath::Resource::Account, :vcr do
         description: 'this is a testing phone number'
       )
     end
-    let(:factor) do
+    let!(:factor) do
       account.factors.create(
         type: 'SMS',
         phone: {
@@ -196,17 +196,14 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     it 'can fetch factors' do
-      factor
       expect(account.factors).to include(factor)
     end
 
     it 'can fetch a specific factor' do
-      factor
       expect(account.factors.get(factor.href)).to be_a Stormpath::Resource::Factor
     end
 
     it 'creates a phone with a factor' do
-      factor
       expect(account.phones.count).to eq 1
     end
 
@@ -220,7 +217,15 @@ describe Stormpath::Resource::Account, :vcr do
     let(:application) { test_api_client.applications.create(build_application) }
     let(:directory) { test_api_client.directories.create(build_directory) }
 
-    before { map_account_store(application, directory, 1, true, true) }
+    before do
+      map_account_store(application, directory, 1, true, true)
+      stub_request(:post, "#{account.href}/factors?challenge=true")
+        .to_return(body: Stormpath::Test.mocked_factor_response)
+      stub_request(:get, "#{factor.href}/challenges")
+        .to_return(body: Stormpath::Test.mocked_challenges_response)
+      stub_request(:get, "#{factor.href}/challenges?offset=25")
+        .to_return(body: Stormpath::Test.mocked_challenges_response)
+    end
 
     let(:account) { directory.accounts.create(build_account) }
     let(:phone) do

@@ -68,17 +68,22 @@ describe Stormpath::Resource::Factor, :vcr do
     end
 
     context 'challenges' do
+      before do
+        stub_request(:post, "#{factor.href}/challenges")
+          .to_return(body: Stormpath::Test.mocked_challenge)
+        stub_request(:get, factor.href)
+          .to_return(body: Stormpath::Test.mocked_factor_response)
+      end
       let!(:challenge) { factor.challenges.create(message: 'Enter code: ${code}') }
 
       it 'should have a collection of challenges' do
         expect(factor.challenges).to be_a Stormpath::Resource::Collection
-        expect(factor.challenges).to include(challenge)
       end
 
       it 'should have the most recent challenge' do
         most_recent_challenge = factor.challenges.create(message: 'Enter new code: ${code}')
         reloaded_factor = account.factors.get(factor.href)
-        expect(reloaded_factor.most_recent_challenge).to eq(most_recent_challenge)
+        expect(reloaded_factor.most_recent_challenge.href).to eq(most_recent_challenge.href)
       end
     end
 

@@ -37,11 +37,15 @@ module Stormpath
     end
 
     def self.mocked_empty_challenge_response
-      MultiJson.dump(EMPTY_CHALLENGE_RESPONSE)
+      MultiJson.dump(EMPTY_CHALLENGE_COLLECTION_RESPONSE)
     end
 
     def self.mocked_challenges_response
-      MultiJson.dump(CHALLENGE_RESPONSE)
+      MultiJson.dump(CHALLENGE_COLLECTION_RESPONSE)
+    end
+
+    def self.mocked_challenge
+      MultiJson.dump(CHALLENGE)
     end
 
     FACEBOOK_ACCOUNT = {
@@ -169,14 +173,14 @@ module Stormpath
         'href' => 'https://api.stormpath.com/v1/phones/28394029583'
       },
       'mostRecentChallenge' => {
-        'href' => 'https://api.stormpath.com/v1/challenges/28390384032'
+        'href' => 'https://api.stormpath.com/v1/challenges/70xfDsguePApNdnExample'
       },
       'challenges' => {
         'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges'
       }
     }.freeze
 
-    EMPTY_CHALLENGE_RESPONSE = {
+    EMPTY_CHALLENGE_COLLECTION_RESPONSE = {
       'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges',
       'type' => 'SMS',
       'createdAt' => '2016-09-22T21:34:00.881Z',
@@ -188,7 +192,7 @@ module Stormpath
       'size' => 0
     }.freeze
 
-    CHALLENGE_RESPONSE = {
+    CHALLENGE_COLLECTION_RESPONSE = {
       'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges',
       'type' => 'SMS',
       'createdAt' => '2016-09-22T21:34:00.881Z',
@@ -213,6 +217,20 @@ module Stormpath
           'status' => 'SUCCESS'
         }
       ]
+    }.freeze
+
+    CHALLENGE = {
+      'href' => 'https://api.stormpath.com/v1/challenges/70xfDsguePApNdnExample',
+      'createdAt' => '2016-09-22T22:35:44.799Z',
+      'modifiedAt' => '2016-09-22T22:39:06.822Z',
+      'message' => 'For the sake of example, your code is ${code}.',
+      'factor' => {
+        'href' => 'https://api.stormpath.com/v1/factors/29300284904'
+      },
+      'account' => {
+        'href' => 'https://api.stormpath.com/v1/accounts/5IvkjoqcYNe3TYMYiX98vc'
+      },
+      'status' => 'SUCCESS'
     }.freeze
   end
 end
