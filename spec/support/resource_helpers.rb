@@ -13,9 +13,9 @@ module Stormpath
           end
           o[:username]   = (!opts[:username].blank? && opts[:username]) || "ruby#{random_number}"
           o[:password]   = (!opts[:password].blank? && opts[:password]) || 'P@$$w0rd'
-          o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'surname'
-          o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || 'givenname'
-          o[:middle_name] = (!opts[:middle_name].blank? && opts[:middle_name]) || 'middle_name'
+          o[:surname]    = (!opts[:surname].blank? && opts[:surname]) || 'ruby'
+          o[:given_name] = (!opts[:given_name].blank? && opts[:given_name]) || 'ruby'
+          o[:middle_name] = (!opts[:middle_name].blank? && opts[:middle_name]) || 'ruby'
           o[:status] = (!opts[:status].blank? && opts[:status]) || 'ENABLED'
         end
       end

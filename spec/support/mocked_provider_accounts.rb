@@ -36,6 +36,10 @@ module Stormpath
       MultiJson.dump(FACTOR_RESPONSE)
     end
 
+    def self.mocked_empty_challenge_response
+      MultiJson.dump(EMPTY_CHALLENGE_RESPONSE)
+    end
+
     def self.mocked_challenges_response
       MultiJson.dump(CHALLENGE_RESPONSE)
     end
@@ -172,6 +176,18 @@ module Stormpath
       }
     }.freeze
 
+    EMPTY_CHALLENGE_RESPONSE = {
+      'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges',
+      'type' => 'SMS',
+      'createdAt' => '2016-09-22T21:34:00.881Z',
+      'modifiedAt' => '2016-09-22T21:34:00.881Z',
+      'status' => 'ENABLED',
+      'verificationStatus' => 'UNVERIFIED',
+      'offset' => 0,
+      'limit' => 25,
+      'size' => 0
+    }.freeze
+
     CHALLENGE_RESPONSE = {
       'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges',
       'type' => 'SMS',
@@ -184,15 +200,15 @@ module Stormpath
       'size' => 1,
       'items' => [
         {
+          'href' => 'https://api.stormpath.com/v1/challenges/70xfDsguePApNdnExample',
           'createdAt' => '2016-09-22T22:35:44.799Z',
           'modifiedAt' => '2016-09-22T22:39:06.822Z',
-          'href' => 'https://api.stormpath.com/v1/challenges/70xfDsguePApNdnExample',
           'message' => 'For the sake of example, your code is ${code}.',
           'factor' => {
-              'href' => 'https://api.stormpath.com/v1/factors/29300284904'
+            'href' => 'https://api.stormpath.com/v1/factors/29300284904'
           },
           'account' => {
-              'href' => 'https://api.stormpath.com/v1/accounts/5IvkjoqcYNe3TYMYiX98vc'
+            'href' => 'https://api.stormpath.com/v1/accounts/5IvkjoqcYNe3TYMYiX98vc'
           },
           'status' => 'SUCCESS'
         }

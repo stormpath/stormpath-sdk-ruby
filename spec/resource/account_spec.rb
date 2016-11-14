@@ -164,7 +164,6 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     after do
-      sleep 5
       application.delete if application
       directory.delete if directory
       account.delete if account
@@ -212,9 +211,6 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     after do
-      sleep 5
-      factor.delete if factor
-      account.delete if account
       directory.delete if directory
       application.delete if application
     end
@@ -247,9 +243,6 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     after do
-      sleep 5
-      factor.delete if factor
-      account.delete if account
       directory.delete if directory
       application.delete if application
     end

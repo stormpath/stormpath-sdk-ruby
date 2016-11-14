@@ -290,8 +290,8 @@ describe Stormpath::Resource::Directory, :vcr do
 
       it 'creates an account with status ENABLED' do
         expect(account.email).to eq("#{account_email}#{default_domain}")
-        expect(account.given_name).to eq('givenname')
-        expect(account.surname).to eq('surname')
+        expect(account.given_name).to eq('ruby')
+        expect(account.surname).to eq('ruby')
         expect(account.status).to eq('ENABLED')
       end
     end
