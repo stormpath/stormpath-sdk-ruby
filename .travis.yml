@@ -6,8 +6,8 @@ services:
 - redis-server
 - memcached
 before_install:
-  - gem install bundler
+- gem install bundler
 env:
   global:
-  - secure: MeyjZGgySZvpYVRm2i7wkrhvu9KUeU7eQ5aKj7FXqIYlQe3T67k+KKA3Ejp6WC3wUEVPUFseWMZCuNkRc0UeGA5/4e4LLc++XuaZn1jLTm1yNofh/CFAAjt5VdIYz4R7sKxpyLxs0orK2+HcaiCoqSDj7ehw2SlDca9VEi0GoQk=
-  - secure: MrtbhfH1IfwDkkvf0pq6trgj68to/fK4c+L1daKvMaNiNvwggbA3s0ea9QjHxXfWmPqL5bf8Q5N7YqXUw8cLpRPrKUA65JkyhyzIju8FgzXz83aCvjJD+5XhJIGzpLM8qHeKh7F0K6/iURTKIUgZXbguK4HpEeCMrrdPYcof3Ew=
+  - secure: JObfQKlPYrwupzv2ASkCQWD7TMqD6D9OfbVdUe/sot91fVgoQIs7vGlQPYNz6aTgoAZfEKptrzXzA0KOsGKRDjN0MSkY/PevPxdb+81YTDdldKD5GCc5srWVDpwhRJvKU8ufHdrTcvf+Weulu4egUHoqOerlBcexTO/Erbe8/M4=
+  - secure: K24I2/DC4Z6SeosQaR4suZij4yacteVzXqLexJ+LSlxZP7j1T72O3JLtc7/SLm8RFOJkiH/csTgbZmLNAWZO8c0Y4fWAvIC/I1xfoCr57udfQPIe83qdtpVetyYs1BGcqlRboGpqxtOewGHHuHtIge4bjD5l1hHA+WaIdVa4GfI=
