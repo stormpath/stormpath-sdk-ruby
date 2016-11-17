@@ -79,15 +79,6 @@ class Stormpath::Resource::Collection
           criteria[:offset] = page.offset + page.limit
           iterate(collection_href, client, item_class, criteria, &block)
         end
-
-        # page.items.each(&block)
-        #
-        # if criteria[:limit].nil? and page.items.count == 25
-        #   criteria[:offset] ||= 0
-        #   criteria[:offset] += 25
-        #   iterate(collection_href, client, item_class, criteria, &block)
-        # end
-
       end
     end
 

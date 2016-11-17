@@ -4,16 +4,6 @@ describe Stormpath::Resource::Factor, :vcr do
   describe 'instances should respond to attribute property methods' do
     let(:directory) { test_api_client.directories.create(build_directory) }
     let(:account) { directory.accounts.create(build_account) }
-    let(:factor) do
-      account.factors.create(
-        type: 'SMS',
-        phone: {
-          number: '+12025550173',
-          name: 'test phone',
-          description: 'this is a testing phone number'
-        }
-      )
-    end
 
     after do
       factor.delete if factor
@@ -21,21 +11,58 @@ describe Stormpath::Resource::Factor, :vcr do
       directory.delete if directory
     end
 
-    it do
-      [:type].each do |property_accessor|
-        expect(factor).to respond_to(property_accessor)
-        expect(factor).to respond_to("#{property_accessor}=")
-        expect(factor.send(property_accessor)).to be_a String
+    context 'type sms' do
+      let(:factor) do
+        account.factors.create(
+          type: 'SMS',
+          phone: {
+            number: '+12025550173',
+            name: 'test phone',
+            description: 'this is a testing phone number'
+          }
+        )
       end
 
-      [:verification_status, :status].each do |property_getter|
-        expect(factor).to respond_to(property_getter)
-        expect(factor.send(property_getter)).to be_a String
+      it do
+        [:type, :status].each do |property_accessor|
+          expect(factor).to respond_to(property_accessor)
+          expect(factor).to respond_to("#{property_accessor}=")
+          expect(factor.send(property_accessor)).to be_a String
+        end
+
+        [:verification_status].each do |property_getter|
+          expect(factor).to respond_to(property_getter)
+          expect(factor.send(property_getter)).to be_a String
+        end
+
+        expect(factor.account).to be_a Stormpath::Resource::Account
+        expect(factor.phone).to be_a Stormpath::Resource::Phone
+        expect(factor.challenges).to be_a Stormpath::Resource::Collection
+      end
+    end
+
+    context 'type google_authenticator' do
+      let(:factor) do
+        account.factors.create(
+          type: 'google-authenticator',
+          issuer: 'ACME'
+        )
       end
 
-      expect(factor.account).to be_a Stormpath::Resource::Account
-      expect(factor.phone).to be_a Stormpath::Resource::Phone
-      expect(factor.challenges).to be_a Stormpath::Resource::Collection
+      it do
+        [:type, :status].each do |property_accessor|
+          expect(factor).to respond_to(property_accessor)
+          expect(factor).to respond_to("#{property_accessor}=")
+          expect(factor.send(property_accessor)).to be_a String
+        end
+
+        [:verification_status, :secret, :key_uri, :base64_q_r_image, :qr_code].each do |property_getter|
+          expect(factor).to respond_to(property_getter)
+          expect(factor.send(property_getter)).to be_a String
+        end
+
+        expect(factor.account).to be_a Stormpath::Resource::Account
+      end
     end
   end
 

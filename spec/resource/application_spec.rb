@@ -1194,7 +1194,7 @@ describe Stormpath::Resource::Application, :vcr do
         application.accounts.create(account_data)
       end
       let(:factor) do
-        account.create_factor('SMS',
+        account.create_factor(:sms,
                               phone: { number: '+12025550173',
                                        name: 'Rspec test phone',
                                        description: 'This is a testing phone number' },

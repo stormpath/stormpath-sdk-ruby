@@ -16,14 +16,15 @@
 module Stormpath
   module Authentication
     class CreateFactor < Stormpath::Resource::Base
-      attr_reader :client, :account, :type, :phone, :challenge
+      attr_reader :client, :account, :type, :phone, :challenge, :custom_options
 
       def initialize(client, account, type, options = {})
         @client = client
         @account = account
-        @type = type
-        @phone = options[:phone]
+        @type = determine_type(type)
+        @phone = options[:phone] || nil
         @challenge = options[:challenge] || nil
+        @custom_options = options[:custom_options] || nil
       end
 
       def save
@@ -37,12 +38,25 @@ module Stormpath
       end
 
       def resource
-        body = {}
-        body[:type] = type
-        body[:phone] = { number: phone[:number] }
-        body[:phone][:name] = phone[:name]
-        body[:phone][:description] = phone[:description]
-        body[:challenge] = { message: "#{challenge[:message]} ${code}" } if challenge
+        {}.tap do |body|
+          body[:type] = type
+          body[:phone] = phone if phone
+          body[:challenge] = { message: "#{challenge[:message]} ${code}" } if challenge
+          add_custom_options(body)
+        end
+      end
+
+      def determine_type(type)
+        raise Stormpath::Error unless type == :sms || type == :google_authenticator
+        type.to_s.sub('_', '-')
+      end
+
+      def add_custom_options(body)
+        if custom_options
+          body[:accountName] = custom_options[:account_name] if custom_options[:account_name]
+          body[:issuer] = custom_options[:issuer] if custom_options[:issuer]
+          body[:status] = custom_options[:status] if custom_options[:status]
+        end
         body
       end
     end
