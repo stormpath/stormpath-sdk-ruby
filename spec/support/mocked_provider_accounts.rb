@@ -48,6 +48,10 @@ module Stormpath
       MultiJson.dump(CHALLENGE)
     end
 
+    def self.mocked_successfull_challenge
+      MultiJson.dump(SUCCESSFULL_CHALLENGE)
+    end
+
     FACEBOOK_ACCOUNT = {
       href: "https://api.stormpath.com/v1/accounts/7jdiPam0PWES317hwRR5a7",
       username: "damir.svrtan",
@@ -231,6 +235,16 @@ module Stormpath
         'href' => 'https://api.stormpath.com/v1/accounts/5IvkjoqcYNe3TYMYiX98vc'
       },
       'status' => 'SUCCESS'
+    }.freeze
+
+    SUCCESSFULL_CHALLENGE = {
+      'href' => 'https://api.stormpath.com/v1/challenges/2p5jkx09ykTSDWMmyMDdgU',
+      'createdAt' => '2016-11-17T14:01:40.138Z',
+      'modifiedAt' => '2016-11-17T14:02:38.773Z',
+      'status' => 'SUCCESS',
+      'message' => '${code}',
+      'account' => { 'href' => 'https://api.stormpath.com/v1/accounts/1vxQr1xUSxftDytaO45KH2' },
+      'factor' => { 'href' => 'https://api.stormpath.com/v1/factors/2p5jktg54AATahGvm6MN4Q' }
     }.freeze
   end
 end

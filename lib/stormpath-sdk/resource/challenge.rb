@@ -19,4 +19,8 @@ class Stormpath::Resource::Challenge < Stormpath::Resource::Instance
 
   belongs_to :factor
   belongs_to :account
+
+  def validate(code)
+    data_store.execute_raw_request href, { code: code }, Stormpath::Resource::Challenge
+  end
 end
