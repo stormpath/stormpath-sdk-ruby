@@ -41,7 +41,7 @@ module Stormpath
       def organization_attrs(opts = {})
         opts.tap do |o|
           o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby-org-#{random_number}"
-          o[:name_key]  = (!opts[:name_key].blank? && opts[:name_key]) || 'ruby desc'
+          o[:name_key]  = (!opts[:name_key].blank? && opts[:name_key]) || "ruby-org-#{random_number}"
         end
       end
 
