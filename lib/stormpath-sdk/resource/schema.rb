@@ -17,4 +17,5 @@ class Stormpath::Resource::Schema < Stormpath::Resource::Instance
   prop_reader :created_at, :modified_at
 
   has_many :fields
+  belongs_to :directory
 end

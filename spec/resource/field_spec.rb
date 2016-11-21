@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Stormpath::Resource::Field, :vcr do
   let(:application) { test_api_client.applications.create(build_application) }
   let(:directory) { test_api_client.directories.create(build_directory) }
-  let(:account_schema) { directory.account_schema }
-  let(:field) { account_schema.fields.first }
+  let(:schema) { directory.account_schema }
+  let(:field) { schema.fields.first }
 
   after do
     directory.delete
