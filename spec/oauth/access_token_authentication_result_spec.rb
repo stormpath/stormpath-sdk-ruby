@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
-  let(:application) { test_api_client.applications.create(build_application) }
-  let(:directory) { test_api_client.directories.create(build_directory) }
+  let(:application) { test_api_client.applications.create(application_attrs) }
+  let(:directory) { test_api_client.directories.create(directory_attrs) }
   before { map_account_store(application, directory, 1, true, false) }
   let!(:account) do
-    application.accounts.create(build_account(email: 'ruby25', password: 'P@$$w0rd'))
+    application.accounts.create(account_attrs(email: 'ruby25', password: 'P@$$w0rd'))
   end
   let(:password_grant_request) do
     Stormpath::Oauth::PasswordGrantRequest.new("ruby25#{default_domain}", 'P@$$w0rd')

@@ -169,7 +169,7 @@ describe Stormpath::Resource::Collection, :vcr do
 
   context 'live examples' do
     context 'testing limits and offsets' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let(:groups) do
         ('A'..'Z').map do |letter|
@@ -211,7 +211,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context 'testing limits and offsets with name checking' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let!(:groups) do
         ('1'..'100').map do |number|
@@ -273,7 +273,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context '#wild characters search' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       # !@#$%^&*()_-+=?><:]}[{'
       # 'jlpicard/!@$%^*()_-+&=?><:]}[{'
@@ -309,7 +309,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context '#asterisk search on one attribute' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let!(:account) do
         directory.accounts.create username: "jlpicard",
@@ -337,7 +337,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context '#asterisk search on multiple attribute' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let!(:account) do
         directory.accounts.create username: "jlpicard",
@@ -365,7 +365,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context 'search accounts by custom data' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let(:account) do
         directory.accounts.create(

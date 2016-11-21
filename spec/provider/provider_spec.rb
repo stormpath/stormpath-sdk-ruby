@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stormpath::Provider::Provider, :vcr do
-  let(:application) { test_api_client.applications.create(build_application) }
+  let(:application) { test_api_client.applications.create(application_attrs) }
   let(:account_store_mapping) { map_account_store(application, directory, 0, false, false) }
   let(:directory) { test_api_client.directories.create(directory_hash) }
 
@@ -96,7 +96,7 @@ describe Stormpath::Provider::Provider, :vcr do
     it_behaves_like 'a provider directory'
 
     it 'should be able to retrieve provider data from a regular account' do
-      account = directory.accounts.create(build_account)
+      account = directory.accounts.create(account_attrs)
 
       expect(account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
       expect(account.provider_data.provider_id).to eq(provider_id)

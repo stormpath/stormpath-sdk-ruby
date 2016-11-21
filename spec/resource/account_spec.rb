@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Account, :vcr do
   describe 'instances should respond to attribute property methods' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
     let(:account) do
-      directory.accounts.create(build_account(email: 'ruby',
+      directory.accounts.create(account_attrs(email: 'ruby',
                                               given_name: 'ruby',
                                               surname: 'ruby',
                                               middle_name: 'ruby'))
@@ -43,9 +43,9 @@ describe Stormpath::Resource::Account, :vcr do
   end
 
   describe 'account_associations' do
-    let(:application) { test_api_client.applications.create(build_application) }
-    let(:directory) { test_api_client.directories.create(build_directory) }
-    let(:account) { directory.accounts.create(build_account) }
+    let(:application) { test_api_client.applications.create(application_attrs) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
+    let(:account) { directory.accounts.create(account_attrs) }
     before { map_account_store(application, directory, 1, true, true) }
 
     it 'should belong_to directory' do
@@ -62,7 +62,7 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     describe 'linked accounts' do
-      let(:directory2) { test_api_client.directories.create(build_directory) }
+      let(:directory2) { test_api_client.directories.create(directory_attrs) }
       before do
         map_account_store(application, directory2, 2, false, false)
         account
@@ -70,7 +70,7 @@ describe Stormpath::Resource::Account, :vcr do
 
       after { directory2.delete }
 
-      let!(:account2) { directory2.accounts.create(build_account) }
+      let!(:account2) { directory2.accounts.create(account_attrs) }
       let!(:link_accounts) do
         test_api_client.account_links.create(
           left_account: {
@@ -97,9 +97,9 @@ describe Stormpath::Resource::Account, :vcr do
 
   describe '#add_or_remove_group' do
     context 'given a group' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
-      let(:group) { directory.groups.create(build_group) }
-      let(:account) { directory.accounts.create(build_account) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
+      let(:group) { directory.groups.create(group_attrs) }
+      let(:account) { directory.accounts.create(account_attrs) }
       before { account.add_group(group) }
 
       after do
@@ -128,8 +128,8 @@ describe Stormpath::Resource::Account, :vcr do
 
   describe '#save' do
     context 'when property values have changed' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
-      let(:account) { directory.accounts.create(build_account) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
+      let(:account) { directory.accounts.create(account_attrs) }
       let(:account_uri) { account.href }
       let(:new_surname) { 'NewSurname' }
       let(:reloaded_account) { test_api_client.accounts.get(account_uri) }

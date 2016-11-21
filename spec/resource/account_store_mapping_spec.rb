@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Stormpath::Resource::AccountStoreMapping, :vcr do
   let(:directory_name) { 'rubysdktestdir' }
-  let(:directory) { test_api_client.directories.create(build_directory(name: directory_name)) }
-  let(:application) { test_api_client.applications.create(build_application) }
+  let(:directory) { test_api_client.directories.create(directory_attrs(name: directory_name)) }
+  let(:application) { test_api_client.applications.create(application_attrs) }
 
   after do
     application.delete if application
@@ -116,7 +116,7 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
   end
 
   describe "given a group" do
-    let(:group) { directory.groups.create(build_group) }
+    let(:group) { directory.groups.create(group_attrs) }
     let(:reloaded_application) { test_api_client.applications.get application.href }
 
     after do

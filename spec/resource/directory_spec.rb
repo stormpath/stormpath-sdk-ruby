@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Directory, :vcr do
-  let(:application) { test_api_client.applications.create(build_application) }
+  let(:application) { test_api_client.applications.create(application_attrs) }
   after { application.delete }
 
   describe 'instances should respond to attribute property methods' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     after { directory.delete }
 
@@ -31,12 +31,12 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'directory_associations' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     after { directory.delete }
 
     context '#accounts' do
-      let(:account) { directory.accounts.create(build_account) }
+      let(:account) { directory.accounts.create(account_attrs) }
 
       after { account.delete if account }
 
@@ -50,7 +50,7 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     context '#groups' do
-      let(:group) { directory.groups.create(build_group) }
+      let(:group) { directory.groups.create(group_attrs) }
 
       after { group.delete }
 
@@ -87,7 +87,7 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     context '#organizations' do
-      let(:organization) { test_api_client.organizations.create(build_organization) }
+      let(:organization) { test_api_client.organizations.create(organization_attrs) }
 
       let!(:organization_account_store_mappings) do
         map_organization_store(directory, organization)
@@ -118,8 +118,8 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_account' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
-    let(:account) { Stormpath::Resource::Account.new(build_account) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
+    let(:account) { Stormpath::Resource::Account.new(account_attrs) }
 
     after { directory.delete }
 
@@ -138,7 +138,7 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     context 'with registration workflow' do
-      let(:directory_with_verification) { test_api_client.directories.create(build_directory) }
+      let(:directory_with_verification) { test_api_client.directories.create(directory_attrs) }
 
       before do
         map_account_store(application, directory_with_verification, 1, false, false)
@@ -182,7 +182,7 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'create account with password import MCF feature' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     before { map_account_store(application, directory, 0, true, true) }
 
@@ -292,7 +292,7 @@ describe Stormpath::Resource::Directory, :vcr do
 
     context 'with account data as hash' do
       let(:account_email) { 'rubysdk' }
-      let(:account) { directory.create_account(build_account(email: account_email)) }
+      let(:account) { directory.create_account(account_attrs(email: account_email)) }
 
       it 'creates an account with status ENABLED' do
         expect(account.email).to eq("#{account_email}#{default_domain}")
@@ -305,7 +305,7 @@ describe Stormpath::Resource::Directory, :vcr do
 
   describe '#create_directory_with_custom_data' do
     let(:directory) do
-      test_api_client.directories.create(build_directory(name: 'rubysdkdir',
+      test_api_client.directories.create(directory_attrs(name: 'rubysdkdir',
                                                          description: 'rubysdkdir desc'))
     end
 
@@ -490,12 +490,12 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_account_with_custom_data' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     after { directory.delete }
 
     it 'creates an account with custom data' do
-      account = Stormpath::Resource::Account.new(build_account)
+      account = Stormpath::Resource::Account.new(account_attrs)
 
       account.custom_data['birth_date'] = '2305-07-13'
 
@@ -510,12 +510,12 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_group' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     after { directory.delete }
 
     context 'given a valid group' do
-      let(:created_group) { directory.groups.create(build_group(name: 'rubysdkgroup')) }
+      let(:created_group) { directory.groups.create(group_attrs(name: 'rubysdkgroup')) }
 
       after { created_group.delete }
 
@@ -527,9 +527,9 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#delete_directory' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
-    let!(:group) { directory.groups.create(build_group) }
-    let!(:account) { directory.accounts.create(build_account) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
+    let!(:group) { directory.groups.create(group_attrs) }
+    let!(:account) { directory.accounts.create(account_attrs) }
     let!(:account_store_mapping) { map_account_store(application, directory, 0, true, true) }
 
     after { directory.delete }

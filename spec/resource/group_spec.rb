@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Group, :vcr do
-  let(:directory) { test_api_client.directories.create(build_directory) }
+  let(:directory) { test_api_client.directories.create(directory_attrs) }
   after { directory.delete }
 
   describe 'instances should respond to attribute property methods' do
@@ -40,8 +40,8 @@ describe Stormpath::Resource::Group, :vcr do
 
   describe '#add_or_remove_account' do
     context 'given an account' do
-      let(:group) { directory.groups.create(build_group) }
-      let(:account) { directory.accounts.create(build_account) }
+      let(:group) { directory.groups.create(group_attrs) }
+      let(:account) { directory.accounts.create(account_attrs) }
 
       before { group.add_account(account) }
 

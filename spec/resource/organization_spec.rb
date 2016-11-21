@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Organization, :vcr do
   let(:organization) do
-    test_api_client.organizations.create(build_organization(name: 'test_ruby_organization',
+    test_api_client.organizations.create(organization_attrs(name: 'test_ruby_organization',
                                                             name_key: 'testorganization',
                                                             description: 'test organization'))
   end
@@ -56,14 +56,14 @@ describe Stormpath::Resource::Organization, :vcr do
 
       it 'should raise Stormpath::Error' do
         expect do
-          test_api_client.organizations.create(build_organization(name_key: 'testorganization'))
+          test_api_client.organizations.create(organization_attrs(name_key: 'testorganization'))
         end.to raise_error(Stormpath::Error)
       end
     end
   end
 
   describe 'associations' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
     after { directory.delete }
 
     context 'groups' do
@@ -77,8 +77,8 @@ describe Stormpath::Resource::Organization, :vcr do
     end
 
     context 'accounts' do
-      let(:account) { directory.accounts.create(build_account(email: 'rubysdk')) }
-      let(:org_account) { directory.accounts.create(build_account(email: 'rubysdk2')) }
+      let(:account) { directory.accounts.create(account_attrs(email: 'rubysdk')) }
+      let(:org_account) { directory.accounts.create(account_attrs(email: 'rubysdk2')) }
 
       before { map_organization_store(directory, organization, true) }
 
@@ -129,7 +129,7 @@ describe Stormpath::Resource::Organization, :vcr do
   end
 
   describe 'organization account store mapping' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
     after { directory.delete }
 
     context 'given an account_store is a directory' do

@@ -17,10 +17,10 @@ describe Stormpath::Resource::AccountLink, :vcr do
   end
 
   let!(:account1) do
-    directory1.accounts.create(build_account(email: 'jekyll', username: 'jekyll'))
+    directory1.accounts.create(account_attrs(email: 'jekyll', username: 'jekyll'))
   end
   let!(:account2) do
-    directory2.accounts.create(build_account(email: 'hyde', username: 'hyde'))
+    directory2.accounts.create(account_attrs(email: 'hyde', username: 'hyde'))
   end
 
   let!(:account_link) do
