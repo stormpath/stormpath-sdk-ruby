@@ -109,6 +109,12 @@ describe Stormpath::Resource::Directory, :vcr do
         expect(directory.password_policy).to be_kind_of(Stormpath::Resource::PasswordPolicy)
       end
     end
+
+    context '#account_schema' do
+      it 'should be able to fetch the account schema' do
+        expect(directory.account_schema).to be_kind_of Stormpath::Resource::AccountSchema
+      end
+    end
   end
 
   describe '#create_account' do
