@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Stormpath::Resource::AccountSchema, :vcr do
+describe Stormpath::Resource::Schema, :vcr do
   let(:application) { test_api_client.applications.create(build_application) }
   let(:directory) { test_api_client.directories.create(build_directory) }
   let(:account_schema) { directory.account_schema }
@@ -12,7 +12,7 @@ describe Stormpath::Resource::AccountSchema, :vcr do
 
   describe 'instances should respond to attribute property methods' do
     it do
-      expect(account_schema).to be_a Stormpath::Resource::AccountSchema
+      expect(account_schema).to be_a Stormpath::Resource::Schema
 
       [:created_at, :modified_at].each do |property_getter|
         expect(account_schema).to respond_to(property_getter)
@@ -21,7 +21,7 @@ describe Stormpath::Resource::AccountSchema, :vcr do
     end
   end
 
-  describe 'account_schema associations' do
+  describe 'schema associations' do
     context '#fields' do
       let(:field) { directory.fields.first }
 

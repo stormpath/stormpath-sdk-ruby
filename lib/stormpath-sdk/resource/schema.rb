@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::AccountSchema < Stormpath::Resource::Instance
+class Stormpath::Resource::Schema < Stormpath::Resource::Instance
   prop_reader :created_at, :modified_at
 
   has_many :fields

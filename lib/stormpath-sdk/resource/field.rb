@@ -16,6 +16,5 @@
 class Stormpath::Resource::Field < Stormpath::Resource::Instance
   prop_reader :name, :required, :created_at, :modified_at
 
-  belongs_to :schema, class_name: :AccountSchema
-  alias_method :account_schema, :schema
+  belongs_to :schema
 end

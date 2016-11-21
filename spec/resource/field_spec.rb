@@ -26,9 +26,9 @@ describe Stormpath::Resource::Field, :vcr do
   end
 
   describe 'field associations' do
-    context '#account_schema' do
+    context '#schema' do
       it 'should be able to get the account schema' do
-        expect(field.account_schema).to be_a Stormpath::Resource::AccountSchema
+        expect(field.schema).to be_a Stormpath::Resource::Schema
       end
     end
   end

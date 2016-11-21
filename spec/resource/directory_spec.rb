@@ -112,7 +112,7 @@ describe Stormpath::Resource::Directory, :vcr do
 
     context '#account_schema' do
       it 'should be able to fetch the account schema' do
-        expect(directory.account_schema).to be_kind_of Stormpath::Resource::AccountSchema
+        expect(directory.account_schema).to be_kind_of Stormpath::Resource::Schema
       end
     end
   end
