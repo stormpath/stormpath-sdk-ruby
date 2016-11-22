@@ -1,6 +1,14 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.4.0
+-------------
+
+Released on November 22, 2016
+
+- Implement Multifactor Authentication with SMS and google-authenticator
+
+
 Version 1.3.1
 -------------
 
