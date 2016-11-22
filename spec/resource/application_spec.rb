@@ -1175,6 +1175,47 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
 
+    context 'generate access token from challenge factor grant request' do
+      before do
+        stub_request(:post,
+                     "https://#{test_api_key_id}:#{test_api_key_secret}@#{test_host}/v1/accounts/#{account.href.split('/').last}/factors?challenge=true")
+          .to_return(body: Stormpath::Test.mocked_factor_response)
+
+        stub_request(:post,
+                     "https://#{test_api_key_id}:#{test_api_key_secret}@#{test_host}/v1/applications/#{application.href.split('/').last}/oauth/token")
+          .to_return(body: Stormpath::Test.mocked_challenge_factor_grant_response)
+      end
+      let(:account_data) { account_attrs }
+      let(:authenticate_oauth) { application.authenticate_oauth(challenge_factor_grant_request) }
+      let(:challenge_factor_grant_request) do
+        Stormpath::Oauth::ChallengeFactorGrantRequest.new(challenge, code)
+      end
+      let(:account) do
+        application.accounts.create(account_data)
+      end
+      let(:factor) do
+        account.create_factor(:sms,
+                              phone: { number: '+12025550173',
+                                       name: 'Rspec test phone',
+                                       description: 'This is a testing phone number' },
+                              challenge: { message: 'Enter code please: ' })
+      end
+      let(:challenge) { "https://#{test_host}/v1/challenges/29300284904" }
+      let(:code) { '123456' }
+
+      it 'should return access token response' do
+        expect(authenticate_oauth).to be_kind_of(Stormpath::Oauth::AccessTokenAuthenticationResult)
+      end
+
+      it 'response should contain token data' do
+        expect(authenticate_oauth.access_token).not_to be_empty
+        expect(authenticate_oauth.refresh_token).not_to be_empty
+        expect(authenticate_oauth.token_type).not_to be_empty
+        expect(authenticate_oauth.expires_in).not_to be_nil
+        expect(authenticate_oauth.stormpath_access_token_href).not_to be_empty
+      end
+    end
+
     context 'exchange id site token for access_token with invalid jwt' do
       let(:invalid_jwt_token) { 'invalid_token' }
 

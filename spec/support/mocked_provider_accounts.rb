@@ -28,6 +28,30 @@ module Stormpath
       MultiJson.dump(STORMPATH_GRANT_RESPONSE)
     end
 
+    def self.mocked_challenge_factor_grant_response
+      MultiJson.dump(STORMPATH_GRANT_RESPONSE)
+    end
+
+    def self.mocked_factor_response
+      MultiJson.dump(FACTOR_RESPONSE)
+    end
+
+    def self.mocked_empty_challenge_response
+      MultiJson.dump(EMPTY_CHALLENGE_COLLECTION_RESPONSE)
+    end
+
+    def self.mocked_challenges_response
+      MultiJson.dump(CHALLENGE_COLLECTION_RESPONSE)
+    end
+
+    def self.mocked_challenge
+      MultiJson.dump(CHALLENGE)
+    end
+
+    def self.mocked_successfull_challenge
+      MultiJson.dump(SUCCESSFULL_CHALLENGE)
+    end
+
     FACEBOOK_ACCOUNT = {
       href: "https://api.stormpath.com/v1/accounts/7jdiPam0PWES317hwRR5a7",
       username: "damir.svrtan",
@@ -139,6 +163,88 @@ module Stormpath
       'token_type' => 'Bearer',
       'expires_in' => 3600,
       'stormpath_access_token_href' => 'random_href'
+    }.freeze
+
+    FACTOR_RESPONSE = {
+      'href' => 'https://api.stormpath.com/v1/factors/29300284904',
+      'type' => 'SMS',
+      'verificationStatus' => 'UNVERIFIED',
+      'status' => 'ENABLED',
+      'account' => {
+        'href' => 'https://api.stormpath.com/v1/accounts/20959204030'
+      },
+      'phone' => {
+        'href' => 'https://api.stormpath.com/v1/phones/28394029583'
+      },
+      'mostRecentChallenge' => {
+        'href' => 'https://api.stormpath.com/v1/challenges/70xfDsguePApNdnExample'
+      },
+      'challenges' => {
+        'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges'
+      }
+    }.freeze
+
+    EMPTY_CHALLENGE_COLLECTION_RESPONSE = {
+      'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges',
+      'type' => 'SMS',
+      'createdAt' => '2016-09-22T21:34:00.881Z',
+      'modifiedAt' => '2016-09-22T21:34:00.881Z',
+      'status' => 'ENABLED',
+      'verificationStatus' => 'UNVERIFIED',
+      'offset' => 0,
+      'limit' => 25,
+      'size' => 0
+    }.freeze
+
+    CHALLENGE_COLLECTION_RESPONSE = {
+      'href' => 'https://api.stormpath.com/v1/factors/29300284904/challenges',
+      'type' => 'SMS',
+      'createdAt' => '2016-09-22T21:34:00.881Z',
+      'modifiedAt' => '2016-09-22T21:34:00.881Z',
+      'status' => 'ENABLED',
+      'verificationStatus' => 'UNVERIFIED',
+      'offset' => 0,
+      'limit' => 25,
+      'size' => 1,
+      'items' => [
+        {
+          'href' => 'https://api.stormpath.com/v1/challenges/70xfDsguePApNdnExample',
+          'createdAt' => '2016-09-22T22:35:44.799Z',
+          'modifiedAt' => '2016-09-22T22:39:06.822Z',
+          'message' => 'For the sake of example, your code is ${code}.',
+          'factor' => {
+            'href' => 'https://api.stormpath.com/v1/factors/29300284904'
+          },
+          'account' => {
+            'href' => 'https://api.stormpath.com/v1/accounts/5IvkjoqcYNe3TYMYiX98vc'
+          },
+          'status' => 'SUCCESS'
+        }
+      ]
+    }.freeze
+
+    CHALLENGE = {
+      'href' => 'https://api.stormpath.com/v1/challenges/70xfDsguePApNdnExample',
+      'createdAt' => '2016-09-22T22:35:44.799Z',
+      'modifiedAt' => '2016-09-22T22:39:06.822Z',
+      'message' => 'For the sake of example, your code is ${code}.',
+      'factor' => {
+        'href' => 'https://api.stormpath.com/v1/factors/29300284904'
+      },
+      'account' => {
+        'href' => 'https://api.stormpath.com/v1/accounts/5IvkjoqcYNe3TYMYiX98vc'
+      },
+      'status' => 'SUCCESS'
+    }.freeze
+
+    SUCCESSFULL_CHALLENGE = {
+      'href' => 'https://api.stormpath.com/v1/challenges/2p5jkx09ykTSDWMmyMDdgU',
+      'createdAt' => '2016-11-17T14:01:40.138Z',
+      'modifiedAt' => '2016-11-17T14:02:38.773Z',
+      'status' => 'SUCCESS',
+      'message' => '${code}',
+      'account' => { 'href' => 'https://api.stormpath.com/v1/accounts/1vxQr1xUSxftDytaO45KH2' },
+      'factor' => { 'href' => 'https://api.stormpath.com/v1/factors/2p5jktg54AATahGvm6MN4Q' }
     }.freeze
   end
 end

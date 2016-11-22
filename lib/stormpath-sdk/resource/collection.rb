@@ -80,7 +80,6 @@ class Stormpath::Resource::Collection
           iterate(collection_href, client, item_class, criteria, &block)
         end
       end
-
     end
 
     class CollectionPage < Stormpath::Resource::Base

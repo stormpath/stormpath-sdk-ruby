@@ -40,6 +40,9 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
 
   has_many :api_keys, can: [:create]
 
+  has_many :phones, can: [:get, :create]
+  has_many :factors, can: [:get, :create]
+
   def add_group group
     client.group_memberships.create group: group, account: self
   end
@@ -64,4 +67,7 @@ class Stormpath::Resource::Account < Stormpath::Resource::Instance
     instance_variable_set "@_provider_data", provider_data
   end
 
+  def create_factor(type, options = {})
+    Stormpath::Authentication::CreateFactor.new(client, self, type, options).save
+  end
 end

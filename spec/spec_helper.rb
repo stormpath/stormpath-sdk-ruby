@@ -15,15 +15,18 @@ require 'uuidtools'
 
 Dir['./spec/support/*.rb'].each { |file| require file }
 
-HIJACK_HTTP_REQUESTS_WITH_VCR = ENV['STORMPATH_SDK_TEST_ENVIRONMENT'] != 'CI'
-
 WebMock.allow_net_connect!
 
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
   c.hook_into :webmock
   c.configure_rspec_metadata!
-  c.ignore_request { |r| HIJACK_HTTP_REQUESTS_WITH_VCR == false }
+
+  c.before_record do |i|
+    i.request.headers.delete('Authorization')
+    u = URI.parse(i.request.uri)
+    i.request.uri.sub!(/:\/\/.*#{Regexp.escape(u.host)}/, "://#{u.host}" )
+  end
 end
 
 RSpec.configure do |c|

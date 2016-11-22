@@ -60,6 +60,9 @@ module Stormpath
     autoload :PasswordPolicy, 'stormpath-sdk/resource/password_policy'
     autoload :EmailTemplate, 'stormpath-sdk/resource/email_template'
     autoload :PasswordStrength, 'stormpath-sdk/resource/password_strength'
+    autoload :Phone, 'stormpath-sdk/resource/phone'
+    autoload :Factor, 'stormpath-sdk/resource/factor'
+    autoload :Challenge, 'stormpath-sdk/resource/challenge'
     autoload :Schema, 'stormpath-sdk/resource/schema'
     autoload :Field, 'stormpath-sdk/resource/field'
   end
@@ -82,6 +85,7 @@ module Stormpath
     autoload :BasicAuthenticator, 'stormpath-sdk/auth/basic_authenticator'
     autoload :HttpBasicAuthentication, 'stormpath-sdk/auth/http_basic_authentication'
     autoload :HttpBearerAuthentication, 'stormpath-sdk/auth/http_bearer_authentication'
+    autoload :CreateFactor, 'stormpath-sdk/auth/create_factor'
   end
 
   module Provider
@@ -142,5 +146,7 @@ module Stormpath
     autoload :ClientCredentialsGrant, 'stormpath-sdk/oauth/client_credentials_grant'
     autoload :SocialGrantRequest, 'stormpath-sdk/oauth/social_grant_request'
     autoload :SocialGrant, 'stormpath-sdk/oauth/social_grant'
+    autoload :ChallengeFactorGrantRequest, 'stormpath-sdk/oauth/challenge_factor_grant_request'
+    autoload :ChallengeFactorGrant, 'stormpath-sdk/oauth/challenge_factor_grant'
   end
 end

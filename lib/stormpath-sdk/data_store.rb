@@ -101,6 +101,21 @@ class Stormpath::DataStore
     return nil
   end
 
+  def execute_raw_request(href, body, klass)
+    request = Request.new('POST', href, nil, {}, body.to_json, @api_key)
+    apply_default_request_headers(request)
+    response = @request_executor.execute_request(request)
+    result = response.body.length > 0 ? MultiJson.load(response.body) : ''
+
+    if response.error?
+      error = Stormpath::Resource::Error.new result
+      raise Stormpath::Error.new(error)
+    end
+
+    cache_walk(result)
+    instantiate(klass, result)
+  end
+
   private
 
     def needs_to_be_fully_qualified?(href)
@@ -296,7 +311,8 @@ class Stormpath::DataStore
           property = resource.get_property name, ignore_camelcasing: ignore_camelcasing
 
           # Special use cases are with Custom Data, Provider and ProviderData, their hashes should not be simplified
-          if property.kind_of?(Hash) and !resource_nested_submittable(resource, name) and name != "items"
+          # As of the implementation for MFA, Phone resource is added too
+          if property.kind_of?(Hash) and !resource_nested_submittable(resource, name) and name != "items" and name != 'phone'
             property = to_simple_reference name, property
           end
 

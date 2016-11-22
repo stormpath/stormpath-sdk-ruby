@@ -39,6 +39,8 @@ describe Stormpath::Resource::Account, :vcr do
       expect(account.groups).to be_a Stormpath::Resource::Collection
       expect(account.group_memberships).to be_a Stormpath::Resource::Collection
       expect(account.applications).to be_a Stormpath::Resource::Collection
+      expect(account.phones).to be_a Stormpath::Resource::Collection
+      expect(account.factors).to be_a Stormpath::Resource::Collection
     end
   end
 
@@ -123,6 +125,188 @@ describe Stormpath::Resource::Account, :vcr do
 
         expect(account.groups).not_to include(group)
       end
+    end
+  end
+
+  describe 'managing phones' do
+    let(:application) { test_api_client.applications.create(application_attrs) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
+
+    before do
+      map_account_store(application, directory, 1, true, true)
+      phone
+    end
+
+    let(:account) { directory.accounts.create(account_attrs) }
+    let(:phone) do
+      account.phones.create(
+        number: '+12025550173',
+        name: 'test phone',
+        description: 'this is a testing phone number'
+      )
+    end
+
+    it 'can fetch phones' do
+      expect(account.phones).to include(phone)
+    end
+
+    it 'can fetch a specific phone' do
+      expect(account.phones.get(phone.href)).to be_a Stormpath::Resource::Phone
+    end
+
+    it 'raises error if phone with same number created' do
+      expect do
+        account.phones.create(
+          number: '+12025550173',
+          name: 'test duplicate phone'
+        )
+      end.to raise_error(Stormpath::Error, 'An existing phone with that number already exists for this Account.')
+    end
+
+    after do
+      application.delete if application
+      directory.delete if directory
+      account.delete if account
+    end
+  end
+
+  describe 'managing factors' do
+    let(:application) { test_api_client.applications.create(application_attrs) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
+
+    before { map_account_store(application, directory, 1, true, true) }
+
+    let(:account) { directory.accounts.create(account_attrs) }
+
+    context 'sms type' do
+      let!(:factor) do
+        account.factors.create(
+          type: 'SMS',
+          phone: {
+            number: '+12025550173',
+            name: 'test phone',
+            description: 'this is a testing phone number'
+          }
+        )
+      end
+
+      it 'can fetch factors' do
+        expect(account.factors).to include(factor)
+      end
+
+      it 'can fetch a specific factor' do
+        expect(account.factors.get(factor.href)).to be_a Stormpath::Resource::Factor
+      end
+
+      it 'creates a phone with a factor' do
+        expect(account.phones.count).to eq 1
+      end
+    end
+
+    context 'google-authenticator type' do
+      let!(:factor) do
+        account.factors.create(
+          type: 'google-authenticator',
+          account_name: "marko.cilimkovic#{default_domain}",
+          issuer: 'ACME',
+          status: 'ENABLED'
+        )
+      end
+
+      it 'can fetch factors' do
+        expect(account.factors).to include(factor)
+      end
+    end
+
+    after do
+      directory.delete if directory
+      application.delete if application
+    end
+  end
+
+  describe '#create_factor' do
+    let(:application) { test_api_client.applications.create(application_attrs) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
+    let(:account) { directory.accounts.create(account_attrs) }
+    before { map_account_store(application, directory, 1, true, true) }
+
+    context 'type sms' do
+      before do
+        stub_request(:post, "#{account.href}/factors?challenge=true")
+          .to_return(body: Stormpath::Test.mocked_factor_response)
+      end
+
+      let(:factor) do
+        account.create_factor(:sms,
+                              phone: { number: '+12025550173',
+                                       name: 'Rspec test phone',
+                                       description: 'This is a testing phone number' },
+                              challenge: { message: 'Enter code please: ' })
+      end
+
+      it 'factor should be created' do
+        expect(factor).to be_kind_of Stormpath::Resource::Factor
+      end
+    end
+
+    context 'type google-authenticator' do
+      let(:factor) do
+        account.create_factor(:google_authenticator, options)
+      end
+
+      context 'with account_name' do
+        let(:account_name) { "marko.cilimkovic#{default_domain}" }
+        let(:options) do
+          {
+            custom_options: {
+              account_name: account_name,
+              issuer: 'ACME',
+              status: 'ENABLED'
+            }
+          }
+        end
+
+        it 'should create factor with custom account_name' do
+          expect(factor.account_name).to eq account_name
+        end
+      end
+
+      context 'with account_name not set' do
+        let(:options) do
+          {
+            custom_options: {
+              issuer: 'ACME',
+              status: 'ENABLED'
+            }
+          }
+        end
+
+        it 'should create factor with account_name set to username' do
+          expect(factor.account_name).to eq account.username
+        end
+      end
+
+      context 'without custom options' do
+        let(:options) { {} }
+        it 'should create factor with account_name set to username' do
+          expect(factor.account_name).to eq account.username
+        end
+      end
+    end
+
+    context 'with bad type set' do
+      let(:factor) do
+        account.create_factor(:invalid_type)
+      end
+
+      it 'should raise error' do
+        expect { factor }.to raise_error(Stormpath::Error)
+      end
+    end
+
+    after do
+      directory.delete if directory
+      application.delete if application
     end
   end
 
