@@ -1,6 +1,6 @@
 shared_examples_for 'account_custom_data' do
   context 'account' do
-    let(:custom_data_storage) { directory.accounts.create(build_account) }
+    let(:custom_data_storage) { directory.accounts.create(account_attrs) }
     let(:custom_data_storage_w_nested_custom_data) do
       directory.accounts.create(
         username: 'ruby username',
@@ -24,7 +24,7 @@ end
 
 shared_examples_for 'group_custom_data' do
   context 'group' do
-    let(:custom_data_storage) { directory.groups.create(build_group) }
+    let(:custom_data_storage) { directory.groups.create(group_attrs) }
     let(:custom_data_storage_w_nested_custom_data) do
       directory.groups.create(
         name: 'ruby group',

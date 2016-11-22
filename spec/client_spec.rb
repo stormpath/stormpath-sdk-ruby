@@ -275,7 +275,7 @@ properties
     context 'by default' do
       let(:applications) { test_api_client.applications }
 
-      let(:application) { applications.create(build_application) }
+      let(:application) { applications.create(application_attrs) }
 
       it 'returns the collection' do
         expect(applications).to be_kind_of(Stormpath::Resource::Collection)
@@ -290,7 +290,7 @@ properties
     context 'pagination' do
       let!(:applications) do
         (0..2).to_a.map do |index|
-          test_api_client.applications.create(build_application(name: "ruby-sdk-test-#{index}"))
+          test_api_client.applications.create(application_attrs(name: "ruby-sdk-test-#{index}"))
         end
       end
 
@@ -309,9 +309,9 @@ properties
       let(:accounts_cache_summary) { cache_manager.get_cache('accounts').stats.summary }
       let(:directories_cache_summary) { cache_manager.get_cache('directories').stats.summary }
       let(:groups_cache_summary) { cache_manager.get_cache('groups').stats.summary }
-      let(:directory) { client.directories.create(build_directory) }
-      let(:group) { directory.groups.create(build_group) }
-      let(:account) { directory.accounts.create(build_account) }
+      let(:directory) { client.directories.create(directory_attrs) }
+      let(:group) { directory.groups.create(group_attrs) }
+      let(:account) { directory.accounts.create(account_attrs) }
 
       before { group.add_account(account) }
 
@@ -338,7 +338,7 @@ properties
         let(:cached_account) do
           client.accounts.get account.href, Stormpath::Resource::Expansion.new('groups')
         end
-        let(:group) { directory.groups.create(build_group) }
+        let(:group) { directory.groups.create(group_attrs) }
 
         before { client.data_store.initialize_cache({}) }
 
@@ -352,8 +352,8 @@ properties
     context 'search' do
       let!(:applications) do
         [
-          test_api_client.applications.create(build_application(name: 'rubytestapp1')),
-          test_api_client.applications.create(build_application(name: 'rubytestapp2'))
+          test_api_client.applications.create(application_attrs(name: 'rubytestapp1')),
+          test_api_client.applications.create(application_attrs(name: 'rubytestapp2'))
         ]
       end
 
@@ -413,7 +413,7 @@ properties
           let(:options) { { createDirectory: true } }
           let!(:account) do
             application.accounts.create(
-              build_account(username: 'johnsmith2', password: '4P@$$w0rd!')
+              account_attrs(username: 'johnsmith2', password: '4P@$$w0rd!')
             )
           end
           let(:auth_request) do
@@ -496,7 +496,7 @@ properties
   describe '#directories' do
     context 'given a collection' do
       let(:directories) { test_api_client.directories }
-      let(:directory) { directories.create(build_directory) }
+      let(:directory) { directories.create(directory_attrs) }
 
       it 'returns the collection' do
         expect(directories).to be_kind_of(Stormpath::Resource::Collection)
@@ -507,8 +507,8 @@ properties
     end
 
     context 'given a collection with a limit' do
-      let!(:directory_1) { test_api_client.directories.create(build_directory) }
-      let!(:directory_2) { test_api_client.directories.create(build_directory) }
+      let!(:directory_1) { test_api_client.directories.create(directory_attrs) }
+      let!(:directory_2) { test_api_client.directories.create(directory_attrs) }
 
       after do
         directory_1.delete
@@ -522,7 +522,7 @@ properties
 
     describe '.create' do
       let(:directory) do
-        test_api_client.directories.create(build_directory(name: 'ruby', description: 'ruby'))
+        test_api_client.directories.create(directory_attrs(name: 'ruby', description: 'ruby'))
       end
 
       it 'creates that application' do
@@ -538,7 +538,7 @@ properties
   describe '#organization' do
     context 'search' do
       let!(:organization) do
-        test_api_client.organizations.create(build_organization(name: 'ruby-org'))
+        test_api_client.organizations.create(organization_attrs(name: 'ruby-org'))
       end
 
       context 'by any attribute' do
@@ -563,7 +563,7 @@ properties
     end
 
     context 'given a collection' do
-      let(:organization) { test_api_client.organizations.create(build_organization) }
+      let(:organization) { test_api_client.organizations.create(organization_attrs) }
 
       it 'returns the collection' do
         expect(test_api_client.organizations).to be_kind_of(Stormpath::Resource::Collection)
@@ -574,8 +574,8 @@ properties
     end
 
     context 'given a collection with a limit' do
-      let!(:organization_1) { test_api_client.organizations.create(build_organization) }
-      let!(:organization_2) { test_api_client.organizations.create(build_organization) }
+      let!(:organization_1) { test_api_client.organizations.create(organization_attrs) }
+      let!(:organization_2) { test_api_client.organizations.create(organization_attrs) }
 
       after do
         organization_1.delete
@@ -589,7 +589,7 @@ properties
 
     describe '.create' do
       let(:organization) do
-        test_api_client.organizations.create(build_organization(name: 'ruby',
+        test_api_client.organizations.create(organization_attrs(name: 'ruby',
                                                                 name_key: 'ruby-org',
                                                                 description: 'ruby-org'))
       end
@@ -606,8 +606,8 @@ properties
   end
 
   describe '#organization_account_store_mappings' do
-    let(:organization) { test_api_client.organizations.create(build_organization) }
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:organization) { test_api_client.organizations.create(organization_attrs) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     let(:organization_account_store_mappings) { map_organization_store(directory, organization) }
 
@@ -627,9 +627,9 @@ properties
 
   describe '#accounts.verify_account_email' do
     context 'given a verfication token of an account' do
-      let(:application) { test_api_client.applications.create(build_application) }
+      let(:application) { test_api_client.applications.create(application_attrs) }
       let(:directory_with_verification) do
-        test_api_client.directories.create(build_directory(description: 'verification enabled'))
+        test_api_client.directories.create(directory_attrs(description: 'verification enabled'))
       end
 
       before do
@@ -644,7 +644,7 @@ properties
       end
 
       let(:account) do
-        directory_with_verification.create_account(Stormpath::Resource::Account.new(build_account))
+        directory_with_verification.create_account(Stormpath::Resource::Account.new(account_attrs))
       end
       let(:verification_token) { account.email_verification_token.token }
 
@@ -675,10 +675,10 @@ properties
     end
 
     let!(:account1) do
-      directory1.accounts.create(build_account(email: 'jekyll', username: 'jekyll'))
+      directory1.accounts.create(account_attrs(email: 'jekyll', username: 'jekyll'))
     end
     let!(:account2) do
-      directory2.accounts.create(build_account(email: 'hyde', username: 'hyde'))
+      directory2.accounts.create(account_attrs(email: 'hyde', username: 'hyde'))
     end
 
     let(:link_accounts) do

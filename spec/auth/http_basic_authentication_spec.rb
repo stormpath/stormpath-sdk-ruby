@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe 'HttpBasicAuthentication', vcr: true do
-  let(:application) { test_api_client.applications.create(build_application) }
-  let(:directory) { test_api_client.directories.create(build_directory) }
-  let(:account) { application.accounts.create(build_account) }
+  let(:application) { test_api_client.applications.create(application_attrs) }
+  let(:directory) { test_api_client.directories.create(directory_attrs) }
+  let(:account) { application.accounts.create(account_attrs) }
   let(:api_key) { account.api_keys.create({}) }
   let(:api_key_id) { api_key.id }
   let(:api_key_secret) { api_key.secret }

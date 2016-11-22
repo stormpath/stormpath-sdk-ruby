@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe 'HttpBearerAuthentication', vcr: true do
-  let(:application) { test_api_client.applications.create(build_application) }
-  let(:directory) { test_api_client.directories.create(build_directory) }
+  let(:application) { test_api_client.applications.create(application_attrs) }
+  let(:directory) { test_api_client.directories.create(directory_attrs) }
   let(:password_grant_request) do
     Stormpath::Oauth::PasswordGrantRequest.new("test#{default_domain}", 'P@$$w0rd')
   end
@@ -19,7 +19,7 @@ describe 'HttpBearerAuthentication', vcr: true do
   end
   before { map_account_store(application, directory, 1, true, true) }
   let!(:account) do
-    application.accounts.create(build_account(email: 'test', password: 'P@$$w0rd'))
+    application.accounts.create(account_attrs(email: 'test', password: 'P@$$w0rd'))
   end
 
   after do

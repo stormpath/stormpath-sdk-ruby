@@ -60,6 +60,8 @@ module Stormpath
     autoload :PasswordPolicy, 'stormpath-sdk/resource/password_policy'
     autoload :EmailTemplate, 'stormpath-sdk/resource/email_template'
     autoload :PasswordStrength, 'stormpath-sdk/resource/password_strength'
+    autoload :Schema, 'stormpath-sdk/resource/schema'
+    autoload :Field, 'stormpath-sdk/resource/field'
   end
 
   module Cache
