@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountStore, :vcr do
-  let(:application) { test_api_client.applications.create(build_application) }
-  let(:directory) { test_api_client.directories.create(build_directory) }
-  let(:group) { directory.groups.create(build_group) }
-  let(:organization) { test_api_client.organizations.create(build_organization) }
+  let(:application) { test_api_client.applications.create(application_attrs) }
+  let(:directory) { test_api_client.directories.create(directory_attrs) }
+  let(:group) { directory.groups.create(group_attrs) }
+  let(:organization) { test_api_client.organizations.create(organization_attrs) }
 
   after do
     application.delete if application

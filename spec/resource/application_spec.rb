@@ -2,9 +2,9 @@ require 'spec_helper'
 include UUIDTools
 
 describe Stormpath::Resource::Application, :vcr do
-  let(:app) { test_api_client.applications.create(build_application) }
+  let(:app) { test_api_client.applications.create(application_attrs) }
   let(:application) { test_api_client.applications.get app.href }
-  let(:directory) { test_api_client.directories.create(build_directory) }
+  let(:directory) { test_api_client.directories.create(directory_attrs) }
 
   before do
     map_account_store(app, directory, 1, true, true)
@@ -67,7 +67,7 @@ describe Stormpath::Resource::Application, :vcr do
   describe 'application_associations' do
 
     context '#accounts' do
-      let(:account) { application.accounts.create(build_account) }
+      let(:account) { application.accounts.create(account_attrs) }
 
       after do
         account.delete if account
@@ -84,7 +84,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context '#groups' do
-      let(:group) { application.groups.create(build_group) }
+      let(:group) { application.groups.create(group_attrs) }
 
       after { group.delete }
 
@@ -114,7 +114,7 @@ describe Stormpath::Resource::Application, :vcr do
 
 
   describe '#create_account' do
-    let(:account) { Stormpath::Resource::Account.new(build_account) }
+    let(:account) { Stormpath::Resource::Account.new(account_attrs) }
 
     context 'with registration workflow' do
       it 'creates an account with worflow enabled' do
@@ -137,7 +137,7 @@ describe Stormpath::Resource::Application, :vcr do
 
   describe '#authenticate_account' do
     let(:account) do
-      directory.accounts.create build_account(password: 'P@$$w0rd')
+      directory.accounts.create account_attrs(password: 'P@$$w0rd')
     end
 
     let(:login_request) do
@@ -182,7 +182,7 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'given a proper directory' do
-      let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
+      let(:account) { directory.accounts.create account_attrs(password: 'P@$$w0rd') }
 
       let(:login_request) do
         Stormpath::Authentication::UsernamePasswordRequest.new account.username, password, account_store: directory
@@ -197,8 +197,8 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'given a wrong directory' do
-      let(:new_directory) { test_api_client.directories.create(build_directory) }
-      let(:account) { new_directory.accounts.create build_account(password: 'P@$$w0rd') }
+      let(:new_directory) { test_api_client.directories.create(directory_attrs) }
+      let(:account) { new_directory.accounts.create account_attrs(password: 'P@$$w0rd') }
       let(:login_request) do
         Stormpath::Authentication::UsernamePasswordRequest.new account.username, password, account_store: directory
       end
@@ -213,9 +213,9 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     context 'given a group' do
-      let(:group) {directory.groups.create(build_group) }
+      let(:group) {directory.groups.create(group_attrs) }
 
-      let(:account) { directory.accounts.create build_account(password: 'P@$$w0rd') }
+      let(:account) { directory.accounts.create account_attrs(password: 'P@$$w0rd') }
 
       let(:login_request) do
         Stormpath::Authentication::UsernamePasswordRequest.new account.username, password, account_store: group
@@ -247,7 +247,7 @@ describe Stormpath::Resource::Application, :vcr do
   describe '#send_password_reset_email' do
     context 'given an email' do
       context 'of an existing account on the application' do
-        let(:account) { directory.accounts.create build_account  }
+        let(:account) { directory.accounts.create account_attrs  }
 
         let(:sent_to_account) { application.send_password_reset_email account.email }
 
@@ -261,8 +261,8 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account not mapped to the application' do
-        let(:account) { other_directory.accounts.create build_account  }
-        let(:other_directory) { test_api_client.directories.create(build_directory) }
+        let(:account) { other_directory.accounts.create account_attrs  }
+        let(:other_directory) { test_api_client.directories.create(directory_attrs) }
 
         after do
           account.delete
@@ -285,7 +285,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account on the application with an account store href' do
-        let(:account) { directory.accounts.create build_account  }
+        let(:account) { directory.accounts.create account_attrs  }
 
         let(:sent_to_account) do
           application.send_password_reset_email(account.email, account_store: { href: directory.href })
@@ -301,7 +301,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account on the application with an account store resource object' do
-        let(:account) { directory.accounts.create build_account  }
+        let(:account) { directory.accounts.create account_attrs  }
 
         let(:sent_to_account) do
           application.send_password_reset_email(account.email, account_store: directory)
@@ -317,8 +317,8 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account not mapped to the application with an account store href' do
-        let(:account) { directory.accounts.create build_account  }
-        let(:other_directory) { test_api_client.directories.create(build_directory) }
+        let(:account) { directory.accounts.create account_attrs  }
+        let(:other_directory) { test_api_client.directories.create(directory_attrs) }
 
         after do
           account.delete
@@ -333,7 +333,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account on the application with a non existant account store organization namekey' do
-        let(:account) { directory.accounts.create build_account  }
+        let(:account) { directory.accounts.create account_attrs  }
 
         after do
           account.delete
@@ -347,8 +347,8 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account on the application with a right account store organization namekey' do
-        let(:account) { account_directory.accounts.create build_account  }
-        let(:account_directory) { test_api_client.directories.create(build_directory) }
+        let(:account) { account_directory.accounts.create account_attrs  }
+        let(:account_directory) { test_api_client.directories.create(directory_attrs) }
 
         let(:reloaded_account_directory) do
           test_api_client.directories.get(account_directory.href)
@@ -386,12 +386,12 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account on the application with a right account store organization resource object' do
-        let(:account) { account_directory.accounts.create build_account  }
-        let(:account_directory) { test_api_client.directories.create(build_directory) }
+        let(:account) { account_directory.accounts.create account_attrs  }
+        let(:account_directory) { test_api_client.directories.create(directory_attrs) }
         let(:reloaded_account_directory) do
           test_api_client.directories.get(account_directory.href)
         end
-        let(:organization) { test_api_client.organizations.create(build_organization) }
+        let(:organization) { test_api_client.organizations.create(organization_attrs) }
         let(:sent_to_account) do
           application.send_password_reset_email(account.email, account_store: organization)
         end
@@ -415,13 +415,13 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account on the application with a wrong account store organization namekey' do
-        let(:account) { account_directory.accounts.create build_account  }
-        let(:account_directory) { test_api_client.directories.create(build_directory) }
+        let(:account) { account_directory.accounts.create account_attrs  }
+        let(:account_directory) { test_api_client.directories.create(directory_attrs) }
         let(:reloaded_account_directory) do
           test_api_client.directories.get(account_directory.href)
         end
-        let(:organization) { test_api_client.organizations.create(build_organization) }
-        let(:other_organization) { test_api_client.organizations.create(build_organization) }
+        let(:organization) { test_api_client.organizations.create(organization_attrs) }
+        let(:other_organization) { test_api_client.organizations.create(organization_attrs) }
 
         after do
           account.delete
@@ -445,14 +445,14 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe '#verification_emails' do
-    let(:directory_with_verification) { test_api_client.directories.create(build_directory) }
+    let(:directory_with_verification) { test_api_client.directories.create(directory_attrs) }
 
     before do
       map_account_store(application, directory_with_verification, 1, false, false)
       enable_email_verification(directory_with_verification)
     end
 
-    let(:account) { directory_with_verification.accounts.create(build_account) }
+    let(:account) { directory_with_verification.accounts.create(account_attrs) }
     let(:verification_emails) do
       application.verification_emails.create(login: account.email)
     end
@@ -468,7 +468,7 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe 'create_login_attempt' do
-    let(:account) { directory.accounts.create(build_account) }
+    let(:account) { directory.accounts.create(account_attrs) }
 
     context 'valid credentials' do
       let(:username_password_request) do
@@ -630,7 +630,7 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe '#verify_password_reset_token' do
-    let(:account) { directory.accounts.create(build_account) }
+    let(:account) { directory.accounts.create(account_attrs) }
     let(:password_reset_token) do
       application.password_reset_tokens.create(email: account.email).token
     end
@@ -925,7 +925,7 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe '#authenticate_oauth' do
-    let(:account_data) { build_account }
+    let(:account_data) { account_attrs }
     let(:password_grant_request) { Stormpath::Oauth::PasswordGrantRequest.new account_data[:email], account_data[:password] }
     let(:aquire_token) { application.authenticate_oauth(password_grant_request) }
     let(:account) { application.accounts.create account_data }
@@ -1185,7 +1185,7 @@ describe Stormpath::Resource::Application, :vcr do
                      "https://#{test_api_key_id}:#{test_api_key_secret}@#{test_host}/v1/applications/#{application.href.split('/').last}/oauth/token")
           .to_return(body: Stormpath::Test.mocked_challenge_factor_grant_response)
       end
-      let(:account_data) { build_account }
+      let(:account_data) { account_attrs }
       let(:authenticate_oauth) { application.authenticate_oauth(challenge_factor_grant_request) }
       let(:challenge_factor_grant_request) do
         Stormpath::Oauth::ChallengeFactorGrantRequest.new(challenge, code)

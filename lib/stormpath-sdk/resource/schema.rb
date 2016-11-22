@@ -13,10 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::AccountLink < Stormpath::Resource::Instance
-  prop_accessor :right_account, :left_account
+class Stormpath::Resource::Schema < Stormpath::Resource::Instance
   prop_reader :created_at, :modified_at
 
-  belongs_to :right_account, class_name: :Account, href: '/rightAccount'
-  belongs_to :left_account, class_name: :Account, href: '/leftAccount'
+  has_many :fields
+  belongs_to :directory
 end

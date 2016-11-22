@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Challenge, :vcr do
-  let(:directory) { test_api_client.directories.create(build_directory) }
-  let(:account) { directory.accounts.create(build_account) }
+  let(:directory) { test_api_client.directories.create(directory_attrs) }
+  let(:account) { directory.accounts.create(account_attrs) }
   let(:factor) do
     account.factors.create(
       type: 'SMS',

@@ -1,7 +1,7 @@
 module Stormpath
   module Test
     module ResourceHelpers
-      def build_account(opts = {})
+      def account_attrs(opts = {})
         opts.tap do |o|
           if !opts[:email].blank? && opts[:email]
             if opts[:email].include?('@')
@@ -28,30 +28,30 @@ module Stormpath
         Stormpath::DataStore::DEFAULT_SERVER_HOST
       end
 
-      def build_application(opts = {})
+      def application_attrs(opts = {})
         opts.tap do |o|
-          o[:name]          = (!opts[:name].blank? && opts[:name]) || "ruby#{random_number}-app"
-          o[:description]   = (!opts[:description].blank? && opts[:description]) || "ruby#{random_number}-desc"
+          o[:name]          = (!opts[:name].blank? && opts[:name]) || "ruby-app-#{random_number}"
+          o[:description]   = (!opts[:description].blank? && opts[:description]) || 'ruby desc'
         end
       end
 
-      def build_directory(opts = {})
+      def directory_attrs(opts = {})
         opts.tap do |o|
-          o[:name]          = (!opts[:name].blank? && opts[:name]) || "ruby#{random_number}-dir"
-          o[:description]   = (!opts[:description].blank? && opts[:description]) || "ruby#{random_number}-desc"
+          o[:name]          = (!opts[:name].blank? && opts[:name]) || "ruby-dir-#{random_number}"
+          o[:description]   = (!opts[:description].blank? && opts[:description]) || 'ruby desc'
         end
       end
 
-      def build_organization(opts = {})
+      def organization_attrs(opts = {})
         opts.tap do |o|
-          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby#{random_number}-org"
-          o[:name_key]  = (!opts[:name_key].blank? && opts[:name_key]) || "ruby#{random_number}-org"
+          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby-org-#{random_number}"
+          o[:name_key]  = (!opts[:name_key].blank? && opts[:name_key]) || "ruby-org-#{random_number}"
         end
       end
 
-      def build_group(opts = {})
+      def group_attrs(opts = {})
         opts.tap do |o|
-          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby#{random_number}-group"
+          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby-group-#{random_number}"
         end
       end
 
@@ -81,7 +81,7 @@ module Stormpath
       end
 
       def random_number
-        Random.rand(1..10_000)
+        SecureRandom.hex(15)
       end
     end
   end

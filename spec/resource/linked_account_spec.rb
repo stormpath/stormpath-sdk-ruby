@@ -7,10 +7,10 @@ describe Stormpath::Resource::LinkedAccount, :vcr do
   let(:directory1) { test_api_client.directories.create(name: 'ruby sdk dir 1') }
   let(:directory2) { test_api_client.directories.create(name: 'ruby sdk dir 2') }
   let(:account1) do
-    directory1.accounts.create(build_account(email: 'jekyll', username: 'jekyll'))
+    directory1.accounts.create(account_attrs(email: 'jekyll', username: 'jekyll'))
   end
   let(:account2) do
-    directory2.accounts.create(build_account(email: 'hyde', username: 'hyde'))
+    directory2.accounts.create(account_attrs(email: 'hyde', username: 'hyde'))
   end
 
   before do

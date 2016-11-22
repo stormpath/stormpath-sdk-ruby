@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe 'CreateFactor', vcr: true do
   let(:client) { test_api_client }
-  let(:directory) { client.directories.create(build_directory) }
-  let(:account) { directory.accounts.create(build_account) }
+  let(:directory) { client.directories.create(directory_attrs) }
+  let(:account) { directory.accounts.create(account_attrs) }
 
   after { directory.delete }
 

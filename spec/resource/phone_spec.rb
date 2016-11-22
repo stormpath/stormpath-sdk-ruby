@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Phone, :vcr do
   describe 'instances should respond to attribute property methods' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
-    let(:account) { directory.accounts.create(build_account) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
+    let(:account) { directory.accounts.create(account_attrs) }
     let(:phone) do
       account.phones.create(
         number: '+12025550173',
@@ -35,12 +35,12 @@ describe Stormpath::Resource::Phone, :vcr do
   end
 
   describe 'phone associations' do
-    let(:app) { test_api_client.applications.create(build_application) }
+    let(:app) { test_api_client.applications.create(application_attrs) }
     let(:application) { test_api_client.applications.get app.href }
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     before { map_account_store(app, directory, 1, true, true) }
-    let(:account) { directory.accounts.create(build_account) }
+    let(:account) { directory.accounts.create(account_attrs) }
     let(:phone) do
       account.phones.create(
         number: '+12025550173',

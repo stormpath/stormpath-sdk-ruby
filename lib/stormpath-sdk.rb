@@ -63,6 +63,8 @@ module Stormpath
     autoload :Phone, 'stormpath-sdk/resource/phone'
     autoload :Factor, 'stormpath-sdk/resource/factor'
     autoload :Challenge, 'stormpath-sdk/resource/challenge'
+    autoload :Schema, 'stormpath-sdk/resource/schema'
+    autoload :Field, 'stormpath-sdk/resource/field'
   end
 
   module Cache

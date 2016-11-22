@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Stormpath::Resource::AccountCreationPolicy, :vcr do
   describe 'instances should respond to attribute property methods' do
-    let(:application) { test_api_client.applications.create(build_application) }
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:application) { test_api_client.applications.create(application_attrs) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
     let(:account_creation_policy) { directory.account_creation_policy }
     let(:create_valid_account) do
       directory.accounts.create(

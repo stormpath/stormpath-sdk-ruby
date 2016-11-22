@@ -28,6 +28,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   has_one :custom_data
   has_one :password_policy
   has_one :account_creation_policy
+  has_one :account_schema, class_name: :schema
 
   def provider
     internal_instance = instance_variable_get "@_provider"

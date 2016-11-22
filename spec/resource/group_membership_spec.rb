@@ -7,9 +7,9 @@ describe Stormpath::Resource::GroupMembership, :vcr do
 
   describe '#add_account' do
     context 'given an account and a group' do
-      let(:directory) { test_api_client.directories.create(build_directory) }
-      let(:group) { directory.groups.create(build_group) }
-      let(:account) { directory.accounts.create(build_account) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
+      let(:group) { directory.groups.create(group_attrs) }
+      let(:account) { directory.accounts.create(account_attrs) }
 
       before { group.add_account account }
 

@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Factor, :vcr do
   describe 'instances should respond to attribute property methods' do
-    let(:directory) { test_api_client.directories.create(build_directory) }
-    let(:account) { directory.accounts.create(build_account) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
+    let(:account) { directory.accounts.create(account_attrs) }
 
     after do
       factor.delete if factor
@@ -67,12 +67,12 @@ describe Stormpath::Resource::Factor, :vcr do
   end
 
   describe 'factor associations' do
-    let(:app) { test_api_client.applications.create(build_application) }
+    let(:app) { test_api_client.applications.create(application_attrs) }
     let(:application) { test_api_client.applications.get app.href }
-    let(:directory) { test_api_client.directories.create(build_directory) }
+    let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     before { map_account_store(app, directory, 1, true, true) }
-    let(:account) { directory.accounts.create(build_account) }
+    let(:account) { directory.accounts.create(account_attrs) }
     let(:phone_number) { '+12025550173' }
 
     let(:factor) do
