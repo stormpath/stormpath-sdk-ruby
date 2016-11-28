@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'BasicAuthenticator', vcr: true do
   let(:application) { test_api_client.applications.create(application_attrs) }
   let(:directory) { test_api_client.directories.create(directory_attrs) }
+  let(:directory2) { test_api_client.directories.create(directory_attrs) }
   let(:organization) { test_api_client.organizations.create(organization_attrs) }
   let(:authenticator) do
     Stormpath::Authentication::BasicAuthenticator.new(test_api_client.data_store)
@@ -86,6 +87,22 @@ describe 'BasicAuthenticator', vcr: true do
       let(:request) do
         Stormpath::Authentication::UsernamePasswordRequest.new(org_account.username,
                                                                invalid_password,
+                                                               account_store: organization)
+      end
+
+      it_behaves_like 'an invalid username or password error'
+    end
+
+    context 'account not in account store' do
+      before { map_account_store(application, directory2, 1, false, false) }
+      after { directory2.delete }
+
+      let(:another_account) do
+        directory2.accounts.create(account_attrs(username: 'ruby-dir-acc', password: password))
+      end
+      let(:request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(another_account.username,
+                                                               password,
                                                                account_store: organization)
       end
 
