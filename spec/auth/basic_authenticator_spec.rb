@@ -7,14 +7,18 @@ describe 'BasicAuthenticator', vcr: true do
   let(:authenticator) do
     Stormpath::Authentication::BasicAuthenticator.new(test_api_client.data_store)
   end
+  let(:password) { 'F00barfoo' }
+  let(:invalid_password) { 'Wr00ngPassw0rd' }
   let(:dir_account) do
-    directory.accounts.create(account_attrs(username: 'ruby_cilim_dir', password: 'F00barfoo'))
+    directory.accounts.create(account_attrs(username: 'ruby_cilim_dir', password: password))
   end
   let(:org_account) do
-    organization.accounts.create(account_attrs(username: 'ruby_cilim_org', password: 'F00barfoo'))
+    organization.accounts.create(account_attrs(username: 'ruby_cilim_org', password: password))
   end
   let(:request) do
-    Stormpath::Authentication::UsernamePasswordRequest.new(dir_account.username, 'F00barfoo')
+    Stormpath::Authentication::UsernamePasswordRequest.new(account.username,
+                                                           password,
+                                                           account_store: account_store)
   end
   let(:authenticate) { authenticator.authenticate(application.href, request) }
 
@@ -40,19 +44,52 @@ describe 'BasicAuthenticator', vcr: true do
     end
   end
 
+  shared_examples 'an invalid username or password error' do
+    it 'raises a Stormpath::Error' do
+      expect { authenticate }.to raise_error(Stormpath::Error, 'Invalid username or password.')
+    end
+  end
+
   context 'authenticate without account store' do
     let(:account) { dir_account }
-    it_should_behave_like 'an AuthenticationResult'
+    let(:account_store) { nil }
+
+    context 'successful authentication' do
+      it_should_behave_like 'an AuthenticationResult'
+    end
+
+    context 'wrong password' do
+      let(:request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(org_account.username,
+                                                               invalid_password)
+      end
+
+      it_behaves_like 'an invalid username or password error'
+    end
   end
 
   context 'authenticate with account store' do
     let(:account) { org_account }
-    let(:request) do
-      Stormpath::Authentication::UsernamePasswordRequest.new(org_account.username,
-                                                             'F00barfoo',
-                                                             account_store: organization)
+    let(:account_store) { organization }
+
+    context 'successful authentication' do
+      let(:request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(org_account.username,
+                                                               password,
+                                                               account_store: organization)
+      end
+
+      it_should_behave_like 'an AuthenticationResult'
     end
 
-    it_should_behave_like 'an AuthenticationResult'
+    context 'wrong password' do
+      let(:request) do
+        Stormpath::Authentication::UsernamePasswordRequest.new(org_account.username,
+                                                               invalid_password,
+                                                               account_store: organization)
+      end
+
+      it_behaves_like 'an invalid username or password error'
+    end
   end
 end
