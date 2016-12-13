@@ -20,7 +20,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   class LoadError < ArgumentError; end
 
-  prop_accessor :name, :description, :authorized_callback_uris, :status
+  prop_accessor :name, :description, :authorized_callback_uris, :status, :authorized_origin_uris
   prop_reader :created_at, :modified_at
 
   belongs_to :tenant
@@ -36,6 +36,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
   has_one :custom_data
   has_one :o_auth_policy, class_name: :oauthPolicy
+  has_one :web_config, class_name: :applicationWebConfig
 
   alias_method :oauth_policy, :o_auth_policy
 
