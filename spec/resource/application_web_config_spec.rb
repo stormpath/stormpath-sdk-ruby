@@ -26,7 +26,7 @@ describe Stormpath::Resource::ApplicationWebConfig, :vcr do
     end
 
     it 'should respond to endpoints' do
-      [:oauth2, :register, :login, :verify_email, :forgot_password, :change_password, :me].each do |endpoint|
+      Stormpath::Resource::ApplicationWebConfig::ENDPOINTS.each do |endpoint|
         expect(web_config).to respond_to(endpoint)
         expect(web_config).to respond_to("#{endpoint}=")
         expect(web_config.send(endpoint)).to be_a Hash
@@ -35,13 +35,12 @@ describe Stormpath::Resource::ApplicationWebConfig, :vcr do
   end
 
   describe 'enabling/disabling endpoints' do
-    xit 'should be able to switch to enabled and disabled' do
-      # TODO: refactor data_store #to_hash method to stop simplifying ApplicationWebConfig endpoints
-      [:oauth2, :register, :login, :verify_email, :forgot_password, :change_password, :me].each do |endpoint|
+    it 'should be able to switch to enabled and disabled' do
+      Stormpath::Resource::ApplicationWebConfig::ENDPOINTS.each do |endpoint|
         instance_eval("web_config.#{endpoint}= { enabled: false }")
         web_config.save
 
-        expect(application.web_config.register['enabled']).to be_false
+        expect(instance_eval("application.web_config.#{endpoint}['enabled']")).to eq false
       end
     end
   end
