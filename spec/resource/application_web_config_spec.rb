@@ -43,5 +43,23 @@ describe Stormpath::Resource::ApplicationWebConfig, :vcr do
         expect(instance_eval("application.web_config.#{endpoint}['enabled']")).to eq false
       end
     end
+
+    it 'should switch configuration options for the /me endpoint' do
+      web_config.me = {
+        enabled: true,
+        expand: {
+          tenant: true,
+          directory: true,
+          groups: false,
+          providerData: true
+        }
+      }
+
+      web_config.save
+      expect(application.web_config.me['expand']['tenant']).to eq true
+      expect(application.web_config.me['expand']['directory']).to eq true
+      expect(application.web_config.me['expand']['groups']).to eq false
+      expect(application.web_config.me['expand']['providerData']).to eq true
+    end
   end
 end
