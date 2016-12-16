@@ -103,6 +103,8 @@ module Stormpath
     autoload :LinkedinProviderData, 'stormpath-sdk/provider/linkedin/linkedin_provider_data'
     autoload :GithubProvider, 'stormpath-sdk/provider/github/github_provider'
     autoload :GithubProviderData, 'stormpath-sdk/provider/github/github_provider_data'
+    autoload :TwitterProvider, 'stormpath-sdk/provider/twitter/twitter_provider'
+    autoload :TwitterProviderData, 'stormpath-sdk/provider/twitter/twitter_provider_data'
     autoload :SamlProvider, 'stormpath-sdk/provider/saml/saml_provider'
     autoload :SamlProviderData, 'stormpath-sdk/provider/saml/saml_provider_data'
     autoload :SamlProviderMetadata, 'stormpath-sdk/provider/saml/saml_provider_metadata'
