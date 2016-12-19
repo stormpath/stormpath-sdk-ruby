@@ -14,7 +14,8 @@
 # limitations under the License.
 #
 class Stormpath::Resource::Field < Stormpath::Resource::Instance
-  prop_reader :name, :required, :created_at, :modified_at
+  prop_accessor :required
+  prop_reader :name, :created_at, :modified_at
 
   belongs_to :schema
 end
