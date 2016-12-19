@@ -38,6 +38,7 @@ module Stormpath
     autoload :Tenant, 'stormpath-sdk/resource/tenant'
     autoload :LinkedAccount, 'stormpath-sdk/resource/linked_account'
     autoload :AccountLink, 'stormpath-sdk/resource/account_link'
+    autoload :AccountLinkingPolicy, 'stormpath-sdk/resource/account_linking_policy'
     autoload :Application, 'stormpath-sdk/resource/application'
     autoload :Directory, 'stormpath-sdk/resource/directory'
     autoload :Account, 'stormpath-sdk/resource/account'
