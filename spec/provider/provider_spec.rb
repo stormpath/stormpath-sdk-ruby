@@ -50,6 +50,11 @@ describe Stormpath::Provider::Provider, :vcr do
         expect(provider.redirect_uri).to eq(redirect_uri)
       end
     end
+
+    it 'should have user info mapping rules' do
+      # TODO: can create?
+      expect(provider.user_info_mapping_rules).to be_kind_of(Stormpath::Resource::Collection)
+    end
   end
 
   shared_examples 'a synchronizable directory' do

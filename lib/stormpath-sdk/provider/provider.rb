@@ -1,5 +1,5 @@
 #
-# Copyright 2014 Stormpath, Inc.
+# Copyright 2016 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,4 +15,6 @@
 #
 class Stormpath::Provider::Provider < Stormpath::Resource::Base
   prop_reader :provider_id, :created_at, :modified_at
+
+  has_many :user_info_mapping_rules, can: [:get, :create]
 end
