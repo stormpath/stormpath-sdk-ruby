@@ -17,28 +17,41 @@ module Stormpath
   module Provider
     class AccountResolver
       include Stormpath::Util::Assert
+      attr_reader :data_store, :parent_href, :request
 
-      def initialize(data_store)
+      def initialize(data_store, parent_href, request)
         @data_store = data_store
-      end
-
-      def resolve_provider_account(parent_href, request)
+        @parent_href = parent_href
+        @request = request
         assert_not_nil(parent_href, 'parent_href argument must be specified')
         assert_kind_of(AccountRequest, request, "Only #{AccountRequest} instances are supported.")
+      end
 
-        attempt = @data_store.instantiate AccountAccess
+      def resolve_provider_account
+        attempt.provider_data = provider_data
+        data_store.create(href, attempt, Stormpath::Provider::AccountResult)
+      end
 
-        attempt.provider_data = {}.tap do |body|
+      def provider_data
+        @provider_data ||= {}.tap do |body|
           body[request.token_type.to_s.camelize(:lower)] = request.token_value
           body['providerId'] = request.provider
-          if request.account_store.present?
-            body['accountStore'] = { request.account_store.first.first.to_s.camelize(:lower) => request.account_store.first.last }
-          end
+          body['accountStore'] = request_account_store_hash if request.account_store.present?
         end
+      end
 
-        href = "#{parent_href}/accounts"
+      private
 
-        @data_store.create(href, attempt, Stormpath::Provider::AccountResult)
+      def attempt
+        @attempt ||= data_store.instantiate(AccountAccess)
+      end
+
+      def href
+        "#{parent_href}/accounts"
+      end
+
+      def request_account_store_hash
+        request.account_store.transform_keys { |key| key.to_s.camelize(:lower) }
       end
     end
   end

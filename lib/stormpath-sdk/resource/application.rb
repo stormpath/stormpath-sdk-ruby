@@ -105,8 +105,8 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Authentication::BasicAuthenticator.new(data_store).authenticate(href, request)
   end
 
-  def get_provider_account request
-    Stormpath::Provider::AccountResolver.new(data_store).resolve_provider_account(href, request)
+  def get_provider_account(request)
+    Stormpath::Provider::AccountResolver.new(data_store, href, request).resolve_provider_account
   end
 
   def authenticate_oauth(request)

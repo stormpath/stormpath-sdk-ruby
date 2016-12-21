@@ -3,9 +3,11 @@ require 'spec_helper'
 describe 'ProviderAccountResolver' do
   context 'given an instance of ProviderAccountResolver' do
     let(:data_store) { Stormpath::DataStore.new('', '', {}, '') }
-    let(:provider_account_resolver) { Stormpath::Provider::AccountResolver.new(data_store) }
+    let(:provider_account_resolver) do
+      Stormpath::Provider::AccountResolver.new(data_store, 'foo/bar', account_request)
+    end
     let(:response) do
-      provider_account_resolver.resolve_provider_account('foo/bar', account_request)
+      provider_account_resolver.resolve_provider_account
     end
 
     before do
@@ -36,6 +38,10 @@ describe 'ProviderAccountResolver' do
 
         it 'a ProviderResult is returned' do
           expect(response).to be_a Stormpath::Provider::AccountResult
+        end
+
+        it 'should have account_store parameter' do
+          expect(provider_account_resolver.provider_data.keys).to include 'accountStore'
         end
       end
     end
