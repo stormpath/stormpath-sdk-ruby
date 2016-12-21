@@ -14,5 +14,6 @@
 # limitations under the License.
 #
 class Stormpath::Provider::GoogleProvider < Stormpath::Provider::Provider
+  prop_accessor :hd, :display, :access_type
   prop_reader :client_id, :client_secret, :redirect_uri, :user_info_mapping_rules
 end

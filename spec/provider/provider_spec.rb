@@ -40,7 +40,6 @@ describe Stormpath::Provider::Provider, :vcr do
       expect(provider.provider_id).to eq(provider_id)
       expect(provider.created_at).to be
       expect(provider.modified_at).to be
-      expect(provider.scope).to be
       expect(provider.href).to eq(directory.href + '/provider')
 
       provider_clazz = "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
@@ -53,6 +52,9 @@ describe Stormpath::Provider::Provider, :vcr do
 
       if provider_id == 'google'
         expect(provider.redirect_uri).to eq(redirect_uri)
+        expect(provider.hd).to eq(hd)
+        expect(provider.display).to eq(display)
+        expect(provider.access_type).to eq(access_type)
       end
     end
 
@@ -155,12 +157,18 @@ describe Stormpath::Provider::Provider, :vcr do
     let(:client_id) { 'GOOGLE_CLIENT_ID' }
     let(:client_secret) { 'GOOGLE_CLIENT_SECRET' }
     let(:redirect_uri) { 'GOOGLE_REDIRECT_URI' }
+    let(:hd) { 'www.example.com' }
+    let(:display) { 'page' }
+    let(:access_type) { 'online' }
     let(:provider_info) do
       {
         provider_id: provider_id,
         client_id: client_id,
         client_secret: client_secret,
-        redirect_uri: redirect_uri
+        redirect_uri: redirect_uri,
+        hd: hd,
+        display: display,
+        access_type: access_type
       }
     end
 
