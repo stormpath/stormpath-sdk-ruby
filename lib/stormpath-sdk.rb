@@ -65,7 +65,6 @@ module Stormpath
     autoload :Challenge, 'stormpath-sdk/resource/challenge'
     autoload :Schema, 'stormpath-sdk/resource/schema'
     autoload :Field, 'stormpath-sdk/resource/field'
-    autoload :UserInfoMappingRule, 'stormpath-sdk/resource/user_info_mapping_rule'
   end
 
   module Cache
@@ -106,6 +105,7 @@ module Stormpath
     autoload :GithubProviderData, 'stormpath-sdk/provider/github/github_provider_data'
     autoload :TwitterProvider, 'stormpath-sdk/provider/twitter/twitter_provider'
     autoload :TwitterProviderData, 'stormpath-sdk/provider/twitter/twitter_provider_data'
+    autoload :UserInfoMappingRules, 'stormpath-sdk/provider/user_info_mapping_rules'
     autoload :SamlProvider, 'stormpath-sdk/provider/saml/saml_provider'
     autoload :SamlProviderData, 'stormpath-sdk/provider/saml/saml_provider_data'
     autoload :SamlProviderMetadata, 'stormpath-sdk/provider/saml/saml_provider_metadata'

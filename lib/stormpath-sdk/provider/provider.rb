@@ -15,6 +15,4 @@
 #
 class Stormpath::Provider::Provider < Stormpath::Resource::Base
   prop_reader :provider_id, :created_at, :modified_at
-
-  has_many :user_info_mapping_rules, can: [:get, :create]
 end

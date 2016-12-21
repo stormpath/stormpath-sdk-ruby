@@ -17,6 +17,10 @@ describe Stormpath::Provider::Provider, :vcr do
     directory.provider
   end
 
+  def social_directory?
+    provider_id != 'stormpath'
+  end
+
   after do
     directory.delete
     application.delete
@@ -41,7 +45,7 @@ describe Stormpath::Provider::Provider, :vcr do
       provider_clazz = "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
       expect(provider).to be_instance_of(provider_clazz)
 
-      if %w(google facebook twitter).include?(provider_id)
+      if social_directory?
         expect(provider.client_id).to eq(client_id)
         expect(provider.client_secret).to eq(client_secret)
       end
@@ -51,9 +55,17 @@ describe Stormpath::Provider::Provider, :vcr do
       end
     end
 
-    it 'should have user info mapping rules' do
-      # TODO: can create?
-      expect(provider.user_info_mapping_rules).to be_kind_of(Stormpath::Resource::Collection)
+    context 'user info mapping rules for social directories' do
+      let(:rule) { { 'name' => 'email', 'accountAttributes' => ['email'] } }
+      let(:rules) { Stormpath::Provider::UserInfoMappingRules.new(items: [rule]) }
+      before { directory.map_user_info_rules(rules) if social_directory? }
+
+      it 'should be able to create and fetch user info mapping rules' do
+        if social_directory?
+          expect(directory.user_info_mapping_rules).to be_kind_of(Stormpath::Provider::UserInfoMappingRules)
+          expect(directory.user_info_mapping_rules.items).to include(rule)
+        end
+      end
     end
   end
 

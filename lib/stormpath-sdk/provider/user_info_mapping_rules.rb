@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::UserInfoMappingRule < Stormpath::Resource::Instance
-  prop_accessor :name, :account_attributes
+class Stormpath::Provider::UserInfoMappingRules < Stormpath::Provider::Provider
+  prop_reader :href, :created_at, :modified_at, :items
+
+  def set_options(options)
+    set_property :href, options[:href]
+  end
 end
