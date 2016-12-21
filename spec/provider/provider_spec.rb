@@ -40,6 +40,7 @@ describe Stormpath::Provider::Provider, :vcr do
       expect(provider.provider_id).to eq(provider_id)
       expect(provider.created_at).to be
       expect(provider.modified_at).to be
+      expect(provider.scope).to be
       expect(provider.href).to eq(directory.href + '/provider')
 
       provider_clazz = "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
@@ -52,6 +53,14 @@ describe Stormpath::Provider::Provider, :vcr do
 
       if provider_id == 'google'
         expect(provider.redirect_uri).to eq(redirect_uri)
+      end
+    end
+
+    it 'should be able to update the scope' do
+      if social_directory?
+        provider.scope = ['email']
+        provider.save
+        expect(provider.scope).to include 'email'
       end
     end
 
