@@ -28,6 +28,8 @@ module Stormpath
 
         attempt = @data_store.instantiate AccountAccess
 
+        # TODO: need to add an options hash and pass all attributes from the providers?
+        # https://stormpath.atlassian.net/wiki/display/AM/Social+Login+V2/#SocialLoginV2-ClientAPIChanges
         attempt.provider_data = {
                                   request.token_type.to_s.camelize(:lower) => request.token_value,
                                   "providerId" => request.provider
