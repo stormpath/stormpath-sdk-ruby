@@ -46,6 +46,7 @@ describe Stormpath::Resource::Application, :vcr do
     expect(application.password_reset_tokens).to be_a Stormpath::Resource::Collection
     expect(application.verification_emails).to be_a Stormpath::Resource::Collection
     expect(application.account_store_mappings).to be_a Stormpath::Resource::Collection
+    expect(application.account_linking_policy).to be_a Stormpath::Resource::AccountLinkingPolicy
   end
 
   describe '.load' do

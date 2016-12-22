@@ -23,10 +23,18 @@ describe Stormpath::Resource::Schema, :vcr do
 
   describe 'schema associations' do
     context '#fields' do
-      let(:field) { directory.fields.first }
-
       it 'should be able to get a list of fields' do
         expect(schema.fields).to be_a Stormpath::Resource::Collection
+      end
+
+      it 'should be able to update the required property' do
+        surname_field = schema.fields.search(name: 'surname').first
+        expect(surname_field.required).to be(false)
+
+        surname_field.required = true
+        surname_field.save
+
+        expect(schema.fields.search(name: 'surname').first.required).to eq true
       end
     end
 

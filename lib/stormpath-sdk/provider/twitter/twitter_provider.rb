@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Field < Stormpath::Resource::Instance
-  prop_accessor :required
-  prop_reader :name, :created_at, :modified_at
-
-  belongs_to :schema
+class Stormpath::Provider::TwitterProvider < Stormpath::Provider::Provider
+  prop_reader :client_id, :client_secret
 end

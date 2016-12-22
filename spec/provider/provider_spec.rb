@@ -41,7 +41,7 @@ describe Stormpath::Provider::Provider, :vcr do
       provider_clazz = "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
       expect(provider).to be_instance_of(provider_clazz)
 
-      if provider_id == 'google' || provider_id == 'facebook'
+      if %w(google facebook twitter).include?(provider_id)
         expect(provider.client_id).to eq(client_id)
         expect(provider.client_secret).to eq(client_secret)
       end
@@ -52,7 +52,7 @@ describe Stormpath::Provider::Provider, :vcr do
     end
   end
 
-  shared_examples 'a syncrhonizeable directory' do
+  shared_examples 'a synchronizable directory' do
     it 'should be able to store provider accounts' do
       account_store_mapping
 
@@ -118,7 +118,7 @@ describe Stormpath::Provider::Provider, :vcr do
     end
 
     it_behaves_like 'a provider directory'
-    it_behaves_like 'a syncrhonizeable directory'
+    it_behaves_like 'a synchronizable directory'
   end
 
   describe 'create google directory with provider credentials' do
@@ -139,7 +139,7 @@ describe Stormpath::Provider::Provider, :vcr do
     end
 
     it_behaves_like 'a provider directory'
-    it_behaves_like 'a syncrhonizeable directory'
+    it_behaves_like 'a synchronizable directory'
   end
 
   describe 'create linkedin directory with provider credentials' do
@@ -154,7 +154,7 @@ describe Stormpath::Provider::Provider, :vcr do
     end
 
     it_behaves_like 'a provider directory'
-    it_behaves_like 'a syncrhonizeable directory'
+    it_behaves_like 'a synchronizable directory'
   end
 
   describe 'create github directory with provider credentials' do
@@ -169,6 +169,21 @@ describe Stormpath::Provider::Provider, :vcr do
     end
 
     it_behaves_like 'a provider directory'
-    it_behaves_like 'a syncrhonizeable directory'
+    it_behaves_like 'a synchronizable directory'
+  end
+
+  describe 'create twitter directory with provider credentials' do
+    let(:name) { 'Twitter' }
+    let(:description) { 'Directory for testing Twitter directories.' }
+
+    let(:provider_id) { 'twitter' }
+    let(:client_id) { 'TWITTER_APP_ID' }
+    let(:client_secret) { 'TWITTER_APP_SECRET' }
+    let(:provider_info) do
+      { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
+    end
+
+    it_behaves_like 'a provider directory'
+    it_behaves_like 'a synchronizable directory'
   end
 end

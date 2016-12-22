@@ -26,6 +26,7 @@ describe Stormpath::Resource::Organization, :vcr do
       expect(organization.custom_data).to be_a Stormpath::Resource::CustomData
       expect(organization.groups).to be_a Stormpath::Resource::Collection
       expect(organization.accounts).to be_a Stormpath::Resource::Collection
+      expect(organization.account_linking_policy).to be_a Stormpath::Resource::AccountLinkingPolicy
     end
   end
 

@@ -1,24 +1,48 @@
 require 'spec_helper'
 
-describe "ProviderAccountResolver" do
-  context "given an instance of ProviderAccountResolver" do
+describe 'ProviderAccountResolver' do
+  context 'given an instance of ProviderAccountResolver' do
+    let(:data_store) { Stormpath::DataStore.new('', '', {}, '') }
+    let(:provider_account_resolver) do
+      Stormpath::Provider::AccountResolver.new(data_store, 'foo/bar', account_request)
+    end
+    let(:response) do
+      provider_account_resolver.resolve_provider_account
+    end
 
     before do
-      data_store = Stormpath::DataStore.new "", "", {}, ""
       allow(test_api_client).to receive(:data_store).and_return(data_store)
       auth_result = Stormpath::Provider::AccountResult.new({}, test_api_client)
       allow(data_store).to receive(:create).and_return(auth_result)
-
-      @provider_account_resolver = Stormpath::Provider::AccountResolver.new data_store
+      provider_account_resolver
     end
 
-    context "when integrating" do
-      before do
-        @response = @provider_account_resolver.resolve_provider_account "foo/bar", Stormpath::Provider::AccountRequest.new(:facebook, :access_token, "some-token")
+    context 'when integrating' do
+      context 'without an account store' do
+        let(:account_request) do
+          Stormpath::Provider::AccountRequest.new(:facebook, :access_token, 'some-token')
+        end
+
+        it 'a ProviderResult is returned' do
+          expect(response).to be_a Stormpath::Provider::AccountResult
+        end
       end
 
-      it "an ProviderResult is returned" do
-        expect(@response).to be_a Stormpath::Provider::AccountResult
+      context 'with account store as a parameter' do
+        let(:account_request) do
+          Stormpath::Provider::AccountRequest.new(:facebook,
+                                                  :access_token,
+                                                  'some-token',
+                                                  account_store: { name_key: 'app1' })
+        end
+
+        it 'a ProviderResult is returned' do
+          expect(response).to be_a Stormpath::Provider::AccountResult
+        end
+
+        it 'should have account_store parameter' do
+          expect(provider_account_resolver.provider_data.keys).to include 'accountStore'
+        end
       end
     end
   end

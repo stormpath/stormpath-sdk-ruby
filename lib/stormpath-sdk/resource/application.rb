@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Stormpath, Inc.
+# Copyright 2016 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_one :custom_data
   has_one :o_auth_policy, class_name: :oauthPolicy
   has_one :web_config, class_name: :applicationWebConfig
+  has_one :account_linking_policy
 
   alias_method :oauth_policy, :o_auth_policy
 
@@ -106,8 +107,8 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     Stormpath::Authentication::BasicAuthenticator.new(data_store).authenticate(href, request)
   end
 
-  def get_provider_account request
-    Stormpath::Provider::AccountResolver.new(data_store).resolve_provider_account(href, request)
+  def get_provider_account(request)
+    Stormpath::Provider::AccountResolver.new(data_store, href, request).resolve_provider_account
   end
 
   def authenticate_oauth(request)
@@ -152,7 +153,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     when Hash
       account_store
     else
-      fail ArgumentError, 'Account store has to be passed either as an resource or a hash'
+      raise ArgumentError, 'Account store has to be passed either as an resource or a hash'
     end
   end
 end

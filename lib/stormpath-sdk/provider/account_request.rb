@@ -1,5 +1,5 @@
 #
-# Copyright 2014 Stormpath, Inc.
+# Copyright 2016 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 module Stormpath
   module Provider
     class AccountRequest
+      attr_accessor :provider, :token_type, :token_value, :account_store
 
-      attr_accessor :provider, :token_type, :token_value
-
-      def initialize(provider, token_type, token_value) 
+      def initialize(provider, token_type, token_value, account_store: {})
         @provider = provider
         @token_type = token_type
         @token_value = token_value
+        @account_store = account_store
       end
-
     end
   end
 end
