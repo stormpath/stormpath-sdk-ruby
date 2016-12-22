@@ -8,15 +8,15 @@ describe Stormpath::Resource::AccountLinkingPolicy, :vcr do
     it do
       expect(account_linking_policy).to be_a Stormpath::Resource::AccountLinkingPolicy
 
-      [:status, :automatic_provisioning, :matching_property].each do |property_accessor|
+      [:status, :automatic_provisioning].each do |property_accessor|
         expect(account_linking_policy).to respond_to(property_accessor)
         expect(account_linking_policy).to respond_to("#{property_accessor}=")
-        if property_accessor == :matching_property
-          expect(account_linking_policy.send(property_accessor)).to be_nil
-        else
-          expect(account_linking_policy.send(property_accessor)).to be_a String
-        end
+        expect(account_linking_policy.send(property_accessor)).to be_a String
       end
+
+      expect(account_linking_policy).to respond_to(:matching_property)
+      expect(account_linking_policy).to respond_to('matching_property=')
+      expect(account_linking_policy.send(:matching_property)).to be_nil
 
       [:created_at, :modified_at].each do |property_getter|
         expect(account_linking_policy).to respond_to(property_getter)
