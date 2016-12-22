@@ -142,13 +142,14 @@ describe Stormpath::Resource::Application, :vcr do
   end
 
   describe 'edit authorized_origin_uris' do
-    let(:authorized_origin_uris) { ['https://dnsLabel1.apps.stormpath.io', 'https://dnsLabel2.apps.stormpath.io'] }
+    let(:authorized_origin_uris) do
+      ['https://dnsLabel1.apps.stormpath.io', 'https://dnsLabel2.apps.stormpath.io']
+    end
 
     it 'changes authorized origin uris on application' do
       application.authorized_origin_uris = authorized_origin_uris
-      response = application.save
+      application.save
 
-      expect(response).to eq application
       expect(application.authorized_origin_uris.size).to eq 3
     end
   end

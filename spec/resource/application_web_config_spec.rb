@@ -36,11 +36,11 @@ describe Stormpath::Resource::ApplicationWebConfig, :vcr do
 
   describe 'enabling/disabling endpoints' do
     it 'should be able to switch to enabled and disabled' do
-      Stormpath::Resource::ApplicationWebConfig::ENDPOINTS.each do |endpoint|
-        instance_eval("web_config.#{endpoint}= { enabled: false }")
+      Stormpath::Resource::ApplicationWebConfig::ENDPOINTS.each do |endpoint_name|
+        web_config.send("#{endpoint_name}=", enabled: false)
         web_config.save
 
-        expect(instance_eval("application.web_config.#{endpoint}['enabled']")).to eq false
+        expect(application.web_config.send(endpoint_name).send(:[], 'enabled')).to eq false
       end
     end
 
