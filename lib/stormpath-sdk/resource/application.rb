@@ -36,6 +36,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
   has_one :custom_data
   has_one :o_auth_policy, class_name: :oauthPolicy
+  has_one :account_linking_policy
 
   alias_method :oauth_policy, :o_auth_policy
 
