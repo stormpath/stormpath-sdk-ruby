@@ -5,6 +5,8 @@ describe Stormpath::Resource::AccountLinkingPolicy, :vcr do
     let!(:application) { test_api_client.applications.create(application_attrs) }
     let(:account_linking_policy) { application.account_linking_policy }
 
+    after { application.delete }
+
     it do
       expect(account_linking_policy).to be_a Stormpath::Resource::AccountLinkingPolicy
 
