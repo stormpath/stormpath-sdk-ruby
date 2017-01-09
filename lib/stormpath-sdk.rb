@@ -53,6 +53,7 @@ module Stormpath
     autoload :PasswordResetToken, 'stormpath-sdk/resource/password_reset_token'
     autoload :VerificationEmail, 'stormpath-sdk/resource/verification_email'
     autoload :OauthPolicy, 'stormpath-sdk/resource/oauth_policy'
+    autoload :ApplicationWebConfig, 'stormpath-sdk/resource/application_web_config'
     autoload :AccessToken, 'stormpath-sdk/resource/access_token'
     autoload :RefreshToken, 'stormpath-sdk/resource/refresh_token'
     autoload :Organization, 'stormpath-sdk/resource/organization'

@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Stormpath, Inc.
+# Copyright 2016 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
 
   class LoadError < ArgumentError; end
 
-  prop_accessor :name, :description, :authorized_callback_uris, :status
+  prop_accessor :name, :description, :authorized_callback_uris, :status, :authorized_origin_uris
   prop_reader :created_at, :modified_at
 
   belongs_to :tenant
@@ -36,6 +36,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_one :default_group_store_mapping, class_name: :accountStoreMapping
   has_one :custom_data
   has_one :o_auth_policy, class_name: :oauthPolicy
+  has_one :web_config, class_name: :applicationWebConfig
   has_one :account_linking_policy
 
   alias_method :oauth_policy, :o_auth_policy
@@ -152,7 +153,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     when Hash
       account_store
     else
-      fail ArgumentError, 'Account store has to be passed either as an resource or a hash'
+      raise ArgumentError, 'Account store has to be passed either as an resource or a hash'
     end
   end
 end
