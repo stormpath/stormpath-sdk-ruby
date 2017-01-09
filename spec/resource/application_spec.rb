@@ -15,7 +15,7 @@ describe Stormpath::Resource::Application, :vcr do
     directory.delete if directory
   end
 
-  it "instances should respond to attribute property methods" do
+  it 'instances should respond to attribute property methods' do
 
     expect(application).to be_a Stormpath::Resource::Application
 
@@ -23,6 +23,12 @@ describe Stormpath::Resource::Application, :vcr do
       expect(application).to respond_to(property_accessor)
       expect(application).to respond_to("#{property_accessor}=")
       expect(application.send property_accessor).to be_a String
+    end
+
+    [:authorized_callback_uris, :authorized_origin_uris].each do |property_accessor|
+      expect(application).to respond_to(property_accessor)
+      expect(application).to respond_to("#{property_accessor}=")
+      expect(application.send property_accessor).to be_a Array
     end
 
     [:created_at, :modified_at].each do |property_getter|
@@ -40,6 +46,7 @@ describe Stormpath::Resource::Application, :vcr do
     expect(application.password_reset_tokens).to be_a Stormpath::Resource::Collection
     expect(application.verification_emails).to be_a Stormpath::Resource::Collection
     expect(application.account_store_mappings).to be_a Stormpath::Resource::Collection
+    expect(application.account_linking_policy).to be_a Stormpath::Resource::AccountLinkingPolicy
   end
 
   describe '.load' do
@@ -98,6 +105,29 @@ describe Stormpath::Resource::Application, :vcr do
       end
     end
 
+    context '#web_config' do
+      let(:web_config) { application.web_config }
+
+      it 'should have web_config' do
+        expect(application.web_config).to be_a Stormpath::Resource::ApplicationWebConfig
+      end
+
+      it 'should be able to change config' do
+        web_config.status = 'ENABLED'
+        web_config.save
+        expect(application.web_config.status).to eq 'ENABLED'
+
+        web_config.status = 'DISABLED'
+        web_config.save
+        expect(application.web_config.status).to eq 'DISABLED'
+      end
+
+      it 'changing dns_label should affect domain_name' do
+        web_config.dns_label = 'stormtrooper'
+        web_config.save
+        expect(application.web_config.domain_name).to eq 'stormtrooper.apps.stormpath.io'
+      end
+    end
   end
 
   describe 'edit authorized_callback_uris' do
@@ -108,10 +138,22 @@ describe Stormpath::Resource::Application, :vcr do
       response = application.save
 
       expect(response).to eq application
-      #expect(application.authorized_callback_uris).to eq(authorized_callback_uris)
+      expect(application.authorized_callback_uris).to eq(authorized_callback_uris)
     end
   end
 
+  describe 'edit authorized_origin_uris' do
+    let(:authorized_origin_uris) do
+      ['https://dnsLabel1.apps.stormpath.io', 'https://dnsLabel2.apps.stormpath.io']
+    end
+
+    it 'changes authorized origin uris on application' do
+      application.authorized_origin_uris = authorized_origin_uris
+      application.save
+
+      expect(application.authorized_origin_uris.size).to eq 3
+    end
+  end
 
   describe '#create_account' do
     let(:account) { Stormpath::Resource::Account.new(account_attrs) }

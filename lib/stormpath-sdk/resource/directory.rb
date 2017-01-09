@@ -52,12 +52,12 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
 
   def statement_mapping_rules
     metadata_href = provider.attribute_statement_mapping_rules['href']
-    data_store.get_resource metadata_href, provider.mapping_rules_class
+    data_store.get_resource metadata_href, Stormpath::Provider::SamlMappingRules
   end
 
   def create_attribute_mappings(mappings)
     mappings.set_options(href: provider.attribute_statement_mapping_rules['href'])
-    data_store.create mappings.href, mappings, provider.mapping_rules_class
+    data_store.create mappings.href, mappings, Stormpath::Provider::SamlMappingRules
   end
 
   def user_info_mapping_rules
