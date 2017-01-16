@@ -87,6 +87,7 @@ describe Stormpath::Resource::Directory, :vcr do
         end
 
         it 'should return groups when searching custom data' do
+          sleep 5
           expect(directory.groups.search('customData.status' => 'active').first).to eq group
         end
       end
