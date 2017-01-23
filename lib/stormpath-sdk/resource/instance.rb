@@ -15,10 +15,10 @@
 #
 class Stormpath::Resource::Instance < Stormpath::Resource::Base
   def save
-    data_store.save self
+    data_store.save(self)
   end
 
   def delete
-    data_store.delete self unless new?
+    data_store.delete(self) unless new?
   end
 end

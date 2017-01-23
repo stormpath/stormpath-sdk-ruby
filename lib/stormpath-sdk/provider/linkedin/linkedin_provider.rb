@@ -15,5 +15,5 @@
 # limitations under the License.
 #
 class Stormpath::Provider::LinkedinProvider < Stormpath::Provider::Provider
-  prop_reader :client_id, :client_secret, :user_info_mapping_rules
+  prop_reader :client_id, :client_secret
 end

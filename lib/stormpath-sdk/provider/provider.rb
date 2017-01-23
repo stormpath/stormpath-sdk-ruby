@@ -15,5 +15,5 @@
 #
 class Stormpath::Provider::Provider < Stormpath::Resource::Instance
   prop_accessor :scope
-  prop_reader :provider_id, :created_at, :modified_at
+  prop_reader :provider_id, :created_at, :modified_at, :user_info_mapping_rules
 end
