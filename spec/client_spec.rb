@@ -290,7 +290,7 @@ properties
     context 'pagination' do
       let!(:applications) do
         (0..2).to_a.map do |index|
-          test_api_client.applications.create(application_attrs(name: "ruby-sdk-test-#{index}"))
+          test_api_client.applications.create(application_attrs(name: "ruby-sdk-test-#{index}-#{random_number}"))
         end
       end
 
