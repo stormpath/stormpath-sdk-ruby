@@ -29,6 +29,7 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
   has_one :password_policy
   has_one :account_creation_policy
   has_one :account_schema, class_name: :schema
+  delegate :user_info_mapping_rules, to: :provider
 
   def provider
     internal_instance = instance_variable_get "@_provider"
@@ -60,13 +61,8 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     data_store.create mappings.href, mappings, Stormpath::Provider::SamlMappingRules
   end
 
-  def user_info_mapping_rules
-    metadata_href = provider.user_info_mapping_rules['href']
-    data_store.get_resource metadata_href, Stormpath::Provider::UserInfoMappingRules
-  end
-
   def map_user_info_rules(rules)
-    rules.set_options(href: provider.user_info_mapping_rules['href'])
-    data_store.execute_raw_request rules.href, rules.properties.except('href'), Stormpath::Provider::UserInfoMappingRules
+    rules.set_options(href: provider.user_info_mapping_rules.href)
+    data_store.execute_raw_request rules.href, rules.properties.except('href'), Stormpath::Resource::UserInfoMappingRules
   end
 end

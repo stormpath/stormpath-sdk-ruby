@@ -68,12 +68,12 @@ describe Stormpath::Provider::Provider, :vcr do
 
     context 'user info mapping rules for social directories' do
       let(:rule) { { 'name' => 'email', 'accountAttributes' => ['email'] } }
-      let(:rules) { Stormpath::Provider::UserInfoMappingRules.new(items: [rule]) }
+      let(:rules) { Stormpath::Resource::UserInfoMappingRules.new(items: [rule]) }
       before { directory.map_user_info_rules(rules) if social_directory? }
 
       it 'should be able to create and fetch user info mapping rules' do
         if social_directory?
-          expect(directory.user_info_mapping_rules).to be_kind_of(Stormpath::Provider::UserInfoMappingRules)
+          expect(directory.user_info_mapping_rules).to be_kind_of(Stormpath::Resource::UserInfoMappingRules)
           expect(directory.user_info_mapping_rules.items).to include(rule)
         end
       end
