@@ -120,23 +120,23 @@ describe Stormpath::Provider::Provider, :vcr do
     end
   end
 
-  # describe 'create stormpath directory with empty provider credentials' do
-  #   let(:name) { 'Stormpath' }
-  #   let(:description) { 'Directory for testing Stormpath directories.' }
-  #   let(:provider_id) { 'stormpath' }
-  #
-  #   it_behaves_like 'a provider directory'
-  #
-  #   it 'should be able to retrieve provider data from a regular account' do
-  #     account = directory.accounts.create(account_attrs)
-  #
-  #     expect(account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
-  #     expect(account.provider_data.provider_id).to eq(provider_id)
-  #     expect(account.provider_data.created_at).to be
-  #     expect(account.provider_data.modified_at).to be
-  #     expect(account.provider_data).to be_instance_of(Stormpath::Provider::StormpathProviderData)
-  #   end
-  # end
+  describe 'create stormpath directory with empty provider credentials' do
+    let(:name) { 'Stormpath' }
+    let(:description) { 'Directory for testing Stormpath directories.' }
+    let(:provider_id) { 'stormpath' }
+
+    it_behaves_like 'a provider directory'
+
+    it 'should be able to retrieve provider data from a regular account' do
+      account = directory.accounts.create(account_attrs)
+
+      expect(account.provider_data).to be_kind_of(Stormpath::Provider::ProviderData)
+      expect(account.provider_data.provider_id).to eq(provider_id)
+      expect(account.provider_data.created_at).to be
+      expect(account.provider_data.modified_at).to be
+      expect(account.provider_data).to be_instance_of(Stormpath::Provider::StormpathProviderData)
+    end
+  end
 
   describe 'create facebook directory with provider credentials' do
     let(:name) { 'Facebook' }
@@ -153,75 +153,75 @@ describe Stormpath::Provider::Provider, :vcr do
     it_behaves_like 'a synchronizable directory'
   end
 
-  # describe 'create google directory with provider credentials' do
-  #   let(:name) { 'Google' }
-  #   let(:description) { 'Directory for testing Google directories.' }
-  #
-  #   let(:provider_id) { 'google' }
-  #   let(:client_id) { 'GOOGLE_CLIENT_ID' }
-  #   let(:client_secret) { 'GOOGLE_CLIENT_SECRET' }
-  #   let(:redirect_uri) { 'GOOGLE_REDIRECT_URI' }
-  #   let(:hd) { 'www.example.com' }
-  #   let(:display) { 'page' }
-  #   let(:access_type) { 'online' }
-  #   let(:provider_info) do
-  #     {
-  #       provider_id: provider_id,
-  #       client_id: client_id,
-  #       client_secret: client_secret,
-  #       redirect_uri: redirect_uri,
-  #       hd: hd,
-  #       display: display,
-  #       access_type: access_type
-  #     }
-  #   end
-  #
-  #   it_behaves_like 'a provider directory'
-  #   it_behaves_like 'a synchronizable directory'
-  # end
-  #
-  # describe 'create linkedin directory with provider credentials' do
-  #   let(:name) { 'Linkedin' }
-  #   let(:description) { 'Directory for testing Linkedin directories.' }
-  #
-  #   let(:provider_id) { 'linkedin' }
-  #   let(:client_id) { 'LINKEDIN_APP_ID' }
-  #   let(:client_secret) { 'LINKEDIN_APP_SECRET' }
-  #   let(:provider_info) do
-  #     { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
-  #   end
-  #
-  #   it_behaves_like 'a provider directory'
-  #   it_behaves_like 'a synchronizable directory'
-  # end
-  #
-  # describe 'create github directory with provider credentials' do
-  #   let(:name) { 'Github' }
-  #   let(:description) { 'Directory for testing Github directories.' }
-  #
-  #   let(:provider_id) { 'github' }
-  #   let(:client_id) { 'GITHUB_APP_ID' }
-  #   let(:client_secret) { 'GITHUB_APP_SECRET' }
-  #   let(:provider_info) do
-  #     { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
-  #   end
-  #
-  #   it_behaves_like 'a provider directory'
-  #   it_behaves_like 'a synchronizable directory'
-  # end
-  #
-  # describe 'create twitter directory with provider credentials' do
-  #   let(:name) { 'Twitter' }
-  #   let(:description) { 'Directory for testing Twitter directories.' }
-  #
-  #   let(:provider_id) { 'twitter' }
-  #   let(:client_id) { 'TWITTER_APP_ID' }
-  #   let(:client_secret) { 'TWITTER_APP_SECRET' }
-  #   let(:provider_info) do
-  #     { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
-  #   end
-  #
-  #   it_behaves_like 'a provider directory'
-  #   it_behaves_like 'a synchronizable directory'
-  # end
+  describe 'create google directory with provider credentials' do
+    let(:name) { 'Google' }
+    let(:description) { 'Directory for testing Google directories.' }
+
+    let(:provider_id) { 'google' }
+    let(:client_id) { 'GOOGLE_CLIENT_ID' }
+    let(:client_secret) { 'GOOGLE_CLIENT_SECRET' }
+    let(:redirect_uri) { 'GOOGLE_REDIRECT_URI' }
+    let(:hd) { 'www.example.com' }
+    let(:display) { 'page' }
+    let(:access_type) { 'online' }
+    let(:provider_info) do
+      {
+        provider_id: provider_id,
+        client_id: client_id,
+        client_secret: client_secret,
+        redirect_uri: redirect_uri,
+        hd: hd,
+        display: display,
+        access_type: access_type
+      }
+    end
+
+    it_behaves_like 'a provider directory'
+    it_behaves_like 'a synchronizable directory'
+  end
+
+  describe 'create linkedin directory with provider credentials' do
+    let(:name) { 'Linkedin' }
+    let(:description) { 'Directory for testing Linkedin directories.' }
+
+    let(:provider_id) { 'linkedin' }
+    let(:client_id) { 'LINKEDIN_APP_ID' }
+    let(:client_secret) { 'LINKEDIN_APP_SECRET' }
+    let(:provider_info) do
+      { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
+    end
+
+    it_behaves_like 'a provider directory'
+    it_behaves_like 'a synchronizable directory'
+  end
+
+  describe 'create github directory with provider credentials' do
+    let(:name) { 'Github' }
+    let(:description) { 'Directory for testing Github directories.' }
+
+    let(:provider_id) { 'github' }
+    let(:client_id) { 'GITHUB_APP_ID' }
+    let(:client_secret) { 'GITHUB_APP_SECRET' }
+    let(:provider_info) do
+      { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
+    end
+
+    it_behaves_like 'a provider directory'
+    it_behaves_like 'a synchronizable directory'
+  end
+
+  describe 'create twitter directory with provider credentials' do
+    let(:name) { 'Twitter' }
+    let(:description) { 'Directory for testing Twitter directories.' }
+
+    let(:provider_id) { 'twitter' }
+    let(:client_id) { 'TWITTER_APP_ID' }
+    let(:client_secret) { 'TWITTER_APP_SECRET' }
+    let(:provider_info) do
+      { provider_id: provider_id, client_id: client_id, client_secret: client_secret }
+    end
+
+    it_behaves_like 'a provider directory'
+    it_behaves_like 'a synchronizable directory'
+  end
 end
