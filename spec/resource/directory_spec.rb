@@ -66,6 +66,8 @@ describe Stormpath::Resource::Directory, :vcr do
         before do
           directory.groups.create(name: 'US group', description: 'Described groups from United S.')
           directory.groups.create(name: 'EU group', description: 'Described groups from Europe')
+          group.custom_data['status'] = 'active'
+          group.save
         end
 
         it 'should return groups by name' do
@@ -82,6 +84,11 @@ describe Stormpath::Resource::Directory, :vcr do
 
         it 'should return groups when searching description with asterisks' do
           expect(directory.groups.search(description: '*groups*').count).to eq 2
+        end
+
+        it 'should return groups when searching custom data' do
+          wait_for_custom_data_indexing
+          expect(directory.groups.search('customData.status' => 'active').first).to eq group
         end
       end
     end
