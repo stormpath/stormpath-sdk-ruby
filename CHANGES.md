@@ -1,6 +1,18 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.5.0
+-------------
+
+Released on January 24, 2017
+
+- Create AccountLinkingPolicy resource and associate it to Application and Organization
+- Create Twitter provider
+- Implement ApplicationWebConfig on the Application resource
+- Added more specs for basic authentication
+- Refactor codebase
+
+
 Version 1.4.0
 -------------
 
