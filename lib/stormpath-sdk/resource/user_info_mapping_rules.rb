@@ -14,7 +14,8 @@
 # limitations under the License.
 #
 class Stormpath::Resource::UserInfoMappingRules < Stormpath::Resource::Instance
-  prop_reader :href, :created_at, :modified_at, :items
+  prop_accessor :items
+  prop_reader :href, :created_at, :modified_at
 
   def set_options(options)
     set_property :href, options[:href]

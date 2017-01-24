@@ -124,10 +124,10 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
       payload['cb_uri'] = options[:callback_uri]
       payload['path'] = options[:path] || ''
       payload['state'] = options[:state] || ''
-      payload['sof'] = options[:show_organization_field] if options[:show_organization_field]
-      payload['onk'] = options[:organization_name_key] if options[:organization_name_key]
-      payload['usd'] = options[:use_subdomain] if options[:use_subdomain]
-    end
+      payload['sof'] = options[:show_organization_field]
+      payload['onk'] = options[:organization_name_key]
+      payload['usd'] = options[:use_subdomain]
+    end.compact
   end
 
   def api_key_id

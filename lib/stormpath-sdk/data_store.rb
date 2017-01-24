@@ -112,7 +112,7 @@ class Stormpath::DataStore
       raise Stormpath::Error.new(error)
     end
 
-    cache_walk(result) unless user_info_mapping_rules?(result)
+    cache_walk(result)
     instantiate(klass, result)
   end
 
@@ -158,7 +158,7 @@ class Stormpath::DataStore
 
     return if http_method == 'delete'
 
-    if result[HREF_PROP_NAME] && !resource_is_saml_mapping_rules?(resource) && !user_info_mapping_rules?(result)
+    if result[HREF_PROP_NAME] && !resource_is_saml_mapping_rules?(resource) && !user_info_mapping_rules?(resource)
       cache_walk result
     else
       result
@@ -348,8 +348,8 @@ class Stormpath::DataStore
       Stormpath::Resource::ApplicationWebConfig::ENDPOINTS.include?(name.underscore.to_sym)
   end
 
-  def user_info_mapping_rules?(result)
-    result['href'].include?('/userInfoMappingRules/') && result.key?('items')
+  def user_info_mapping_rules?(resource)
+    resource.is_a?(Stormpath::Resource::UserInfoMappingRules)
   end
 
   def resource_is_saml_mapping_rules?(resource)

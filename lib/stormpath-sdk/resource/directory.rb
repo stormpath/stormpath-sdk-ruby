@@ -60,9 +60,4 @@ class Stormpath::Resource::Directory < Stormpath::Resource::Instance
     mappings.set_options(href: provider.attribute_statement_mapping_rules['href'])
     data_store.create mappings.href, mappings, Stormpath::Provider::SamlMappingRules
   end
-
-  def map_user_info_rules(rules)
-    rules.set_options(href: provider.user_info_mapping_rules.href)
-    data_store.execute_raw_request rules.href, rules.properties.except('href'), Stormpath::Resource::UserInfoMappingRules
-  end
 end
