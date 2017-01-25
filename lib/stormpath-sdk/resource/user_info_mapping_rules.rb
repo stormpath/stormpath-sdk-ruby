@@ -16,8 +16,4 @@
 class Stormpath::Resource::UserInfoMappingRules < Stormpath::Resource::Instance
   prop_accessor :items
   prop_reader :href, :created_at, :modified_at
-
-  def set_options(options)
-    set_property :href, options[:href]
-  end
 end
