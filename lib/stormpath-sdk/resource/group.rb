@@ -13,27 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Group < Stormpath::Resource::Instance
-  include Stormpath::Resource::CustomDataStorage
+module Stormpath
+  module Resource
+    class Group < Stormpath::Resource::Instance
+      include Stormpath::Resource::CustomDataStorage
 
-  prop_accessor :name, :description, :status
-  prop_reader :created_at, :modified_at
+      prop_accessor :name, :description, :status
+      prop_reader :created_at, :modified_at
 
-  belongs_to :tenant
-  belongs_to :directory
+      belongs_to :tenant
+      belongs_to :directory
 
-  has_many :accounts
-  has_many :account_memberships
+      has_many :accounts
+      has_many :account_memberships
 
-  has_one :custom_data
+      has_one :custom_data
 
-  def add_account account
-    client.group_memberships.create group: self, account: account
+      def add_account(account)
+        client.group_memberships.create group: self, account: account
+      end
+
+      def remove_account(account)
+        account_membership = account_memberships.find do |membership|
+          membership.account.href == account.href
+        end
+        account_membership.delete if account_membership
+      end
+    end
   end
-
-  def remove_account account
-    account_membership = account_memberships.find {|account_membership| account_membership.account.href == account.href }
-    account_membership.delete if account_membership
-  end
-
 end

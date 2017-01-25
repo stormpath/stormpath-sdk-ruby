@@ -19,8 +19,7 @@ module Stormpath
       extend ActiveSupport::Concern
 
       module ClassMethods
-
-        def resource_prop_reader(name, options={})
+        def resource_prop_reader(name, options = {})
           options[:class_name] ||= name
           resource_class = "Stormpath::Resource::#{options[:class_name].to_s.camelize}".constantize
           property_name = name.to_s.camelize :lower
@@ -29,10 +28,10 @@ module Stormpath
           end
         end
 
-        alias_method :has_one, :resource_prop_reader
-        alias_method :belongs_to, :resource_prop_reader
+        alias has_one resource_prop_reader
+        alias belongs_to resource_prop_reader
 
-        def has_many(name, options={}, &block)
+        def has_many(name, options = {}, &block)
           options[:class_name] ||= name.to_s.singularize
           item_class = "Stormpath::Resource::#{options[:class_name].to_s.camelize}".constantize
           property_name = name.to_s.camelize :lower
@@ -43,52 +42,48 @@ module Stormpath
             collection_href = "#{tenant.send(name).href}" if options[:delegate]
 
             Stormpath::Resource::Collection.new(href, item_class, client,
-              collection_href: collection_href).tap do |collection|
+                                                collection_href: collection_href).tap do |collection|
 
               collection.class_eval do
-                if can.include? :create
+                if can.include?(:create)
                   def create(properties_or_resource, options = {})
                     resource = case properties_or_resource
-                      when Stormpath::Resource::Base
-                        properties_or_resource
-                      else
-                        item_class.new properties_or_resource, client
-                      end
+                               when Stormpath::Resource::Base
+                                 properties_or_resource
+                               else
+                                 item_class.new properties_or_resource, client
+                               end
                     data_store.create href, resource, item_class, options
                   end
-                end#can.include? :create
+                end # can.include? :create
 
                 if can.include? :get
-                  def get(id_or_href, expansion=nil)
+                  def get(id_or_href, expansion = nil)
                     item_href = if id_or_href.index '/'
-                      id_or_href
-                    else
-                      "#{href}/#{id_or_href}"
-                    end
-                    data_store.get_resource item_href, item_class, (expansion ? expansion.to_query : nil)
+                                  id_or_href
+                                else
+                                  "#{href}/#{id_or_href}"
+                                end
+                    data_store.get_resource(item_href, item_class, (expansion ? expansion.to_query : nil))
                   end
-                end#can.include? :get
-              end#collection.class_eval do
+                end # can.include? :get
+              end # collection.class_eval do
 
               collection.class_eval(&block) if block
-            end#Stormpath::Resource::Collection.new
-          end#define_method(name)
-        end#def has_many
-
-      end#module Class Methods
+            end # Stormpath::Resource::Collection.new
+          end # define_method(name)
+        end # def has_many
+      end # module Class Methods
 
       included do
-
         private
 
           def get_resource_property(key, clazz)
             value = get_property key
 
-            return nil if value.nil? and clazz != Stormpath::Resource::CustomData
+            return nil if value.nil? && (clazz != Stormpath::Resource::CustomData)
 
-            if value.is_a? Hash
-              resource_href = get_href_from_hash value
-            end
+            resource_href = get_href_from_hash value if value.is_a? Hash
 
             key_name = "@_#{key.underscore}"
 
@@ -105,14 +100,9 @@ module Stormpath
           def get_resource_href_property(key)
             value = get_property key
 
-            if value.is_a? Hash
-              get_href_from_hash value
-            else
-              nil
-            end
+            get_href_from_hash value if value.is_a? Hash
           end
-
-      end#included do
-    end#Associations
-  end#Resource
-end#Stormpath
+      end # included do
+    end # Associations
+  end # Resource
+end # Stormpath

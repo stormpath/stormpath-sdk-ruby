@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::LinkedinProvider < Stormpath::Provider::Provider
-  prop_reader :client_id, :client_secret
+module Stormpath
+  module Provider
+    class LinkedinProvider < Stormpath::Provider::Provider
+      prop_reader :client_id, :client_secret
+    end
+  end
 end

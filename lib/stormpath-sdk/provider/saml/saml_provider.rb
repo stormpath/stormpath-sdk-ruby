@@ -13,8 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::SamlProvider < Stormpath::Provider::Provider
-  prop_reader :provider_id, :sso_login_url, :sso_logout_url,
-    :encoded_x509_signing_cert, :request_signature_algorithm,
-    :service_provider_metadata, :attribute_statement_mapping_rules
+module Stormpath
+  module Provider
+    class SamlProvider < Stormpath::Provider::Provider
+      prop_reader :provider_id, :sso_login_url, :sso_logout_url,
+                  :encoded_x509_signing_cert, :request_signature_algorithm,
+                  :service_provider_metadata, :attribute_statement_mapping_rules
+    end
+  end
 end

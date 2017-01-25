@@ -6,7 +6,7 @@ module Stormpath
       def initialize(username, password, options = {})
         @username = username
         @password = password
-        @grant_type = "password"
+        @grant_type = 'password'
         @organization_name_key = options[:organization_name_key]
       end
     end

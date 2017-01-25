@@ -16,13 +16,12 @@
 module Stormpath
   module Util
     module Assert
-
       def assert_not_nil(object, message)
         raise(ArgumentError, message, caller) if object.nil?
       end
 
       def assert_kind_of(clazz, object, message)
-        raise(ArgumentError, message, caller) unless object.kind_of? clazz
+        raise(ArgumentError, message, caller) unless object.is_a?(clazz)
       end
 
       def assert_true(arg, message)
@@ -32,7 +31,6 @@ module Stormpath
       def assert_false(arg, message)
         raise(ArgumentError, message, caller) if arg
       end
-
     end
   end
 end

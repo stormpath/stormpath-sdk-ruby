@@ -21,26 +21,26 @@ module Stormpath
         include UUIDTools
         include Stormpath::Http::Utils
 
-        DEFAULT_ALGORITHM = "SHA256"
-        HOST_HEADER = "Host"
-        AUTHORIZATION_HEADER = "Authorization"
-        STORMPATH_DATE_HEADER = "X-Stormpath-Date"
-        ID_TERMINATOR = "sauthc1_request"
-        ALGORITHM = "HMAC-SHA-256"
-        AUTHENTICATION_SCHEME = "SAuthc1"
-        SAUTHC1_ID = "sauthc1Id"
-        SAUTHC1_SIGNED_HEADERS = "sauthc1SignedHeaders"
-        SAUTHC1_SIGNATURE = "sauthc1Signature"
-        DATE_FORMAT = "%Y%m%d"
-        TIMESTAMP_FORMAT = "%Y%m%dT%H%M%SZ"
-        #noinspection RubyConstantNamingConvention
-        NL = "\n"
+        DEFAULT_ALGORITHM = 'SHA256'.freeze
+        HOST_HEADER = 'Host'.freeze
+        AUTHORIZATION_HEADER = 'Authorization'.freeze
+        STORMPATH_DATE_HEADER = 'X-Stormpath-Date'.freeze
+        ID_TERMINATOR = 'sauthc1_request'.freeze
+        ALGORITHM = 'HMAC-SHA-256'.freeze
+        AUTHENTICATION_SCHEME = 'SAuthc1'.freeze
+        SAUTHC1_ID = 'sauthc1Id'.freeze
+        SAUTHC1_SIGNED_HEADERS = 'sauthc1SignedHeaders'.freeze
+        SAUTHC1_SIGNATURE = 'sauthc1Signature'.freeze
+        DATE_FORMAT = '%Y%m%d'.freeze
+        TIMESTAMP_FORMAT = '%Y%m%dT%H%M%SZ'.freeze
+        # noinspection RubyConstantNamingConvention
+        NL = "\n".freeze
 
-        def initialize(uuid_generator=UUID.method(:random_create))
+        def initialize(uuid_generator = UUID.method(:random_create))
           @uuid_generator = uuid_generator
         end
 
-        def sign_request request
+        def sign_request(request)
           request.http_headers.delete(Sauthc1Signer::AUTHORIZATION_HEADER)
           request.http_headers.delete(Sauthc1Signer::STORMPATH_DATE_HEADER)
 
@@ -56,9 +56,7 @@ module Stormpath
           # have to have it in the request by the time we sign.
           host_header = uri.host
 
-          unless default_port?(uri)
-            host_header << ":" << uri.port.to_s
-          end
+          host_header << ':' << uri.port.to_s unless default_port?(uri)
 
           request.http_headers.store HOST_HEADER, host_header
 
@@ -78,7 +76,7 @@ module Stormpath
                                signed_headers_string,
                                request_payload_hash_hex].join(NL)
 
-          id = [request.api_key.id, date_stamp, nonce, ID_TERMINATOR].join("/")
+          id = [request.api_key.id, date_stamp, nonce, ID_TERMINATOR].join('/')
 
           canonical_request_hash_hex = to_hex(hash_text(canonical_request))
 
@@ -93,16 +91,15 @@ module Stormpath
           signature = sign to_utf8(string_to_sign), k_signing, DEFAULT_ALGORITHM
           signature_hex = to_hex signature
 
-          authorization_header = AUTHENTICATION_SCHEME + " " +
-              create_name_value_pair(SAUTHC1_ID, id) + ", " +
-              create_name_value_pair(SAUTHC1_SIGNED_HEADERS, signed_headers_string) + ", " +
-              create_name_value_pair(SAUTHC1_SIGNATURE, signature_hex)
+          authorization_header = AUTHENTICATION_SCHEME + ' ' +
+                                 create_name_value_pair(SAUTHC1_ID, id) + ', ' +
+                                 create_name_value_pair(SAUTHC1_SIGNED_HEADERS, signed_headers_string) + ', ' +
+                                 create_name_value_pair(SAUTHC1_SIGNATURE, signature_hex)
 
           request.http_headers.store AUTHORIZATION_HEADER, authorization_header
         end
 
-
-        def to_hex data
+        def to_hex(data)
           result = ''
 
           data.each_byte do |val|
@@ -121,72 +118,69 @@ module Stormpath
 
         private
 
-          def canonicalize_query_string request
-            request.to_s_query_string true
-          end
+        def canonicalize_query_string(request)
+          request.to_s_query_string true
+        end
 
-          def hash_text text
-            Digest.digest DEFAULT_ALGORITHM, to_utf8(text)
-          end
+        def hash_text(text)
+          Digest.digest DEFAULT_ALGORITHM, to_utf8(text)
+        end
 
-          def sign data, key, algorithm
-            digest_data = to_utf8 data
-            digest = Digest.new(algorithm)
-            HMAC.digest(digest, key, digest_data)
-          end
+        def sign(data, key, algorithm)
+          digest_data = to_utf8 data
+          digest = Digest.new(algorithm)
+          HMAC.digest(digest, key, digest_data)
+        end
 
-          def to_utf8 str
-            #we ask for multi line UTF-8 text
-            str.scan(/./mu).join
-          end
+        def to_utf8(str)
+          # we ask for multi line UTF-8 text
+          str.scan(/./mu).join
+        end
 
-          def get_request_payload request
-            get_request_payload_without_query_params request
-          end
+        def get_request_payload(request)
+          get_request_payload_without_query_params request
+        end
 
-          def get_request_payload_without_query_params request
-            request.body || ''
-          end
+        def get_request_payload_without_query_params(request)
+          request.body || ''
+        end
 
-          def create_name_value_pair name, value
-            "#{name}=#{value}"
-          end
+        def create_name_value_pair(name, value)
+          "#{name}=#{value}"
+        end
 
-          def canonicalize_resource_path resource_path
-            if resource_path.nil? or resource_path.empty?
-              '/'
+        def canonicalize_resource_path(resource_path)
+          if resource_path.nil? || resource_path.empty?
+            '/'
+          else
+            encode_url resource_path, true, true
+          end
+        end
+
+        def canonicalize_headers(request)
+          sorted_headers = request.http_headers.keys.sort!
+          result = ''
+
+          sorted_headers.each do |header|
+            result << header.downcase << ':' << request.http_headers[header].to_s
+            result << NL
+          end
+          result
+        end
+
+        def get_signed_headers(request)
+          sorted_headers = request.http_headers.keys.sort!
+          result = ''
+          sorted_headers.each do |header|
+            if result.empty?
+              result << header
             else
-              encode_url resource_path, true, true
+              result << ';' << header
             end
           end
-
-
-          def canonicalize_headers request
-            sorted_headers = request.http_headers.keys.sort!
-            result = ''
-
-            sorted_headers.each do |header|
-              result << header.downcase << ':' << request.http_headers[header].to_s
-              result << NL
-            end
-            result
-          end
-
-          def get_signed_headers request
-            sorted_headers = request.http_headers.keys.sort!
-            result = ''
-            sorted_headers.each do |header|
-              if result.empty?
-                result << header
-              else
-                result << ';' << header
-              end
-            end
-            result.downcase
-          end
-
-
-      end#Sauthc1Signer
-    end#Authc
-  end#Http
-end#Stormpath
+          result.downcase
+        end
+      end # Sauthc1Signer
+    end # Authc
+  end # Http
+end # Stormpath

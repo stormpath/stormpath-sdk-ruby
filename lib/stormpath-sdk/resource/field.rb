@@ -13,9 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Field < Stormpath::Resource::Instance
-  prop_accessor :required
-  prop_reader :name, :created_at, :modified_at
+module Stormpath
+  module Resource
+    class Field < Stormpath::Resource::Instance
+      prop_accessor :required
+      prop_reader :name, :created_at, :modified_at
 
-  belongs_to :schema
+      belongs_to :schema
+    end
+  end
 end

@@ -13,8 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::LinkedAccount < Stormpath::Resource::Instance
-  include Stormpath::Resource::CustomDataStorage
+module Stormpath
+  module Resource
+    class LinkedAccount < Stormpath::Resource::Instance
+      include Stormpath::Resource::CustomDataStorage
 
-  belongs_to :account
+      belongs_to :account
+    end
+  end
 end

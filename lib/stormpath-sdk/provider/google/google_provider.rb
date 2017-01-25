@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::GoogleProvider < Stormpath::Provider::Provider
-  prop_reader :client_id, :client_secret, :redirect_uri
+module Stormpath
+  module Provider
+    class GoogleProvider < Stormpath::Provider::Provider
+      prop_reader :client_id, :client_secret, :redirect_uri
+    end
+  end
 end

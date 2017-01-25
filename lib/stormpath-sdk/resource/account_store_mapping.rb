@@ -13,23 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::AccountStoreMapping < Stormpath::Resource::Instance
+module Stormpath
+  module Resource
+    class AccountStoreMapping < Stormpath::Resource::Instance
+      prop_accessor :list_index, :is_default_account_store, :is_default_group_store
 
-  prop_accessor :list_index, :is_default_account_store, :is_default_group_store
+      belongs_to :application
 
-  belongs_to :application
+      has_one :account_store
 
-  has_one :account_store
+      alias default_account_store is_default_account_store
+      alias default_account_store? is_default_account_store
 
-  alias_method :default_account_store, :is_default_account_store
-  alias_method :default_account_store?, :is_default_account_store
+      alias default_account_store= is_default_account_store=
 
-  alias_method :default_account_store=, :is_default_account_store=
+      alias default_group_store is_default_group_store
+      alias default_group_store? is_default_group_store
 
-  alias_method :default_group_store, :is_default_group_store
-  alias_method :default_group_store?, :is_default_group_store
-
-  alias_method :default_group_store=, :is_default_group_store=
-
+      alias default_group_store= is_default_group_store=
+    end
+  end
 end
-

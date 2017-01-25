@@ -18,16 +18,16 @@ module Stormpath
     class BasicAuthenticator
       include Stormpath::Util::Assert
 
-      def initialize data_store
+      def initialize(data_store)
         @data_store = data_store
       end
 
-      def authenticate parent_href, request
-        assert_not_nil parent_href, "parentHref argument must be specified"
-        assert_kind_of UsernamePasswordRequest, request, "Only UsernamePasswordRequest instances are supported."
+      def authenticate(parent_href, request)
+        assert_not_nil parent_href, 'parentHref argument must be specified'
+        assert_kind_of UsernamePasswordRequest, request, 'Only UsernamePasswordRequest instances are supported.'
 
         username = request.principals
-        username = username || ''
+        username ||= ''
 
         password = request.credentials
         pw_string = password.join

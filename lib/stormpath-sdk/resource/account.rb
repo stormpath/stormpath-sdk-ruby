@@ -13,61 +13,67 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Account < Stormpath::Resource::Instance
-  include Stormpath::Resource::CustomDataStorage
+module Stormpath
+  module Resource
+    class Account < Stormpath::Resource::Instance
+      include Stormpath::Resource::CustomDataStorage
 
-  prop_accessor :username, :email, :given_name, :middle_name, :surname, :status
-  prop_writer :password
-  prop_reader :full_name, :created_at, :modified_at, :password_modified_at
-  prop_non_printable :password
+      prop_accessor :username, :email, :given_name, :middle_name, :surname, :status
+      prop_writer :password
+      prop_reader :full_name, :created_at, :modified_at, :password_modified_at
+      prop_non_printable :password
 
-  belongs_to :directory
-  belongs_to :tenant
+      belongs_to :directory
+      belongs_to :tenant
 
-  has_one :email_verification_token
+      has_one :email_verification_token
 
-  has_many :groups
-  has_many :group_memberships
-  has_many :applications
+      has_many :groups
+      has_many :group_memberships
+      has_many :applications
 
-  has_many :linked_accounts, class_name: :Account
-  has_many :account_links
+      has_many :linked_accounts, class_name: :Account
+      has_many :account_links
 
-  has_one :custom_data
+      has_one :custom_data
 
-  has_many :access_tokens
-  has_many :refresh_tokens
+      has_many :access_tokens
+      has_many :refresh_tokens
 
-  has_many :api_keys, can: [:create]
+      has_many :api_keys, can: [:create]
 
-  has_many :phones, can: [:get, :create]
-  has_many :factors, can: [:get, :create]
+      has_many :phones, can: [:get, :create]
+      has_many :factors, can: [:get, :create]
 
-  def add_group group
-    client.group_memberships.create group: group, account: self
-  end
+      def add_group(group)
+        client.group_memberships.create group: group, account: self
+      end
 
-  def remove_group group
-    group_membership = group_memberships.find {|group_membership| group_membership.group.href == group.href }
-    group_membership.delete if group_membership
-  end
+      def remove_group(group)
+        group_membership = group_memberships.find do |membership|
+          membership.group.href == group.href
+        end
+        group_membership.delete if group_membership
+      end
 
-  def provider_data
-    internal_instance = instance_variable_get "@_provider_data"
-    return internal_instance if internal_instance
+      def provider_data
+        internal_instance = instance_variable_get('@_provider_data')
+        return internal_instance if internal_instance
 
-    provider_data_href = self.href + '/providerData'
+        provider_data_href = "#{href}/providerData"
 
-    clazz_proc = Proc.new do |data|
-      provider_id = data['providerId']
-      "Stormpath::Provider::#{provider_id.capitalize}ProviderData".constantize
+        clazz_proc = proc do |data|
+          provider_id = data['providerId']
+          "Stormpath::Provider::#{provider_id.capitalize}ProviderData".constantize
+        end
+
+        provider_data = data_store.get_resource(provider_data_href, clazz_proc)
+        instance_variable_set('@_provider_data', provider_data)
+      end
+
+      def create_factor(type, options = {})
+        Stormpath::Authentication::CreateFactor.new(client, self, type, options).save
+      end
     end
-
-    provider_data = data_store.get_resource provider_data_href, clazz_proc
-    instance_variable_set "@_provider_data", provider_data
-  end
-
-  def create_factor(type, options = {})
-    Stormpath::Authentication::CreateFactor.new(client, self, type, options).save
   end
 end

@@ -28,7 +28,7 @@ module Stormpath
 
       api_key = ApiKey(options)
 
-      assert_not_nil api_key, "No API key has been provided. Please pass an 'api_key' or " +
+      assert_not_nil api_key, "No API key has been provided. Please pass an 'api_key' or " \
                               "'api_key_file_location' to the Stormpath::Client constructor."
 
       request_executor = Stormpath::Http::HttpClientRequestExecutor.new(proxy: options[:proxy])
@@ -64,43 +64,42 @@ module Stormpath
 
     private
 
-      def ApiKey(options={})
-        if api_key = options[:api_key]
-          case api_key
-          when ApiKey then api_key
-          when Hash then ApiKey.new api_key[:id], api_key[:secret]
-          end
-        elsif options[:api_key_file_location]
-          load_api_key_file(options[:api_key_file_location],
-                            options[:api_key_id_property_name],
-                            options[:api_key_secret_property_name])
+    def ApiKey(options = {})
+      if api_key = options[:api_key]
+        case api_key
+        when ApiKey then api_key
+        when Hash then ApiKey.new api_key[:id], api_key[:secret]
         end
+      elsif options[:api_key_file_location]
+        load_api_key_file(options[:api_key_file_location],
+                          options[:api_key_id_property_name],
+                          options[:api_key_secret_property_name])
+      end
+    end
+
+    def load_api_key_file(api_key_file_location, id_property_name, secret_property_name)
+      begin
+        api_key_properties = JavaProperties::Properties.new api_key_file_location
+      rescue
+        raise ArgumentError, "No API Key file could be found or loaded from '#{api_key_file_location}'."
       end
 
-      def load_api_key_file api_key_file_location, id_property_name, secret_property_name
-        begin
-          api_key_properties = JavaProperties::Properties.new api_key_file_location
-        rescue
-          raise ArgumentError, "No API Key file could be found or loaded from '#{api_key_file_location}'."
-        end
+      id_property_name ||= 'apiKey.id'
+      secret_property_name ||= 'apiKey.secret'
 
-        id_property_name ||= 'apiKey.id'
-        secret_property_name ||= 'apiKey.secret'
+      api_key_id = api_key_properties[id_property_name]
+      assert_not_nil api_key_id, api_key_warning_message(:id, api_key_file_location)
 
-        api_key_id = api_key_properties[id_property_name]
-        assert_not_nil api_key_id, api_key_warning_message(:id, api_key_file_location)
+      api_key_secret = api_key_properties[secret_property_name]
+      assert_not_nil api_key_secret, api_key_warning_message(:secret, api_key_file_location)
 
-        api_key_secret = api_key_properties[secret_property_name]
-        assert_not_nil api_key_secret, api_key_warning_message(:secret, api_key_file_location)
+      ApiKey.new api_key_id, api_key_secret
+    end
 
-        ApiKey.new api_key_id, api_key_secret
-      end
-
-      def api_key_warning_message id_or_secret, api_key_file_location
-        "No API #{id_or_secret} in properties. Please provide a 'apiKey.#{id_or_secret}' property " +
-        "in '#{api_key_file_location}' or pass in an 'api_key_#{id_or_secret}_property_name' " +
-        "to the Stormpath::Client constructor to specify an alternative property."
-      end
-
+    def api_key_warning_message(id_or_secret, api_key_file_location)
+      "No API #{id_or_secret} in properties. Please provide a 'apiKey.#{id_or_secret}' property " \
+        "in '#{api_key_file_location}' or pass in an 'api_key_#{id_or_secret}_property_name' " \
+        'to the Stormpath::Client constructor to specify an alternative property.'
+    end
   end
 end

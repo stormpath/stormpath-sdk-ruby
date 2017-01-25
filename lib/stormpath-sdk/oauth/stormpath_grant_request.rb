@@ -18,14 +18,14 @@ module Stormpath
 
       private
 
-      attr_accessor :account, :application, :api_key
+      attr_accessor :account, :application, :api_key, :status
 
       def payload
         {
           sub: account.href,
           iat: Time.now.to_i,
           iss: application.href,
-          status: @status,
+          status: status,
           aud: api_key.id
         }
       end

@@ -13,14 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Tenant < Stormpath::Resource::Instance
-  include Stormpath::Resource::CustomDataStorage
+module Stormpath
+  module Resource
+    class Tenant < Stormpath::Resource::Instance
+      include Stormpath::Resource::CustomDataStorage
 
-  prop_reader :name, :key, :created_at, :modified_at
+      prop_reader :name, :key, :created_at, :modified_at
 
-  has_many :applications
-  has_many :directories
-  has_many :organizations
-  has_one :custom_data
-
+      has_many :applications
+      has_many :directories
+      has_many :organizations
+      has_one :custom_data
+    end
+  end
 end

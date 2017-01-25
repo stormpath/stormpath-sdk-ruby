@@ -13,7 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::SamlProviderData < Stormpath::Provider::ProviderData
-  prop_reader :href, :created_at, :modified_at, :provider_id, :sso_log_in_url,
-    :sso_lgout_url
+module Stormpath
+  module Provider
+    class SamlProviderData < Stormpath::Provider::ProviderData
+      prop_reader :href, :created_at, :modified_at, :provider_id, :sso_log_in_url, :sso_logout_url
+    end
+  end
 end

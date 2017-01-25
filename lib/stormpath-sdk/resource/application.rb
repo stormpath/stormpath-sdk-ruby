@@ -13,147 +13,147 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Application < Stormpath::Resource::Instance
-  include Stormpath::Resource::CustomDataStorage
-  include Stormpath::Resource::AccountOverrides
-  include UUIDTools
+module Stormpath
+  module Resource
+    class Application < Stormpath::Resource::Instance
+      include Stormpath::Resource::CustomDataStorage
+      include Stormpath::Resource::AccountOverrides
+      include UUIDTools
 
-  class LoadError < ArgumentError; end
+      class LoadError < ArgumentError; end
 
-  prop_accessor :name, :description, :authorized_callback_uris, :status, :authorized_origin_uris
-  prop_reader :created_at, :modified_at
+      prop_accessor :name, :description, :authorized_callback_uris, :status, :authorized_origin_uris
+      prop_reader :created_at, :modified_at
 
-  belongs_to :tenant
+      belongs_to :tenant
 
-  has_many :accounts, can: [:get, :create]
-  has_many :password_reset_tokens, can: [:get, :create]
-  has_many :account_store_mappings, can: [:get, :create]
-  has_many :groups, can: [:get, :create]
-  has_many :verification_emails, can: :create
-  has_many :api_keys
+      has_many :accounts, can: [:get, :create]
+      has_many :password_reset_tokens, can: [:get, :create]
+      has_many :account_store_mappings, can: [:get, :create]
+      has_many :groups, can: [:get, :create]
+      has_many :verification_emails, can: :create
+      has_many :api_keys
 
-  has_one :default_account_store_mapping, class_name: :accountStoreMapping
-  has_one :default_group_store_mapping, class_name: :accountStoreMapping
-  has_one :custom_data
-  has_one :o_auth_policy, class_name: :oauthPolicy
-  has_one :web_config, class_name: :applicationWebConfig
-  has_one :account_linking_policy
+      has_one :default_account_store_mapping, class_name: :accountStoreMapping
+      has_one :default_group_store_mapping, class_name: :accountStoreMapping
+      has_one :custom_data
+      has_one :o_auth_policy, class_name: :oauthPolicy
+      has_one :web_config, class_name: :applicationWebConfig
+      has_one :account_linking_policy
 
-  alias_method :oauth_policy, :o_auth_policy
+      alias oauth_policy o_auth_policy
 
-  def self.load(composite_url)
-    begin
-      builder = Stormpath::Util::UriBuilder.new(composite_url)
-      api_key_id, api_key_secret = builder.userinfo.split(':')
+      def self.load(composite_url)
+        builder = Stormpath::Util::UriBuilder.new(composite_url)
+        api_key_id, api_key_secret = builder.userinfo.split(':')
 
-      client = Stormpath::Client.new api_key: {
-        id: api_key_id,
-        secret: api_key_secret
-      }
+        client = Stormpath::Client.new api_key: {
+          id: api_key_id,
+          secret: api_key_secret
+        }
 
-      application_path = builder.uri.path.slice(/\/applications(.)*$/)
-      client.applications.get(application_path)
-    rescue
-      raise LoadError
-    end
-  end
+        application_path = builder.uri.path.slice(/\/applications(.)*$/)
+        client.applications.get(application_path)
+      rescue
+        raise LoadError
+      end
 
-  def create_id_site_url(options = {})
-    base = client.data_store.base_url.sub("v" + Stormpath::DataStore::DEFAULT_API_VERSION.to_s, "sso")
-    base += '/logout' if options[:logout]
+      def create_id_site_url(options = {})
+        base = client.data_store.base_url.sub('v' + Stormpath::DataStore::DEFAULT_API_VERSION.to_s, 'sso')
+        base += '/logout' if options[:logout]
 
-    if options[:callback_uri].empty?
-      raise Stormpath::Oauth::Error.new(:jwt_cb_uri_incorrect)
-    end
+        if options[:callback_uri].empty?
+          raise Stormpath::Oauth::Error, :jwt_cb_uri_incorrect
+        end
 
-    token = JWT.encode(jwt_token_payload(options), client.data_store.api_key.secret, 'HS256')
-    base + '?jwtRequest=' + token
-  end
+        token = JWT.encode(jwt_token_payload(options), client.data_store.api_key.secret, 'HS256')
+        "#{base}?jwtRequest=#{token}"
+      end
 
-  def handle_id_site_callback(response_url)
-    assert_not_nil response_url, "No response provided. Please provide response object."
+      def handle_id_site_callback(response_url)
+        assert_not_nil(response_url, 'No response provided. Please provide response object.')
 
-    uri = URI(response_url)
-    params = CGI::parse(uri.query)
-    token = params["jwtResponse"].first
+        uri = URI(response_url)
+        params = CGI.parse(uri.query)
+        token = params['jwtResponse'].first
 
-    begin
-      jwt_response, _header = JWT.decode(token, client.data_store.api_key.secret)
-    rescue JWT::ExpiredSignature => error
-      # JWT raises error if the signature expired, we need to capture this and
-      # rerase IdSite::Error
-      raise Stormpath::Oauth::Error.new(:jwt_expired)
-    end
+        begin
+          jwt_response, _header = JWT.decode(token, client.data_store.api_key.secret)
+        rescue JWT::ExpiredSignature => error
+          # JWT raises error if the signature expired, we need to capture this and
+          # reraise IdSite::Error
+          raise Stormpath::Oauth::Error, :jwt_expired
+        end
 
-    id_site_result = Stormpath::IdSite::IdSiteResult.new(jwt_response)
+        id_site_result = Stormpath::IdSite::IdSiteResult.new(jwt_response)
 
-    if id_site_result.jwt_invalid?(api_key_id)
-      raise Stormpath::Oauth::Error.new(:jwt_invalid)
-    end
+        raise Stormpath::Oauth::Error, :jwt_invalid if id_site_result.jwt_invalid?(api_key_id)
 
-    id_site_result
-  end
+        id_site_result
+      end
 
-  def send_password_reset_email(email, account_store: nil)
-    password_reset_token = create_password_reset_token(email, account_store: account_store)
-    password_reset_token.account
-  end
+      def send_password_reset_email(email, account_store: nil)
+        password_reset_token = create_password_reset_token(email, account_store: account_store)
+        password_reset_token.account
+      end
 
-  def verify_password_reset_token token
-    password_reset_tokens.get(token).account
-  end
+      def verify_password_reset_token(token)
+        password_reset_tokens.get(token).account
+      end
 
-  def authenticate_account request
-    Stormpath::Authentication::BasicAuthenticator.new(data_store).authenticate(href, request)
-  end
+      def authenticate_account(request)
+        Stormpath::Authentication::BasicAuthenticator.new(data_store).authenticate(href, request)
+      end
 
-  def get_provider_account(request)
-    Stormpath::Provider::AccountResolver.new(data_store, href, request).resolve_provider_account
-  end
+      def get_provider_account(request)
+        Stormpath::Provider::AccountResolver.new(data_store, href, request).resolve_provider_account
+      end
 
-  def authenticate_oauth(request)
-    Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request)
-  end
+      def authenticate_oauth(request)
+        Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request)
+      end
 
-  private
+      private
 
-  def jwt_token_payload(options)
-    payload = {
-      'iat' => Time.now.to_i,
-      'jti' => UUID.method(:random_create).call.to_s,
-      'iss' => client.data_store.api_key.id,
-      'sub' => href,
-      'cb_uri' => options[:callback_uri],
-      'path' => options[:path] || '',
-      'state' => options[:state] || '',
-    }
+      def jwt_token_payload(options)
+        payload = {
+          'iat' => Time.now.to_i,
+          'jti' => UUID.method(:random_create).call.to_s,
+          'iss' => client.data_store.api_key.id,
+          'sub' => href,
+          'cb_uri' => options[:callback_uri],
+          'path' => options[:path] || '',
+          'state' => options[:state] || ''
+        }
 
-    payload["sof"] = options[:show_organization_field] if options[:show_organization_field]
-    payload["onk"] = options[:organization_name_key] if options[:organization_name_key]
-    payload["usd"] = options[:use_subdomain] if options[:use_subdomain]
-    payload
-  end
+        payload['sof'] = options[:show_organization_field] if options[:show_organization_field]
+        payload['onk'] = options[:organization_name_key] if options[:organization_name_key]
+        payload['usd'] = options[:use_subdomain] if options[:use_subdomain]
+        payload
+      end
 
-  def api_key_id
-    client.data_store.api_key.id
-  end
+      def api_key_id
+        client.data_store.api_key.id
+      end
 
-  def create_password_reset_token(email, account_store: nil)
-    params = { email: email }
-    params[:account_store] = account_store_to_hash(account_store) if account_store
-    password_reset_tokens.create(params)
-  end
+      def create_password_reset_token(email, account_store: nil)
+        params = { email: email }
+        params[:account_store] = account_store_to_hash(account_store) if account_store
+        password_reset_tokens.create(params)
+      end
 
-  def account_store_to_hash(account_store)
-    case account_store
-    when Stormpath::Resource::Organization
-      { name_key: account_store.name_key }
-    when Stormpath::Resource::Group, Stormpath::Resource::Directory
-      { href: account_store.href }
-    when Hash
-      account_store
-    else
-      raise ArgumentError, 'Account store has to be passed either as an resource or a hash'
+      def account_store_to_hash(account_store)
+        case account_store
+        when Stormpath::Resource::Organization
+          { name_key: account_store.name_key }
+        when Stormpath::Resource::Group, Stormpath::Resource::Directory
+          { href: account_store.href }
+        when Hash
+          account_store
+        else
+          raise ArgumentError, 'Account store has to be passed either as an resource or a hash'
+        end
+      end
     end
   end
 end

@@ -23,4 +23,3 @@ module Stormpath
     end
   end
 end
-

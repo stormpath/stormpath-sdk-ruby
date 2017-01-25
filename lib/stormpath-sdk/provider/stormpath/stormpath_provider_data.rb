@@ -13,5 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::StormpathProviderData < Stormpath::Provider::ProviderData
+module Stormpath
+  module Provider
+    class StormpathProviderData < Stormpath::Provider::ProviderData
+    end
+  end
 end

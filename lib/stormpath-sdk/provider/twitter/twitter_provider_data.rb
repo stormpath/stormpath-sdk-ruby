@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::TwitterProviderData < Stormpath::Provider::ProviderData
-  prop_reader :access_token
+module Stormpath
+  module Provider
+    class TwitterProviderData < Stormpath::Provider::ProviderData
+      prop_reader :access_token
+    end
+  end
 end

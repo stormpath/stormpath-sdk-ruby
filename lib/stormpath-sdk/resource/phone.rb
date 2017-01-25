@@ -13,9 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Phone < Stormpath::Resource::Instance
-  prop_accessor :number, :name, :description
-  prop_reader :verification_status, :status, :created_at, :modified_at
+module Stormpath
+  module Resource
+    class Phone < Stormpath::Resource::Instance
+      prop_accessor :number, :name, :description
+      prop_reader :verification_status, :status, :created_at, :modified_at
 
-  belongs_to :account
+      belongs_to :account
+    end
+  end
 end

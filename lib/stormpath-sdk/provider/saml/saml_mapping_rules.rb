@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::SamlMappingRules < Stormpath::Provider::Provider
-  prop_reader :href, :created_at, :modified_at, :items
+module Stormpath
+  module Provider
+    class SamlMappingRules < Stormpath::Provider::Provider
+      prop_reader :href, :created_at, :modified_at, :items
 
-  def set_options(options)
-    set_property :href, options[:href]
+      def set_options(options)
+        set_property :href, options[:href]
+      end
+    end
   end
 end

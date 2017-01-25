@@ -16,10 +16,9 @@
 module Stormpath
   module Provider
     class AccountResult < Stormpath::Resource::Base
-
       prop_reader :is_new_account
 
-      alias_method :is_new_account?, :is_new_account
+      alias is_new_account? is_new_account
 
       has_one :account
     end

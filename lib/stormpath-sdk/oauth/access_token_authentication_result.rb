@@ -3,12 +3,10 @@ module Stormpath
     class AccessTokenAuthenticationResult < Stormpath::Resource::Instance
       prop_reader :access_token, :refresh_token, :token_type, :expires_in, :stormpath_access_token_href
 
-      alias_method :href, :stormpath_access_token_href
+      alias href stormpath_access_token_href
 
       def delete
-        unless href.respond_to?(:empty) and href.empty?
-          data_store.delete self
-        end
+        data_store.delete self unless href.respond_to?(:empty) && href.empty?
       end
 
       def account
@@ -22,11 +20,9 @@ module Stormpath
       end
 
       def jwt_response
-        begin
-          JWT.decode(access_token, data_store.api_key.secret).first
-        rescue JWT::ExpiredSignature => error
-          raise Stormpath::Oauth::Error.new(:jwt_expired)
-        end
+        JWT.decode(access_token, data_store.api_key.secret).first
+      rescue JWT::ExpiredSignature => error
+        raise Stormpath::Oauth::Error, :jwt_expired
       end
     end
   end

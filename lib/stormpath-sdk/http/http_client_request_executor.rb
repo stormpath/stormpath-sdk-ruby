@@ -25,7 +25,7 @@ module Stormpath
       end
 
       def execute_request(request, redirects_limit = 10)
-        assert_not_nil request, "Request argument cannot be null."
+        assert_not_nil request, 'Request argument cannot be null.'
 
         @redirect_response = nil
 
@@ -37,7 +37,7 @@ module Stormpath
                    request.href
                  end
 
-        if request.http_headers["Content-Type"] == "application/x-www-form-urlencoded"
+        if request.http_headers['Content-Type'] == 'application/x-www-form-urlencoded'
           @http_client.set_auth(request.href, request.api_key.id, request.api_key.secret)
         end
 
@@ -45,17 +45,17 @@ module Stormpath
 
         response = method.call domain, request.body, request.http_headers
 
-        if response.redirect? and redirects_limit > 0
+        if response.redirect? && redirects_limit > 0
           request.href = response.http_header['location'][0]
           redirects_limit -= 1
           @redirect_response = execute_request request, redirects_limit
           return @redirect_response
         end
 
-        Response.new response.http_header.status_code,
+        Response.new(response.http_header.status_code,
                      response.http_header.body_type,
                      response.content,
-                     response.http_header.body_size
+                     response.http_header.body_size)
       end
     end
   end
