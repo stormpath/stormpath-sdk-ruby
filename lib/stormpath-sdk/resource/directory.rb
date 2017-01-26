@@ -31,6 +31,7 @@ module Stormpath
       has_one :password_policy
       has_one :account_creation_policy
       has_one :account_schema, class_name: :schema
+      delegate :user_info_mapping_rules, to: :provider
 
       def provider
         internal_instance = instance_variable_get '@_provider'

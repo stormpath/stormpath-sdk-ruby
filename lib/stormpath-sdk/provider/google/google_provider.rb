@@ -16,6 +16,7 @@
 module Stormpath
   module Provider
     class GoogleProvider < Stormpath::Provider::Provider
+      prop_accessor :hd, :display, :access_type
       prop_reader :client_id, :client_secret, :redirect_uri
     end
   end

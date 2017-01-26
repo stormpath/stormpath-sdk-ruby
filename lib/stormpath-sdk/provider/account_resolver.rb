@@ -1,5 +1,5 @@
 #
-# Copyright 2014 Stormpath, Inc.
+# Copyright 2016 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ module Stormpath
       end
 
       def provider_data
+        # TODO: need to add an options hash and pass all attributes from the providers?
+        # https://stormpath.atlassian.net/wiki/display/AM/Social+Login+V2/#SocialLoginV2-ClientAPIChanges
         @provider_data ||= {}.tap do |body|
           body[request.token_type.to_s.camelize(:lower)] = request.token_value
           body['providerId'] = request.provider

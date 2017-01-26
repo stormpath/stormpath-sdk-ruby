@@ -1,5 +1,5 @@
 #
-# Copyright 2014 Stormpath, Inc.
+# Copyright 2016 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 module Stormpath
   module Provider
     class ProviderData < Stormpath::Resource::Base
-      prop_reader :provider_id, :created_at, :modified_at
+      prop_reader :provider_id, :created_at, :modified_at, :user_info
     end
   end
 end

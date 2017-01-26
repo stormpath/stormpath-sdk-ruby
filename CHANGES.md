@@ -1,6 +1,14 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.6.0
+-------------
+
+Released on January 26, 2017
+
+- Implement Social login V2 - user info mapping rules on a directory, custom attributes for Google(hd, display, access_type), provider scope, redirect_uri on social grant requests
+
+
 Version 1.5.0
 -------------
 

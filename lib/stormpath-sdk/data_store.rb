@@ -164,8 +164,8 @@ module Stormpath
 
       return if http_method == 'delete'
 
-      if result[HREF_PROP_NAME] && !resource_is_saml_mapping_rules?(resource)
-        cache_walk(result)
+      if result[HREF_PROP_NAME] && !resource_is_saml_mapping_rules?(resource) && !user_info_mapping_rules?(resource)
+        cache_walk result
       else
         result
       end
@@ -356,6 +356,10 @@ module Stormpath
 
     def resource_is_saml_mapping_rules?(resource)
       resource.is_a?(Stormpath::Provider::SamlMappingRules)
+    end
+
+    def user_info_mapping_rules?(resource)
+      resource.is_a?(Stormpath::Resource::UserInfoMappingRules)
     end
   end
 end

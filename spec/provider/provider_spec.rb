@@ -17,6 +17,10 @@ describe Stormpath::Provider::Provider, :vcr do
     directory.provider
   end
 
+  def social_directory?
+    provider_id != 'stormpath'
+  end
+
   after do
     directory.delete
     application.delete
@@ -41,13 +45,41 @@ describe Stormpath::Provider::Provider, :vcr do
       provider_clazz = "Stormpath::Provider::#{provider_id.capitalize}Provider".constantize
       expect(provider).to be_instance_of(provider_clazz)
 
-      if %w(google facebook twitter).include?(provider_id)
+      if social_directory?
         expect(provider.client_id).to eq(client_id)
         expect(provider.client_secret).to eq(client_secret)
       end
 
       if provider_id == 'google'
         expect(provider.redirect_uri).to eq(redirect_uri)
+        expect(provider.hd).to eq(hd)
+        expect(provider.display).to eq(display)
+        expect(provider.access_type).to eq(access_type)
+      end
+    end
+
+    it 'should be able to update the scope' do
+      if social_directory?
+        provider.scope = ['email']
+        provider.save
+        expect(provider.scope).to include 'email'
+      end
+    end
+
+    context 'user info mapping rules for social directories' do
+      let(:rule) { { 'name' => 'email', 'accountAttributes' => ['email'] } }
+      before do
+        if social_directory?
+          directory.user_info_mapping_rules.items = [rule]
+          directory.user_info_mapping_rules.save
+        end
+      end
+
+      it 'should be able to create and fetch user info mapping rules' do
+        if social_directory?
+          expect(directory.user_info_mapping_rules).to be_kind_of(Stormpath::Resource::UserInfoMappingRules)
+          expect(directory.user_info_mapping_rules.items).to include(rule)
+        end
       end
     end
   end
@@ -129,12 +161,18 @@ describe Stormpath::Provider::Provider, :vcr do
     let(:client_id) { 'GOOGLE_CLIENT_ID' }
     let(:client_secret) { 'GOOGLE_CLIENT_SECRET' }
     let(:redirect_uri) { 'GOOGLE_REDIRECT_URI' }
+    let(:hd) { 'www.example.com' }
+    let(:display) { 'page' }
+    let(:access_type) { 'online' }
     let(:provider_info) do
       {
         provider_id: provider_id,
         client_id: client_id,
         client_secret: client_secret,
-        redirect_uri: redirect_uri
+        redirect_uri: redirect_uri,
+        hd: hd,
+        display: display,
+        access_type: access_type
       }
     end
 
