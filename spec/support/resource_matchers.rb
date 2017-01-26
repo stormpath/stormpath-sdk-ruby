@@ -1,16 +1,16 @@
-RSpec::Matchers.define :be_link do |expected|
+RSpec::Matchers.define :be_link do |_expected|
   match do |actual|
     actual.length == 1 && actual['href']
   end
 end
 
-RSpec::Matchers.define :be_resource do |expected|
+RSpec::Matchers.define :be_resource do |_expected|
   match do |actual|
     actual.length > 1 && actual['href'] && !actual['items']
   end
 end
 
-RSpec::Matchers.define :be_link_collection do |expected|
+RSpec::Matchers.define :be_link_collection do |_expected|
   match do |actual|
     actual['href'] && actual['items'] && actual['items'].all? do |item|
       item && item.length == 1 && item['href']
@@ -18,7 +18,7 @@ RSpec::Matchers.define :be_link_collection do |expected|
   end
 end
 
-RSpec::Matchers.define :be_resource_collection do |expected|
+RSpec::Matchers.define :be_resource_collection do |_expected|
   match do |actual|
     actual['href'] && actual['items'] && actual['items'].all? do |item|
       item && item.length > 1 && item['href'] && !item['items']

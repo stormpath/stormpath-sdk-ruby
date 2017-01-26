@@ -5,7 +5,9 @@ module Stormpath
         opts.tap do |o|
           if !opts[:email].blank? && opts[:email]
             if opts[:email].include?('@')
-              raise ArgumentError, "Invalid email format. Please send the email without the domain. For example, 'anakin.skywalker', instead of 'anakin.skywalker@darkside.com'"
+              raise(ArgumentError,
+                    'Invalid email format. Please send the email without the domain. For example,' \
+                    " 'anakin.skywalker', instead of 'anakin.skywalker@darkside.com'")
             end
             o[:email] = "#{opts[:email]}#{default_domain}"
           else

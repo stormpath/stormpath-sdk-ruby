@@ -1,23 +1,13 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Collection, :vcr do
-  let(:href) do
-    'http://example.com'
-  end
-
-  let(:item_class) do
-    Stormpath::Resource::Application
-  end
-
-  let(:client) do
-    Stormpath::Client
-  end
+  let(:href) { 'http://example.com' }
+  let(:item_class) { Stormpath::Resource::Application }
+  let(:client) { Stormpath::Client }
 
   describe '#collection_href' do
     context 'by default' do
-      let(:collection) do
-        Stormpath::Resource::Collection.new href, item_class, client
-      end
+      let(:collection) { Stormpath::Resource::Collection.new href, item_class, client }
 
       it 'defaults to href' do
         expect(collection.collection_href).to eq href
@@ -25,9 +15,7 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context 'when specified' do
-      let(:collection_href) do
-        'http://fakie.com'
-      end
+      let(:collection_href) { 'http://fakie.com' }
 
       let(:collection) do
         Stormpath::Resource::Collection.new(
@@ -43,13 +31,8 @@ describe Stormpath::Resource::Collection, :vcr do
   end
 
   describe '#offset' do
-    let(:collection) do
-      Stormpath::Resource::Collection.new href, item_class, client
-    end
-
-    let!(:offset) do
-      collection.offset 5
-    end
+    let(:collection) { Stormpath::Resource::Collection.new href, item_class, client }
+    let!(:offset) { collection.offset 5 }
 
     it 'returns the collection' do
       expect(offset.class).to eq Stormpath::Resource::Collection
@@ -61,13 +44,9 @@ describe Stormpath::Resource::Collection, :vcr do
   end
 
   describe '#limit' do
-    let(:collection) do
-      Stormpath::Resource::Collection.new href, item_class, client
-    end
+    let(:collection) { Stormpath::Resource::Collection.new href, item_class, client }
 
-    let!(:limit) do
-      collection.limit 100
-    end
+    let!(:limit) { collection.limit 100 }
 
     it 'returns the collection' do
       expect(limit.class).to eq Stormpath::Resource::Collection
@@ -79,17 +58,11 @@ describe Stormpath::Resource::Collection, :vcr do
   end
 
   describe '#order' do
-    let(:collection) do
-      Stormpath::Resource::Collection.new href, item_class, client
-    end
+    let(:collection) { Stormpath::Resource::Collection.new href, item_class, client }
 
-    let(:order_statement) do
-      'lastName asc,age desc'
-    end
+    let(:order_statement) { 'lastName asc,age desc' }
 
-    let!(:order) do
-      collection.order order_statement
-    end
+    let!(:order) { collection.order order_statement }
 
     it 'returns the collection' do
       expect(order.class).to eq Stormpath::Resource::Collection
@@ -101,18 +74,12 @@ describe Stormpath::Resource::Collection, :vcr do
   end
 
   describe '#search' do
-    let(:collection) do
-      Stormpath::Resource::Collection.new href, item_class, client
-    end
+    let(:collection) { Stormpath::Resource::Collection.new href, item_class, client }
 
     context 'when passed a string' do
-      let(:query) do
-        'dagnabbit'
-      end
+      let(:query) { 'dagnabbit' }
 
-      let!(:search) do
-        collection.search query
-      end
+      let!(:search) { collection.search query }
 
       it 'returns the collection' do
         expect(search.class).to eq Stormpath::Resource::Collection
@@ -124,13 +91,8 @@ describe Stormpath::Resource::Collection, :vcr do
     end
 
     context 'when passed a hash of attributes' do
-      let(:query_hash) do
-        { name: 'Stanley Kubrick', description: 'That dude was a sick maniac' }
-      end
-
-      let!(:search) do
-        collection.search query_hash
-      end
+      let(:query_hash) { { name: 'Stanley Kubrick', description: 'That dude was a sick maniac' } }
+      let!(:search) { collection.search query_hash }
 
       it 'returns the collection' do
         expect(search.class).to eq Stormpath::Resource::Collection
@@ -143,9 +105,7 @@ describe Stormpath::Resource::Collection, :vcr do
   end
 
   describe '#criteria' do
-    let(:collection) do
-      Stormpath::Resource::Collection.new href, item_class, client
-    end
+    let(:collection) { Stormpath::Resource::Collection.new href, item_class, client }
 
     context 'when no fetch criteria present' do
       it 'returns an empty hash for criteria' do
@@ -177,9 +137,7 @@ describe Stormpath::Resource::Collection, :vcr do
         end
       end
 
-      after do
-        directory.delete
-      end
+      after { directory.delete }
 
       it 'should respond as expected with or without limits' do
         expect(groups.count).to eq(26)
@@ -219,14 +177,12 @@ describe Stormpath::Resource::Collection, :vcr do
         end
       end
 
-      after do
-        directory.delete
-      end
+      after { directory.delete }
 
       it 'should paginate properly' do
         expect(directory.groups.count).to eq(100)
 
-        expect(directory.groups.map {|group| group.name }).to eq(('1'..'100').to_a.sort)
+        expect(directory.groups.map(&:name)).to eq(('1'..'100').to_a.sort)
 
         expect(directory.groups.limit(30).count).to eq(100)
 
@@ -244,23 +200,23 @@ describe Stormpath::Resource::Collection, :vcr do
 
         expect(directory.groups.limit(30).offset(90).current_page.size).to eq(100)
 
-        expect(directory.groups.limit(30).map {|group| group.name }).to eq(('1'..'100').to_a.sort)
+        expect(directory.groups.limit(30).map(&:name)).to eq(('1'..'100').to_a.sort)
 
-        expect(directory.groups.limit(30).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.first(30))
+        expect(directory.groups.limit(30).current_page.items.map(&:name)).to eq(('1'..'100').to_a.sort.first(30))
 
-        expect(directory.groups.limit(30).offset(30).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(30))
+        expect(directory.groups.limit(30).offset(30).map(&:name)).to eq(('1'..'100').to_a.sort.drop(30))
 
-        expect(directory.groups.limit(30).offset(30).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(30).first(30))
+        expect(directory.groups.limit(30).offset(30).current_page.items.map(&:name)).to eq(('1'..'100').to_a.sort.drop(30).first(30))
 
-        expect(directory.groups.limit(30).offset(60).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(60))
+        expect(directory.groups.limit(30).offset(60).map(&:name)).to eq(('1'..'100').to_a.sort.drop(60))
 
-        expect(directory.groups.limit(30).offset(60).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(60).first(30))
+        expect(directory.groups.limit(30).offset(60).current_page.items.map(&:name)).to eq(('1'..'100').to_a.sort.drop(60).first(30))
 
-        expect(directory.groups.limit(30).offset(90).map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(90))
+        expect(directory.groups.limit(30).offset(90).map(&:name)).to eq(('1'..'100').to_a.sort.drop(90))
 
-        expect(directory.groups.limit(30).offset(90).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(90).first(30))
+        expect(directory.groups.limit(30).offset(90).current_page.items.map(&:name)).to eq(('1'..'100').to_a.sort.drop(90).first(30))
 
-        expect(directory.groups.limit(30).offset(90).current_page.items.map {|group| group.name }).to eq(('1'..'100').to_a.sort.drop(90).first(10))
+        expect(directory.groups.limit(30).offset(90).current_page.items.map(&:name)).to eq(('1'..'100').to_a.sort.drop(90).first(10))
 
         group_count = 0
         directory.groups.each do |group|
@@ -281,15 +237,13 @@ describe Stormpath::Resource::Collection, :vcr do
 
       let!(:account) do
         directory.accounts.create username: username,
-           email: "captain#{default_domain}",
-           givenName: "Jean-Luc",
-           surname: "Picard",
-           password: "hakunaMatata179Enterprise"
+                                  email: "captain#{default_domain}",
+                                  givenName: 'Jean-Luc',
+                                  surname: 'Picard',
+                                  password: 'hakunaMatata179Enterprise'
       end
 
-      after do
-        directory.delete
-      end
+      after { directory.delete }
 
       it 'should search accounts by username' do
         expect(directory.accounts.search(username: username).count).to eq(1)
@@ -312,27 +266,25 @@ describe Stormpath::Resource::Collection, :vcr do
       let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let!(:account) do
-        directory.accounts.create username: "jlpicard",
-           email: "captain#{default_domain}",
-           givenName: "Jean-Luc",
-           surname: "Picard",
-           password: "hakunaMatata179Enterprise"
+        directory.accounts.create username: 'jlpicard',
+                                  email: "captain#{default_domain}",
+                                  givenName: 'Jean-Luc',
+                                  surname: 'Picard',
+                                  password: 'hakunaMatata179Enterprise'
       end
 
-      after do
-        directory.delete
-      end
+      after { directory.delete }
 
       it 'should search accounts by username with asterisk at the beginning' do
-        expect(directory.accounts.search(username: "*card").count).to eq(1)
+        expect(directory.accounts.search(username: '*card').count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the end' do
-        expect(directory.accounts.search(username: "jl*").count).to eq(1)
+        expect(directory.accounts.search(username: 'jl*').count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the beginning and the end' do
-        expect(directory.accounts.search(username: "*pic*").count).to eq(1)
+        expect(directory.accounts.search(username: '*pic*').count).to eq(1)
       end
     end
 
@@ -340,27 +292,25 @@ describe Stormpath::Resource::Collection, :vcr do
       let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let!(:account) do
-        directory.accounts.create username: "jlpicard",
-           email: "captain#{default_domain}",
-           givenName: "Jean-Luc",
-           surname: "Picard",
-           password: "hakunaMatata179Enterprise"
+        directory.accounts.create username: 'jlpicard',
+                                  email: "captain#{default_domain}",
+                                  givenName: 'Jean-Luc',
+                                  surname: 'Picard',
+                                  password: 'hakunaMatata179Enterprise'
       end
 
-      after do
-        directory.delete
-      end
+      after { directory.delete }
 
       it 'should search accounts by username with asterisk at the beginning' do
-        expect(directory.accounts.search(username: "*card", email: "*stormpath.com").count).to eq(1)
+        expect(directory.accounts.search(username: '*card', email: '*stormpath.com').count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the end' do
-        expect(directory.accounts.search(username: "jl*", email: "capt*").count).to eq(1)
+        expect(directory.accounts.search(username: 'jl*', email: 'capt*').count).to eq(1)
       end
 
       it 'should search accounts by username with asterisk at the beginning and the end' do
-        expect(directory.accounts.search(username: "*pic*", email: "*stormpath*").count).to eq(1)
+        expect(directory.accounts.search(username: '*pic*', email: '*stormpath*').count).to eq(1)
       end
     end
 
@@ -387,9 +337,7 @@ describe Stormpath::Resource::Collection, :vcr do
         )
       end
 
-      after do
-        directory.delete
-      end
+      after { directory.delete }
 
       context 'camelCase' do
         before do

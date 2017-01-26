@@ -104,7 +104,7 @@ shared_examples_for 'custom_data_storage' do
   end
 
   it 'update custom data through custom_data_storage.save, cache should be cleared' do
-    custom_data_storage.custom_data[:permissions] = {'crew_quarters' => '93-601'}
+    custom_data_storage.custom_data[:permissions] = { 'crew_quarters' => '93-601' }
     custom_data_storage.custom_data.save
 
     expect(reloaded_custom_data_storage.custom_data[:permissions]).to eq('crew_quarters' => '93-601')
@@ -117,11 +117,11 @@ shared_examples_for 'custom_data_storage' do
 
   it 'first level keys can be saved as symbols or strings, they will default to the same (saved as strings)' do
     custom_data_storage.custom_data[:permissions] = 'Drive the boat'
-    expect(custom_data_storage.custom_data[:permissions]).to eq('Drive the boat');
+    expect(custom_data_storage.custom_data[:permissions]).to eq('Drive the boat')
     expect(custom_data_storage.custom_data['permissions']).to eq(custom_data_storage.custom_data[:permissions])
 
     custom_data_storage.custom_data.save
-    expect(custom_data_storage.custom_data[:permissions]).to eq('Drive the boat');
+    expect(custom_data_storage.custom_data[:permissions]).to eq('Drive the boat')
     expect(custom_data_storage.custom_data['permissions']).to eq(custom_data_storage.custom_data[:permissions])
   end
 
@@ -260,7 +260,6 @@ shared_examples_for 'custom_data_storage' do
 
     expect(reloaded_custom_data_storage.custom_data['favorite_drink']).to eq('Earl Grey Tea')
   end
-
 
   it '#has_key?' do
     expect(custom_data_storage.custom_data.has_key?('createdAt')).to be_truthy

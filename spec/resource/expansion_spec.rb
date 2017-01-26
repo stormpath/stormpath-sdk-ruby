@@ -8,7 +8,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ expand: 'foo' })
+        expect(expansion.to_query).to eq(expand: 'foo')
       end
     end
     context 'given a list of property names' do
@@ -17,7 +17,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ expand: 'foo,bar' })
+        expect(expansion.to_query).to eq(expand: 'foo,bar')
       end
     end
 
@@ -32,7 +32,7 @@ describe Stormpath::Resource::Expansion, :vcr do
     end
   end
 
-  describe "#add_property" do
+  describe '#add_property' do
     context 'given a simple property name' do
       let(:expansion) { Stormpath::Resource::Expansion.new }
 
@@ -41,7 +41,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ expand: 'foo' })
+        expect(expansion.to_query).to eq(expand: 'foo')
       end
     end
 
@@ -54,7 +54,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ expand: 'foo,bar' })
+        expect(expansion.to_query).to eq(expand: 'foo,bar')
       end
     end
 
@@ -68,7 +68,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'will not duplicate the property' do
-        expect(expansion.to_query).to eq({ expand: 'foo,bar' })
+        expect(expansion.to_query).to eq(expand: 'foo,bar')
       end
     end
 
@@ -80,7 +80,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'can be transmuted to a simple hash' do
-        expect(expansion.to_query).to eq({ expand: 'foo(offset:5,limit:100)' })
+        expect(expansion.to_query).to eq(expand: 'foo(offset:5,limit:100)')
       end
     end
 
@@ -93,7 +93,7 @@ describe Stormpath::Resource::Expansion, :vcr do
       end
 
       it 'allows the last call to win out over the first' do
-        expect(expansion.to_query).to eq({ expand: 'foo(offset:25)' })
+        expect(expansion.to_query).to eq(expand: 'foo(offset:25)')
       end
     end
   end

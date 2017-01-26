@@ -187,7 +187,12 @@ describe Stormpath::DataStore do
   end
 
   context 'memcached store' do
-    let(:store) { { store: Stormpath::Cache::MemcachedStore, store_opts: { host: 'localhost:11211', prefix_key: 'mem' } } }
+    let(:store) do
+      {
+        store: Stormpath::Cache::MemcachedStore,
+        store_opts: { host: 'localhost:11211', prefix_key: 'mem' }
+      }
+    end
     it_should_behave_like 'a data store'
   end
 end

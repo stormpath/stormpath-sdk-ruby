@@ -6,13 +6,7 @@ describe Stormpath::Resource::Base do
       class TestResource < Stormpath::Resource::Base
         prop_accessor :username, :given_name
       end
-
-      let(:resource) do
-        TestResource.new({
-          'username' => 'bar',
-          'givenName' => 'foo'
-        }, nil)
-      end
+      let(:resource) { TestResource.new({ 'username' => 'bar', 'givenName' => 'foo' }, nil) }
 
       it 'generates a getter method for each property' do
         expect(resource.username).to eq('bar')
@@ -33,13 +27,7 @@ describe Stormpath::Resource::Base do
       class TestResource < Stormpath::Resource::Base
         prop_non_printable :password
       end
-
-      let(:resource) do
-        TestResource.new({
-          'username' => 'bar',
-          'password' => 'P@$$w0rd'
-        }, nil)
-      end
+      let(:resource) { TestResource.new({ 'username' => 'bar', 'password' => 'P@$$w0rd' }, nil) }
 
       it 'marks that property as not being printable' do
         expect(resource.inspect).to include('username')
@@ -70,14 +58,10 @@ describe Stormpath::Resource::Base do
     class TestResource < Stormpath::Resource::Base; end
 
     context 'compared against an object of the same class' do
-      let(:resource) do
-        TestResource.new('http://foo.com/test/123')
-      end
+      let(:resource) { TestResource.new('http://foo.com/test/123') }
 
       context 'href matches' do
-        let(:other) do
-          TestResource.new('http://foo.com/test/123')
-        end
+        let(:other) { TestResource.new('http://foo.com/test/123') }
 
         it 'passes' do
           expect(resource).to eq(other)
@@ -85,9 +69,7 @@ describe Stormpath::Resource::Base do
       end
 
       context 'href does not match' do
-        let(:other) do
-          TestResource.new('http://foo.com/test/456')
-        end
+        let(:other) { TestResource.new('http://foo.com/test/456') }
 
         it 'fails' do
           expect(resource).to_not eq(other)
@@ -97,14 +79,8 @@ describe Stormpath::Resource::Base do
 
     context 'compared against an object of another class' do
       class NotAResource; end
-
-      let(:resource) do
-        TestResource.new('http://foo.com/test/123')
-      end
-
-      let(:other) do
-        NotAResource.new
-      end
+      let(:resource) { TestResource.new('http://foo.com/test/123') }
+      let(:other) { NotAResource.new }
 
       it 'fails' do
         expect(resource).to_not eq(other)

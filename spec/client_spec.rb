@@ -106,7 +106,7 @@ properties
           end
           let(:client) do
             Stormpath::Client.new(
-              api_key_file_location: api_key_file_location,
+              api_key_file_location: api_key_file_location
             )
           end
 
@@ -121,10 +121,10 @@ properties
 
           it 'raises an error' do
             expect { client }.to raise_error ArgumentError,
-              "No API id in properties. Please provide a 'apiKey.id' property in '" +
-              api_key_file_location +
-              "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " +
-              "constructor to specify an alternative property."
+                                             "No API id in properties. Please provide a 'apiKey.id' property in '" +
+                                             api_key_file_location +
+                                             "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " \
+                                             'constructor to specify an alternative property.'
           end
         end
 
@@ -451,7 +451,7 @@ properties
 
           before { application }
 
-          #fails with Stormpath::Error: Authentication required.
+          # fails with Stormpath::Error: Authentication required.
           it 'creates directory named "Client Application Create Test Directory"' do
             expect(directories.map(&:name)).to include("#{application_name} Directory")
           end

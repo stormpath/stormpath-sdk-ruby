@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Tenant, :vcr do
-
-  describe "instances should respond to attribute property methods" do
+  describe 'instances should respond to attribute property methods' do
     let(:tenant) { test_api_client.tenant }
 
     it do
@@ -10,7 +9,7 @@ describe Stormpath::Resource::Tenant, :vcr do
 
       [:name, :key, :created_at, :modified_at].each do |property_getter|
         expect(tenant).to respond_to(property_getter)
-        expect(tenant.send property_getter).to be_a String
+        expect(tenant.send(property_getter)).to be_a String
       end
 
       expect(tenant.applications).to be_a Stormpath::Resource::Collection
@@ -24,11 +23,10 @@ describe Stormpath::Resource::Tenant, :vcr do
     let(:tenant) { test_api_client.tenant }
 
     it 'creates an tenant with custom data' do
-      tenant.custom_data["category"] = "classified"
+      tenant.custom_data['category'] = 'classified'
 
       tenant.save
-      expect(tenant.custom_data["category"]).to eq("classified")
+      expect(tenant.custom_data['category']).to eq('classified')
     end
   end
-
 end

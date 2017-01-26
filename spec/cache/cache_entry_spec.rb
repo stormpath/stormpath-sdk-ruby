@@ -19,13 +19,13 @@ describe Stormpath::Cache::CacheEntry do
     end
 
     it 'initializes the creation time to now' do
-      #commenting because it passes locally but not on travis :/
-      #expect(cache_entry.created_at).to eq now
+      # commenting because it passes locally but not on travis :/
+      # expect(cache_entry.created_at).to eq now
     end
 
     it 'initializes the last accessed time to now' do
-      #commenting because it passes locally but not on travis :/
-      #expect(cache_entry.last_accessed_at).to eq now
+      # commenting because it passes locally but not on travis :/
+      # expect(cache_entry.last_accessed_at).to eq now
     end
   end
 
@@ -42,8 +42,8 @@ describe Stormpath::Cache::CacheEntry do
     end
 
     it 'updates the last accessed at time' do
-      #commenting because it passes locally but not on travis :/
-      #expect(cache_entry.last_accessed_at).to eq now
+      # commenting because it passes locally but not on travis :/
+      # expect(cache_entry.last_accessed_at).to eq now
     end
   end
 
@@ -103,33 +103,30 @@ describe Stormpath::Cache::CacheEntry do
     before { Timecop.freeze now }
 
     it 'returns a hash of the attributes' do
-      expect(cache_entry.to_h).to eq({
-        'value' => cache_entry.value,
-        'created_at' => cache_entry.created_at,
-        'last_accessed_at' => cache_entry.last_accessed_at
-      })
+      expect(cache_entry.to_h).to eq('value' => cache_entry.value,
+                                     'created_at' => cache_entry.created_at,
+                                     'last_accessed_at' => cache_entry.last_accessed_at)
     end
   end
 
   describe '.from_h=' do
     let(:hash) do
       {
-        "value" =>
+        'value' =>
           {
-            "href" => "https://api.stormpath.com/v1/applications/app1",
-            "name" => "application app1",
-            "tenant" => {
-              "href" => "https://api.stormpath.com/v1/tenants/ten2"
+            'href' => 'https://api.stormpath.com/v1/applications/app1',
+            'name' => 'application app1',
+            'tenant' => {
+              'href' => 'https://api.stormpath.com/v1/tenants/ten2'
             },
-            "groups" =>
-              {"href" => "https://api.stormpath.com/v1/applications/app3/groups",
-               "items" =>
-                 [{"href" => "https://api.stormpath.com/v1/groups/gro4"},
-                 {"href" => "https://api.stormpath.com/v1/groups/gro5"}]
-              }
-            },
-        "created_at" => "2013-06-05T10:01:31-07:00",
-        "last_accessed_at" => "2013-06-05T10:01:31-07:00"
+            'groups' =>
+              { 'href' => 'https://api.stormpath.com/v1/applications/app3/groups',
+                'items' =>
+                 [{ 'href' => 'https://api.stormpath.com/v1/groups/gro4' },
+                  { 'href' => 'https://api.stormpath.com/v1/groups/gro5' }] }
+          },
+        'created_at' => '2013-06-05T10:01:31-07:00',
+        'last_accessed_at' => '2013-06-05T10:01:31-07:00'
       }
     end
 

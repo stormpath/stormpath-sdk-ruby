@@ -31,7 +31,8 @@ describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
 
     expect(account.access_tokens.count).to eq(1)
 
-    jti = JWT.decode(jwt_authentication_result.access_token, test_api_client.data_store.api_key.secret).first['jti']
+    jti = JWT.decode(jwt_authentication_result.access_token,
+                     test_api_client.data_store.api_key.secret).first['jti']
 
     fetched_access_token = test_api_client.access_tokens.get(jti)
 
@@ -49,7 +50,8 @@ describe Stormpath::Oauth::AccessTokenAuthenticationResult, :vcr do
 
     expect(account.refresh_tokens.count).to eq(1)
 
-    jti = JWT.decode(jwt_authentication_result.refresh_token, test_api_client.data_store.api_key.secret).first['jti']
+    jti = JWT.decode(jwt_authentication_result.refresh_token,
+                     test_api_client.data_store.api_key.secret).first['jti']
 
     fetched_refresh_token = test_api_client.refresh_tokens.get(jti)
 
