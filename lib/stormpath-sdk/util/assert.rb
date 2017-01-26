@@ -33,6 +33,9 @@ module Stormpath
         raise(ArgumentError, message, caller) if arg
       end
 
+      def assert_not_blank(object, message)
+        raise(ArgumentError, message, caller) if object.blank?
+      end
     end
   end
 end
