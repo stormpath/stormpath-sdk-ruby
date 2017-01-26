@@ -290,7 +290,7 @@ properties
     context 'pagination' do
       let!(:applications) do
         (0..2).to_a.map do |index|
-          test_api_client.applications.create(application_attrs(name: "ruby-sdk-test-#{index}"))
+          test_api_client.applications.create(application_attrs(name: "ruby-sdk-test-#{index}-#{random_number}"))
         end
       end
 
@@ -537,14 +537,13 @@ properties
 
   describe '#organization' do
     context 'search' do
+      let(:random_org_name) { "ruby-org-#{random_number}" }
       let!(:organization) do
-        test_api_client.organizations.create(organization_attrs(name: 'ruby-org'))
+        test_api_client.organizations.create(organization_attrs(name: random_org_name))
       end
 
       context 'by any attribute' do
-        let(:search_results) do
-          test_api_client.organizations.search('ruby-org')
-        end
+        let(:search_results) { test_api_client.organizations.search(random_org_name) }
 
         it 'returns the application' do
           expect(search_results.count).to eq 1
@@ -552,7 +551,7 @@ properties
       end
 
       context 'by an explicit attribute' do
-        let(:search_results) { test_api_client.organizations.search(name: 'ruby-org') }
+        let(:search_results) { test_api_client.organizations.search(name: random_org_name) }
 
         it 'returns the application' do
           expect(search_results.count).to eq 1

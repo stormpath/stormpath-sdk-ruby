@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Stormpath, Inc.
+# Copyright 2016 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
 #
 class Stormpath::Resource::Instance < Stormpath::Resource::Base
   def save
-    data_store.save self
+    data_store.save(self)
   end
 
   def delete
-    unless new?
-      data_store.delete self
-    end
+    data_store.delete(self) unless new?
   end
 end

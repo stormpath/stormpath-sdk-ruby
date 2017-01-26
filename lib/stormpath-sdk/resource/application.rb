@@ -59,19 +59,17 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   end
 
   def create_id_site_url(options = {})
-    base = client.data_store.base_url.sub("v" + Stormpath::DataStore::DEFAULT_API_VERSION.to_s, "sso")
+    base = client.data_store.base_url.sub("v#{Stormpath::DataStore::DEFAULT_API_VERSION}", 'sso')
     base += '/logout' if options[:logout]
 
-    if options[:callback_uri].empty?
-      raise Stormpath::Oauth::Error.new(:jwt_cb_uri_incorrect)
-    end
+    raise Stormpath::Oauth::Error.new(:jwt_cb_uri_incorrect) if options[:callback_uri].empty?
 
     token = JWT.encode(jwt_token_payload(options), client.data_store.api_key.secret, 'HS256')
     base + '?jwtRequest=' + token
   end
 
   def handle_id_site_callback(response_url)
-    assert_not_nil response_url, "No response provided. Please provide response object."
+    assert_not_nil response_url, 'No response provided. Please provide response object.'
 
     uri = URI(response_url)
     params = CGI::parse(uri.query)
@@ -99,11 +97,11 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
     password_reset_token.account
   end
 
-  def verify_password_reset_token token
+  def verify_password_reset_token(token)
     password_reset_tokens.get(token).account
   end
 
-  def authenticate_account request
+  def authenticate_account(request)
     Stormpath::Authentication::BasicAuthenticator.new(data_store).authenticate(href, request)
   end
 
@@ -118,20 +116,18 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   private
 
   def jwt_token_payload(options)
-    payload = {
-      'iat' => Time.now.to_i,
-      'jti' => UUID.method(:random_create).call.to_s,
-      'iss' => client.data_store.api_key.id,
-      'sub' => href,
-      'cb_uri' => options[:callback_uri],
-      'path' => options[:path] || '',
-      'state' => options[:state] || '',
-    }
-
-    payload["sof"] = options[:show_organization_field] if options[:show_organization_field]
-    payload["onk"] = options[:organization_name_key] if options[:organization_name_key]
-    payload["usd"] = options[:use_subdomain] if options[:use_subdomain]
-    payload
+    {}.tap do |payload|
+      payload['iat'] = Time.now.to_i
+      payload['jti'] = UUID.method(:random_create).call.to_s
+      payload['iss'] = client.data_store.api_key.id
+      payload['sub'] = href
+      payload['cb_uri'] = options[:callback_uri]
+      payload['path'] = options[:path] || ''
+      payload['state'] = options[:state] || ''
+      payload['sof'] = options[:show_organization_field]
+      payload['onk'] = options[:organization_name_key]
+      payload['usd'] = options[:use_subdomain]
+    end.compact
   end
 
   def api_key_id

@@ -67,6 +67,7 @@ module Stormpath
     autoload :Challenge, 'stormpath-sdk/resource/challenge'
     autoload :Schema, 'stormpath-sdk/resource/schema'
     autoload :Field, 'stormpath-sdk/resource/field'
+    autoload :UserInfoMappingRules, 'stormpath-sdk/resource/user_info_mapping_rules'
   end
 
   module Cache

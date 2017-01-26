@@ -13,9 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::Provider < Stormpath::Resource::Instance
-  prop_accessor :scope
-  prop_reader :provider_id, :created_at, :modified_at
-
-  has_one :user_info_mapping_rules
+class Stormpath::Resource::UserInfoMappingRules < Stormpath::Resource::Instance
+  prop_accessor :items
+  prop_reader :href, :created_at, :modified_at
 end
