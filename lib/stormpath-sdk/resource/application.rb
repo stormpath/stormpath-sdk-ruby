@@ -29,7 +29,7 @@ class Stormpath::Resource::Application < Stormpath::Resource::Instance
   has_many :password_reset_tokens, can: [:get, :create]
   has_many :account_store_mappings, can: [:get, :create]
   has_many :groups, can: [:get, :create]
-  has_many :verification_emails, can: :create
+  has_many :verification_emails, can: [:create, :resend]
   has_many :api_keys
 
   has_one :default_account_store_mapping, class_name: :accountStoreMapping
