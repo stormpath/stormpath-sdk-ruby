@@ -40,6 +40,7 @@ module Stormpath
       has_one :o_auth_policy, class_name: :oauthPolicy
       has_one :web_config, class_name: :applicationWebConfig
       has_one :account_linking_policy
+      has_one :saml_policy
 
       alias oauth_policy o_auth_policy
 

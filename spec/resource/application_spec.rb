@@ -44,6 +44,7 @@ describe Stormpath::Resource::Application, :vcr do
     expect(application.verification_emails).to be_a Stormpath::Resource::Collection
     expect(application.account_store_mappings).to be_a Stormpath::Resource::Collection
     expect(application.account_linking_policy).to be_a Stormpath::Resource::AccountLinkingPolicy
+    expect(application.saml_policy).to be_a Stormpath::Resource::SamlPolicy
   end
 
   describe '.load' do
