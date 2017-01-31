@@ -4,10 +4,14 @@ describe Stormpath::Resource::Account, :vcr do
   describe 'instances should respond to attribute property methods' do
     let(:directory) { test_api_client.directories.create(directory_attrs) }
     let(:account) do
-      directory.accounts.create(account_attrs(email: 'ruby',
-                                              given_name: 'ruby',
-                                              surname: 'ruby',
-                                              middle_name: 'ruby'))
+      directory.accounts.create(
+        account_attrs(
+          email: 'ruby',
+          given_name: 'ruby',
+          surname: 'ruby',
+          middle_name: 'ruby'
+        )
+      )
     end
 
     after do
