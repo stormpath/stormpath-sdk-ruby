@@ -120,11 +120,13 @@ properties
           end
 
           it 'raises an error' do
-            expect { client }.to raise_error ArgumentError,
-                                             "No API id in properties. Please provide a 'apiKey.id' property in '" +
-                                             api_key_file_location +
-                                             "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " \
-                                             'constructor to specify an alternative property.'
+            expect { client }.to raise_error(
+              ArgumentError,
+              "No API id in properties. Please provide a 'apiKey.id' property in '" +
+              api_key_file_location +
+              "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " \
+              'constructor to specify an alternative property.'
+            )
           end
         end
 

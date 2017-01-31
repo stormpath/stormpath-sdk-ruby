@@ -103,9 +103,11 @@ describe Stormpath::Cache::CacheEntry do
     before { Timecop.freeze now }
 
     it 'returns a hash of the attributes' do
-      expect(cache_entry.to_h).to eq('value' => cache_entry.value,
-                                     'created_at' => cache_entry.created_at,
-                                     'last_accessed_at' => cache_entry.last_accessed_at)
+      expect(cache_entry.to_h).to eq(
+        'value' => cache_entry.value,
+        'created_at' => cache_entry.created_at,
+        'last_accessed_at' => cache_entry.last_accessed_at
+      )
     end
   end
 

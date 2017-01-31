@@ -236,11 +236,13 @@ describe Stormpath::Resource::Collection, :vcr do
       let(:username) { 'jlpicard/!@$%^ *()_-+=?><]}[{' }
 
       let!(:account) do
-        directory.accounts.create username: username,
-                                  email: "captain#{default_domain}",
-                                  givenName: 'Jean-Luc',
-                                  surname: 'Picard',
-                                  password: 'hakunaMatata179Enterprise'
+        directory.accounts.create(
+          username: username,
+          email: "captain#{default_domain}",
+          givenName: 'Jean-Luc',
+          surname: 'Picard',
+          password: 'hakunaMatata179Enterprise'
+        )
       end
 
       after { directory.delete }
@@ -266,11 +268,13 @@ describe Stormpath::Resource::Collection, :vcr do
       let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let!(:account) do
-        directory.accounts.create username: 'jlpicard',
-                                  email: "captain#{default_domain}",
-                                  givenName: 'Jean-Luc',
-                                  surname: 'Picard',
-                                  password: 'hakunaMatata179Enterprise'
+        directory.accounts.create(
+          username: 'jlpicard',
+          email: "captain#{default_domain}",
+          givenName: 'Jean-Luc',
+          surname: 'Picard',
+          password: 'hakunaMatata179Enterprise'
+        )
       end
 
       after { directory.delete }
@@ -292,11 +296,13 @@ describe Stormpath::Resource::Collection, :vcr do
       let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       let!(:account) do
-        directory.accounts.create username: 'jlpicard',
-                                  email: "captain#{default_domain}",
-                                  givenName: 'Jean-Luc',
-                                  surname: 'Picard',
-                                  password: 'hakunaMatata179Enterprise'
+        directory.accounts.create(
+          username: 'jlpicard',
+          email: "captain#{default_domain}",
+          givenName: 'Jean-Luc',
+          surname: 'Picard',
+          password: 'hakunaMatata179Enterprise'
+        )
       end
 
       after { directory.delete }
