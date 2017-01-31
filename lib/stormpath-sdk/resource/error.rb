@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Error < Stormpath::Resource::Base
-  prop_reader :status, :code, :message, :developer_message, :more_info, :request_id
+module Stormpath
+  module Resource
+    class Error < Stormpath::Resource::Base
+      prop_reader :status, :code, :message, :developer_message, :more_info, :request_id
 
-  def initialize(body)
-    super body, nil
+      def initialize(body)
+        super(body, nil)
+      end
+    end
   end
 end

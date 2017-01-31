@@ -22,9 +22,7 @@ module Stormpath
       end
 
       def delete
-        if @size > 0
-          @size -= 1
-        end
+        @size -= 1 if @size > 0
       end
 
       def summary

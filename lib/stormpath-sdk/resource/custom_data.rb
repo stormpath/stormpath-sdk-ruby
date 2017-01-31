@@ -13,82 +13,81 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::CustomData < Stormpath::Resource::Instance
-  include Stormpath::Resource::CustomDataHashMethods
+module Stormpath
+  module Resource
+    class CustomData < Stormpath::Resource::Instance
+      include Stormpath::Resource::CustomDataHashMethods
 
-  prop_reader :created_at, :modified_at
+      prop_reader :created_at, :modified_at
 
-  def [](property_name)
-    get_property property_name, ignore_camelcasing: true
-  end
+      def [](property_name)
+        get_property property_name, ignore_camelcasing: true
+      end
 
-  def []=(property_name, property_value)
-    set_property property_name, property_value, ignore_camelcasing: true
-  end
+      def []=(property_name, property_value)
+        set_property property_name, property_value, ignore_camelcasing: true
+      end
 
-  def save
-    if has_removed_properties?
-      delete_removed_properties
-    end
-    if has_new_properties?
-      super
-    end
-  end
+      def save
+        delete_removed_properties if has_removed_properties?
+        super if has_new_properties?
+      end
 
-  def delete(name = nil)
-    if name.nil?
-      @properties = { HREF_PROP_NAME => @properties[HREF_PROP_NAME] }
-      @dirty_properties.clear
-      @deleted_properties.clear
-      return super()
-    end
+      def delete(name = nil)
+        if name.nil?
+          @properties = { HREF_PROP_NAME => @properties[HREF_PROP_NAME] }
+          @dirty_properties.clear
+          @deleted_properties.clear
+          return super()
+        end
 
-    @write_lock.lock
-    property_name = name.to_s
-    begin
-      @properties.delete(property_name)
-      @dirty_properties.delete(property_name)
-      @deleted_properties << property_name
-      @dirty = true
-    ensure
-      @write_lock.unlock
-    end
-  end
+        @write_lock.lock
+        property_name = name.to_s
+        begin
+          @properties.delete(property_name)
+          @dirty_properties.delete(property_name)
+          @deleted_properties << property_name
+          @dirty = true
+        ensure
+          @write_lock.unlock
+        end
+      end
 
-  private
+      private
 
-    def sanitize(properties)
-      {}.tap do |sanitized_properties|
-        properties.map do |key, value|
-          property_name = key.to_s
-          sanitized_properties[property_name] = value
+      def sanitize(properties)
+        {}.tap do |sanitized_properties|
+          properties.map do |key, value|
+            property_name = key.to_s
+            sanitized_properties[property_name] = value
+          end
+        end
+      end
+
+      def has_removed_properties?
+        @read_lock.lock
+        begin
+          !@deleted_properties.empty?
+        ensure
+          @read_lock.unlock
+        end
+      end
+
+      def has_new_properties?
+        @read_lock.lock
+        begin
+          !@dirty_properties.empty?
+        ensure
+          @read_lock.unlock
+        end
+      end
+
+      def delete_removed_properties
+        @deleted_properties.delete_if do |deleted_property_name|
+          data_store.delete self, deleted_property_name
+          true
         end
       end
     end
-
-    def has_removed_properties?
-      @read_lock.lock
-      begin
-        !@deleted_properties.empty?
-      ensure
-        @read_lock.unlock
-      end
-    end
-
-    def has_new_properties?
-      @read_lock.lock
-      begin
-        !@dirty_properties.empty?
-      ensure
-        @read_lock.unlock
-      end
-    end
-
-    def delete_removed_properties
-      @deleted_properties.delete_if do |deleted_property_name|
-        data_store.delete self, deleted_property_name
-        true
-      end
-    end
-
+  end
 end

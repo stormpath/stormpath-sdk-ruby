@@ -3,7 +3,7 @@ module Stormpath
     class CacheEntry
       attr_accessor :value, :created_at, :last_accessed_at
 
-      def initialize value
+      def initialize(value)
         self.value            = value
         self.created_at       = Time.now
         self.last_accessed_at = created_at
@@ -13,7 +13,7 @@ module Stormpath
         self.last_accessed_at = Time.now
       end
 
-      def expired? ttl_seconds, tti_seconds
+      def expired?(ttl_seconds, tti_seconds)
         now = Time.now
         now > (created_at + ttl_seconds) || now > (last_accessed_at + tti_seconds)
       end

@@ -10,13 +10,13 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     directory.delete if directory
   end
 
-  describe "instances" do
+  describe 'instances' do
     let!(:account_store_mapping) do
       map_account_store(application, directory, 0, true, false)
     end
 
     it do
-      [:list_index, :is_default_account_store, :is_default_group_store, :default_account_store, :default_group_store ].each do |prop_accessor|
+      [:list_index, :is_default_account_store, :is_default_group_store, :default_account_store, :default_group_store].each do |prop_accessor|
         expect(account_store_mapping).to respond_to(prop_accessor)
         expect(account_store_mapping).to respond_to("#{prop_accessor}=")
       end
@@ -25,11 +25,11 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
         expect(account_store_mapping).to respond_to(prop_getter)
       end
 
-      expect(account_store_mapping.list_index).to be_a Fixnum
+      expect(account_store_mapping.list_index).to be_a Integer
 
       [:default_account_store, :default_group_store].each do |default_store_method|
         [default_store_method, "is_#{default_store_method}", "#{default_store_method}?"].each do |specific_store_method|
-          expect(account_store_mapping.send specific_store_method).to be_boolean
+          expect(account_store_mapping.send(specific_store_method)).to be_boolean
         end
       end
 
@@ -37,7 +37,6 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
       expect(account_store_mapping.application).to be_a Stormpath::Resource::Application
     end
   end
-
 
   describe 'given an application' do
     let(:reloaded_application) { test_api_client.applications.get application.href }
@@ -104,10 +103,9 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
         expect(re_reloaded_application.default_group_store_mapping).to eq(nil)
       end
     end
-
   end
 
-  describe "given a directory" do
+  describe 'given a directory' do
     before { map_account_store(application, directory, 0, false, false) }
 
     it 'add an account store mapping' do
@@ -115,13 +113,11 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
     end
   end
 
-  describe "given a group" do
+  describe 'given a group' do
     let(:group) { directory.groups.create(group_attrs) }
     let(:reloaded_application) { test_api_client.applications.get application.href }
 
-    after do
-      group.delete if group
-    end
+    after { group.delete if group }
 
     context 'add an account store mapping' do
       it 'being a default account store' do
@@ -136,26 +132,24 @@ describe Stormpath::Resource::AccountStoreMapping, :vcr do
           map_account_store(application, group, 0, false, true)
         end.to raise_error Stormpath::Error
       end
-
     end
-
   end
 
-  describe "update attribute default_group_store" do
+  describe 'update attribute default_group_store' do
     let(:account_store_mapping) { map_account_store(application, directory, 0, true, false) }
-    let(:reloaded_mapping){ application.account_store_mappings.get account_store_mapping.href }
+    let(:reloaded_mapping) { application.account_store_mappings.get account_store_mapping.href }
 
     it 'should go from true to false' do
       expect(account_store_mapping.is_default_account_store).to eq(true)
-      account_store_mapping.default_account_store= false
+      account_store_mapping.default_account_store = false
       account_store_mapping.save
       expect(reloaded_mapping.is_default_account_store).to eq(false)
     end
   end
 
-  describe "given a mapping" do
+  describe 'given a mapping' do
     let!(:account_store_mapping) { map_account_store(application, directory, 0, true, false) }
-    let(:reloaded_application) { test_api_client.applications.get application.href}
+    let(:reloaded_application) { test_api_client.applications.get application.href }
 
     it 'function delete should destroy it' do
       expect(application.account_store_mappings.count).to eq(1)

@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Stormpath, Inc.
+# Copyright 2016 Stormpath, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,14 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Challenge < Stormpath::Resource::Instance
-  prop_accessor :message
-  prop_reader :status, :created_at, :modified_at
+module Stormpath
+  module Resource
+    class Challenge < Stormpath::Resource::Instance
+      prop_accessor :message
+      prop_reader :status, :created_at, :modified_at
 
-  belongs_to :factor
-  belongs_to :account
+      belongs_to :factor
+      belongs_to :account
 
-  def validate(code)
-    data_store.execute_raw_request href, { code: code }, Stormpath::Resource::Challenge
+      def validate(code)
+        data_store.execute_raw_request(href, { code: code }, Stormpath::Resource::Challenge)
+      end
+    end
   end
 end

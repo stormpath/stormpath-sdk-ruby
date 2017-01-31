@@ -1,8 +1,7 @@
 module Stormpath
   module Cache
     class CacheManager
-
-      def initialize(opts = nil)
+      def initialize(_opts = nil)
         @caches = {}
       end
 
@@ -15,7 +14,7 @@ module Stormpath
       end
 
       def stats
-        Hash[ @caches.map { |region, cache| [region, cache.stats] } ]
+        Hash[@caches.map { |region, cache| [region, cache.stats] }]
       end
     end
   end

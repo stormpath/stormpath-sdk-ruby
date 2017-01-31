@@ -139,7 +139,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create facebook directory with provider credentials' do
-    let(:name) { 'Facebook' }
+    let(:name) { "ruby-sdk-facebook-#{random_number}" }
     let(:description) { 'Directory for testing Facebook directories.' }
 
     let(:provider_id) { 'facebook' }
@@ -154,7 +154,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create google directory with provider credentials' do
-    let(:name) { 'Google' }
+    let(:name) { "ruby-sdk-google-#{random_number}" }
     let(:description) { 'Directory for testing Google directories.' }
 
     let(:provider_id) { 'google' }
@@ -181,7 +181,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create linkedin directory with provider credentials' do
-    let(:name) { 'Linkedin' }
+    let(:name) { "ruby-sdk-linkedin-#{random_number}" }
     let(:description) { 'Directory for testing Linkedin directories.' }
 
     let(:provider_id) { 'linkedin' }
@@ -196,7 +196,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create github directory with provider credentials' do
-    let(:name) { 'Github' }
+    let(:name) { "ruby-sdk-github-#{random_number}" }
     let(:description) { 'Directory for testing Github directories.' }
 
     let(:provider_id) { 'github' }
@@ -211,7 +211,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create twitter directory with provider credentials' do
-    let(:name) { 'Twitter' }
+    let(:name) { "ruby-sdk-twitter-#{random_number}" }
     let(:description) { 'Directory for testing Twitter directories.' }
 
     let(:provider_id) { 'twitter' }

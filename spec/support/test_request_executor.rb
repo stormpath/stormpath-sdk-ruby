@@ -3,8 +3,8 @@ module Stormpath
     class TestRequestExecutor
       attr_writer :response
 
-      def execute_request(request)
-        Stormpath::Http::Response.new 200, 'text/json', @response, @response.length
+      def execute_request(_request)
+        Stormpath::Http::Response.new(200, 'text/json', @response, @response.length)
       end
     end
   end

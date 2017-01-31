@@ -99,7 +99,7 @@ describe Stormpath::Resource::AccountCreationPolicy, :vcr do
 
     context 'when domain not string' do
       it 'should raise error' do
-        blacklisted = ['*spam.com', 12345]
+        blacklisted = ['*spam.com', 12_345]
         account_creation_policy.email_domain_blacklist = blacklisted
         expect do
           account_creation_policy.save

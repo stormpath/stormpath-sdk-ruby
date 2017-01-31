@@ -21,16 +21,15 @@ module Stormpath
 
       def inspect
         ''.tap do |str|
-          str << %Q[#<#{class_name_with_id} @properties={]
+          str << %(#<#{class_name_with_id} @properties={)
           @read_lock.lock
           begin
             str << properties.map do |key, value|
-              if printable_property? key
-                if value.kind_of? Hash and value.has_key? Stormpath::Resource::Base::HREF_PROP_NAME
-                  value = %Q[{ "#{Stormpath::Resource::Base::HREF_PROP_NAME}" => "#{value[Stormpath::Resource::Base::HREF_PROP_NAME]}" }]
-                end
-                %Q["#{key} => #{value}"]
+              next unless printable_property? key
+              if value.is_a?(Hash) && value.key?(Stormpath::Resource::Base::HREF_PROP_NAME)
+                value = %({ "#{Stormpath::Resource::Base::HREF_PROP_NAME}" => "#{value[Stormpath::Resource::Base::HREF_PROP_NAME]}" })
               end
+              %("#{key} => #{value}")
             end.compact.join(',')
           ensure
             @read_lock.unlock
@@ -49,9 +48,7 @@ module Stormpath
 
           begin
             properties_yaml = properties.each do |key, value|
-              if printable_property? key
-                " #{key}: #{value} \n"
-              end
+              " #{key}: #{value} \n" if printable_property? key
             end.compact.join("\n")
             unless properties_yaml.empty?
               yaml << " properties\n "
@@ -64,7 +61,7 @@ module Stormpath
       end
 
       def class_name_with_id
-        object_id_hex = '%x' % (self.object_id << 1)
+        object_id_hex = '%x' % (object_id << 1)
         "#{self.class.name}:0x#{object_id_hex}"
       end
     end

@@ -16,22 +16,21 @@
 module Stormpath
   module Authentication
     class BasicLoginAttempt < Stormpath::Resource::Base
-
-      TYPE = "type"
-      VALUE = "value"
-      ACCOUNT_STORE = "account_store"
+      TYPE = 'type'.freeze
+      VALUE = 'value'.freeze
+      ACCOUNT_STORE = 'account_store'.freeze
 
       def account_store
         get_property ACCOUNT_STORE
       end
 
       def account_store=(account_store)
-        if account_store.kind_of? Stormpath::Resource::Base
-          set_property ACCOUNT_STORE, {HREF_PROP_NAME => account_store.href}
-        elsif account_store.kind_of? Hash
+        if account_store.is_a? Stormpath::Resource::Base
+          set_property ACCOUNT_STORE, HREF_PROP_NAME => account_store.href
+        elsif account_store.is_a? Hash
           set_property ACCOUNT_STORE, sanitize(account_store)
         else
-          fail ArgumentError, 'account_store should be a Stormpath::Resource::Instance or a Hash'
+          raise ArgumentError, 'account_store should be a Stormpath::Resource::Instance or a Hash'
         end
       end
 
@@ -50,9 +49,6 @@ module Stormpath
       def value=(value)
         set_property VALUE, value
       end
-
     end
-
   end
-
 end

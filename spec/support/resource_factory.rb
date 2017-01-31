@@ -16,10 +16,10 @@ module Stormpath
           resource['name'] = "#{type} #{id}"
           associations.each do |assoc|
             resource[assoc] = if assoc =~ /s$/
-              collection type, assoc.sub(/s$/, ''), depth - 1
-            else
-              resource assoc, depth - 1
-            end
+                                collection type, assoc.sub(/s$/, ''), depth - 1
+                              else
+                                resource assoc, depth - 1
+                              end
           end
         end
 

@@ -13,9 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::GroupMembership < Stormpath::Resource::Instance
-
-  has_one :account
-  has_one :group
-
+module Stormpath
+  module Resource
+    class GroupMembership < Stormpath::Resource::Instance
+      has_one :account
+      has_one :group
+    end
+  end
 end

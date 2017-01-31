@@ -16,13 +16,11 @@
 module Stormpath
   module Provider
     class AccountAccess < Stormpath::Resource::Base
-
       PROVIDER_DATA = :provider_data
 
       def provider_data=(provider_data)
         set_property PROVIDER_DATA, provider_data
       end
-
     end
   end
 end

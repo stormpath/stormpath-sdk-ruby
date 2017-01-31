@@ -4,10 +4,14 @@ describe Stormpath::Resource::Account, :vcr do
   describe 'instances should respond to attribute property methods' do
     let(:directory) { test_api_client.directories.create(directory_attrs) }
     let(:account) do
-      directory.accounts.create(account_attrs(email: 'ruby',
-                                              given_name: 'ruby',
-                                              surname: 'ruby',
-                                              middle_name: 'ruby'))
+      directory.accounts.create(
+        account_attrs(
+          email: 'ruby',
+          given_name: 'ruby',
+          surname: 'ruby',
+          middle_name: 'ruby'
+        )
+      )
     end
 
     after do
@@ -120,9 +124,7 @@ describe Stormpath::Resource::Account, :vcr do
 
       it 'adds and removes the group from the account' do
         expect(account.groups).to include(group)
-
         account.remove_group group
-
         expect(account.groups).not_to include(group)
       end
     end
@@ -250,9 +252,7 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     context 'type google-authenticator' do
-      let(:factor) do
-        account.create_factor(:google_authenticator, options)
-      end
+      let(:factor) { account.create_factor(:google_authenticator, options) }
 
       context 'with account_name' do
         let(:account_name) { "marko.cilimkovic#{default_domain}" }
@@ -295,9 +295,7 @@ describe Stormpath::Resource::Account, :vcr do
     end
 
     context 'with bad type set' do
-      let(:factor) do
-        account.create_factor(:invalid_type)
-      end
+      let(:factor) { account.create_factor(:invalid_type) }
 
       it 'should raise error' do
         expect { factor }.to raise_error(Stormpath::Error)

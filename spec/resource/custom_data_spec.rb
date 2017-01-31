@@ -14,7 +14,7 @@ describe Stormpath::Resource::CustomData, :vcr do
 
   context 'without caching regions' do
     let(:disabled_cache_client) do
-      @disabled_cache_client ||= Stormpath::Client.new({api_key: test_api_key, cache: { store: Stormpath::Cache::DisabledCacheStore }})
+      @disabled_cache_client ||= Stormpath::Client.new(api_key: test_api_key, cache: { store: Stormpath::Cache::DisabledCacheStore })
     end
 
     let(:directory) { disabled_cache_client.directories.create(directory_attrs) }

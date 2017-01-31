@@ -106,7 +106,7 @@ properties
           end
           let(:client) do
             Stormpath::Client.new(
-              api_key_file_location: api_key_file_location,
+              api_key_file_location: api_key_file_location
             )
           end
 
@@ -120,11 +120,13 @@ properties
           end
 
           it 'raises an error' do
-            expect { client }.to raise_error ArgumentError,
+            expect { client }.to raise_error(
+              ArgumentError,
               "No API id in properties. Please provide a 'apiKey.id' property in '" +
               api_key_file_location +
-              "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " +
-              "constructor to specify an alternative property."
+              "' or pass in an 'api_key_id_property_name' to the Stormpath::Client " \
+              'constructor to specify an alternative property.'
+            )
           end
         end
 
@@ -451,7 +453,7 @@ properties
 
           before { application }
 
-          #fails with Stormpath::Error: Authentication required.
+          # fails with Stormpath::Error: Authentication required.
           it 'creates directory named "Client Application Create Test Directory"' do
             expect(directories.map(&:name)).to include("#{application_name} Directory")
           end
@@ -537,13 +539,13 @@ properties
 
   describe '#organization' do
     context 'search' do
-      let(:random_org_name) { "ruby-org-#{random_number}" }
+      let(:random_name_key) { "ruby-org-#{random_number}" }
       let!(:organization) do
-        test_api_client.organizations.create(organization_attrs(name: random_org_name))
+        test_api_client.organizations.create(organization_attrs(name: random_name_key))
       end
 
       context 'by any attribute' do
-        let(:search_results) { test_api_client.organizations.search(random_org_name) }
+        let(:search_results) { test_api_client.organizations.search(random_name_key) }
 
         it 'returns the application' do
           expect(search_results.count).to eq 1
@@ -551,7 +553,7 @@ properties
       end
 
       context 'by an explicit attribute' do
-        let(:search_results) { test_api_client.organizations.search(name: random_org_name) }
+        let(:search_results) { test_api_client.organizations.search(name: random_name_key) }
 
         it 'returns the application' do
           expect(search_results.count).to eq 1
@@ -658,15 +660,9 @@ properties
   end
 
   describe '#account_links' do
-    let(:application) do
-      test_api_client.applications.create(name: 'ruby sdk app', description: 'ruby sdk desc')
-    end
-    let(:directory1) do
-      test_api_client.directories.create(name: 'ruby sdk dir 1')
-    end
-    let(:directory2) do
-      test_api_client.directories.create(name: 'ruby sdk dir 2')
-    end
+    let(:application) { test_api_client.applications.create(application_attrs) }
+    let(:directory1) { test_api_client.directories.create(directory_attrs) }
+    let(:directory2) { test_api_client.directories.create(directory_attrs) }
 
     before do
       map_account_store(application, directory1, 1, true, false)

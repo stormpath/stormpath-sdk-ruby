@@ -13,101 +13,102 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Collection
-  include Enumerable
+module Stormpath
+  module Resource
+    class Collection
+      include Enumerable
 
-  attr_reader :href, :client, :item_class, :collection_href, :criteria
+      attr_reader :href, :client, :item_class, :collection_href, :criteria
 
-  def initialize(href, item_class, client, options={})
-    @client = client
-    @href = href
-    @item_class = item_class
-    @collection_href = options[:collection_href] || @href
-    @criteria ||= {}
-  end
+      def initialize(href, item_class, client, options = {})
+        @client = client
+        @href = href
+        @item_class = item_class
+        @collection_href = options[:collection_href] || @href
+        @criteria ||= {}
+      end
 
-  def data_store
-    client.data_store
-  end
+      def data_store
+        client.data_store
+      end
 
-  def search query
-    query_hash = if query.is_a? String
-      { q: query }
-    elsif query.is_a? Hash
-      query
-    end
+      def search(query)
+        query_hash = if query.is_a? String
+                       { q: query }
+                     elsif query.is_a? Hash
+                       query
+                     end
 
-    criteria.merge! query_hash
-    self
-  end
+        criteria.merge! query_hash
+        self
+      end
 
-  def offset offset
-    criteria.merge! offset: offset
-    self
-  end
+      def offset(offset)
+        criteria[:offset] = offset
+        self
+      end
 
-  def limit limit
-    criteria.merge! limit: limit
-    self
-  end
+      def limit(limit)
+        criteria[:limit] = limit
+        self
+      end
 
-  def order statement
-    criteria.merge! order_by: statement
-    self
-  end
+      def order(statement)
+        criteria[:order_by] = statement
+        self
+      end
 
-  def each(&block)
-    PaginatedIterator.iterate(collection_href, client, item_class, @criteria, &block)
-  end
+      def each(&block)
+        PaginatedIterator.iterate(collection_href, client, item_class, @criteria, &block)
+      end
 
-  def current_page
-    page = CollectionPage.new(collection_href, client, criteria)
-    page.item_type = item_class
-    page
-  end
-
-  private
-
-    module PaginatedIterator
-
-      def self.iterate(collection_href, client, item_class, criteria, &block)
-        page = CollectionPage.new collection_href, client, criteria
+      def current_page
+        page = CollectionPage.new(collection_href, client, criteria)
         page.item_type = item_class
-
-        unless page.items.count.zero?
-          page.items.each(&block)
-          criteria[:offset] = page.offset + page.limit
-          iterate(collection_href, client, item_class, criteria, &block)
-        end
-      end
-    end
-
-    class CollectionPage < Stormpath::Resource::Base
-      ITEMS = 'items'
-
-      prop_accessor :offset, :limit, :size
-
-      attr_accessor :item_type
-
-      def items
-        to_resource_array get_property(ITEMS)
+        page
       end
 
-      def to_resource properties
-        data_store.instantiate item_type, properties
-      end
+      private
 
-      def to_resource_array vals
-        Array.new.tap do |items|
-          if vals.is_a? Array
-            vals.each do |val|
-              resource = to_resource val
-              items << resource
-            end
+      module PaginatedIterator
+        def self.iterate(collection_href, client, item_class, criteria, &block)
+          page = CollectionPage.new collection_href, client, criteria
+          page.item_type = item_class
+
+          unless page.items.count.zero?
+            page.items.each(&block)
+            criteria[:offset] = page.offset + page.limit
+            iterate(collection_href, client, item_class, criteria, &block)
           end
         end
       end
 
-    end#class Stormpath::Resource::Collection::CollectionPage
+      class CollectionPage < Stormpath::Resource::Base
+        ITEMS = 'items'.freeze
 
-end#Stormpath::Resource::Collection
+        prop_accessor :offset, :limit, :size
+
+        attr_accessor :item_type
+
+        def items
+          to_resource_array get_property(ITEMS)
+        end
+
+        def to_resource(properties)
+          data_store.instantiate item_type, properties
+        end
+
+        def to_resource_array(vals)
+          [].tap do |items|
+            if vals.is_a? Array
+              vals.each do |val|
+                resource = to_resource val
+                items << resource
+              end
+            end
+          end
+        end
+      end # class Stormpath::Resource::Collection::CollectionPage
+    end # Stormpath::Resource::Collection
+  end
+end

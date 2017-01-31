@@ -13,17 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::AccountStore < Stormpath::Resource::Instance
-  def self.new(*args)
-    href = args.first[HREF_PROP_NAME]
-    if href =~ /directories/
-      Stormpath::Resource::Directory.new(*args)
-    elsif href =~ /group/
-      Stormpath::Resource::Group.new(*args)
-    elsif href =~ /organizations/
-      Stormpath::Resource::Organization.new(*args)
-    else
-      raise 'inappropriate type of an account store'
+module Stormpath
+  module Resource
+    class AccountStore < Stormpath::Resource::Instance
+      def self.new(*args)
+        href = args.first[HREF_PROP_NAME]
+        if href =~ /directories/
+          Stormpath::Resource::Directory.new(*args)
+        elsif href =~ /group/
+          Stormpath::Resource::Group.new(*args)
+        elsif href =~ /organizations/
+          Stormpath::Resource::Organization.new(*args)
+        else
+          raise 'inappropriate type of an account store'
+        end
+      end
     end
   end
 end

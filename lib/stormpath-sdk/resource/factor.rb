@@ -13,14 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Factor < Stormpath::Resource::Instance
-  prop_accessor :type, :account_name, :issuer, :status
-  prop_reader :verification_status, :secret, :key_uri, :base64_q_r_image
-  alias_method :qr_code, :base64_q_r_image
+module Stormpath
+  module Resource
+    class Factor < Stormpath::Resource::Instance
+      prop_accessor :type, :account_name, :issuer, :status
+      prop_reader :verification_status, :secret, :key_uri, :base64_q_r_image
+      alias qr_code base64_q_r_image
 
-  has_many :challenges, can: [:get, :create]
-  has_one :most_recent_challenge, class_name: :challenge
-  has_one :phone
+      has_many :challenges, can: [:get, :create]
+      has_one :most_recent_challenge, class_name: :challenge
+      has_one :phone
 
-  belongs_to :account
+      belongs_to :account
+    end
+  end
 end

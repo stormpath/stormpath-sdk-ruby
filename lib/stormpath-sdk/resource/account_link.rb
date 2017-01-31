@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::AccountLink < Stormpath::Resource::Instance
-  prop_accessor :right_account, :left_account
-  prop_reader :created_at, :modified_at
+module Stormpath
+  module Resource
+    class AccountLink < Stormpath::Resource::Instance
+      prop_accessor :right_account, :left_account
+      prop_reader :created_at, :modified_at
 
-  belongs_to :right_account, class_name: :Account, href: '/rightAccount'
-  belongs_to :left_account, class_name: :Account, href: '/leftAccount'
+      belongs_to :right_account, class_name: :Account, href: '/rightAccount'
+      belongs_to :left_account, class_name: :Account, href: '/leftAccount'
+    end
+  end
 end

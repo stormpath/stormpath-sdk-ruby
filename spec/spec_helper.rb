@@ -25,7 +25,7 @@ VCR.configure do |c|
   c.before_record do |i|
     i.request.headers.delete('Authorization')
     u = URI.parse(i.request.uri)
-    i.request.uri.sub!(/:\/\/.*#{Regexp.escape(u.host)}/, "://#{u.host}" )
+    i.request.uri.sub!(/:\/\/.*#{Regexp.escape(u.host)}/, "://#{u.host}")
   end
 end
 

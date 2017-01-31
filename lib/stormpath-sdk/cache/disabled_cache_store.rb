@@ -1,18 +1,15 @@
 module Stormpath
   module Cache
     class DisabledCacheStore
-      def initialize(opts = nil)
-      end
+      def initialize(opts = nil); end
 
-      def get(key)
-      end
+      def get(key); end
 
-      def put(key, entry)
+      def put(_key, entry)
         entry
       end
 
-      def delete(key)
-      end
+      def delete(key); end
 
       def clear
         {}

@@ -13,31 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::Expansion
-  attr_reader :query
+module Stormpath
+  module Resource
+    class Expansion
+      attr_reader :query
 
-  def initialize *names
-    @query = {}
-    @properties = {}
+      def initialize(*names)
+        @query = {}
+        @properties = {}
 
-    names.each { |name| add_property name }
-  end
+        names.each { |name| add_property name }
+      end
 
-  def add_property name, options = {}
-    @properties[name] = if options[:offset] || options[:limit]
-      pagination = []
-      pagination.push("offset:#{options[:offset]}") if options[:offset]
-      pagination.push("limit:#{options[:limit]}") if options[:limit]
+      def add_property(name, options = {})
+        @properties[name] = if options[:offset] || options[:limit]
+                              pagination = []
+                              pagination.push("offset:#{options[:offset]}") if options[:offset]
+                              pagination.push("limit:#{options[:limit]}") if options[:limit]
 
-      "#{name}(#{pagination.join(',')})"
-    else
-      name
-    end
-  end
+                              "#{name}(#{pagination.join(',')})"
+                            else
+                              name
+                            end
+      end
 
-  def to_query
-    if @properties.any?
-      { expand: @properties.values.join(',') }
+      def to_query
+        { expand: @properties.values.join(',') } if @properties.any?
+      end
     end
   end
 end

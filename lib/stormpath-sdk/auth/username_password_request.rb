@@ -16,12 +16,11 @@
 module Stormpath
   module Authentication
     class UsernamePasswordRequest
-
       attr_reader :host, :account_store
 
-      def initialize username, password, options = {}
+      def initialize(username, password, options = {})
         @username = username
-        @password = (password || "").chars.to_a
+        @password = (password || '').chars.to_a
         @host = options[:host]
         @account_store = options[:account_store]
       end
@@ -39,10 +38,9 @@ module Stormpath
         @host = nil
         @account_store = nil
 
-        @password.each { |pass_char| pass_char = 0x00 }
+        @password.each { |_pass_char| pass_char = 0x00 }
         @password = nil
       end
-
     end
   end
 end

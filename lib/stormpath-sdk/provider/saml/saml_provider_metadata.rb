@@ -13,7 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Provider::SamlProviderMetadata < Stormpath::Provider::ProviderData
-  prop_reader :href, :created_at, :modified_at, :entity_id, :x509_signing_cert,
-    :assertion_consumer_service_post_endpoint
+module Stormpath
+  module Provider
+    class SamlProviderMetadata < Stormpath::Provider::ProviderData
+      prop_reader :href, :created_at, :modified_at, :entity_id, :x509_signing_cert,
+                  :assertion_consumer_service_post_endpoint
+    end
+  end
 end

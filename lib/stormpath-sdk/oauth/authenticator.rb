@@ -8,7 +8,7 @@ module Stormpath
       end
 
       def authenticate(parent_href, request)
-        assert_not_nil parent_href, "parent_href must be specified"
+        assert_not_nil parent_href, 'parent_href must be specified'
 
         clazz = GRANT_CLASSES_BY_TYPE[request.grant_type.to_sym]
         attempt = @data_store.instantiate(clazz)
