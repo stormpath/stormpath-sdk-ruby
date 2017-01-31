@@ -53,6 +53,11 @@ module Stormpath
         data_store.get_resource metadata_href, Stormpath::Provider::SamlProviderMetadata
       end
 
+      # TODO: SamlMappingRules is obsolete and AttributeStatementMappingRules should be used
+      # through the provider
+      # delegate :attribute_statement_mapping_rules, to: :provider
+      # and delete the other 2 methods
+      # https://stormpath.atlassian.net/wiki/display/AM/Stormpath+as+a+SAML+Service+Provider
       def statement_mapping_rules
         metadata_href = provider.attribute_statement_mapping_rules['href']
         data_store.get_resource metadata_href, Stormpath::Provider::SamlMappingRules

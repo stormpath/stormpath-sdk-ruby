@@ -19,6 +19,9 @@ module Stormpath
       prop_reader :provider_id, :sso_login_url, :sso_logout_url,
                   :encoded_x509_signing_cert, :request_signature_algorithm,
                   :service_provider_metadata, :attribute_statement_mapping_rules
+
+      # :attribute_statement_mapping_rules is obsolete as a prop_reader
+      # Since AttributeStatementMappingRules is created as a standalone class, a has_one should be used here
     end
   end
 end
