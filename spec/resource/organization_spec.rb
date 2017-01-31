@@ -2,9 +2,11 @@ require 'spec_helper'
 
 describe Stormpath::Resource::Organization, :vcr do
   let(:organization) do
-    test_api_client.organizations.create(organization_attrs(name: 'test_ruby_organization',
-                                                            name_key: 'testorganization',
-                                                            description: 'test organization'))
+    test_api_client.organizations.create(organization_attrs(
+                                           name: 'test_ruby_organization',
+                                           name_key: 'testorganization',
+                                           description: 'test organization'
+    ))
   end
 
   after { organization.delete if organization }

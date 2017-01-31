@@ -26,28 +26,28 @@ module Stormpath
           },
           jwt_expired: {
             status: 400,
-            code: 10011,
+            code: 10_011,
             message: 'Token is invalid',
             developer_message: 'Token is no longer valid because it has expired',
             request_id: 'Oauth error UUID'
           },
           jwt_invalid: {
             status: 400,
-            code: 10012,
+            code: 10_012,
             message: 'Token is invalid',
             developer_message: 'Token is invalid because the issued at time (iat) is after the current time',
             request_id: 'Oauth error UUID'
           },
           jwt_invalid_issuer: {
             status: 400,
-            code: 10014,
+            code: 10_014,
             message: 'Token is invalid',
             developer_message: 'Token is invalid because the issuer of the token does not match the Application validating the token.',
             request_id: 'Oauth error UUID'
           },
           jwt_invalid_signature: {
             status: 400,
-            code: 10017,
+            code: 10_017,
             message: 'Token is invalid',
             developer_message: 'Token is invalid because verifying the signature of a JWT failed.',
             request_id: 'Oauth error UUID'

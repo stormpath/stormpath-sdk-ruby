@@ -22,8 +22,10 @@ shared_examples 'a data store' do
     end
 
     it 'pulls resource name from href if its custom data also' do
-      region = data_store.send(:region_for,
-                               "#{default_base_url}/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData")
+      region = data_store.send(
+        :region_for,
+        "#{default_base_url}/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData"
+      )
       expect(region).to eq('customData')
     end
   end
@@ -158,12 +160,14 @@ shared_examples 'a data store' do
 
   context '#apply_default_user_agent' do
     let(:request) do
-      Stormpath::Http::Request.new('get',
-                                   'http://example.com/resources/abc123',
-                                   nil,
-                                   {},
-                                   nil,
-                                   test_api_key)
+      Stormpath::Http::Request.new(
+        'get',
+        'http://example.com/resources/abc123',
+        nil,
+        {},
+        nil,
+        test_api_key
+      )
     end
 
     before do

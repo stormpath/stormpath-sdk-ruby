@@ -52,10 +52,12 @@ module Stormpath
           return @redirect_response
         end
 
-        Response.new(response.http_header.status_code,
-                     response.http_header.body_type,
-                     response.content,
-                     response.http_header.body_size)
+        Response.new(
+          response.http_header.status_code,
+          response.http_header.body_type,
+          response.content,
+          response.http_header.body_size
+        )
       end
     end
   end

@@ -68,20 +68,26 @@ module Stormpath
       parent_href = "#{parent_href}?#{URI.encode_www_form(options)}" unless options.empty?
 
       save_resource(parent_href, resource, return_type).tap do |returned_resource|
-        if resource.is_a? return_type
-          resource.set_properties returned_resource.properties
+        if resource.is_a?(return_type)
+          resource.set_properties(returned_resource.properties)
         end
       end
     end
 
     def save(resource, clazz = nil)
       assert_not_nil(resource, 'resource argument cannot be null.')
-      assert_kind_of(Stormpath::Resource::Base,
-                     resource,
-                     'resource argument must be instance of Stormpath::Resource::Base')
+      assert_kind_of(
+        Stormpath::Resource::Base,
+        resource,
+        'resource argument must be instance of Stormpath::Resource::Base'
+      )
       href = resource.href
       assert_not_nil(href, 'href or resource.href cannot be null.')
-      assert_true(!href.empty?, 'save may only be called on objects that have already been persisted (i.e. they have an existing href).')
+      assert_true(
+        !href.empty?,
+        'save may only be called on objects that have already been persisted'\
+        ' (i.e. they have an existing href).'
+      )
 
       href = qualify(href)
 
@@ -94,9 +100,11 @@ module Stormpath
 
     def delete(resource, property_name = nil)
       assert_not_nil(resource, 'resource argument cannot be null.')
-      assert_kind_of(Stormpath::Resource::Base,
-                     resource,
-                     'resource argument must be instance of Stormpath::Resource::Base')
+      assert_kind_of(
+        Stormpath::Resource::Base,
+        resource,
+        'resource argument must be instance of Stormpath::Resource::Base'
+      )
 
       href = resource.href
       href += "/#{property_name}" if property_name
@@ -220,10 +228,10 @@ module Stormpath
     def region_for(href)
       return nil if href.nil?
       region = if href.include?('/customData')
-        href.split('/')[-1]
-      else
-        href.split('/')[-2]
-      end
+                 href.split('/')[-1]
+               else
+                 href.split('/')[-2]
+               end
       CACHE_REGIONS.include?(region) ? region : nil
     end
 
@@ -242,17 +250,21 @@ module Stormpath
     end
 
     def apply_default_user_agent(request)
-      request.http_headers.store('User-Agent', 'stormpath-sdk-ruby/' + Stormpath::VERSION +
-      " ruby/#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}" \
-      ' ' + Gem::Platform.local.os.to_s + '/' + Gem::Platform.local.version.to_s)
+      request.http_headers.store(
+        'User-Agent', 'stormpath-sdk-ruby/' + Stormpath::VERSION +
+        " ruby/#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}" \
+        ' ' + Gem::Platform.local.os.to_s + '/' + Gem::Platform.local.version.to_s
+      )
     end
 
     def save_resource(href, resource, return_type)
       assert_not_nil(resource, 'resource argument cannot be null.')
       assert_not_nil(return_type, 'returnType class cannot be null.')
-      assert_kind_of(Stormpath::Resource::Base,
-                     resource,
-                     'resource argument must be instance of Stormpath::Resource::Base')
+      assert_kind_of(
+        Stormpath::Resource::Base,
+        resource,
+        'resource argument must be instance of Stormpath::Resource::Base'
+      )
 
       q_href = qualify(href)
       clear_cache_on_save(resource)
@@ -331,8 +343,10 @@ module Stormpath
     end
 
     def to_simple_reference(property_name, hash)
-      assert_true(hash.key?(HREF_PROP_NAME),
-                  "Nested resource '#{property_name}' must have an 'href' property.")
+      assert_true(
+        hash.key?(HREF_PROP_NAME),
+        "Nested resource '#{property_name}' must have an 'href' property."
+      )
 
       href = hash[HREF_PROP_NAME]
 

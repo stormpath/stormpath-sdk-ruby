@@ -41,8 +41,9 @@ module Stormpath
             href = options[:href] || get_resource_href_property(property_name)
             collection_href = "#{tenant.send(name).href}" if options[:delegate]
 
-            Stormpath::Resource::Collection.new(href, item_class, client,
-                                                collection_href: collection_href).tap do |collection|
+            Stormpath::Resource::Collection.new(
+              href, item_class, client, collection_href: collection_href
+            ).tap do |collection|
 
               collection.class_eval do
                 if can.include?(:create)
@@ -64,7 +65,9 @@ module Stormpath
                                 else
                                   "#{href}/#{id_or_href}"
                                 end
-                    data_store.get_resource(item_href, item_class, (expansion ? expansion.to_query : nil))
+                    data_store.get_resource(
+                      item_href, item_class, (expansion ? expansion.to_query : nil)
+                    )
                   end
                 end # can.include? :get
               end # collection.class_eval do

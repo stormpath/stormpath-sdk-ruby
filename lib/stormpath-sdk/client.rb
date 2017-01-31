@@ -71,9 +71,11 @@ module Stormpath
         when Hash then ApiKey.new(api_key[:id], api_key[:secret])
         end
       elsif options[:api_key_file_location]
-        load_api_key_file(options[:api_key_file_location],
-                          options[:api_key_id_property_name],
-                          options[:api_key_secret_property_name])
+        load_api_key_file(
+          options[:api_key_file_location],
+          options[:api_key_id_property_name],
+          options[:api_key_secret_property_name]
+        )
       end
     end
 

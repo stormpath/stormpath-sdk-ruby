@@ -588,9 +588,11 @@ properties
 
     describe '.create' do
       let(:organization) do
-        test_api_client.organizations.create(organization_attrs(name: 'ruby',
-                                                                name_key: 'ruby-org',
-                                                                description: 'ruby-org'))
+        test_api_client.organizations.create(organization_attrs(
+                                               name: 'ruby',
+                                               name_key: 'ruby-org',
+                                               description: 'ruby-org'
+        ))
       end
 
       it 'creates an organization' do

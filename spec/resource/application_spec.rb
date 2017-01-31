@@ -211,9 +211,11 @@ describe Stormpath::Resource::Application, :vcr do
       let(:account) { directory.accounts.create(account_attrs(password: 'P@$$w0rd')) }
 
       let(:login_request) do
-        Stormpath::Authentication::UsernamePasswordRequest.new(account.username,
-                                                               password,
-                                                               account_store: directory)
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.username,
+          password,
+          account_store: directory
+        )
       end
 
       it 'should return an authentication result' do
@@ -228,9 +230,11 @@ describe Stormpath::Resource::Application, :vcr do
       let(:new_directory) { test_api_client.directories.create(directory_attrs) }
       let(:account) { new_directory.accounts.create(account_attrs(password: 'P@$$w0rd')) }
       let(:login_request) do
-        Stormpath::Authentication::UsernamePasswordRequest.new(account.username,
-                                                               password,
-                                                               account_store: directory)
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.username,
+          password,
+          account_store: directory
+        )
       end
 
       after { new_directory.delete if new_directory }
@@ -244,9 +248,11 @@ describe Stormpath::Resource::Application, :vcr do
       let(:group) { directory.groups.create(group_attrs) }
       let(:account) { directory.accounts.create(account_attrs(password: 'P@$$w0rd')) }
       let(:login_request) do
-        Stormpath::Authentication::UsernamePasswordRequest.new(account.username,
-                                                               password,
-                                                               account_store: group)
+        Stormpath::Authentication::UsernamePasswordRequest.new(
+          account.username,
+          password,
+          account_store: group
+        )
       end
 
       before { map_account_store(application, group, 0, true, false) }
@@ -306,7 +312,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account on the application with an account store href' do
-        let(:account) { directory.accounts.create(account_attrs)  }
+        let(:account) { directory.accounts.create(account_attrs) }
         let(:sent_to_account) do
           application.send_password_reset_email(account.email, account_store: { href: directory.href })
         end
@@ -321,7 +327,7 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       context 'of an existing account on the application with an account store resource object' do
-        let(:account) { directory.accounts.create(account_attrs)  }
+        let(:account) { directory.accounts.create(account_attrs) }
         let(:sent_to_account) do
           application.send_password_reset_email(account.email, account_store: directory)
         end
@@ -667,15 +673,17 @@ describe Stormpath::Resource::Application, :vcr do
 
   describe '#create_id_site_url' do
     let(:jwt_token) do
-      JWT.encode({
-                   'iat' => Time.now.to_i,
-                   'jti' => UUID.method(:random_create).call.to_s,
-                   'aud' => test_api_key_id,
-                   'sub' => application.href,
-                   'cb_uri' => 'http://localhost:9292/redirect',
-                   'path' => '',
-                   'state' => ''
-                 }, test_api_key_secret, 'HS256')
+      JWT.encode(
+        {
+          'iat' => Time.now.to_i,
+          'jti' => UUID.method(:random_create).call.to_s,
+          'aud' => test_api_key_id,
+          'sub' => application.href,
+          'cb_uri' => 'http://localhost:9292/redirect',
+          'path' => '',
+          'state' => ''
+        }, test_api_key_secret, 'HS256'
+      )
     end
 
     let(:create_id_site_url_result) do
@@ -736,15 +744,17 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'with a valid jwt response' do
       let(:jwt_token) do
-        JWT.encode({
-                     'iat' => Time.now.to_i,
-                     'aud' => test_api_key_id,
-                     'sub' => application.href,
-                     'path' => '',
-                     'state' => '',
-                     'isNewSub' => true,
-                     'status' => 'REGISTERED'
-                   }, test_api_key_secret, 'HS256')
+        JWT.encode(
+          {
+            'iat' => Time.now.to_i,
+            'aud' => test_api_key_id,
+            'sub' => application.href,
+            'path' => '',
+            'state' => '',
+            'isNewSub' => true,
+            'status' => 'REGISTERED'
+          }, test_api_key_secret, 'HS256'
+        )
       end
       let!(:site_result) { application.handle_id_site_callback(callback_uri_base + jwt_token) }
 
@@ -771,16 +781,18 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'with an expired token' do
       let(:jwt_token) do
-        JWT.encode({
-                     'iat' => Time.now.to_i,
-                     'aud' => test_api_key_id,
-                     'sub' => application.href,
-                     'path' => '',
-                     'state' => '',
-                     'exp' => Time.now.to_i - 1,
-                     'isNewSub' => true,
-                     'status' => 'REGISTERED'
-                   }, test_api_key_secret, 'HS256')
+        JWT.encode(
+          {
+            'iat' => Time.now.to_i,
+            'aud' => test_api_key_id,
+            'sub' => application.href,
+            'path' => '',
+            'state' => '',
+            'exp' => Time.now.to_i - 1,
+            'isNewSub' => true,
+            'status' => 'REGISTERED'
+          }, test_api_key_secret, 'HS256'
+        )
       end
 
       it 'should raise Stormpath Error with correct data' do
@@ -803,15 +815,17 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'with a different client id (aud)' do
       let(:jwt_token) do
-        JWT.encode({
-                     'iat' => Time.now.to_i,
-                     'aud' => UUID.method(:random_create).call.to_s,
-                     'sub' => application.href,
-                     'path' => '',
-                     'state' => '',
-                     'isNewSub' => true,
-                     'status' => 'REGISTERED'
-                   }, test_api_key_secret, 'HS256')
+        JWT.encode(
+          {
+            'iat' => Time.now.to_i,
+            'aud' => UUID.method(:random_create).call.to_s,
+            'sub' => application.href,
+            'path' => '',
+            'state' => '',
+            'isNewSub' => true,
+            'status' => 'REGISTERED'
+          }, test_api_key_secret, 'HS256'
+        )
       end
 
       it 'should raise error' do
@@ -835,16 +849,18 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'with an invalid exp value' do
       let(:jwt_token) do
-        JWT.encode({
-                     'iat' => Time.now.to_i,
-                     'aud' => test_api_key_id,
-                     'sub' => application.href,
-                     'path' => '',
-                     'state' => '',
-                     'exp' => 'not gona work',
-                     'isNewSub' => true,
-                     'status' => 'REGISTERED'
-                   }, test_api_key_secret, 'HS256')
+        JWT.encode(
+          {
+            'iat' => Time.now.to_i,
+            'aud' => test_api_key_id,
+            'sub' => application.href,
+            'path' => '',
+            'state' => '',
+            'exp' => 'not gona work',
+            'isNewSub' => true,
+            'status' => 'REGISTERED'
+          }, test_api_key_secret, 'HS256'
+        )
       end
 
       it 'should error with the stormpath error' do
@@ -856,15 +872,17 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'with an invalid signature' do
       let(:jwt_token) do
-        JWT.encode({
-                     'iat' => Time.now.to_i,
-                     'aud' => test_api_key_id,
-                     'sub' => application.href,
-                     'path' => '',
-                     'state' => '',
-                     'isNewSub' => true,
-                     'status' => 'REGISTERED'
-                   }, 'false key', 'HS256')
+        JWT.encode(
+          {
+            'iat' => Time.now.to_i,
+            'aud' => test_api_key_id,
+            'sub' => application.href,
+            'path' => '',
+            'state' => '',
+            'isNewSub' => true,
+            'status' => 'REGISTERED'
+          }, 'false key', 'HS256'
+        )
       end
 
       it 'should reject the signature' do
@@ -876,18 +894,20 @@ describe Stormpath::Resource::Application, :vcr do
 
     context 'with show_organization_field key specified' do
       let(:jwt_token) do
-        JWT.encode({
-                     'iat' => Time.now.to_i,
-                     'aud' => test_api_key_id,
-                     'sub' => application.href,
-                     'path' => '',
-                     'state' => '',
-                     'isNewSub' => true,
-                     'status' => 'REGISTERED',
-                     'organization_name_key' => 'stormtroopers',
-                     'usd' => true,
-                     'sof' => true
-                   }, test_api_key_secret, 'HS256')
+        JWT.encode(
+          {
+            'iat' => Time.now.to_i,
+            'aud' => test_api_key_id,
+            'sub' => application.href,
+            'path' => '',
+            'state' => '',
+            'isNewSub' => true,
+            'status' => 'REGISTERED',
+            'organization_name_key' => 'stormtroopers',
+            'usd' => true,
+            'sof' => true
+          }, test_api_key_secret, 'HS256'
+        )
       end
       let!(:site_result) { application.handle_id_site_callback(callback_uri_base + jwt_token) }
 
