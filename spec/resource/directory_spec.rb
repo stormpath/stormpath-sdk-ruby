@@ -220,7 +220,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'can authenticate with the account credentials' do
-        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'qwerty'
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new('jlucpicard', 'qwerty')
         auth_result = application.authenticate_account auth_request
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
@@ -253,7 +253,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'can authenticate with the account credentials' do
-        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'testing12'
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new('jlucpicard', 'testing12')
         auth_result = application.authenticate_account auth_request
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
@@ -286,7 +286,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'can authenticate with the account credentials' do
-        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'NotSecure'
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new('jlucpicard', 'NotSecure')
         auth_result = application.authenticate_account auth_request
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
@@ -312,8 +312,12 @@ describe Stormpath::Resource::Directory, :vcr do
 
   describe '#create_directory_with_custom_data' do
     let(:directory) do
-      test_api_client.directories.create(directory_attrs(name: 'rubysdkdir',
-                                                         description: 'rubysdkdir desc'))
+      test_api_client.directories.create(
+        directory_attrs(
+          name: 'rubysdkdir',
+          description: 'rubysdkdir desc'
+        )
+      )
     end
 
     after { directory.delete }

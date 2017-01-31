@@ -57,7 +57,7 @@ module Stormpath
 
         def non_printable_properties
           @non_printable_properties ||= []
-          Array.new @non_printable_properties
+          Array.new(@non_printable_properties)
         end
       end
 

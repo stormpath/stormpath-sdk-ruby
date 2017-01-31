@@ -36,7 +36,7 @@ module Stormpath
     end
 
     def tenant(expansion = nil)
-      tenants.get 'current', expansion
+      tenants.get('current', expansion)
     end
 
     def client
@@ -49,7 +49,7 @@ module Stormpath
     has_many :accounts, href: '/accounts', can: :get do
       def verify_email_token(token)
         token_href = "#{href}/emailVerificationTokens/#{token}"
-        token = Stormpath::Resource::EmailVerificationToken.new token_href, client
+        token = Stormpath::Resource::EmailVerificationToken.new(token_href, client)
         data_store.save token, Stormpath::Resource::Account
       end
     end
@@ -68,7 +68,7 @@ module Stormpath
       if api_key = options[:api_key]
         case api_key
         when ApiKey then api_key
-        when Hash then ApiKey.new api_key[:id], api_key[:secret]
+        when Hash then ApiKey.new(api_key[:id], api_key[:secret])
         end
       elsif options[:api_key_file_location]
         load_api_key_file(options[:api_key_file_location],
@@ -79,7 +79,7 @@ module Stormpath
 
     def load_api_key_file(api_key_file_location, id_property_name, secret_property_name)
       begin
-        api_key_properties = JavaProperties::Properties.new api_key_file_location
+        api_key_properties = JavaProperties::Properties.new(api_key_file_location)
       rescue
         raise ArgumentError, "No API Key file could be found or loaded from '#{api_key_file_location}'."
       end
@@ -93,7 +93,7 @@ module Stormpath
       api_key_secret = api_key_properties[secret_property_name]
       assert_not_nil api_key_secret, api_key_warning_message(:secret, api_key_file_location)
 
-      ApiKey.new api_key_id, api_key_secret
+      ApiKey.new(api_key_id, api_key_secret)
     end
 
     def api_key_warning_message(id_or_secret, api_key_file_location)

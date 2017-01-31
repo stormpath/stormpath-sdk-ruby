@@ -133,7 +133,7 @@ describe Stormpath::Resource::Collection, :vcr do
 
       let(:groups) do
         ('A'..'Z').map do |letter|
-          directory.groups.create name: "#{letter}. pagination testing group "
+          directory.groups.create(name: "#{letter}. pagination testing group ")
         end
       end
 
@@ -170,12 +170,7 @@ describe Stormpath::Resource::Collection, :vcr do
 
     context 'testing limits and offsets with name checking' do
       let(:directory) { test_api_client.directories.create(directory_attrs) }
-
-      let!(:groups) do
-        ('1'..'100').map do |number|
-          directory.groups.create name: number
-        end
-      end
+      let!(:groups) { ('1'..'100').map { |number| directory.groups.create(name: number) } }
 
       after { directory.delete }
 

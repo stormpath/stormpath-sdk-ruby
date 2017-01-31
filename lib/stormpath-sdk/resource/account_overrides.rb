@@ -14,7 +14,7 @@ module Stormpath
                      when Stormpath::Resource::Base
                        account
                      else
-                       Stormpath::Resource::Account.new account, client
+                       Stormpath::Resource::Account.new(account, client)
                      end
 
           resource.apply_custom_data_updates_if_necessary

@@ -1,0 +1,21 @@
+LineLength:
+  Max: 100
+
+Documentation:
+  Enabled: False
+
+Style/FirstMethodArgumentLineBreak:
+  Description: >-
+                 Checks for a line break before the first argument in a
+                 multi-line method call.
+  Enabled: True
+
+WordArray:
+  Enabled: False
+
+AllCops:
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/migrate/*.rb'
+Rails:
+  Enabled: true

@@ -51,9 +51,9 @@ module Stormpath
                                when Stormpath::Resource::Base
                                  properties_or_resource
                                else
-                                 item_class.new properties_or_resource, client
+                                 item_class.new(properties_or_resource, client)
                                end
-                    data_store.create href, resource, item_class, options
+                    data_store.create(href, resource, item_class, options)
                   end
                 end # can.include? :create
 

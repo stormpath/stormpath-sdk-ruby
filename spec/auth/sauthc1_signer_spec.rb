@@ -6,7 +6,7 @@ describe Stormpath::Http::Authc::Sauthc1Signer do
     proc { 'fake-uuid' }
   end
   let(:signer) do
-    Stormpath::Http::Authc::Sauthc1Signer.new fake_uuid_generator
+    Stormpath::Http::Authc::Sauthc1Signer.new(fake_uuid_generator)
   end
 
   after do
@@ -19,11 +19,15 @@ describe Stormpath::Http::Authc::Sauthc1Signer do
         let(:fake_api_key) { Stormpath::ApiKey.new('foo', 'bar') }
 
         let(:empty_query_hash_request) do
-          Stormpath::Http::Request.new 'get', 'http://example.com/resources/abc123?q=red blue', nil, {}, nil, test_api_key
+          Stormpath::Http::Request.new(
+            'get', 'http://example.com/resources/abc123?q=red blue', nil, {}, nil, test_api_key
+          )
         end
 
         let(:filled_query_hash_request) do
-          Stormpath::Http::Request.new 'get', 'http://example.com/resources/abc123', { 'q' => 'red blue' }, {}, nil, test_api_key
+          Stormpath::Http::Request.new(
+            'get', 'http://example.com/resources/abc123', { 'q' => 'red blue' }, {}, nil, test_api_key
+          )
         end
 
         before do

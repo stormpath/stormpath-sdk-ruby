@@ -4,20 +4,20 @@ module Stormpath
   module Cache
     class RedisStore
       def initialize(opts = {})
-        @redis = Redis.new opts
+        @redis = Redis.new(opts)
       end
 
       def get(key)
-        entry = @redis.get key
+        entry = @redis.get(key)
         entry && Stormpath::Cache::CacheEntry.from_h(MultiJson.load(entry))
       end
 
       def put(key, entry)
-        @redis.set key, MultiJson.dump(entry.to_h)
+        @redis.set(key, MultiJson.dump(entry.to_h))
       end
 
       def delete(key)
-        @redis.del key
+        @redis.del(key)
       end
 
       def clear

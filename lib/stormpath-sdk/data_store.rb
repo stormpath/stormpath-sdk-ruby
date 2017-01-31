@@ -35,7 +35,7 @@ module Stormpath
       @base_url = base_url || DEFAULT_BASE_URL
       @request_executor = request_executor
       @api_key = api_key
-      initialize_cache cache_opts
+      initialize_cache(cache_opts)
     end
 
     def initialize_cache(cache_opts)
@@ -45,12 +45,12 @@ module Stormpath
         region_opts = regions_opts[region.to_sym] || {}
         region_opts[:store] ||= cache_opts[:store]
         region_opts[:store_opts] ||= cache_opts[:store_opts]
-        @cache_manager.create_cache region, region_opts
+        @cache_manager.create_cache(region, region_opts)
       end
     end
 
     def instantiate(clazz, properties = {})
-      clazz.new properties, client
+      clazz.new(properties, client)
     end
 
     def get_resource(href, clazz, query = nil)
@@ -60,7 +60,7 @@ module Stormpath
 
       clazz = clazz.call(data) if clazz.respond_to? :call
 
-      instantiate clazz, data.to_hash
+      instantiate(clazz, data.to_hash)
     end
 
     def create(parent_href, resource, return_type, options = {})
@@ -114,7 +114,7 @@ module Stormpath
       result = !response.body.empty? ? MultiJson.load(response.body) : ''
 
       if response.error?
-        error = Stormpath::Resource::Error.new result
+        error = Stormpath::Resource::Error.new(result)
         raise Stormpath::Error, error
       end
 
@@ -134,7 +134,7 @@ module Stormpath
 
     def execute_request(http_method, href, resource = nil, query = nil)
       if http_method == 'get' && (cache = cache_for href)
-        cached_result = cache.get href
+        cached_result = cache.get(href)
         return cached_result if cached_result
       end
 

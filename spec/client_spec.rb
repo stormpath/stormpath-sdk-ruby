@@ -234,8 +234,8 @@ properties
           stub_request(:any, api_key_file_location).to_return(body: api_key_and_secret_properties)
           data_store = client.instance_variable_get '@data_store'
           cache_manager = data_store.cache_manager
-          @directories_cache = cache_manager.get_cache 'directories'
-          @groups_cache = cache_manager.get_cache 'groups'
+          @directories_cache = cache_manager.get_cache('directories')
+          @groups_cache = cache_manager.get_cache('groups')
         end
 
         it 'passes those params down to the caches' do
@@ -259,7 +259,7 @@ properties
       end
 
       let(:api_key) do
-        Stormpath::ApiKey.new test_api_key_id, test_api_key_secret
+        Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret)
       end
 
       it 'initializes the request executor with the proxy' do
@@ -268,7 +268,7 @@ properties
           .with(proxy: http_proxy)
           .and_return request_executor
 
-        Stormpath::Client.new api_key: api_key, proxy: http_proxy
+        Stormpath::Client.new(api_key: api_key, proxy: http_proxy)
       end
     end
   end
@@ -325,7 +325,7 @@ properties
 
       context 'expanding a nested single resource' do
         let(:cached_account) do
-          client.accounts.get account.href, Stormpath::Resource::Expansion.new('directory')
+          client.accounts.get(account.href, Stormpath::Resource::Expansion.new('directory'))
         end
 
         before { client.data_store.initialize_cache({}) }
@@ -338,7 +338,7 @@ properties
 
       context 'expanding a nested collection resource' do
         let(:cached_account) do
-          client.accounts.get account.href, Stormpath::Resource::Expansion.new('groups')
+          client.accounts.get(account.href, Stormpath::Resource::Expansion.new('groups'))
         end
         let(:group) { directory.groups.create(group_attrs) }
 
@@ -393,7 +393,7 @@ properties
       end
 
       context do
-        let(:application) { test_api_client.applications.create application_attributes }
+        let(:application) { test_api_client.applications.create(application_attributes) }
 
         it 'creates that application' do
           expect(application).to be
@@ -405,11 +405,9 @@ properties
       end
 
       describe 'auto directory creation' do
-        let(:application) { test_api_client.applications.create application_attributes, options }
+        let(:application) { test_api_client.applications.create(application_attributes, options) }
 
-        let(:directories) do
-          test_api_client.directories
-        end
+        let(:directories) { test_api_client.directories }
 
         context 'login source' do
           let(:options) { { createDirectory: true } }
@@ -419,7 +417,7 @@ properties
             )
           end
           let(:auth_request) do
-            Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith2', '4P@$$w0rd!'
+            Stormpath::Authentication::UsernamePasswordRequest.new('johnsmith2', '4P@$$w0rd!')
           end
           let(:auth_result) { application.authenticate_account(auth_request) }
 

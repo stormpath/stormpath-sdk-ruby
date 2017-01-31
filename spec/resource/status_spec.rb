@@ -13,7 +13,7 @@ describe 'StatusOnDirectoryAndAccount', :vcr do
   let!(:account) do
     directory.accounts.create(account_attrs(email: 'rubytest', password: 'P@$$w0rd'))
   end
-  let(:reloaded_account) { test_api_client.accounts.get account.href }
+  let(:reloaded_account) { test_api_client.accounts.get(account.href) }
   before { map_account_store(application, directory, 0, true, true) }
 
   after do
