@@ -354,10 +354,10 @@ describe Stormpath::Resource::Directory, :vcr do
 
       it 'creates the directory with provider data' do
         stub_request(:post, 'https://api.stormpath.com/v1/directories')
-          .to_return(status: 200, body: fixture('create_saml_directory.json'), headers: {})
+          .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
         stub_request(:get, directory.href + '/provider')
-          .to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers: {})
+          .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
         directory
         expect(directory.provider.provider_id).to eq('saml')
@@ -407,10 +407,10 @@ describe Stormpath::Resource::Directory, :vcr do
 
     it 'returnes provider data' do
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
-        .to_return(status: 200, body: fixture('create_saml_directory.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
       stub_request(:get, directory.href + '/provider')
-        .to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
       directory
       expect(directory.provider.href).not_to be_empty
@@ -443,13 +443,13 @@ describe Stormpath::Resource::Directory, :vcr do
 
     it 'returnes provider metadata' do
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
-        .to_return(status: 200, body: fixture('create_saml_directory.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
       stub_request(:get, directory.href + '/provider')
-        .to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
       stub_request(:get, directory.provider.service_provider_metadata['href'])
-        .to_return(status: 200, body: fixture('get_saml_directory_provider_metadata.json'), headers: {})
+        .to_return(body: Stormpath::Test.mocked_saml_directory_provider_metadata_response, status: 200)
 
       expect(directory.provider_metadata.href).not_to be_empty
       expect(directory.provider_metadata.entity_id).not_to be_empty
@@ -486,13 +486,13 @@ describe Stormpath::Resource::Directory, :vcr do
                                                            ])
 
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
-        .to_return(status: 200, body: fixture('create_saml_directory.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
       stub_request(:get, directory.href + '/provider')
-        .to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
       stub_request(:post, directory.provider.attribute_statement_mapping_rules['href'])
-        .to_return(status: 200, body: fixture('create_saml_directory_mapping_rules.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory_rules)
 
       response = directory.create_attribute_mappings(mappings)
       expect(response.items).to eq([{ 'name' => 'uid4', 'name_format' => 'nil', 'account_attributes' => ['username'] }])
