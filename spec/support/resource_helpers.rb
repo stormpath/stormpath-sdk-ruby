@@ -55,7 +55,8 @@ module Stormpath
 
       def group_attrs(opts = {})
         opts.tap do |o|
-          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby-group-#{random_number}"
+          o[:name]        = (!opts[:name].blank? && opts[:name]) || "ruby-group-#{random_number}"
+          o[:description] = (!opts[:description].blank? && opts[:description]) || "ruby-group-desc-#{random_number}"
         end
       end
 

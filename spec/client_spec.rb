@@ -352,16 +352,18 @@ properties
     end
 
     context 'search' do
+      let(:app_name_1) { "ruby-test-app-#{random_number}" }
+      let(:app_name_2) { "ruby-test-app-#{random_number}" }
       let!(:applications) do
         [
-          test_api_client.applications.create(application_attrs(name: 'rubytestapp1')),
-          test_api_client.applications.create(application_attrs(name: 'rubytestapp2'))
+          test_api_client.applications.create(application_attrs(name: app_name_1)),
+          test_api_client.applications.create(application_attrs(name: app_name_2))
         ]
       end
 
       context 'by any attribute' do
         let(:search_results) do
-          test_api_client.applications.search('rubytestapp1')
+          test_api_client.applications.search(app_name_1)
         end
 
         it 'returns the application' do
@@ -371,7 +373,7 @@ properties
 
       context 'by an explicit attribute' do
         let(:search_results) do
-          test_api_client.applications.search(name: 'rubytestapp1')
+          test_api_client.applications.search(name: app_name_1)
         end
 
         it 'returns the application' do
@@ -383,7 +385,7 @@ properties
     end
 
     describe '.create' do
-      let(:application_name) { 'rubytestapp' }
+      let(:application_name) { "rubytestapp-#{random_number}" }
 
       let(:application_attributes) do
         {
@@ -410,14 +412,15 @@ properties
         let(:directories) { test_api_client.directories }
 
         context 'login source' do
+          let(:username) { "johnsmith-#{random_number}" }
           let(:options) { { createDirectory: true } }
           let!(:account) do
             application.accounts.create(
-              account_attrs(username: 'johnsmith2', password: '4P@$$w0rd!')
+              account_attrs(username: username, password: '4P@$$w0rd!')
             )
           end
           let(:auth_request) do
-            Stormpath::Authentication::UsernamePasswordRequest.new('johnsmith2', '4P@$$w0rd!')
+            Stormpath::Authentication::UsernamePasswordRequest.new(username, '4P@$$w0rd!')
           end
           let(:auth_result) { application.authenticate_account(auth_request) }
 
@@ -669,12 +672,8 @@ properties
       map_account_store(application, directory2, 2, false, false)
     end
 
-    let!(:account1) do
-      directory1.accounts.create(account_attrs(email: 'jekyll', username: 'jekyll'))
-    end
-    let!(:account2) do
-      directory2.accounts.create(account_attrs(email: 'hyde', username: 'hyde'))
-    end
+    let!(:account1) { directory1.accounts.create(account_attrs) }
+    let!(:account2) { directory2.accounts.create(account_attrs) }
 
     let(:link_accounts) do
       test_api_client.account_links.create(

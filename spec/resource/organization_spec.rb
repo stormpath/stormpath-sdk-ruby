@@ -1,14 +1,10 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::Organization, :vcr do
+  let(:organization_name_key) { "rubysdk-org-#{random_number}" }
   let(:organization) do
-    test_api_client.organizations.create(organization_attrs(
-                                           name: 'test_ruby_organization',
-                                           name_key: 'testorganization',
-                                           description: 'test organization'
-    ))
+    test_api_client.organizations.create(organization_attrs(name_key: organization_name_key))
   end
-
   after { organization.delete if organization }
 
   describe 'instances should respond to attribute property methods' do
@@ -59,7 +55,7 @@ describe Stormpath::Resource::Organization, :vcr do
 
       it 'should raise Stormpath::Error' do
         expect do
-          test_api_client.organizations.create(organization_attrs(name_key: 'testorganization'))
+          test_api_client.organizations.create(organization_attrs(name_key: organization_name_key))
         end.to raise_error(Stormpath::Error)
       end
     end
@@ -70,7 +66,7 @@ describe Stormpath::Resource::Organization, :vcr do
     after { directory.delete }
 
     context 'groups' do
-      let(:group) { directory.groups.create(name: 'test_group') }
+      let(:group) { directory.groups.create(organization_attrs) }
       before { map_organization_store(group, organization) }
 
       it 'returns a collection of groups' do
@@ -80,8 +76,10 @@ describe Stormpath::Resource::Organization, :vcr do
     end
 
     context 'accounts' do
-      let(:account) { directory.accounts.create(account_attrs(email: 'rubysdk')) }
-      let(:org_account) { directory.accounts.create(account_attrs(email: 'rubysdk2')) }
+      let(:account_email_1) { "rubysdk-#{random_number}" }
+      let(:account_email_2) { "rubysdk-#{random_number}" }
+      let(:account) { directory.accounts.create(account_attrs(email: account_email_1)) }
+      let(:org_account) { directory.accounts.create(account_attrs(email: account_email_2)) }
 
       before { map_organization_store(directory, organization, true) }
 
@@ -120,14 +118,15 @@ describe Stormpath::Resource::Organization, :vcr do
   end
 
   describe 'update' do
+    let(:changed_org_name_key) { "rubysdk-org-#{random_number}" }
     before do
-      organization.name_key = 'changed-test-organization'
+      organization.name_key = changed_org_name_key
       organization.save
     end
 
     it 'can change the data of the existing organization' do
       org = test_api_client.organizations.get(organization.href)
-      expect(org.name_key).to eq('changed-test-organization')
+      expect(org.name_key).to eq(changed_org_name_key)
     end
   end
 
@@ -148,7 +147,7 @@ describe Stormpath::Resource::Organization, :vcr do
     end
 
     context 'given an account_store is a group' do
-      let(:group) { directory.groups.create(name: 'test_group') }
+      let(:group) { directory.groups.create(group_attrs) }
       let(:organization_account_store_mapping) { map_organization_store(group, organization) }
       let(:reloaded_mapping) do
         test_api_client.account_store_mappings.get(organization_account_store_mapping.href)

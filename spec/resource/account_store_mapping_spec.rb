@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stormpath::Resource::AccountStoreMapping, :vcr do
-  let(:directory_name) { 'rubysdktestdir' }
+  let(:directory_name) { "rubysdktestdir-#{random_number}" }
   let(:directory) { test_api_client.directories.create(directory_attrs(name: directory_name)) }
   let(:application) { test_api_client.applications.create(application_attrs) }
 
