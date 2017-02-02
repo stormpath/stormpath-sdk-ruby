@@ -454,12 +454,9 @@ properties
 
           before { application }
 
-          # fails with Stormpath::Error: Authentication required.
           it 'creates directory named "Client Application Create Test Directory"' do
             expect(directories.map(&:name)).to include("#{application_name} Directory")
           end
-
-          it 'resolves naming conflict with existing directory throwing Stormpath::Error with status 409 and code 5010'
         end
 
         context 'with directory: ""' do
@@ -487,7 +484,7 @@ properties
         after(:each) do |example|
           unless example.metadata[:skip_cleanup]
             application.delete
-            test_api_client.directories.each do |d|
+            directories.each do |d|
               d.delete if ["#{application_name} Directory", "#{application_name} Directory (2)", "#{application_name} Directory Custom"].include?(d.name)
             end
           end
