@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'BasicAuthenticator' do
+describe 'BasicAuthenticator', :vcr do
   let(:application) { test_api_client.applications.create(application_attrs) }
   let(:directory) { test_api_client.directories.create(directory_attrs) }
   let(:directory2) { test_api_client.directories.create(directory_attrs) }
