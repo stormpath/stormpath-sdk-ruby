@@ -385,7 +385,7 @@ properties
     end
 
     describe '.create' do
-      let(:application_name) { "rubytestapp-#{random_number}" }
+      let(:application_name) { "rubyclientcreatespec-#{random_number}" }
 
       let(:application_attributes) do
         {
@@ -408,8 +408,6 @@ properties
 
       describe 'auto directory creation' do
         let(:application) { test_api_client.applications.create(application_attributes, options) }
-
-        let(:directories) { test_api_client.directories }
 
         context 'login source' do
           let(:username) { "johnsmith-#{random_number}" }
@@ -436,7 +434,7 @@ properties
 
           it 'creates directory named by appending "Directory" to app name' do
             application
-            expect(directories.map(&:name)).to include("#{application_name} Directory")
+            expect(test_api_client.directories.map(&:name)).to include("#{application_name} Directory")
           end
 
           context 'and existing directory' do
@@ -444,7 +442,7 @@ properties
               test_api_client.directories.each { |d| d.delete if "#{application_name} Directory" == d.name }
               test_api_client.directories.create(name: "#{application_name} Directory")
               application
-              expect(directories.map(&:name)).to include("#{application_name} Directory (2)")
+              expect(test_api_client.directories.map(&:name)).to include("#{application_name} Directory (2)")
             end
           end
         end
@@ -455,7 +453,7 @@ properties
           before { application }
 
           it 'creates directory named "Client Application Create Test Directory"' do
-            expect(directories.map(&:name)).to include("#{application_name} Directory")
+            expect(test_api_client.directories.map(&:name)).to include("#{application_name} Directory")
           end
         end
 
@@ -484,8 +482,8 @@ properties
         after(:each) do |example|
           unless example.metadata[:skip_cleanup]
             application.delete
-            directories.each do |d|
-              d.delete if ["#{application_name} Directory", "#{application_name} Directory (2)", "#{application_name} Directory Custom"].include?(d.name)
+            test_api_client.directories.each do |d|
+              d.delete if ["#{application_name} Directory", "#{application_name} Directory (2)"].include?(d.name)
             end
           end
         end
