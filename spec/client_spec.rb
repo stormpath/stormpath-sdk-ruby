@@ -524,14 +524,17 @@ properties
     end
 
     describe '.create' do
+      let(:directory_name) { "rubysdkdir-#{random_number}" }
       let(:directory) do
-        test_api_client.directories.create(directory_attrs(name: 'ruby', description: 'ruby'))
+        test_api_client.directories.create(
+          directory_attrs(name: directory_name, description: directory_name)
+        )
       end
 
       it 'creates that application' do
         expect(directory).to be
-        expect(directory.name).to eq('ruby')
-        expect(directory.description).to eq('ruby')
+        expect(directory.name).to eq(directory_name)
+        expect(directory.description).to eq(directory_name)
       end
 
       after { directory.delete }
@@ -590,19 +593,22 @@ properties
     end
 
     describe '.create' do
+      let(:organization_name) { "rubysdkorg#{random_number}" }
       let(:organization) do
-        test_api_client.organizations.create(organization_attrs(
-                                               name: 'ruby',
-                                               name_key: 'ruby-org',
-                                               description: 'ruby-org'
-        ))
+        test_api_client.organizations.create(
+          organization_attrs(
+            name: organization_name,
+            name_key: organization_name,
+            description: organization_name
+          )
+        )
       end
 
       it 'creates an organization' do
         expect(organization).to be
-        expect(organization.name).to eq('ruby')
-        expect(organization.name_key).to eq('ruby-org')
-        expect(organization.description).to eq('ruby-org')
+        expect(organization.name).to eq(organization_name)
+        expect(organization.name_key).to eq(organization_name)
+        expect(organization.description).to eq(organization_name)
       end
 
       after { organization.delete }

@@ -311,11 +311,12 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_directory_with_custom_data' do
+    let(:directory_name) { "rubysdkdir-#{random_number}" }
     let(:directory) do
       test_api_client.directories.create(
         directory_attrs(
-          name: 'rubysdkdir',
-          description: 'rubysdkdir desc'
+          name: directory_name,
+          description: directory_name
         )
       )
     end
@@ -326,18 +327,20 @@ describe Stormpath::Resource::Directory, :vcr do
       directory.custom_data['category'] = 'classified'
 
       directory.save
-      expect(directory.name).to eq('rubysdkdir')
-      expect(directory.description).to eq('rubysdkdir desc')
+      expect(directory.name).to eq(directory_name)
+      expect(directory.description).to eq(directory_name)
       expect(directory.custom_data['category']).to eq('classified')
     end
   end
 
   describe 'create directory with provider data' do
+    let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
+
     context 'valida data' do
       let(:directory) do
         test_api_client.directories.create(
-          name: 'rubysdkdir',
-          description: 'description_for_some_test_directory',
+          name: directory_name,
+          description: directory_name,
           provider: {
             provider_id: 'saml',
             sso_login_url: 'https://yourIdp.com/saml2/sso/login',
@@ -371,8 +374,8 @@ describe Stormpath::Resource::Directory, :vcr do
       it 'raises Stormpath::Error' do
         expect do
           test_api_client.directories.create(
-            name: 'rubysdkdir',
-            description: 'description_for_some_test_directory',
+            name: directory_name,
+            description: directory_name,
             provider: {
               provider_id: 'saml',
               sso_login_url: '',
@@ -389,8 +392,8 @@ describe Stormpath::Resource::Directory, :vcr do
   describe 'saml #provider' do
     let(:directory) do
       test_api_client.directories.create(
-        name: 'rubysdkdir',
-        description: 'description_for_some_test_directory',
+        name: directory_name,
+        description: directory_name,
         provider: {
           provider_id: 'saml',
           sso_login_url: 'https://yourIdp.com/saml2/sso/login',
@@ -425,7 +428,7 @@ describe Stormpath::Resource::Directory, :vcr do
   describe 'saml #provider_metadata' do
     let(:directory) do
       test_api_client.directories.create(
-        name: 'rubysdkdir',
+        name: directory_name,
         description: 'description_for_some_test_directory',
         provider: {
           provider_id: 'saml',
@@ -461,7 +464,7 @@ describe Stormpath::Resource::Directory, :vcr do
   describe 'saml mapping rules' do
     let(:directory) do
       test_api_client.directories.create(
-        name: 'rubysdkdir',
+        name: directory_name,
         description: 'description_for_some_test_directory',
         provider: {
           provider_id: 'saml',
@@ -478,12 +481,14 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     it 'updates the directory mappings' do
-      mappings = Stormpath::Provider::SamlMappingRules.new(items: [
-                                                             {
-                                                               name: 'uid',
-                                                               account_attributes: ['username']
-                                                             }
-                                                           ])
+      mappings = Stormpath::Provider::SamlMappingRules.new(
+        items: [
+          {
+            name: 'uid',
+            account_attributes: ['username']
+          }
+        ]
+      )
 
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
         .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
@@ -525,13 +530,14 @@ describe Stormpath::Resource::Directory, :vcr do
     after { directory.delete }
 
     context 'given a valid group' do
-      let(:created_group) { directory.groups.create(group_attrs(name: 'rubysdkgroup')) }
+      let(:group_name) { "rubysdkgroup#{random_number}" }
+      let(:created_group) { directory.groups.create(group_attrs(name: group_name)) }
 
       after { created_group.delete }
 
       it 'creates a group' do
         expect(created_group).to be
-        expect(created_group.name).to eq('rubysdkgroup')
+        expect(created_group.name).to eq(group_name)
       end
     end
   end
