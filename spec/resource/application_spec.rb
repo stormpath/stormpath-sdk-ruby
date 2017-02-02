@@ -581,6 +581,8 @@ describe Stormpath::Resource::Application, :vcr do
           it 'raises an error' do
             expect { auth_request }.to raise_error(Stormpath::Error)
           end
+
+          after { other_organization.delete }
         end
 
         describe 'using an organization object' do
@@ -595,6 +597,8 @@ describe Stormpath::Resource::Application, :vcr do
           it 'raises an error' do
             expect { auth_request }.to raise_error(Stormpath::Error)
           end
+
+          after { other_organization.delete }
         end
       end
     end
