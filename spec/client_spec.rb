@@ -477,7 +477,7 @@ properties
           before { application }
 
           it 'creates no directory' do
-            expect(directories.map(&:name)).not_to include("#{application_name} Directory")
+            expect(test_api_client.directories.map(&:name)).not_to include("#{application_name} Directory")
           end
         end
 
@@ -495,12 +495,11 @@ properties
 
   describe '#directories' do
     context 'given a collection' do
-      let(:directories) { test_api_client.directories }
-      let(:directory) { directories.create(directory_attrs) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       it 'returns the collection' do
-        expect(directories).to be_kind_of(Stormpath::Resource::Collection)
-        expect(directories.count).to be >= 1
+        expect(test_api_client.directories).to be_kind_of(Stormpath::Resource::Collection)
+        expect(test_api_client.directories.count).to be >= 1
       end
 
       after { directory.delete }
