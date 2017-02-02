@@ -334,7 +334,7 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'create directory with provider data' do
-    let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
+    let(:directory_name) { "rubysdkdirprovider-#{random_number}" }
 
     context 'valida data' do
       let(:directory) do
@@ -390,6 +390,7 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'saml #provider' do
+    let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
     let(:directory) do
       test_api_client.directories.create(
         name: directory_name,
@@ -426,6 +427,7 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'saml #provider_metadata' do
+    let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
     let(:directory) do
       test_api_client.directories.create(
         name: directory_name,
@@ -462,6 +464,7 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'saml mapping rules' do
+    let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
     let(:directory) do
       test_api_client.directories.create(
         name: directory_name,
