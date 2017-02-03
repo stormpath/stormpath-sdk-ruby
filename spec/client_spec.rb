@@ -297,6 +297,7 @@ properties
       end
 
       it 'accepts offset and limit' do
+        wait_for_resource_creation
         expect(test_api_client.applications.limit(2).count).to be >= 3
         expect(test_api_client.applications.offset(1).limit(2).count).to be >= 2
       end
@@ -480,7 +481,7 @@ properties
         end
 
         after(:each) do |example|
-          wait_for_directory_creation
+          wait_for_resource_creation
           unless example.metadata[:skip_cleanup]
             application.delete
             test_api_client.directories.each do |d|
@@ -514,6 +515,7 @@ properties
       end
 
       it 'should retrieve the number of directories described with the limit' do
+        wait_for_resource_creation
         expect(test_api_client.directories.count).to be >= 2
       end
     end

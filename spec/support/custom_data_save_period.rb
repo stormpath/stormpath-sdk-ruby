@@ -8,7 +8,7 @@ module Stormpath
         sleep 5
       end
 
-      def wait_for_directory_creation
+      def wait_for_resource_creation
         sleep 4
       end
     end
