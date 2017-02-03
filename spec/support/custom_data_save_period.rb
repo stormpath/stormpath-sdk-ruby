@@ -9,7 +9,7 @@ module Stormpath
       end
 
       def wait_for_resource_creation
-        sleep 4
+        sleep rand(2..6)
       end
     end
   end

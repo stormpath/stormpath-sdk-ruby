@@ -476,6 +476,7 @@ properties
           before { application }
 
           it 'creates no directory' do
+            wait_for_resource_creation
             expect(test_api_client.directories.map(&:name)).not_to include("#{application_name} Directory")
           end
         end
