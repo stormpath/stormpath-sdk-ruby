@@ -101,6 +101,7 @@ describe Stormpath::Resource::Application, :vcr do
 
     context '#web_config' do
       let(:web_config) { application.web_config }
+      let(:dns_label) { "ruby-dns-label-#{random_number}" }
 
       it 'should have web_config' do
         expect(application.web_config).to be_a Stormpath::Resource::ApplicationWebConfig
@@ -117,9 +118,9 @@ describe Stormpath::Resource::Application, :vcr do
       end
 
       it 'changing dns_label should affect domain_name' do
-        web_config.dns_label = 'stormtrooper'
+        web_config.dns_label = dns_label
         web_config.save
-        expect(application.web_config.domain_name).to eq 'stormtrooper.apps.stormpath.io'
+        expect(application.web_config.domain_name).to eq "#{dns_label}.apps.stormpath.io"
       end
     end
   end
