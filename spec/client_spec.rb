@@ -498,6 +498,7 @@ properties
       let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       it 'returns the collection' do
+        wait_for_resource_creation
         expect(test_api_client.directories).to be_kind_of(Stormpath::Resource::Collection)
         expect(test_api_client.directories.count).to be >= 1
       end
