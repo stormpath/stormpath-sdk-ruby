@@ -480,6 +480,7 @@ properties
         end
 
         after(:each) do |example|
+          wait_for_directory_creation
           unless example.metadata[:skip_cleanup]
             application.delete
             test_api_client.directories.each do |d|
