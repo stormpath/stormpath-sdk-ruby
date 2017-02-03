@@ -98,6 +98,7 @@ module Stormpath
     autoload :HttpBasicAuthentication, 'stormpath-sdk/auth/http_basic_authentication'
     autoload :HttpBearerAuthentication, 'stormpath-sdk/auth/http_bearer_authentication'
     autoload :CreateFactor, 'stormpath-sdk/auth/create_factor'
+    autoload :RegisterServiceProvider, 'stormpath-sdk/auth/register_service_provider'
   end
 
   module Provider
