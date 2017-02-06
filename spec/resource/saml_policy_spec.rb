@@ -17,7 +17,7 @@ describe Stormpath::Resource::SamlPolicy, :vcr do
 
   describe 'saml policy associations' do
     it 'should respond to service_provider' do
-      expect(saml_policy.service_provider).to be_a Stormpath::Resource::RegisteredSamlServiceProvider
+      expect(saml_policy.service_provider).to be_a Stormpath::Resource::SamlServiceProvider
     end
 
     it 'should respond to identity_provider' do
