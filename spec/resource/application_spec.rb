@@ -677,11 +677,10 @@ describe Stormpath::Resource::Application, :vcr do
                    'state' => ''
                  }, test_api_key_secret, 'HS256')
     end
-
-    let(:create_id_site_url_result) do
-      options = { callback_uri: 'http://localhost:9292/redirect' }
-      application.create_id_site_url options
-    end
+    let(:create_id_site_url_result) { application.create_id_site_url(options) }
+    let(:options) { { callback_uri: 'http://localhost:9292/redirect' } }
+    let(:uri) { Addressable::URI.parse(create_id_site_url_result) }
+    let(:jwt_token) { JWT.decode(uri.query_values['jwtRequest'], test_api_key_secret).first }
 
     it 'should create a url with jwtRequest' do
       expect(create_id_site_url_result).to include('jwtRequest')
@@ -692,35 +691,50 @@ describe Stormpath::Resource::Application, :vcr do
     end
 
     it 'should create a jwtRequest that is signed wit the client secret' do
-      uri = Addressable::URI.parse(create_id_site_url_result)
-      jwt_token = JWT.decode(uri.query_values['jwtRequest'], test_api_key_secret).first
-
       expect(jwt_token['iss']).to eq test_api_key_id
       expect(jwt_token['sub']).to eq application.href
       expect(jwt_token['cb_uri']).to eq 'http://localhost:9292/redirect'
     end
 
     context 'with logout option' do
+      before { options[:logout] = true }
+
       it 'shoud create a request to /sso/logout' do
+        expect(create_id_site_url_result).to include('/sso/logout')
       end
     end
 
-    context 'without providing cb_uri' do
-      let(:create_id_site_url_result) do
-        options = { callback_uri: '' }
-        application.create_id_site_url options
+    context 'with bad cb_uri' do
+      context 'blank' do
+        before { options[:callback_uri] = '' }
+
+        it 'should raise Stormpath Error with correct id_site error data' do
+          begin
+            create_id_site_url_result
+          rescue Stormpath::Error => error
+            expect(error.status).to eq(400)
+            expect(error.code).to eq(400)
+            expect(error.message).to eq('The specified callback URI (cb_uri) is not valid')
+            expect(error.developer_message).to eq('The specified callback URI (cb_uri) is not valid.'\
+              ' Make sure the callback URI specified in your ID Site configuration matches the value specified.')
+          end
+        end
       end
 
-      it 'should raise Stormpath Error with correct id_site error data' do
-        begin
-          create_id_site_url_result
-        rescue Stormpath::Error => error
-          expect(error.status).to eq(400)
-          expect(error.code).to eq(400)
-          expect(error.message).to eq('The specified callback URI (cb_uri) is not valid')
-          expect(error.developer_message).to eq('The specified callback URI (cb_uri) is not valid. Make sure the '\
-            'callback URI specified in your ID Site configuration matches the value specified.')
+      context 'nil' do
+        before { options.delete(:callback_uri) }
+
+        it 'should raise Stormpath Error' do
+          expect { create_id_site_url_result }.to raise_error(Stormpath::Error)
         end
+      end
+    end
+
+    context 'with providing require_mfa' do
+      before { options[:require_mfa] = ['sms'] }
+
+      it 'should create a jwtRequest that contains require_mfa' do
+        expect(jwt_token['require_mfa']).to eq ['sms']
       end
     end
   end

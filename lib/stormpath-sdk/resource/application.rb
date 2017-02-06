@@ -59,12 +59,10 @@ module Stormpath
       end
 
       def create_id_site_url(options = {})
-        base = client.data_store.base_url.sub('v' + Stormpath::DataStore::DEFAULT_API_VERSION.to_s, 'sso')
+        base = client.data_store.base_url.sub("v#{Stormpath::DataStore::DEFAULT_API_VERSION}", 'sso')
         base += '/logout' if options[:logout]
 
-        if options[:callback_uri].empty?
-          raise Stormpath::Oauth::Error, :jwt_cb_uri_incorrect
-        end
+        raise Stormpath::Oauth::Error, :jwt_cb_uri_incorrect unless options[:callback_uri].present?
 
         token = JWT.encode(jwt_token_payload(options), client.data_store.api_key.secret, 'HS256')
         "#{base}?jwtRequest=#{token}"
