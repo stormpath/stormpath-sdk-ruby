@@ -22,6 +22,7 @@ module Stormpath
 
       # :attribute_statement_mapping_rules is obsolete as a prop_reader
       # Since AttributeStatementMappingRules is created as a standalone class, a has_one should be used here
+      # TODO: has_one :attribute_statement_mapping_rules
     end
   end
 end

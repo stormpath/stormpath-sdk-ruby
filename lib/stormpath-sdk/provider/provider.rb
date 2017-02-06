@@ -20,7 +20,6 @@ module Stormpath
       prop_reader :provider_id, :created_at, :modified_at
 
       has_one :user_info_mapping_rules
-      # TODO: add has_one :attribute_statement_mapping_rules
     end
   end
 end
