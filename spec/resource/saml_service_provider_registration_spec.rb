@@ -23,17 +23,29 @@ describe Stormpath::Resource::SamlServiceProviderRegistration, vcr: true do
   it 'instances should respond to attribute property methods' do
     expect(service_provider_registration).to be_a Stormpath::Resource::SamlServiceProviderRegistration
 
-    [:status, :default_relay_state, :created_at, :modified_at].each do |prop_reader|
+    [:created_at, :modified_at].each do |prop_reader|
       expect(service_provider_registration).to respond_to(prop_reader)
       expect(service_provider_registration.send(prop_reader)).to be_a String
     end
 
-    # TODO: Currently no prop_accessors are enabled because the POST method isn't supported.
-    # Check out with Tom!
-    # [].each do |property_accessor|
-    #   expect(application).to respond_to(property_accessor)
-    #   expect(application).to respond_to("#{property_accessor}=")
-    #   expect(application.send(property_accessor)).to be_a String
-    # end
+    [:status, :default_relay_state].each do |property_accessor|
+      expect(service_provider_registration).to respond_to(property_accessor)
+      expect(service_provider_registration).to respond_to("#{property_accessor}=")
+      expect(service_provider_registration.send(property_accessor)).to be_a String
+    end
+  end
+
+  describe 'associations' do
+    it 'should respond to identity_provider' do
+      expect(service_provider_registration.identity_provider).to(
+        be_a(Stormpath::Resource::SamlIdentityProvider)
+      )
+    end
+
+    it 'should respond to service_provider' do
+      expect(service_provider_registration.service_provider).to(
+        be_a(Stormpath::Resource::RegisteredSamlServiceProvider)
+      )
+    end
   end
 end
