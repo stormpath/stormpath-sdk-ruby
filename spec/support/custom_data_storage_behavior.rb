@@ -15,8 +15,8 @@ shared_examples_for 'account_custom_data' do
         }
       )
     end
-    let(:reloaded_custom_data_storage) { test_api_client.accounts.get custom_data_storage.href }
-    let(:reloaded_custom_data_storage_2) { test_api_client.accounts.get custom_data_storage.href }
+    let(:reloaded_custom_data_storage) { test_api_client.accounts.get(custom_data_storage.href) }
+    let(:reloaded_custom_data_storage_2) { test_api_client.accounts.get(custom_data_storage.href) }
 
     it_behaves_like 'custom_data_storage'
   end
@@ -37,8 +37,8 @@ shared_examples_for 'group_custom_data' do
       )
     end
 
-    let(:reloaded_custom_data_storage) { test_api_client.groups.get custom_data_storage.href }
-    let(:reloaded_custom_data_storage_2) { test_api_client.groups.get custom_data_storage.href }
+    let(:reloaded_custom_data_storage) { test_api_client.groups.get(custom_data_storage.href) }
+    let(:reloaded_custom_data_storage_2) { test_api_client.groups.get(custom_data_storage.href) }
 
     it_behaves_like 'custom_data_storage'
   end

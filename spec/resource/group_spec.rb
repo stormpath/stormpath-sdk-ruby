@@ -5,7 +5,7 @@ describe Stormpath::Resource::Group, :vcr do
   after { directory.delete }
 
   describe 'instances should respond to attribute property methods' do
-    let(:group) { directory.groups.create name: 'RubyTestGroup', description: 'testDescription' }
+    let(:group) { directory.groups.create(group_attrs) }
 
     after { group.delete }
 

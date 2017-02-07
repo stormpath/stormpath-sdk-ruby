@@ -47,10 +47,12 @@ module Stormpath
         builder = Stormpath::Util::UriBuilder.new(composite_url)
         api_key_id, api_key_secret = builder.userinfo.split(':')
 
-        client = Stormpath::Client.new api_key: {
-          id: api_key_id,
-          secret: api_key_secret
-        }
+        client = Stormpath::Client.new(
+          api_key: {
+            id: api_key_id,
+            secret: api_key_secret
+          }
+        )
 
         application_path = builder.uri.path.slice(/\/applications(.)*$/)
         client.applications.get(application_path)

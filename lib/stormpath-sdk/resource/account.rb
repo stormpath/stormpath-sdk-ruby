@@ -46,7 +46,7 @@ module Stormpath
       has_many :factors, can: [:get, :create]
 
       def add_group(group)
-        client.group_memberships.create group: group, account: self
+        client.group_memberships.create(group: group, account: self)
       end
 
       def remove_group(group)

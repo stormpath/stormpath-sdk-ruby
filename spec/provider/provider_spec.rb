@@ -121,7 +121,7 @@ describe Stormpath::Provider::Provider, :vcr do
   end
 
   describe 'create stormpath directory with empty provider credentials' do
-    let(:name) { 'Stormpath' }
+    let(:name) { "ruby-sdk-stormpath-#{random_number}" }
     let(:description) { 'Directory for testing Stormpath directories.' }
     let(:provider_id) { 'stormpath' }
 

@@ -14,7 +14,7 @@ module Stormpath
       end
 
       def delete(key)
-        @store.delete key
+        @store.delete(key)
       end
 
       def clear

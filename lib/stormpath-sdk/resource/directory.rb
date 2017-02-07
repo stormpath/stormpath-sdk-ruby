@@ -60,7 +60,7 @@ module Stormpath
 
       def create_attribute_mappings(mappings)
         mappings.set_options(href: provider.attribute_statement_mapping_rules['href'])
-        data_store.create mappings.href, mappings, Stormpath::Provider::SamlMappingRules
+        data_store.create(mappings.href, mappings, Stormpath::Provider::SamlMappingRules)
       end
     end
   end

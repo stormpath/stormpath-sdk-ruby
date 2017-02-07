@@ -30,10 +30,12 @@ describe 'ProviderAccountResolver' do
 
       context 'with account store as a parameter' do
         let(:account_request) do
-          Stormpath::Provider::AccountRequest.new(:facebook,
-                                                  :access_token,
-                                                  'some-token',
-                                                  account_store: { name_key: 'app1' })
+          Stormpath::Provider::AccountRequest.new(
+            :facebook,
+            :access_token,
+            'some-token',
+            account_store: { name_key: 'app1' }
+          )
         end
 
         it 'a ProviderResult is returned' do

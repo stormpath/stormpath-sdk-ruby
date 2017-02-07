@@ -2,16 +2,18 @@ require 'spec_helper'
 
 describe Stormpath::Resource::AccountLink, :vcr do
   let(:application) { test_api_client.applications.create(application_attrs) }
-  let(:directory1) { test_api_client.directories.create(name: 'ruby sdk dir 1') }
-  let(:directory2) { test_api_client.directories.create(name: 'ruby sdk dir 2') }
+  let(:directory1) { test_api_client.directories.create(directory_attrs) }
+  let(:directory2) { test_api_client.directories.create(directory_attrs) }
+  let(:username1) { "jekyll-#{random_number}" }
+  let(:username2) { "hyde-#{random_number}" }
 
   before do
     map_account_store(application, directory1, 1, true, false)
     map_account_store(application, directory2, 2, false, false)
   end
 
-  let!(:account1) { directory1.accounts.create(account_attrs(email: 'jekyll', username: 'jekyll')) }
-  let!(:account2) { directory2.accounts.create(account_attrs(email: 'hyde', username: 'hyde')) }
+  let!(:account1) { directory1.accounts.create(account_attrs(email: username1, username: username1)) }
+  let!(:account2) { directory2.accounts.create(account_attrs(email: username2, username: username2)) }
 
   let!(:account_link) do
     test_api_client.account_links.create(

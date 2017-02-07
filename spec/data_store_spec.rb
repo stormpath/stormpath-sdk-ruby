@@ -6,9 +6,9 @@ shared_examples 'a data store' do
   let(:data_store) do
     Stormpath::DataStore.new(request_executor, test_api_key, store, nil)
   end
-  let(:application_cache) { data_store.cache_manager.get_cache 'applications' }
-  let(:tenant_cache)      { data_store.cache_manager.get_cache 'tenants' }
-  let(:group_cache)       { data_store.cache_manager.get_cache 'groups' }
+  let(:application_cache) { data_store.cache_manager.get_cache('applications') }
+  let(:tenant_cache)      { data_store.cache_manager.get_cache('tenants') }
+  let(:group_cache)       { data_store.cache_manager.get_cache('groups') }
   let(:default_base_url) { Stormpath::DataStore::DEFAULT_BASE_URL }
 
   after do
@@ -22,8 +22,10 @@ shared_examples 'a data store' do
     end
 
     it 'pulls resource name from href if its custom data also' do
-      region = data_store.send(:region_for,
-                               "#{default_base_url}/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData")
+      region = data_store.send(
+        :region_for,
+        "#{default_base_url}/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData"
+      )
       expect(region).to eq('customData')
     end
   end
@@ -71,7 +73,7 @@ shared_examples 'a data store' do
         href = resource['href']
         request_executor.response = MultiJson.dump resource
         data_store.get_resource href, Stormpath::Resource::Application
-        @cached = application_cache.get href
+        @cached = application_cache.get(href)
       end
 
       it 'caches a shallow resource' do
@@ -109,7 +111,7 @@ shared_examples 'a data store' do
         href = resource['href']
         request_executor.response = MultiJson.dump resource
         data_store.get_resource href, Stormpath::Resource::Application
-        @cached = application_cache.get href
+        @cached = application_cache.get(href)
       end
 
       it 'caches a shallow resource' do
@@ -158,12 +160,14 @@ shared_examples 'a data store' do
 
   context '#apply_default_user_agent' do
     let(:request) do
-      Stormpath::Http::Request.new('get',
-                                   'http://example.com/resources/abc123',
-                                   nil,
-                                   {},
-                                   nil,
-                                   test_api_key)
+      Stormpath::Http::Request.new(
+        'get',
+        'http://example.com/resources/abc123',
+        nil,
+        {},
+        nil,
+        test_api_key
+      )
     end
 
     before do

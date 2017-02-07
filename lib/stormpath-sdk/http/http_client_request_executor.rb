@@ -21,7 +21,7 @@ module Stormpath
 
       def initialize(options = {})
         @signer = Sauthc1Signer.new
-        @http_client = HTTPClient.new options[:proxy]
+        @http_client = HTTPClient.new(options[:proxy])
       end
 
       def execute_request(request, redirects_limit = 10)
@@ -52,10 +52,12 @@ module Stormpath
           return @redirect_response
         end
 
-        Response.new(response.http_header.status_code,
-                     response.http_header.body_type,
-                     response.content,
-                     response.http_header.body_size)
+        Response.new(
+          response.http_header.status_code,
+          response.http_header.body_type,
+          response.content,
+          response.http_header.body_size
+        )
       end
     end
   end

@@ -84,7 +84,7 @@ module Stormpath
 
       def delete_removed_properties
         @deleted_properties.delete_if do |deleted_property_name|
-          data_store.delete self, deleted_property_name
+          data_store.delete(self, deleted_property_name)
           true
         end
       end

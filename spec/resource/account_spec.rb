@@ -239,11 +239,13 @@ describe Stormpath::Resource::Account, :vcr do
       end
 
       let(:factor) do
-        account.create_factor(:sms,
-                              phone: { number: '+12025550173',
-                                       name: 'Rspec test phone',
-                                       description: 'This is a testing phone number' },
-                              challenge: { message: 'Enter code please: ' })
+        account.create_factor(
+          :sms,
+          phone: { number: '+12025550173',
+                   name: 'Rspec test phone',
+                   description: 'This is a testing phone number' },
+          challenge: { message: 'Enter code please: ' }
+        )
       end
 
       it 'factor should be created' do

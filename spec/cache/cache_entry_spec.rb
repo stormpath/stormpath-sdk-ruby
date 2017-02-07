@@ -8,7 +8,7 @@ describe Stormpath::Cache::CacheEntry do
 
   context 'by default' do
     let(:cache_entry) do
-      Stormpath::Cache::CacheEntry.new 'foo'
+      Stormpath::Cache::CacheEntry.new('foo')
     end
 
     let(:now) { Time.now }
@@ -31,7 +31,7 @@ describe Stormpath::Cache::CacheEntry do
 
   describe '#touch' do
     let(:cache_entry) do
-      Stormpath::Cache::CacheEntry.new 'foo'
+      Stormpath::Cache::CacheEntry.new('foo')
     end
 
     let(:now) { Time.now }
@@ -55,7 +55,7 @@ describe Stormpath::Cache::CacheEntry do
 
     context 'has not expired' do
       let(:cache_entry) do
-        Stormpath::Cache::CacheEntry.new 'foo'
+        Stormpath::Cache::CacheEntry.new('foo')
       end
 
       let(:expired) do
@@ -69,7 +69,7 @@ describe Stormpath::Cache::CacheEntry do
 
     context 'when TTL has expired' do
       before do
-        cache_entry = Stormpath::Cache::CacheEntry.new 'foo'
+        cache_entry = Stormpath::Cache::CacheEntry.new('foo')
         Timecop.freeze now + ttl_seconds + 1
 
         @expired = cache_entry.expired? ttl_seconds, tti_seconds
@@ -82,7 +82,7 @@ describe Stormpath::Cache::CacheEntry do
 
     context 'when TTI has expired' do
       before do
-        cache_entry = Stormpath::Cache::CacheEntry.new 'foo'
+        cache_entry = Stormpath::Cache::CacheEntry.new('foo')
         Timecop.freeze now + tti_seconds + 1
 
         @expired = cache_entry.expired? ttl_seconds, tti_seconds
@@ -96,7 +96,7 @@ describe Stormpath::Cache::CacheEntry do
 
   describe '#to_h' do
     let(:cache_entry) do
-      Stormpath::Cache::CacheEntry.new 'foo'
+      Stormpath::Cache::CacheEntry.new('foo')
     end
 
     let(:now) { Time.now }

@@ -68,7 +68,7 @@ describe Stormpath::Resource::Factor, :vcr do
 
   describe 'factor associations' do
     let(:app) { test_api_client.applications.create(application_attrs) }
-    let(:application) { test_api_client.applications.get app.href }
+    let(:application) { test_api_client.applications.get(app.href) }
     let(:directory) { test_api_client.directories.create(directory_attrs) }
 
     before { map_account_store(app, directory, 1, true, true) }

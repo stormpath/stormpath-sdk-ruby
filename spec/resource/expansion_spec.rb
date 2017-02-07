@@ -4,7 +4,7 @@ describe Stormpath::Resource::Expansion, :vcr do
   describe '#initialize' do
     context 'given a single property name' do
       let(:expansion) do
-        Stormpath::Resource::Expansion.new 'foo'
+        Stormpath::Resource::Expansion.new('foo')
       end
 
       it 'can be transmuted to a simple hash' do
@@ -13,7 +13,7 @@ describe Stormpath::Resource::Expansion, :vcr do
     end
     context 'given a list of property names' do
       let(:expansion) do
-        Stormpath::Resource::Expansion.new 'foo', 'bar'
+        Stormpath::Resource::Expansion.new('foo', 'bar')
       end
 
       it 'can be transmuted to a simple hash' do
