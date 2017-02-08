@@ -1,6 +1,6 @@
 module Stormpath
   module Authentication
-    class RegisterServiceProvider < Stormpath::Resource::Base
+    class RegisterServiceProvider
       attr_reader :client, :identity_provider, :assertion_consumer_service_url,
                   :entity_id, :name, :description, :name_id_format
 
