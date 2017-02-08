@@ -220,7 +220,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'can authenticate with the account credentials' do
-        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'qwerty'
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new('jlucpicard', 'qwerty')
         auth_result = application.authenticate_account auth_request
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
@@ -253,7 +253,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'can authenticate with the account credentials' do
-        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'testing12'
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new('jlucpicard', 'testing12')
         auth_result = application.authenticate_account auth_request
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
@@ -286,7 +286,7 @@ describe Stormpath::Resource::Directory, :vcr do
       end
 
       it 'can authenticate with the account credentials' do
-        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new 'jlucpicard', 'NotSecure'
+        auth_request = Stormpath::Authentication::UsernamePasswordRequest.new('jlucpicard', 'NotSecure')
         auth_result = application.authenticate_account auth_request
 
         expect(auth_result).to be_a Stormpath::Authentication::AuthenticationResult
@@ -311,9 +311,14 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe '#create_directory_with_custom_data' do
+    let(:directory_name) { "rubysdkdir-#{random_number}" }
     let(:directory) do
-      test_api_client.directories.create(directory_attrs(name: 'rubysdkdir',
-                                                         description: 'rubysdkdir desc'))
+      test_api_client.directories.create(
+        directory_attrs(
+          name: directory_name,
+          description: directory_name
+        )
+      )
     end
 
     after { directory.delete }
@@ -322,18 +327,20 @@ describe Stormpath::Resource::Directory, :vcr do
       directory.custom_data['category'] = 'classified'
 
       directory.save
-      expect(directory.name).to eq('rubysdkdir')
-      expect(directory.description).to eq('rubysdkdir desc')
+      expect(directory.name).to eq(directory_name)
+      expect(directory.description).to eq(directory_name)
       expect(directory.custom_data['category']).to eq('classified')
     end
   end
 
   describe 'create directory with provider data' do
+    let(:directory_name) { "rubysdkdirprovider-#{random_number}" }
+
     context 'valida data' do
       let(:directory) do
         test_api_client.directories.create(
-          name: 'rubysdkdir',
-          description: 'description_for_some_test_directory',
+          name: directory_name,
+          description: directory_name,
           provider: {
             provider_id: 'saml',
             sso_login_url: 'https://yourIdp.com/saml2/sso/login',
@@ -350,10 +357,10 @@ describe Stormpath::Resource::Directory, :vcr do
 
       it 'creates the directory with provider data' do
         stub_request(:post, 'https://api.stormpath.com/v1/directories')
-          .to_return(status: 200, body: fixture('create_saml_directory.json'), headers: {})
+          .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
         stub_request(:get, directory.href + '/provider')
-          .to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers: {})
+          .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
         directory
         expect(directory.provider.provider_id).to eq('saml')
@@ -367,8 +374,8 @@ describe Stormpath::Resource::Directory, :vcr do
       it 'raises Stormpath::Error' do
         expect do
           test_api_client.directories.create(
-            name: 'rubysdkdir',
-            description: 'description_for_some_test_directory',
+            name: directory_name,
+            description: directory_name,
             provider: {
               provider_id: 'saml',
               sso_login_url: '',
@@ -383,10 +390,11 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'saml #provider' do
+    let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
     let(:directory) do
       test_api_client.directories.create(
-        name: 'rubysdkdir',
-        description: 'description_for_some_test_directory',
+        name: directory_name,
+        description: directory_name,
         provider: {
           provider_id: 'saml',
           sso_login_url: 'https://yourIdp.com/saml2/sso/login',
@@ -403,10 +411,10 @@ describe Stormpath::Resource::Directory, :vcr do
 
     it 'returnes provider data' do
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
-        .to_return(status: 200, body: fixture('create_saml_directory.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
       stub_request(:get, directory.href + '/provider')
-        .to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
       directory
       expect(directory.provider.href).not_to be_empty
@@ -419,9 +427,10 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'saml #provider_metadata' do
+    let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
     let(:directory) do
       test_api_client.directories.create(
-        name: 'rubysdkdir',
+        name: directory_name,
         description: 'description_for_some_test_directory',
         provider: {
           provider_id: 'saml',
@@ -439,13 +448,13 @@ describe Stormpath::Resource::Directory, :vcr do
 
     it 'returnes provider metadata' do
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
-        .to_return(status: 200, body: fixture('create_saml_directory.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
       stub_request(:get, directory.href + '/provider')
-        .to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
       stub_request(:get, directory.provider.service_provider_metadata['href'])
-        .to_return(status: 200, body: fixture('get_saml_directory_provider_metadata.json'), headers: {})
+        .to_return(body: Stormpath::Test.mocked_saml_directory_provider_metadata_response, status: 200)
 
       expect(directory.provider_metadata.href).not_to be_empty
       expect(directory.provider_metadata.entity_id).not_to be_empty
@@ -455,9 +464,10 @@ describe Stormpath::Resource::Directory, :vcr do
   end
 
   describe 'saml mapping rules' do
+    let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
     let(:directory) do
       test_api_client.directories.create(
-        name: 'rubysdkdir',
+        name: directory_name,
         description: 'description_for_some_test_directory',
         provider: {
           provider_id: 'saml',
@@ -474,21 +484,23 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     it 'updates the directory mappings' do
-      mappings = Stormpath::Provider::SamlMappingRules.new(items: [
-                                                             {
-                                                               name: 'uid',
-                                                               account_attributes: ['username']
-                                                             }
-                                                           ])
+      mappings = Stormpath::Provider::SamlMappingRules.new(
+        items: [
+          {
+            name: 'uid',
+            account_attributes: ['username']
+          }
+        ]
+      )
 
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
-        .to_return(status: 200, body: fixture('create_saml_directory.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
       stub_request(:get, directory.href + '/provider')
-        .to_return(status: 200, body: fixture('get_saml_directory_provider.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
       stub_request(:post, directory.provider.attribute_statement_mapping_rules['href'])
-        .to_return(status: 200, body: fixture('create_saml_directory_mapping_rules.json'), headers: {})
+        .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory_rules)
 
       response = directory.create_attribute_mappings(mappings)
       expect(response.items).to eq([{ 'name' => 'uid4', 'name_format' => 'nil', 'account_attributes' => ['username'] }])
@@ -521,13 +533,14 @@ describe Stormpath::Resource::Directory, :vcr do
     after { directory.delete }
 
     context 'given a valid group' do
-      let(:created_group) { directory.groups.create(group_attrs(name: 'rubysdkgroup')) }
+      let(:group_name) { "rubysdkgroup#{random_number}" }
+      let(:created_group) { directory.groups.create(group_attrs(name: group_name)) }
 
       after { created_group.delete }
 
       it 'creates a group' do
         expect(created_group).to be
-        expect(created_group.name).to eq('rubysdkgroup')
+        expect(created_group.name).to eq(group_name)
       end
     end
   end

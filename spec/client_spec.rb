@@ -234,8 +234,8 @@ properties
           stub_request(:any, api_key_file_location).to_return(body: api_key_and_secret_properties)
           data_store = client.instance_variable_get '@data_store'
           cache_manager = data_store.cache_manager
-          @directories_cache = cache_manager.get_cache 'directories'
-          @groups_cache = cache_manager.get_cache 'groups'
+          @directories_cache = cache_manager.get_cache('directories')
+          @groups_cache = cache_manager.get_cache('groups')
         end
 
         it 'passes those params down to the caches' do
@@ -259,7 +259,7 @@ properties
       end
 
       let(:api_key) do
-        Stormpath::ApiKey.new test_api_key_id, test_api_key_secret
+        Stormpath::ApiKey.new(test_api_key_id, test_api_key_secret)
       end
 
       it 'initializes the request executor with the proxy' do
@@ -268,7 +268,7 @@ properties
           .with(proxy: http_proxy)
           .and_return request_executor
 
-        Stormpath::Client.new api_key: api_key, proxy: http_proxy
+        Stormpath::Client.new(api_key: api_key, proxy: http_proxy)
       end
     end
   end
@@ -297,6 +297,7 @@ properties
       end
 
       it 'accepts offset and limit' do
+        wait_for_resource_creation
         expect(test_api_client.applications.limit(2).count).to be >= 3
         expect(test_api_client.applications.offset(1).limit(2).count).to be >= 2
       end
@@ -325,7 +326,7 @@ properties
 
       context 'expanding a nested single resource' do
         let(:cached_account) do
-          client.accounts.get account.href, Stormpath::Resource::Expansion.new('directory')
+          client.accounts.get(account.href, Stormpath::Resource::Expansion.new('directory'))
         end
 
         before { client.data_store.initialize_cache({}) }
@@ -338,7 +339,7 @@ properties
 
       context 'expanding a nested collection resource' do
         let(:cached_account) do
-          client.accounts.get account.href, Stormpath::Resource::Expansion.new('groups')
+          client.accounts.get(account.href, Stormpath::Resource::Expansion.new('groups'))
         end
         let(:group) { directory.groups.create(group_attrs) }
 
@@ -352,16 +353,18 @@ properties
     end
 
     context 'search' do
+      let(:app_name_1) { "ruby-test-app-#{random_number}" }
+      let(:app_name_2) { "ruby-test-app-#{random_number}" }
       let!(:applications) do
         [
-          test_api_client.applications.create(application_attrs(name: 'rubytestapp1')),
-          test_api_client.applications.create(application_attrs(name: 'rubytestapp2'))
+          test_api_client.applications.create(application_attrs(name: app_name_1)),
+          test_api_client.applications.create(application_attrs(name: app_name_2))
         ]
       end
 
       context 'by any attribute' do
         let(:search_results) do
-          test_api_client.applications.search('rubytestapp1')
+          test_api_client.applications.search(app_name_1)
         end
 
         it 'returns the application' do
@@ -371,7 +374,7 @@ properties
 
       context 'by an explicit attribute' do
         let(:search_results) do
-          test_api_client.applications.search(name: 'rubytestapp1')
+          test_api_client.applications.search(name: app_name_1)
         end
 
         it 'returns the application' do
@@ -383,7 +386,7 @@ properties
     end
 
     describe '.create' do
-      let(:application_name) { 'rubytestapp' }
+      let(:application_name) { "rubyclientcreatespec-#{random_number}" }
 
       let(:application_attributes) do
         {
@@ -393,7 +396,7 @@ properties
       end
 
       context do
-        let(:application) { test_api_client.applications.create application_attributes }
+        let(:application) { test_api_client.applications.create(application_attributes) }
 
         it 'creates that application' do
           expect(application).to be
@@ -405,21 +408,18 @@ properties
       end
 
       describe 'auto directory creation' do
-        let(:application) { test_api_client.applications.create application_attributes, options }
-
-        let(:directories) do
-          test_api_client.directories
-        end
+        let(:application) { test_api_client.applications.create(application_attributes, options) }
 
         context 'login source' do
+          let(:username) { "johnsmith-#{random_number}" }
           let(:options) { { createDirectory: true } }
           let!(:account) do
             application.accounts.create(
-              account_attrs(username: 'johnsmith2', password: '4P@$$w0rd!')
+              account_attrs(username: username, password: '4P@$$w0rd!')
             )
           end
           let(:auth_request) do
-            Stormpath::Authentication::UsernamePasswordRequest.new 'johnsmith2', '4P@$$w0rd!'
+            Stormpath::Authentication::UsernamePasswordRequest.new(username, '4P@$$w0rd!')
           end
           let(:auth_result) { application.authenticate_account(auth_request) }
 
@@ -435,7 +435,7 @@ properties
 
           it 'creates directory named by appending "Directory" to app name' do
             application
-            expect(directories.map(&:name)).to include("#{application_name} Directory")
+            expect(test_api_client.directories.map(&:name)).to include("#{application_name} Directory")
           end
 
           context 'and existing directory' do
@@ -443,7 +443,7 @@ properties
               test_api_client.directories.each { |d| d.delete if "#{application_name} Directory" == d.name }
               test_api_client.directories.create(name: "#{application_name} Directory")
               application
-              expect(directories.map(&:name)).to include("#{application_name} Directory (2)")
+              expect(test_api_client.directories.map(&:name)).to include("#{application_name} Directory (2)")
             end
           end
         end
@@ -453,12 +453,9 @@ properties
 
           before { application }
 
-          # fails with Stormpath::Error: Authentication required.
           it 'creates directory named "Client Application Create Test Directory"' do
-            expect(directories.map(&:name)).to include("#{application_name} Directory")
+            expect(test_api_client.directories.map(&:name)).to include("#{application_name} Directory")
           end
-
-          it 'resolves naming conflict with existing directory throwing Stormpath::Error with status 409 and code 5010'
         end
 
         context 'with directory: ""' do
@@ -479,15 +476,17 @@ properties
           before { application }
 
           it 'creates no directory' do
-            expect(directories.map(&:name)).not_to include("#{application_name} Directory")
+            wait_for_resource_creation
+            expect(test_api_client.directories.map(&:name)).not_to include("#{application_name} Directory")
           end
         end
 
         after(:each) do |example|
+          wait_for_resource_creation
           unless example.metadata[:skip_cleanup]
             application.delete
             test_api_client.directories.each do |d|
-              d.delete if ["#{application_name} Directory", "#{application_name} Directory (2)", "#{application_name} Directory Custom"].include?(d.name)
+              d.delete if ["#{application_name} Directory", "#{application_name} Directory (2)"].include?(d.name)
             end
           end
         end
@@ -497,12 +496,12 @@ properties
 
   describe '#directories' do
     context 'given a collection' do
-      let(:directories) { test_api_client.directories }
-      let(:directory) { directories.create(directory_attrs) }
+      let(:directory) { test_api_client.directories.create(directory_attrs) }
 
       it 'returns the collection' do
-        expect(directories).to be_kind_of(Stormpath::Resource::Collection)
-        expect(directories.count).to be >= 1
+        wait_for_resource_creation
+        expect(test_api_client.directories).to be_kind_of(Stormpath::Resource::Collection)
+        expect(test_api_client.directories.count).to be >= 1
       end
 
       after { directory.delete }
@@ -518,19 +517,23 @@ properties
       end
 
       it 'should retrieve the number of directories described with the limit' do
+        wait_for_resource_creation
         expect(test_api_client.directories.count).to be >= 2
       end
     end
 
     describe '.create' do
+      let(:directory_name) { "rubysdkdir-#{random_number}" }
       let(:directory) do
-        test_api_client.directories.create(directory_attrs(name: 'ruby', description: 'ruby'))
+        test_api_client.directories.create(
+          directory_attrs(name: directory_name, description: directory_name)
+        )
       end
 
       it 'creates that application' do
         expect(directory).to be
-        expect(directory.name).to eq('ruby')
-        expect(directory.description).to eq('ruby')
+        expect(directory.name).to eq(directory_name)
+        expect(directory.description).to eq(directory_name)
       end
 
       after { directory.delete }
@@ -589,17 +592,22 @@ properties
     end
 
     describe '.create' do
+      let(:organization_name) { "rubysdkorg#{random_number}" }
       let(:organization) do
-        test_api_client.organizations.create(organization_attrs(name: 'ruby',
-                                                                name_key: 'ruby-org',
-                                                                description: 'ruby-org'))
+        test_api_client.organizations.create(
+          organization_attrs(
+            name: organization_name,
+            name_key: organization_name,
+            description: organization_name
+          )
+        )
       end
 
       it 'creates an organization' do
         expect(organization).to be
-        expect(organization.name).to eq('ruby')
-        expect(organization.name_key).to eq('ruby-org')
-        expect(organization.description).to eq('ruby-org')
+        expect(organization.name).to eq(organization_name)
+        expect(organization.name_key).to eq(organization_name)
+        expect(organization.description).to eq(organization_name)
       end
 
       after { organization.delete }
@@ -669,12 +677,8 @@ properties
       map_account_store(application, directory2, 2, false, false)
     end
 
-    let!(:account1) do
-      directory1.accounts.create(account_attrs(email: 'jekyll', username: 'jekyll'))
-    end
-    let!(:account2) do
-      directory2.accounts.create(account_attrs(email: 'hyde', username: 'hyde'))
-    end
+    let!(:account1) { directory1.accounts.create(account_attrs) }
+    let!(:account2) { directory2.accounts.create(account_attrs) }
 
     let(:link_accounts) do
       test_api_client.account_links.create(

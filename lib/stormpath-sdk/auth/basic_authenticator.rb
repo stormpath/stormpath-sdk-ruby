@@ -36,7 +36,7 @@ module Stormpath
 
         value = Base64.encode64(value).tr("\n", '')
 
-        attempt = @data_store.instantiate BasicLoginAttempt, nil
+        attempt = @data_store.instantiate(BasicLoginAttempt, nil)
         attempt.type = 'basic'
         attempt.value = value
 
@@ -44,7 +44,7 @@ module Stormpath
 
         href = parent_href + '/loginAttempts'
 
-        @data_store.create href, attempt, AuthenticationResult
+        @data_store.create(href, attempt, AuthenticationResult)
       end
     end
   end

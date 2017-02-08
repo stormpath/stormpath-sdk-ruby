@@ -6,7 +6,7 @@ module Stormpath
       end
 
       def create_cache(region, opts)
-        @caches[region] = Cache.new opts
+        @caches[region] = Cache.new(opts)
       end
 
       def get_cache(region)

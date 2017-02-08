@@ -5,7 +5,7 @@ module Stormpath
 
       def initialize(refresh_token)
         @refresh_token = refresh_token
-        @grant_type = 'refresh_token' 
+        @grant_type = 'refresh_token'
       end
     end
   end

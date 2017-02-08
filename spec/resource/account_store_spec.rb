@@ -15,7 +15,7 @@ describe Stormpath::Resource::AccountStore, :vcr do
 
   describe 'given an account_store_mapping and a directory' do
     let!(:account_store_mapping) { map_account_store(application, directory, 0, true, true) }
-    let(:reloaded_mapping) { application.account_store_mappings.get account_store_mapping.href }
+    let(:reloaded_mapping) { application.account_store_mappings.get(account_store_mapping.href) }
 
     it 'should return a directory' do
       expect(reloaded_mapping.account_store.class).to eq(Stormpath::Resource::Directory)
@@ -25,7 +25,7 @@ describe Stormpath::Resource::AccountStore, :vcr do
 
   describe 'given an account_store_mapping and a group' do
     let!(:account_store_mapping) { map_account_store(application, group, 0, true, false) }
-    let(:reloaded_mapping) { application.account_store_mappings.get account_store_mapping.href }
+    let(:reloaded_mapping) { application.account_store_mappings.get(account_store_mapping.href) }
 
     it 'should return a group' do
       expect(reloaded_mapping.account_store.class).to eq(Stormpath::Resource::Group)
@@ -35,7 +35,7 @@ describe Stormpath::Resource::AccountStore, :vcr do
 
   describe 'given an account_store_mapping and an organization' do
     let!(:account_store_mapping) { map_account_store(application, organization, 0, true, false) }
-    let(:reloaded_mapping) { application.account_store_mappings.get account_store_mapping.href }
+    let(:reloaded_mapping) { application.account_store_mappings.get(account_store_mapping.href) }
 
     it 'should return an organization' do
       expect(reloaded_mapping.account_store.class).to eq(Stormpath::Resource::Organization)

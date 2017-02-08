@@ -72,7 +72,7 @@ module Stormpath
 
       module PaginatedIterator
         def self.iterate(collection_href, client, item_class, criteria, &block)
-          page = CollectionPage.new collection_href, client, criteria
+          page = CollectionPage.new(collection_href, client, criteria)
           page.item_type = item_class
 
           unless page.items.count.zero?
@@ -91,11 +91,11 @@ module Stormpath
         attr_accessor :item_type
 
         def items
-          to_resource_array get_property(ITEMS)
+          to_resource_array(get_property(ITEMS))
         end
 
         def to_resource(properties)
-          data_store.instantiate item_type, properties
+          data_store.instantiate(item_type, properties)
         end
 
         def to_resource_array(vals)

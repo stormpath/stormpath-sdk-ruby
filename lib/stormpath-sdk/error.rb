@@ -29,11 +29,22 @@ module Stormpath
     private
 
     class NilError
-      def message; '' end
-      def status; -1 end
-      def code; -1 end
+      def message
+        ''
+      end
+
+      def status
+        -1
+      end
+
+      def code
+        -1
+      end
+
       def developer_message; end
+
       def more_info; end
+
       def request_id; end
     end
   end

@@ -5,9 +5,11 @@ module Stormpath
         opts.tap do |o|
           if !opts[:email].blank? && opts[:email]
             if opts[:email].include?('@')
-              raise(ArgumentError,
-                    'Invalid email format. Please send the email without the domain. For example,' \
-                    " 'anakin.skywalker', instead of 'anakin.skywalker@darkside.com'")
+              raise(
+                ArgumentError,
+                'Invalid email format. Please send the email without the domain. For example,' \
+                " 'anakin.skywalker', instead of 'anakin.skywalker@darkside.com'"
+              )
             end
             o[:email] = "#{opts[:email]}#{default_domain}"
           else
@@ -46,14 +48,16 @@ module Stormpath
 
       def organization_attrs(opts = {})
         opts.tap do |o|
-          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby-org-#{random_number}"
-          o[:name_key]  = (!opts[:name_key].blank? && opts[:name_key]) || "ruby-org-#{random_number}"
+          o[:name]        = (!opts[:name].blank? && opts[:name]) || "ruby-org-#{random_number}"
+          o[:description] = (!opts[:description].blank? && opts[:description]) || "ruby-org-#{random_number}"
+          o[:name_key]    = (!opts[:name_key].blank? && opts[:name_key]) || "ruby-org-#{random_number}"
         end
       end
 
       def group_attrs(opts = {})
         opts.tap do |o|
-          o[:name]      = (!opts[:name].blank? && opts[:name]) || "ruby-group-#{random_number}"
+          o[:name]        = (!opts[:name].blank? && opts[:name]) || "ruby-group-#{random_number}"
+          o[:description] = (!opts[:description].blank? && opts[:description]) || "ruby-group-desc-#{random_number}"
         end
       end
 

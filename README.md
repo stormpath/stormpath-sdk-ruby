@@ -71,9 +71,9 @@ If you have not already done so, register as a developer on
     URLs you acquired above.
 
     ```ruby
-    application = client.applications.get application_url
+    application = client.applications.get(application_url)
 
-    directory = client.directories.get directory_url
+    directory = client.directories.get(directory_url)
     ```
 
 1.  **Create an account for a user** on the directory.
@@ -119,7 +119,7 @@ If you have not already done so, register as a developer on
 1.  **Create a group** in a directory
 
     ```ruby
-    directory.groups.create name: 'Admins'
+    directory.groups.create(name: 'Admins')
     ```
 
 1.  **Add the account to the group**
@@ -131,7 +131,7 @@ If you have not already done so, register as a developer on
 1. **Check for account inclusion in group** by reloading the account
 
     ```ruby
-    account = client.accounts.get account.href
+    account = client.accounts.get(account.href)
     is_admin = account.groups.any? { |group| group.name == 'Admins' }
     ```
 
@@ -219,9 +219,9 @@ and directories you have registered. You use the client to access them
 with their REST URL:
 
 ```ruby
-application = client.applications.get application_url
+application = client.applications.get(application_url)
 
-directory = client.directories.get directory_url
+directory = client.directories.get(directory_url)
 ```
 
 The <code>applications</code> and <code>directories</code> property on a
@@ -237,9 +237,9 @@ Additional resources are <code>accounts</code>, <code>groups</code>,
 Applications and directories can be created directly off the client.
 
 ```ruby
-application = client.applications.create name: 'foo', description: 'bar'
+application = client.applications.create(name: 'foo', description: 'bar')
 
-directory = client.directories.create name: 'foo', description: 'bar'
+directory = client.directories.create(name: 'foo', description: 'bar')
 ```
 
 ### Collections
@@ -283,7 +283,7 @@ A resource's children can be eager loaded by passing the entity expansion object
 
 ```ruby
 expansion = Stormpath::Resource::Expansion.new 'groups', 'group_memberships'
-client.accounts.get account.href, expansion
+client.accounts.get(account.href, expansion)
 ```
 
 <code>limit</code> and <code>offset</code> can be specified for each child resource by calling <code>add_property</code>.
@@ -292,7 +292,7 @@ client.accounts.get account.href, expansion
 expansion = Stormpath::Resource::Expansion.new
 expansion.add_property 'groups', offset: 5, limit: 10
 
-client.accounts.get account.href, expansion
+client.accounts.get(account.href, expansion)
 ```
 
 ### ID Site
@@ -849,7 +849,7 @@ You can create groups and assign them to accounts using the Stormpath
 web console, or programmatically. Groups are created on directories:
 
 ```ruby
-group = directory.groups.create name: 'administrators'
+group = directory.groups.create(name: 'administrators')
 ```
 
 Group membership can be created by:
@@ -857,7 +857,7 @@ Group membership can be created by:
 * Explicitly creating a group membership resource with your client:
 
   ```ruby
-  group_membership = client.group_memberships.create group: group, account: account
+  group_membership = client.group_memberships.create(group: group, account: account)
   ```
 
 * Using the <code>add_group</code> method on the account instance:
@@ -903,7 +903,7 @@ An `Organization` is a top-level container for Account Stores. You can think of 
 * Adding an Organization to an Application as an Account Store
 
   ```ruby
-    client.account_store_mappings.create application: application, account_store: organization
+    client.account_store_mappings.create(application: application, account_store: organization)
   ```
 
 

@@ -6,7 +6,7 @@ module Stormpath
       alias href stormpath_access_token_href
 
       def delete
-        data_store.delete self unless href.respond_to?(:empty) && href.empty?
+        data_store.delete(self) unless href.respond_to?(:empty) && href.empty?
       end
 
       def account

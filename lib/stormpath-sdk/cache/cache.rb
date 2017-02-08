@@ -11,7 +11,7 @@ module Stormpath
         @ttl_seconds = opts[:ttl_seconds] || DEFAULT_TTL_SECONDS
         @tti_seconds = opts[:tti_seconds] || DEFAULT_TTI_SECONDS
         store_opts = opts[:store_opts] || {}
-        @store = (opts[:store] || DEFAULT_STORE).new store_opts
+        @store = (opts[:store] || DEFAULT_STORE).new(store_opts)
         @stats = CacheStats.new
       end
 
@@ -19,7 +19,7 @@ module Stormpath
         if entry = @store.get(k)
           if entry.expired? @ttl_seconds, @tti_seconds
             @stats.miss true
-            @store.delete k
+            @store.delete(k)
             nil
           else
             @stats.hit
@@ -38,7 +38,7 @@ module Stormpath
       end
 
       def delete(k)
-        @store.delete k
+        @store.delete(k)
         @stats.delete
       end
 

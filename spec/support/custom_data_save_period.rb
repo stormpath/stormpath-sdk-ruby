@@ -7,6 +7,10 @@ module Stormpath
       def wait_for_custom_data_indexing
         sleep 5
       end
+
+      def wait_for_resource_creation
+        sleep rand(2..6)
+      end
     end
   end
 end
