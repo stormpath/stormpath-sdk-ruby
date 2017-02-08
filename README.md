@@ -764,7 +764,6 @@ The Attribute Assertions (`<saml:AttributeStatement>`) are brought into Stormpat
 SAML Assertion mapping is defined in an **attributeStatementMappingRules** object found inside the Directory's Provider object, or directly: `/v1/attributeStatementMappingRules/$RULES_ID`.
 
 ##### Mapping Rules
-# todo: update this
 The rules have three different components:
 
 - **name**: The SAML Attribute name
