@@ -681,7 +681,7 @@ dir_provider.encoded_x509_signing_cert
 dir_provider.request_signature_algorithm
 dir_provider.service_provider_metadata
 dir_provider.attribute_statement_mapping_rules
-dir_provider.creted_at
+dir_provider.created_at
 dir_provider.modified_at
 ```
 
@@ -692,13 +692,13 @@ Next you will have to configure your Stormpath-powered application as a Service 
 In order to retrieve the required values, start by sending a GET to the Directory's Provider:
 
 ```ruby
-directory.provider_metadata
+directory.service_provider_metadata
 ```
 
-provider_metadata method returns instance of SamlProviderMetadata and you can access the following values
+service_provider_metadata method returns instance of SamlServiceProviderMetadata and you can access the following values
 
 ```ruby
-dir_provider_metadata = directory.provider_metadata
+dir_provider_metadata = directory.service_provider_metadata
 
 dir_provider_metadata.href
 dir_provider_metadata.entity_id
@@ -764,7 +764,7 @@ The Attribute Assertions (`<saml:AttributeStatement>`) are brought into Stormpat
 SAML Assertion mapping is defined in an **attributeStatementMappingRules** object found inside the Directory's Provider object, or directly: `/v1/attributeStatementMappingRules/$RULES_ID`.
 
 ##### Mapping Rules
-
+# todo: update this
 The rules have three different components:
 
 - **name**: The SAML Attribute name
@@ -774,14 +774,13 @@ The rules have three different components:
 In order to create the mapping rules, we simply send the following:
 
 ```ruby
-mappings = Stormpath::Provider::SamlMappingRules.new(items: [
-  {
-    name: "uid",
-    account_attributes: ["username"]
-  }
-])
+rule = {
+  'name' => 'uid',
+  'accountAttributes' => ['username']
+}
 
-dir.create_attribute_mappings(mappings)
+dir.attribute_statement_mapping_rules.items = [rule]
+dir.attribute_statement_mapping_rules.save
 ```
 
 ### Password Reset

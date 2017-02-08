@@ -17,12 +17,10 @@ module Stormpath
   module Provider
     class SamlProvider < Stormpath::Provider::Provider
       prop_reader :provider_id, :sso_login_url, :sso_logout_url,
-                  :encoded_x509_signing_cert, :request_signature_algorithm,
-                  :service_provider_metadata, :attribute_statement_mapping_rules
+                  :encoded_x509_signing_cert, :request_signature_algorithm
 
-      # :attribute_statement_mapping_rules is obsolete as a prop_reader
-      # Since AttributeStatementMappingRules is created as a standalone class, a has_one should be used here
-      # TODO: has_one :attribute_statement_mapping_rules
+      has_one :attribute_statement_mapping_rules
+      has_one :service_provider_metadata, class_name: :samlServiceProviderMetadata
     end
   end
 end

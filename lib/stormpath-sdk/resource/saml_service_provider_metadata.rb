@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 module Stormpath
-  module Provider
-    class SamlProviderMetadata < Stormpath::Provider::ProviderData
+  module Resource
+    class SamlServiceProviderMetadata < Stormpath::Resource::Instance
       prop_reader :href, :created_at, :modified_at, :entity_id, :x509_signing_cert,
                   :assertion_consumer_service_post_endpoint
     end
