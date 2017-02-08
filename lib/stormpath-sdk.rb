@@ -99,6 +99,7 @@ module Stormpath
     autoload :HttpBearerAuthentication, 'stormpath-sdk/auth/http_bearer_authentication'
     autoload :CreateFactor, 'stormpath-sdk/auth/create_factor'
     autoload :RegisterServiceProvider, 'stormpath-sdk/auth/register_service_provider'
+    autoload :RegisteredServiceProviderAttempt, 'stormpath-sdk/auth/registered_service_provider_attempt'
   end
 
   module Provider
