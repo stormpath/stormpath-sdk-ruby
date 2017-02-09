@@ -7,11 +7,14 @@ describe 'RegisterServiceProvider', vcr: true do
   let(:assertion_consumer_service_url) { "http://example#{random_number}.zendesk.com/access/saml" }
   let(:entity_id) { "unique-name-#{random_number}" }
   let(:registered_service_provider) do
-    Stormpath::Authentication::RegisterServiceProvider.new(
-      client, identity_provider, assertion_consumer_service_url, entity_id, options
-    ).call
+    Stormpath::Authentication::RegisterServiceProvider.new(client, identity_provider, options).call
   end
-  let(:options) { {} }
+  let(:options) do
+    {
+      assertion_consumer_service_url: assertion_consumer_service_url,
+      entity_id: entity_id
+    }
+  end
 
   after { application.delete }
 
@@ -33,12 +36,10 @@ describe 'RegisterServiceProvider', vcr: true do
     end
 
     context 'with optional parameters' do
-      let(:options) do
-        {
-          name: "service-provider-name-#{random_number}",
-          description: 'stormpath example',
-          name_id_format: 'PERSISTENT'
-        }
+      before do
+        options[:name] = "service-provider-name-#{random_number}"
+        options[:description] = 'stormpath example'
+        options[:name_id_format] = 'PERSISTENT'
       end
 
       it 'should successfully create a registered_service_provider' do
@@ -56,7 +57,9 @@ describe 'RegisterServiceProvider', vcr: true do
   end
 
   describe 'unsuccessfull service provider registration' do
-    let(:assertion_consumer_service_url) { nil }
+    before do
+      options.delete(:assertion_consumer_service_url)
+    end
 
     it 'should raise Stormpath::Error' do
       expect { registered_service_provider }.to raise_error(Stormpath::Error)

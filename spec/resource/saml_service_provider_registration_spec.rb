@@ -5,9 +5,15 @@ describe Stormpath::Resource::SamlServiceProviderRegistration, vcr: true do
   let(:identity_provider) { application.saml_policy.identity_provider }
   let(:assertion_consumer_service_url) { 'https://some.sp.com/saml/sso/post' }
   let(:entity_id) { random_number }
+  let(:options) do
+    {
+      assertion_consumer_service_url: assertion_consumer_service_url,
+      entity_id: entity_id
+    }
+  end
   let(:service_provider) do
     Stormpath::Authentication::RegisterServiceProvider.new(
-      test_api_client, identity_provider, assertion_consumer_service_url, entity_id
+      test_api_client, identity_provider, options
     ).call
   end
   let(:service_provider_registration) { identity_provider.saml_service_provider_registrations.first }

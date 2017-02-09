@@ -10,10 +10,8 @@ module Stormpath
       has_many :registered_saml_service_providers
       has_many :saml_service_provider_registrations, can: [:get, :create]
 
-      def register_service_provider(assertion_consumer_service_url, entity_id, options = {})
-        Stormpath::Authentication::RegisterServiceProvider.new(
-          client, self, assertion_consumer_service_url, entity_id, options
-        ).call
+      def register_service_provider(options = {})
+        Stormpath::Authentication::RegisterServiceProvider.new(client, self, options).call
       end
     end
   end

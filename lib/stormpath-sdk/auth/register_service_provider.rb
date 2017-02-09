@@ -4,11 +4,11 @@ module Stormpath
       attr_reader :client, :identity_provider, :assertion_consumer_service_url,
                   :entity_id, :name, :description, :name_id_format
 
-      def initialize(client, identity_provider, assertion_consumer_service_url, entity_id, options = {})
+      def initialize(client, identity_provider, options = {})
         @client = client
         @identity_provider = identity_provider
-        @assertion_consumer_service_url = assertion_consumer_service_url
-        @entity_id = entity_id
+        @assertion_consumer_service_url = options[:assertion_consumer_service_url]
+        @entity_id = options[:entity_id]
         @name = options[:name] || nil
         @description = options[:description] || nil
         @name_id_format = options[:name_id_format] || nil
