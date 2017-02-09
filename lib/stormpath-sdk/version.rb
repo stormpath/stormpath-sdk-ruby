@@ -14,6 +14,6 @@
 # limitations under the License.
 #
 module Stormpath
-  VERSION = '1.6.0'.freeze
-  VERSION_DATE = '2017-01-26'.freeze
+  VERSION = '1.7.0'.freeze
+  VERSION_DATE = '2017-02-09'.freeze
 end

@@ -1,6 +1,17 @@
 stormpath-sdk-ruby Changelog
 ============================
 
+Version 1.7.0
+-------------
+
+Released on February 09, 2017
+
+- Implemented SAML IdP
+- AttributeStatementMappingRules is now an association instead of a property
+- Added require_mfa attribute option to the JWT payload
+- Code cleanup and refactoring
+
+
 Version 1.6.0
 -------------
 
