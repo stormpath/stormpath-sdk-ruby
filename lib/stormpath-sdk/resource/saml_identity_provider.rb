@@ -9,10 +9,6 @@ module Stormpath
       has_one :x509_signing_cert, class_name: :x509Certificate
       has_many :registered_saml_service_providers
       has_many :saml_service_provider_registrations, can: [:get, :create]
-
-      def register_service_provider(options = {})
-        Stormpath::Authentication::RegisterServiceProvider.new(self, options).call
-      end
     end
   end
 end

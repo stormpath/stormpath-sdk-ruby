@@ -6,7 +6,7 @@ describe Stormpath::Resource::RegisteredSamlServiceProvider, vcr: true do
   let(:assertion_consumer_service_url) { 'https://some.sp.com/saml/sso/post' }
   let(:entity_id) { 'urn:sp:A1B2C3' }
   let(:registered_service_provider) do
-    identity_provider.register_service_provider(
+    application.register_service_provider(
       assertion_consumer_service_url: assertion_consumer_service_url, entity_id: entity_id
     )
   end

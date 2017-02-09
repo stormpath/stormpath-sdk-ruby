@@ -70,25 +70,6 @@ describe Stormpath::Resource::SamlIdentityProvider, vcr: true do
     end
   end
 
-  describe '#register_service_provider' do
-    let(:assertion_consumer_service_url) { 'https://some.sp.com/saml/sso/post' }
-    let(:entity_id) { 'urn:sp:A1B2C3' }
-    let(:registered_service_provider) do
-      identity_provider.register_service_provider(
-        assertion_consumer_service_url: assertion_consumer_service_url,
-        entity_id: entity_id
-      )
-    end
-
-    after { registered_service_provider.delete }
-
-    it 'should successfully create and register a service provider' do
-      expect(registered_service_provider).to(
-        be_a(Stormpath::Resource::RegisteredSamlServiceProvider)
-      )
-    end
-  end
-
   describe 'map existing registered service provider' do
     let(:assertion_consumer_service_url) { 'https://some.sp.com/saml/sso/post' }
     let(:entity_id) { 'urn:sp:A1B2C3' }
