@@ -369,7 +369,7 @@ module Stormpath
     end
 
     def resource_is_saml_mapping_rules?(resource)
-      resource.is_a?(Stormpath::Provider::SamlMappingRules)
+      resource.is_a?(Stormpath::Resource::AttributeStatementMappingRules)
     end
 
     def user_info_mapping_rules?(resource)

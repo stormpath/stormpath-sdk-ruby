@@ -44,6 +44,7 @@ describe Stormpath::Resource::Application, :vcr do
     expect(application.verification_emails).to be_a Stormpath::Resource::Collection
     expect(application.account_store_mappings).to be_a Stormpath::Resource::Collection
     expect(application.account_linking_policy).to be_a Stormpath::Resource::AccountLinkingPolicy
+    expect(application.saml_policy).to be_a Stormpath::Resource::SamlPolicy
   end
 
   describe '.load' do
@@ -1341,6 +1342,25 @@ describe Stormpath::Resource::Application, :vcr do
           Stormpath::Oauth::VerifyAccessToken.new(application).verify(access_token)
         end.to raise_error(Stormpath::Error)
       end
+    end
+  end
+
+  describe '#register_service_provider' do
+    let(:assertion_consumer_service_url) { 'https://some.sp.com/saml/sso/post' }
+    let(:entity_id) { 'urn:sp:A1B2C3' }
+    let(:registered_service_provider) do
+      application.register_service_provider(
+        assertion_consumer_service_url: assertion_consumer_service_url,
+        entity_id: entity_id
+      )
+    end
+
+    after { registered_service_provider.delete }
+
+    it 'should successfully create and register a service provider' do
+      expect(registered_service_provider).to(
+        be_a(Stormpath::Resource::RegisteredSamlServiceProvider)
+      )
     end
   end
 end

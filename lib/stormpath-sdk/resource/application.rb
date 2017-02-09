@@ -18,6 +18,7 @@ module Stormpath
     class Application < Stormpath::Resource::Instance
       include Stormpath::Resource::CustomDataStorage
       include Stormpath::Resource::AccountOverrides
+
       include UUIDTools
 
       class LoadError < ArgumentError; end
@@ -40,6 +41,7 @@ module Stormpath
       has_one :o_auth_policy, class_name: :oauthPolicy
       has_one :web_config, class_name: :applicationWebConfig
       has_one :account_linking_policy
+      has_one :saml_policy
 
       alias oauth_policy o_auth_policy
 
@@ -111,6 +113,12 @@ module Stormpath
 
       def authenticate_oauth(request)
         Stormpath::Oauth::Authenticator.new(data_store).authenticate(href, request)
+      end
+
+      def register_service_provider(options = {})
+        Stormpath::Authentication::RegisterServiceProvider.new(
+          saml_policy.identity_provider, options
+        ).call
       end
 
       private

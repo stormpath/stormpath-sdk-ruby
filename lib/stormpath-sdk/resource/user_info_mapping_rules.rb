@@ -13,7 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Stormpath::Resource::UserInfoMappingRules < Stormpath::Resource::Instance
-  prop_accessor :items
-  prop_reader :href, :created_at, :modified_at
+module Stormpath
+  module Resource
+    class UserInfoMappingRules < Stormpath::Resource::Instance
+      prop_accessor :items
+      prop_reader :href, :created_at, :modified_at
+    end
+  end
 end

@@ -61,6 +61,7 @@ module Stormpath
     has_many :access_tokens, href: '/accessTokens', can: [:get]
     has_many :refresh_tokens, href: '/refreshTokens', can: [:get]
     has_many :account_links, href: '/accountLinks', can: :create
+    has_many :registered_saml_service_providers, href: '/registeredSamlServiceProviders', can: :create
 
     private
 

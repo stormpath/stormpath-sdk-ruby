@@ -40,6 +40,15 @@ module Stormpath
     autoload :AccountLink, 'stormpath-sdk/resource/account_link'
     autoload :AccountLinkingPolicy, 'stormpath-sdk/resource/account_linking_policy'
     autoload :Application, 'stormpath-sdk/resource/application'
+    autoload :SamlServiceProviderMetadata, 'stormpath-sdk/resource/saml_service_provider_metadata'
+    autoload :SamlPolicy, 'stormpath-sdk/resource/saml_policy'
+    autoload :SamlServiceProvider, 'stormpath-sdk/resource/saml_service_provider'
+    autoload :SsoInitiationEndpoint, 'stormpath-sdk/resource/sso_initiation_endpoint'
+    autoload :SamlIdentityProvider, 'stormpath-sdk/resource/saml_identity_provider'
+    autoload :RegisteredSamlServiceProvider, 'stormpath-sdk/resource/registered_saml_service_provider'
+    autoload :SamlServiceProviderRegistration, 'stormpath-sdk/resource/saml_service_provider_registration'
+    autoload :SamlIdentityProviderMetadata, 'stormpath-sdk/resource/saml_identity_provider_metadata'
+    autoload :X509Certificate, 'stormpath-sdk/resource/x_509_certificate'
     autoload :Directory, 'stormpath-sdk/resource/directory'
     autoload :Account, 'stormpath-sdk/resource/account'
     autoload :AccountStore, 'stormpath-sdk/resource/account_store'
@@ -68,6 +77,7 @@ module Stormpath
     autoload :Schema, 'stormpath-sdk/resource/schema'
     autoload :Field, 'stormpath-sdk/resource/field'
     autoload :UserInfoMappingRules, 'stormpath-sdk/resource/user_info_mapping_rules'
+    autoload :AttributeStatementMappingRules, 'stormpath-sdk/resource/attribute_statement_mapping_rules'
   end
 
   module Cache
@@ -89,6 +99,7 @@ module Stormpath
     autoload :HttpBasicAuthentication, 'stormpath-sdk/auth/http_basic_authentication'
     autoload :HttpBearerAuthentication, 'stormpath-sdk/auth/http_bearer_authentication'
     autoload :CreateFactor, 'stormpath-sdk/auth/create_factor'
+    autoload :RegisterServiceProvider, 'stormpath-sdk/auth/register_service_provider'
   end
 
   module Provider
@@ -110,8 +121,6 @@ module Stormpath
     autoload :TwitterProviderData, 'stormpath-sdk/provider/twitter/twitter_provider_data'
     autoload :SamlProvider, 'stormpath-sdk/provider/saml/saml_provider'
     autoload :SamlProviderData, 'stormpath-sdk/provider/saml/saml_provider_data'
-    autoload :SamlProviderMetadata, 'stormpath-sdk/provider/saml/saml_provider_metadata'
-    autoload :SamlMappingRules, 'stormpath-sdk/provider/saml/saml_mapping_rules'
     autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath/stormpath_provider'
     autoload :StormpathProviderData, 'stormpath-sdk/provider/stormpath/stormpath_provider_data'
   end
