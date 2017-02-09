@@ -40,6 +40,7 @@ module Stormpath
     autoload :AccountLink, 'stormpath-sdk/resource/account_link'
     autoload :AccountLinkingPolicy, 'stormpath-sdk/resource/account_linking_policy'
     autoload :Application, 'stormpath-sdk/resource/application'
+    autoload :SamlServiceProviderMetadata, 'stormpath-sdk/resource/saml_service_provider_metadata'
     autoload :SamlPolicy, 'stormpath-sdk/resource/saml_policy'
     autoload :SamlServiceProvider, 'stormpath-sdk/resource/saml_service_provider'
     autoload :SsoInitiationEndpoint, 'stormpath-sdk/resource/sso_initiation_endpoint'
@@ -120,8 +121,6 @@ module Stormpath
     autoload :TwitterProviderData, 'stormpath-sdk/provider/twitter/twitter_provider_data'
     autoload :SamlProvider, 'stormpath-sdk/provider/saml/saml_provider'
     autoload :SamlProviderData, 'stormpath-sdk/provider/saml/saml_provider_data'
-    autoload :SamlProviderMetadata, 'stormpath-sdk/provider/saml/saml_provider_metadata'
-    autoload :SamlMappingRules, 'stormpath-sdk/provider/saml/saml_mapping_rules'
     autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath/stormpath_provider'
     autoload :StormpathProviderData, 'stormpath-sdk/provider/stormpath/stormpath_provider_data'
   end

@@ -426,7 +426,7 @@ describe Stormpath::Resource::Directory, :vcr do
     end
   end
 
-  describe 'saml #provider_metadata' do
+  describe 'saml #service_provider_metadata' do
     let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
     let(:directory) do
       test_api_client.directories.create(
@@ -446,25 +446,25 @@ describe Stormpath::Resource::Directory, :vcr do
       directory.delete if directory
     end
 
-    it 'returnes provider metadata' do
+    it 'returnes service provider metadata' do
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
         .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
       stub_request(:get, directory.href + '/provider')
         .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
-
-      stub_request(:get, directory.provider.service_provider_metadata['href'])
+      stub_request(:get, directory.service_provider_metadata.href)
         .to_return(body: Stormpath::Test.mocked_saml_directory_provider_metadata_response, status: 200)
 
-      expect(directory.provider_metadata.href).not_to be_empty
-      expect(directory.provider_metadata.entity_id).not_to be_empty
-      expect(directory.provider_metadata.assertion_consumer_service_post_endpoint).not_to be_empty
-      expect(directory.provider_metadata.x509_signing_cert).not_to be_empty
+      expect(directory.service_provider_metadata.href).not_to be_empty
+      expect(directory.service_provider_metadata.entity_id).not_to be_empty
+      expect(directory.service_provider_metadata.assertion_consumer_service_post_endpoint).not_to be_empty
+      expect(directory.service_provider_metadata.x509_signing_cert).not_to be_empty
     end
   end
 
   describe 'saml mapping rules' do
     let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
+    let(:rule) { { 'name' => 'email', 'accountAttributes' => ['email'] } }
     let(:directory) do
       test_api_client.directories.create(
         name: directory_name,
@@ -473,7 +473,7 @@ describe Stormpath::Resource::Directory, :vcr do
           provider_id: 'saml',
           sso_login_url: 'https://yourIdp.com/saml2/sso/login',
           sso_logout_url: 'https://yourIdp.com/saml2/sso/logout',
-          encoded_x509_signing_cert: "-----BEGIN CERTIFICATE-----\n...Certificate goes here...\n-----END CERTIFICATE-----",
+          encoded_x509_signing_cert: Stormpath::Test.mocked_encoded_x509_signing_cert,
           request_signature_algorithm: 'RSA-SHA256'
         }
       )
@@ -484,25 +484,17 @@ describe Stormpath::Resource::Directory, :vcr do
     end
 
     it 'updates the directory mappings' do
-      mappings = Stormpath::Provider::SamlMappingRules.new(
-        items: [
-          {
-            name: 'uid',
-            account_attributes: ['username']
-          }
-        ]
-      )
-
       stub_request(:post, 'https://api.stormpath.com/v1/directories')
         .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory)
 
       stub_request(:get, directory.href + '/provider')
         .to_return(status: 200, body: Stormpath::Test.mocked_saml_directory_provider_response)
 
-      stub_request(:post, directory.provider.attribute_statement_mapping_rules['href'])
+      stub_request(:post, directory.provider.attribute_statement_mapping_rules.href)
         .to_return(status: 200, body: Stormpath::Test.mocked_create_saml_directory_rules)
 
-      response = directory.create_attribute_mappings(mappings)
+      directory.attribute_statement_mapping_rules.items = [rule]
+      response = directory.attribute_statement_mapping_rules.save
       expect(response.items).to eq([{ 'name' => 'uid4', 'name_format' => 'nil', 'account_attributes' => ['username'] }])
     end
   end

@@ -1,18 +1,3 @@
-#
-# Copyright 2012 Stormpath, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
 module Stormpath
   module Resource
     class Directory < Stormpath::Resource::Instance
@@ -31,6 +16,9 @@ module Stormpath
       has_one :password_policy
       has_one :account_creation_policy
       has_one :account_schema, class_name: :schema
+
+      delegate :attribute_statement_mapping_rules, to: :provider
+      delegate :service_provider_metadata, to: :provider
       delegate :user_info_mapping_rules, to: :provider
 
       def provider
@@ -46,26 +34,6 @@ module Stormpath
 
         provider = data_store.get_resource provider_href, clazz_proc
         instance_variable_set '@_provider', provider
-      end
-
-      def provider_metadata
-        metadata_href = provider.service_provider_metadata['href']
-        data_store.get_resource metadata_href, Stormpath::Provider::SamlProviderMetadata
-      end
-
-      # TODO: SamlMappingRules is obsolete and AttributeStatementMappingRules should be used
-      # through the provider
-      # delegate :attribute_statement_mapping_rules, to: :provider
-      # and delete the other 2 methods
-      # https://stormpath.atlassian.net/wiki/display/AM/Stormpath+as+a+SAML+Service+Provider
-      def statement_mapping_rules
-        metadata_href = provider.attribute_statement_mapping_rules['href']
-        data_store.get_resource metadata_href, Stormpath::Provider::SamlMappingRules
-      end
-
-      def create_attribute_mappings(mappings)
-        mappings.set_options(href: provider.attribute_statement_mapping_rules['href'])
-        data_store.create(mappings.href, mappings, Stormpath::Provider::SamlMappingRules)
       end
     end
   end
