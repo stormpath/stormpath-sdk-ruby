@@ -11,7 +11,7 @@ module Stormpath
       has_many :saml_service_provider_registrations, can: [:get, :create]
 
       def register_service_provider(options = {})
-        Stormpath::Authentication::RegisterServiceProvider.new(client, self, options).call
+        Stormpath::Authentication::RegisterServiceProvider.new(self, options).call
       end
     end
   end

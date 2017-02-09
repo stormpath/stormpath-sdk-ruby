@@ -7,7 +7,7 @@ describe 'RegisterServiceProvider', vcr: true do
   let(:assertion_consumer_service_url) { "http://example#{random_number}.zendesk.com/access/saml" }
   let(:entity_id) { "unique-name-#{random_number}" }
   let(:registered_service_provider) do
-    Stormpath::Authentication::RegisterServiceProvider.new(client, identity_provider, options).call
+    Stormpath::Authentication::RegisterServiceProvider.new(identity_provider, options).call
   end
   let(:options) do
     {

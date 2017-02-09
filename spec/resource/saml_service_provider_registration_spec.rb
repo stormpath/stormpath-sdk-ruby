@@ -12,9 +12,7 @@ describe Stormpath::Resource::SamlServiceProviderRegistration, vcr: true do
     }
   end
   let(:service_provider) do
-    Stormpath::Authentication::RegisterServiceProvider.new(
-      test_api_client, identity_provider, options
-    ).call
+    Stormpath::Authentication::RegisterServiceProvider.new(identity_provider, options).call
   end
   let(:service_provider_registration) { identity_provider.saml_service_provider_registrations.first }
 
