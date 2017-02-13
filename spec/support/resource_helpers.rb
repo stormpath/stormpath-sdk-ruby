@@ -86,6 +86,45 @@ module Stormpath
         )
       end
 
+      def ldap_agent_attrs
+        {
+          config: {
+            directory_host: 'ldap.local',
+            directory_port: '636',
+            ssl_required: true,
+            agent_user_dn: 'tom@stormpath.com',
+            agent_user_dn_password: 'StormpathRulez',
+            base_dn: 'dc=example,dc=com',
+            poll_interval: 60,
+            # referral_mode: 'follow',      | attributes used for creating ad directories
+            # ignore_referral_issues: true, | -------------------||----------------------
+            account_config: {
+              dn_suffix: 'ou=employees',
+              object_class: 'person',
+              object_filter: '(cn=finance)',
+              email_rdn: 'email',
+              given_name_rdn: 'givenName',
+              middle_name_rdn: 'middleName',
+              surname_rdn: 'sn',
+              username_rdn: 'uid',
+              password_rdn: 'userPassword'
+            },
+            group_config: {
+              dn_suffix: 'ou=groups',
+              object_class: 'groupOfUniqueNames',
+              object_filter: '(ou=*-group)',
+              name_rdn: 'cn',
+              description_rdn: 'description',
+              members_rdn: 'uniqueMember'
+            }
+          }
+        }
+      end
+
+      def camelize_keys(hash)
+        hash.transform_keys { |key| key.to_s.camelize(:lower).to_s }
+      end
+
       def random_number
         SecureRandom.hex(15)
       end

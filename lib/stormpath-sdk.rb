@@ -78,6 +78,7 @@ module Stormpath
     autoload :Field, 'stormpath-sdk/resource/field'
     autoload :UserInfoMappingRules, 'stormpath-sdk/resource/user_info_mapping_rules'
     autoload :AttributeStatementMappingRules, 'stormpath-sdk/resource/attribute_statement_mapping_rules'
+    autoload :Agent, 'stormpath-sdk/resource/agent'
   end
 
   module Cache
@@ -121,6 +122,7 @@ module Stormpath
     autoload :TwitterProviderData, 'stormpath-sdk/provider/twitter/twitter_provider_data'
     autoload :SamlProvider, 'stormpath-sdk/provider/saml/saml_provider'
     autoload :SamlProviderData, 'stormpath-sdk/provider/saml/saml_provider_data'
+    autoload :LdapProvider, 'stormpath-sdk/provider/ldap/ldap_provider'
     autoload :StormpathProvider, 'stormpath-sdk/provider/stormpath/stormpath_provider'
     autoload :StormpathProviderData, 'stormpath-sdk/provider/stormpath/stormpath_provider_data'
   end

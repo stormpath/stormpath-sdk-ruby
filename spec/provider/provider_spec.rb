@@ -67,7 +67,8 @@ describe Stormpath::Provider::Provider, :vcr do
     end
 
     context 'user info mapping rules for social directories' do
-      let(:rule) { { 'name' => 'email', 'accountAttributes' => ['email'] } }
+      let(:rule) { { name: 'email', account_attributes: ['email'] } }
+      let(:response_rule) { camelize_keys(rule) }
       before do
         if social_directory?
           directory.user_info_mapping_rules.items = [rule]
@@ -78,7 +79,7 @@ describe Stormpath::Provider::Provider, :vcr do
       it 'should be able to create and fetch user info mapping rules' do
         if social_directory?
           expect(directory.user_info_mapping_rules).to be_kind_of(Stormpath::Resource::UserInfoMappingRules)
-          expect(directory.user_info_mapping_rules.items).to include(rule)
+          expect(directory.user_info_mapping_rules.items).to include(response_rule)
         end
       end
     end
