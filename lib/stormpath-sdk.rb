@@ -17,6 +17,7 @@ require 'stormpath-sdk/version' unless defined? Stormpath::VERSION
 
 require 'stormpath-sdk/util/assert'
 require 'stormpath-sdk/util/uri_builder'
+require 'stormpath-sdk/util/href_qualifier'
 
 module Stormpath
   autoload :Error, 'stormpath-sdk/error'

@@ -1,18 +1,3 @@
-#
-# Copyright 2013 Stormpath, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
 require 'java_properties'
 
 module Stormpath
@@ -23,13 +8,13 @@ module Stormpath
     attr_reader :data_store, :application
 
     def initialize(options)
+      api_key = ApiKey(options)
+      assert_not_nil api_key, "No API key has been provided. Please pass an 'api_key' or " \
+                              "'api_key_file_location' to the Stormpath::Client constructor."
+
       base_url = options[:base_url]
       cache_opts = options[:cache] || {}
 
-      api_key = ApiKey(options)
-
-      assert_not_nil api_key, "No API key has been provided. Please pass an 'api_key' or " \
-                              "'api_key_file_location' to the Stormpath::Client constructor."
 
       request_executor = Stormpath::Http::HttpClientRequestExecutor.new(proxy: options[:proxy])
       @data_store = Stormpath::DataStore.new(request_executor, api_key, cache_opts, self, base_url)

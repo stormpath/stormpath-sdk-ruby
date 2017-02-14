@@ -1,18 +1,3 @@
-#
-# Copyright 2012 Stormpath, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
 module Stormpath
   class DataStore
     include Stormpath::Http
@@ -31,10 +16,10 @@ module Stormpath
     def initialize(request_executor, api_key, cache_opts, client, base_url = nil)
       assert_not_nil request_executor, 'RequestExecutor cannot be null.'
 
-      @client = client
-      @base_url = base_url || DEFAULT_BASE_URL
       @request_executor = request_executor
       @api_key = api_key
+      @client = client
+      @base_url = base_url || DEFAULT_BASE_URL
       initialize_cache(cache_opts)
     end
 
@@ -132,12 +117,9 @@ module Stormpath
 
     private
 
-    def needs_to_be_fully_qualified?(href)
-      !href.downcase.start_with?('http')
-    end
-
     def qualify(href)
-      needs_to_be_fully_qualified?(href) ? @base_url + href : href
+      @qualifier ||= HrefQualifier.new(base_url)
+      @qualifier.qualify(href)
     end
 
     def execute_request(http_method, href, resource = nil, query = nil)
@@ -187,7 +169,7 @@ module Stormpath
     end
 
     def custom_data_delete_field_url_regex
-      /#{@base_url}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
+      /#{base_url}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
     end
 
     def clear_cache(href)
