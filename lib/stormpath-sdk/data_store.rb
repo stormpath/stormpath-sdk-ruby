@@ -331,8 +331,8 @@ module Stormpath
             property = to_simple_reference(name, property)
           end
 
-          if name == 'items' && resource_is_saml_mapping_rules?(resource) ||
-             name == 'items' && user_info_mapping_rules?(resource)
+          if (name == 'items' && resource_is_saml_mapping_rules?(resource)) ||
+             (name == 'items' && user_info_mapping_rules?(resource))
             property = property.map do |item|
               item.transform_keys { |key| key.to_s.camelize(:lower).to_sym }
             end
