@@ -43,22 +43,12 @@ module Stormpath
               name, ignore_camelcasing: resource_is_custom_data?(resource, name)
             )
 
-            # Special use cases are with
-            # Custom Data, Provider and ProviderData, Phone, Agent config property accessor
-            # Their hashes should not be simplified
-            if property.is_a?(Hash) && !resource_nested_submittable(resource, name) && name != 'items' && name != 'phone' && name != 'config'
+            if should_be_simplified?(property, resource, name)
               property = to_simple_reference(name, property)
             end
 
-            if (name == 'items' && resource.try(:mapping_rule?)) ||
-               (name == 'config' && resource_is_agent_config?(resource))
-              if property.is_a?(Array)
-                property = property.map do |item|
-                  item.transform_keys { |key| camel_case(key) }
-                end
-              elsif property.is_a?(Hash)
-                property = property.deep_transform_keys { |key| camel_case(key) }
-              end
+            if should_be_camel_cased?(name, resource)
+              property = camel_case(property)
             end
 
             properties.store(name, property)
@@ -66,8 +56,14 @@ module Stormpath
         end
       end
 
-      def camel_case(key)
-        key.to_s.camelize(:lower).to_sym
+      def camel_case(property)
+        if property.is_a?(Array)
+          property.map do |item|
+            item.transform_keys { |key| key.to_s.camelize(:lower).to_sym }
+          end
+        elsif property.is_a?(Hash)
+          property.deep_transform_keys { |key| key.to_s.camelize(:lower).to_sym }
+        end
       end
 
       def to_simple_reference(property_name, hash)
@@ -81,10 +77,24 @@ module Stormpath
         { Stormpath::Resource::Base::HREF_PROP_NAME => href }
       end
 
+      def should_be_simplified?(property, resource, name)
+        # Special use cases are with
+        # Custom Data, Provider and ProviderData, Phone, Agent config property accessor
+        # Their hashes should not be simplified
+        property.is_a?(Hash) &&
+          !resource_nested_submittable(resource, name) &&
+            !['items', 'phone', 'config'].include?(name)
+      end
+
       def resource_nested_submittable(resource, name)
         ['provider', 'providerData', 'accountStore'].include?(name) ||
           resource_is_custom_data?(resource, name) ||
           resource_is_application_web_config(resource, name)
+      end
+
+      def should_be_camel_cased?(name, resource)
+        (name == 'items' && resource.try(:mapping_rules?)) ||
+           (name == 'config' && resource_is_agent_config?(resource))
       end
 
       def resource_is_custom_data?(resource, name)
@@ -98,11 +108,6 @@ module Stormpath
 
       def resource_is_agent_config?(resource)
         resource.is_a?(Stormpath::Resource::Agent)
-      end
-
-      def resource_is_mapping_rules?(resource)
-        resource.is_a?(Stormpath::Resource::AttributeStatementMappingRules) ||
-          resource.is_a?(Stormpath::Resource::UserInfoMappingRules)
       end
     end
   end

@@ -135,7 +135,7 @@ module Stormpath
 
       return if http_method == 'delete'
 
-      if result[HREF_PROP_NAME] && !resource.try(:mapping_rule?)
+      if result[HREF_PROP_NAME] && !resource.try(:mapping_rules?)
         cache_walk result
       else
         result
