@@ -25,9 +25,7 @@ module Stormpath
     end
 
     def get_resource(href, clazz, query = nil)
-      q_href = qualify href
-
-      data = execute_request('get', q_href, nil, query)
+      data = execute_request('get', qualify(href), nil, query)
 
       clazz = clazz.call(data) if clazz.respond_to? :call
 
@@ -35,7 +33,6 @@ module Stormpath
     end
 
     def create(parent_href, resource, return_type, options = {})
-      # TODO: assuming there is no ? in url
       parent_href = "#{parent_href}?#{URI.encode_www_form(options)}" unless options.empty?
 
       save_resource(parent_href, resource, return_type).tap do |returned_resource|
@@ -60,11 +57,9 @@ module Stormpath
         ' (i.e. they have an existing href).'
       )
 
-      href = qualify(href)
-
       clazz ||= resource.class
 
-      save_resource(href, resource, clazz).tap do |return_value|
+      save_resource(qualify(href), resource, clazz).tap do |return_value|
         resource.set_properties(return_value)
       end
     end
@@ -114,7 +109,7 @@ module Stormpath
         return cached_result if cached_result
       end
 
-      body = extract_body_from_resource(resource)
+      body = Stormpath::Util::BodyExtractor.for(resource).call
 
       request = Request.new(http_method, href, query, {}, body, @api_key)
 
@@ -140,7 +135,7 @@ module Stormpath
 
       return if http_method == 'delete'
 
-      if result[HREF_PROP_NAME] && !resource_is_saml_mapping_rules?(resource) && !user_info_mapping_rules?(resource)
+      if result[HREF_PROP_NAME] && !resource.try(:mapping_rule?)
         cache_walk result
       else
         result
@@ -234,9 +229,8 @@ module Stormpath
         'resource argument must be instance of Stormpath::Resource::Base'
       )
 
-      q_href = qualify(href)
       clear_cache_on_save(resource)
-      response = execute_request('post', q_href, resource)
+      response = execute_request('post', qualify(href), resource)
       instantiate(return_type, parse_response(response))
     end
 
@@ -270,97 +264,6 @@ module Stormpath
           clear_cache(resource.application.href)
         end
       end
-    end
-
-    def extract_body_from_resource(resource)
-      return if resource.nil?
-      form_data = resource.try(:form_data?)
-
-      if form_data
-        form_request_parse(resource)
-      else
-        MultiJson.dump(to_hash(resource))
-      end
-    end
-
-    def form_request_parse(resource)
-      URI.encode_www_form(resource.form_properties.to_a)
-    end
-
-    def to_hash(resource)
-      {}.tap do |properties|
-        resource.get_dirty_property_names.each do |name|
-          ignore_camelcasing = resource_is_custom_data(resource, name)
-          property = resource.get_property name, ignore_camelcasing: ignore_camelcasing
-
-          # Special use cases are with Custom Data, Provider and ProviderData, their hashes should not be simplified
-          # As of the implementation for MFA, Phone resource is added too, as well ass config for LDAP
-          if property.is_a?(Hash) && !resource_nested_submittable(resource, name) && name != 'items' && name != 'phone' && name != 'config'
-            property = to_simple_reference(name, property)
-          end
-
-          if (name == 'items' && resource_is_saml_mapping_rules?(resource)) ||
-             (name == 'items' && user_info_mapping_rules?(resource))
-            property = property.map do |item|
-              item.transform_keys { |key| key.to_s.camelize(:lower).to_sym }
-            end
-          end
-
-          # TODO: refactor transforming of keys in the to_hash method
-          # Suggestion: Extract this logic into a service
-          if name == 'config' && resource_is_agent_config?(resource)
-            property = deep_transform_keys(property) { |key| key.to_s.camelize(:lower).to_sym }
-          end
-
-          properties.store(name, property)
-        end
-      end
-    end
-
-    def to_simple_reference(property_name, hash)
-      assert_true(
-        hash.key?(HREF_PROP_NAME),
-        "Nested resource '#{property_name}' must have an 'href' property."
-      )
-
-      href = hash[HREF_PROP_NAME]
-
-      { HREF_PROP_NAME => href }
-    end
-
-    def deep_transform_keys(property, &block)
-      result = {}
-      property.each do |key, value|
-        result[yield(key)] = value.is_a?(Hash) ? deep_transform_keys(value, &block) : value
-      end
-      result
-    end
-
-    def resource_nested_submittable(resource, name)
-      ['provider', 'providerData', 'accountStore'].include?(name) ||
-        resource_is_custom_data(resource, name) ||
-        resource_is_application_web_config(resource, name)
-    end
-
-    def resource_is_custom_data(resource, name)
-      resource.is_a?(Stormpath::Resource::CustomData) || name == 'customData'
-    end
-
-    def resource_is_application_web_config(resource, name)
-      resource.is_a?(Stormpath::Resource::ApplicationWebConfig) &&
-        Stormpath::Resource::ApplicationWebConfig::ENDPOINTS.include?(name.underscore.to_sym)
-    end
-
-    def resource_is_saml_mapping_rules?(resource)
-      resource.is_a?(Stormpath::Resource::AttributeStatementMappingRules)
-    end
-
-    def user_info_mapping_rules?(resource)
-      resource.is_a?(Stormpath::Resource::UserInfoMappingRules)
-    end
-
-    def resource_is_agent_config?(resource)
-      resource.is_a?(Stormpath::Resource::Agent)
     end
   end
 end
