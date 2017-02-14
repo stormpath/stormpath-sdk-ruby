@@ -329,8 +329,6 @@ properties
           client.accounts.get(account.href, Stormpath::Resource::Expansion.new('directory'))
         end
 
-        before { client.data_store.initialize_cache({}) }
-
         it 'caches the nested resource' do
           expect(cached_account.directory.name).to be
           expect(directories_cache_summary).to eq [1, 1, 0, 0, 1]
@@ -342,8 +340,6 @@ properties
           client.accounts.get(account.href, Stormpath::Resource::Expansion.new('groups'))
         end
         let(:group) { directory.groups.create(group_attrs) }
-
-        before { client.data_store.initialize_cache({}) }
 
         it 'caches the nested resource' do
           expect(cached_account.groups.first.name).to eq(group.name)

@@ -8,9 +8,6 @@ module Stormpath
     DEFAULT_BASE_URL = 'https://' + DEFAULT_SERVER_HOST + '/v' + DEFAULT_API_VERSION.to_s
     HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
-    CACHE_REGIONS = %w(applications directories accounts groups groupMemberships accountMemberships
-                       tenants customData provider providerData).freeze
-
     attr_reader :client, :request_executor, :cache_manager, :api_key, :base_url
 
     def initialize(request_executor, api_key, cache_opts, client, base_url = nil)
@@ -18,20 +15,9 @@ module Stormpath
 
       @request_executor = request_executor
       @api_key = api_key
+      @cache_manager = Stormpath::Cache::CacheManager.new(cache_opts)
       @client = client
       @base_url = base_url || DEFAULT_BASE_URL
-      initialize_cache(cache_opts)
-    end
-
-    def initialize_cache(cache_opts)
-      @cache_manager = Stormpath::Cache::CacheManager.new
-      regions_opts = cache_opts[:regions] || {}
-      CACHE_REGIONS.each do |region|
-        region_opts = regions_opts[region.to_sym] || {}
-        region_opts[:store] ||= cache_opts[:store]
-        region_opts[:store_opts] ||= cache_opts[:store_opts]
-        @cache_manager.create_cache(region, region_opts)
-      end
     end
 
     def instantiate(clazz, properties = {})
@@ -118,7 +104,7 @@ module Stormpath
     private
 
     def qualify(href)
-      @qualifier ||= HrefQualifier.new(base_url)
+      @qualifier ||= Stormpath::Util::HrefQualifier.new(base_url)
       @qualifier.qualify(href)
     end
 
@@ -214,7 +200,7 @@ module Stormpath
                else
                  href.split('/')[-2]
                end
-      CACHE_REGIONS.include?(region) ? region : nil
+      Stormpath::Cache::CacheManager::CACHE_REGIONS.include?(region) ? region : nil
     end
 
     def apply_default_request_headers(request)
