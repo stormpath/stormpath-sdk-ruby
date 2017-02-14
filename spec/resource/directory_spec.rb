@@ -464,7 +464,7 @@ describe Stormpath::Resource::Directory, :vcr do
 
   describe 'saml mapping rules' do
     let(:directory_name) { "rubysdkdirsaml-#{random_number}" }
-    let(:rule) { { 'name' => 'email', 'accountAttributes' => ['email'] } }
+    let(:rule) { { name: 'email', account_attributes: ['email'] } }
     let(:directory) do
       test_api_client.directories.create(
         name: directory_name,
@@ -496,6 +496,52 @@ describe Stormpath::Resource::Directory, :vcr do
       directory.attribute_statement_mapping_rules.items = [rule]
       response = directory.attribute_statement_mapping_rules.save
       expect(response.items).to eq([{ 'name' => 'uid4', 'name_format' => 'nil', 'account_attributes' => ['username'] }])
+    end
+  end
+
+  describe 'ldap #provider' do
+    let(:directory_name) { "rubysdkdirldap-#{random_number}" }
+    let!(:directory) do
+      test_api_client.directories.create(
+        name: directory_name,
+        description: directory_name,
+        provider: {
+          provider_id: 'ldap',
+          agent: ldap_agent_attrs
+        }
+      )
+    end
+
+    after { directory.delete }
+
+    it 'returnes provider data' do
+      expect(directory.provider.href).not_to be_empty
+      expect(directory.provider.provider_id).to eq('ldap')
+    end
+
+    it 'returns the agent' do
+      expect(directory.provider.agent).to be_a Stormpath::Resource::Agent
+    end
+
+    context 'update' do
+      let(:agent) { directory.provider.agent }
+      let!(:update_agent) do
+        agent.config = {
+          ssl_required: false,
+          account_config: {
+            email_rdn: 'electronic-mail'
+          },
+          group_config: {
+            name_rdn: 'name'
+          }
+        }
+        agent.save
+      end
+
+      it 'should update the attributes properly' do
+        expect(agent.config['sslRequired']).to eq false
+        expect(agent.config['groupConfig']['nameRdn']).to eq 'name'
+      end
     end
   end
 

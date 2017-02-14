@@ -326,15 +326,22 @@ module Stormpath
           property = resource.get_property name, ignore_camelcasing: ignore_camelcasing
 
           # Special use cases are with Custom Data, Provider and ProviderData, their hashes should not be simplified
-          # As of the implementation for MFA, Phone resource is added too
-          if property.is_a?(Hash) && !resource_nested_submittable(resource, name) && name != 'items' && name != 'phone'
+          # As of the implementation for MFA, Phone resource is added too, as well ass config for LDAP
+          if property.is_a?(Hash) && !resource_nested_submittable(resource, name) && name != 'items' && name != 'phone' && name != 'config'
             property = to_simple_reference(name, property)
           end
 
-          if name == 'items' && resource_is_saml_mapping_rules?(resource)
+          if (name == 'items' && resource_is_saml_mapping_rules?(resource)) ||
+             (name == 'items' && user_info_mapping_rules?(resource))
             property = property.map do |item|
               item.transform_keys { |key| key.to_s.camelize(:lower).to_sym }
             end
+          end
+
+          # TODO: refactor transforming of keys in the to_hash method
+          # Suggestion: Extract this logic into a service
+          if name == 'config' && resource_is_agent_config?(resource)
+            property = deep_transform_keys(property) { |key| key.to_s.camelize(:lower).to_sym }
           end
 
           properties.store(name, property)
@@ -351,6 +358,14 @@ module Stormpath
       href = hash[HREF_PROP_NAME]
 
       { HREF_PROP_NAME => href }
+    end
+
+    def deep_transform_keys(property, &block)
+      result = {}
+      property.each do |key, value|
+        result[yield(key)] = value.is_a?(Hash) ? deep_transform_keys(value, &block) : value
+      end
+      result
     end
 
     def resource_nested_submittable(resource, name)
@@ -374,6 +389,10 @@ module Stormpath
 
     def user_info_mapping_rules?(resource)
       resource.is_a?(Stormpath::Resource::UserInfoMappingRules)
+    end
+
+    def resource_is_agent_config?(resource)
+      resource.is_a?(Stormpath::Resource::Agent)
     end
   end
 end

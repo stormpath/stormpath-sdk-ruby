@@ -45,10 +45,12 @@ describe Stormpath::Resource::SamlIdentityProvider, vcr: true do
 
     describe 'attribute_statement_mapping_rules' do
       let(:rule) do
-        { 'name' => 'email',
-          'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:entity',
-          'accountAttributes' => ['email'] }
+        { name: 'email',
+          name_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:entity',
+          account_attributes: ['email'] }
       end
+      let(:response_rule) { camelize_keys(rule) }
+
       before do
         identity_provider.attribute_statement_mapping_rules.items = [rule]
         identity_provider.attribute_statement_mapping_rules.save
@@ -61,7 +63,7 @@ describe Stormpath::Resource::SamlIdentityProvider, vcr: true do
       end
 
       it 'should contain the saved rule' do
-        expect(identity_provider.attribute_statement_mapping_rules.items).to include(rule)
+        expect(identity_provider.attribute_statement_mapping_rules.items).to include(response_rule)
       end
     end
 

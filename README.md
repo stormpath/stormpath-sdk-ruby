@@ -767,15 +767,15 @@ SAML Assertion mapping is defined in an **attributeStatementMappingRules** objec
 The rules have three different components:
 
 - **name**: The SAML Attribute name
-- **nameFormat**: The name format for this SAML Attribute, expressed as a Uniform Resource Name (URN).
-- **accountAttributes**: This is an array of Stormpath Account or customData (`customData.$KEY_NAME`) attributes that will map to this SAML Attribute.
+- **name_format**: The name format for this SAML Attribute, expressed as a Uniform Resource Name (URN).
+- **account_attributes**: This is an array of Stormpath Account or customData (`customData.$KEY_NAME`) attributes that will map to this SAML Attribute.
 
 In order to create the mapping rules, we simply send the following:
 
 ```ruby
 rule = {
-  'name' => 'uid',
-  'accountAttributes' => ['username']
+  name: 'uid',
+  account_attributes: ['username']
 }
 
 dir.attribute_statement_mapping_rules.items = [rule]
