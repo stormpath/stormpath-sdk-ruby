@@ -134,6 +134,7 @@ module Stormpath
     autoload :Request, 'stormpath-sdk/http/request'
     autoload :Response, 'stormpath-sdk/http/response'
     autoload :HttpClientRequestExecutor, 'stormpath-sdk/http/http_client_request_executor'
+    autoload :HeaderInjection, 'stormpath-sdk/http/header_injection'
 
     module Authc
       autoload :Sauthc1Signer, 'stormpath-sdk/http/authc/sauthc1_signer'

@@ -8,7 +8,7 @@ module Stormpath
     DEFAULT_BASE_URL = 'https://' + DEFAULT_SERVER_HOST + '/v' + DEFAULT_API_VERSION.to_s
     HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
-    attr_reader :client, :request_executor, :cache_manager, :api_key, :base_url
+    attr_reader :client, :request_executor, :cache_manager, :api_key, :base_url, :qualifier
 
     def initialize(request_executor, api_key, cache_opts, client, base_url = nil)
       assert_not_nil request_executor, 'RequestExecutor cannot be null.'
@@ -18,6 +18,7 @@ module Stormpath
       @cache_manager = Stormpath::Cache::CacheManager.new(cache_opts)
       @client = client
       @base_url = base_url || DEFAULT_BASE_URL
+      @qualifier = Stormpath::Util::HrefQualifier.new(@base_url)
     end
 
     def instantiate(clazz, properties = {})
@@ -33,7 +34,7 @@ module Stormpath
     end
 
     def create(parent_href, resource, return_type, options = {})
-      parent_href = "#{parent_href}?#{URI.encode_www_form(options)}" unless options.empty?
+      parent_href = "#{parent_href}?#{URI.encode_www_form(options)}" if options.present?
 
       save_resource(parent_href, resource, return_type).tap do |returned_resource|
         if resource.is_a?(return_type)
@@ -52,7 +53,7 @@ module Stormpath
       href = resource.href
       assert_not_nil(href, 'href or resource.href cannot be null.')
       assert_true(
-        !href.empty?,
+        href.present?,
         'save may only be called on objects that have already been persisted'\
         ' (i.e. they have an existing href).'
       )
@@ -67,9 +68,8 @@ module Stormpath
     def delete(resource, property_name = nil)
       assert_not_nil(resource, 'resource argument cannot be null.')
       assert_kind_of(
-        Stormpath::Resource::Base,
-        resource,
-        'resource argument must be instance of Stormpath::Resource::Base'
+        Stormpath::Resource::Base, resource, 'resource argument must be instance of ' \
+                                             'Stormpath::Resource::Base'
       )
 
       href = resource.href
@@ -82,15 +82,12 @@ module Stormpath
     end
 
     def execute_raw_request(href, body, klass)
-      request = Request.new('POST', href, nil, {}, body.to_json, @api_key)
-      apply_default_request_headers(request)
-      response = @request_executor.execute_request(request)
-      result = !response.body.empty? ? MultiJson.load(response.body) : ''
+      request = Request.new('POST', href, nil, {}, body.to_json, api_key)
+      apply_headers_to_request(request)
+      response = request_executor.execute_request(request)
+      result = response.body.present? ? MultiJson.load(response.body) : ''
 
-      if response.error?
-        error = Stormpath::Resource::Error.new(result)
-        raise Stormpath::Error, error
-      end
+      raise_error_for(result) if response.error?
 
       cache_walk(result)
       instantiate(klass, result)
@@ -98,9 +95,18 @@ module Stormpath
 
     private
 
-    def qualify(href)
-      @qualifier ||= Stormpath::Util::HrefQualifier.new(base_url)
-      @qualifier.qualify(href)
+    def save_resource(href, resource, return_type)
+      assert_not_nil(resource, 'resource argument cannot be null.')
+      assert_not_nil(return_type, 'returnType class cannot be null.')
+      assert_kind_of(
+        Stormpath::Resource::Base,
+        resource,
+        'resource argument must be instance of Stormpath::Resource::Base'
+      )
+
+      clear_cache_on_save(resource)
+      response = execute_request('post', qualify(href), resource)
+      instantiate(return_type, parse_response(response))
     end
 
     def execute_request(http_method, href, resource = nil, query = nil)
@@ -111,22 +117,14 @@ module Stormpath
 
       body = Stormpath::Util::BodyExtractor.for(resource).call
 
-      request = Request.new(http_method, href, query, {}, body, @api_key)
+      request = Request.new(http_method, href, query, {}, body, api_key)
+      apply_headers_to_request(request, resource)
 
-      if resource.try(:form_data?)
-        apply_form_data_request_headers(request)
-      else
-        apply_default_request_headers(request)
-      end
+      response = request_executor.execute_request(request)
 
-      response = @request_executor.execute_request(request)
+      result = response.body.present? ? MultiJson.load(response.body) : ''
 
-      result = !response.body.empty? ? MultiJson.load(response.body) : ''
-
-      if response.error?
-        error = Stormpath::Resource::Error.new(result)
-        raise Stormpath::Error, error
-      end
+      raise_error_for(result) if response.error?
 
       if resource.is_a?(Stormpath::Provider::AccountAccess)
         is_new_account = response.http_status == 201
@@ -136,10 +134,27 @@ module Stormpath
       return if http_method == 'delete'
 
       if result[HREF_PROP_NAME] && !resource.try(:mapping_rules?)
-        cache_walk result
+        cache_walk(result)
       else
         result
       end
+    end
+
+    def parse_response(response)
+      return {} if response.is_a?(String) && response.blank?
+      response.to_hash
+    end
+
+    def qualify(href)
+      qualifier.qualify(href)
+    end
+
+    def apply_headers_to_request(request, resource = nil)
+      Stormpath::Http::HeaderInjection.for(request, resource).perform
+    end
+
+    def raise_error_for(result)
+      raise Stormpath::Error, Stormpath::Resource::Error.new(result)
     end
 
     def clear_cache_on_delete(href)
@@ -185,7 +200,7 @@ module Stormpath
     end
 
     def cache_for(href)
-      @cache_manager.get_cache(region_for(href))
+      cache_manager.get_cache(region_for(href))
     end
 
     def region_for(href)
@@ -196,47 +211,6 @@ module Stormpath
                  href.split('/')[-2]
                end
       Stormpath::Cache::CacheManager::CACHE_REGIONS.include?(region) ? region : nil
-    end
-
-    def apply_default_request_headers(request)
-      request.http_headers.store('Accept', 'application/json')
-      apply_default_user_agent(request)
-
-      if request.body && !request.body.empty?
-        request.http_headers.store('Content-Type', 'application/json')
-      end
-    end
-
-    def apply_form_data_request_headers(request)
-      request.http_headers.store('Content-Type', 'application/x-www-form-urlencoded')
-      apply_default_user_agent(request)
-    end
-
-    def apply_default_user_agent(request)
-      request.http_headers.store(
-        'User-Agent', 'stormpath-sdk-ruby/' + Stormpath::VERSION +
-        " ruby/#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}" \
-        ' ' + Gem::Platform.local.os.to_s + '/' + Gem::Platform.local.version.to_s
-      )
-    end
-
-    def save_resource(href, resource, return_type)
-      assert_not_nil(resource, 'resource argument cannot be null.')
-      assert_not_nil(return_type, 'returnType class cannot be null.')
-      assert_kind_of(
-        Stormpath::Resource::Base,
-        resource,
-        'resource argument must be instance of Stormpath::Resource::Base'
-      )
-
-      clear_cache_on_save(resource)
-      response = execute_request('post', qualify(href), resource)
-      instantiate(return_type, parse_response(response))
-    end
-
-    def parse_response(response)
-      return {} if response.is_a?(String) && response.blank?
-      response.to_hash
     end
 
     def clear_cache_on_save(resource)
