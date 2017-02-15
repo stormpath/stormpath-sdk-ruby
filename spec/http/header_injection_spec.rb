@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_examples 'request headers have the user agent' do
   it 'should be set' do
     expect(request.http_headers).to have_key('User-Agent')
-    expect(request.http_headers['User-Agent']).to eq 'stormpath-sdk-ruby/1.7.0 ruby/2.3.1-p112 darwin/15'
+    expect(request.http_headers['User-Agent']).to eq 'stormpath-sdk-ruby/1.7.0 ruby/2.3.1-p112 darwin/14'
   end
 end
 
@@ -12,6 +12,11 @@ describe Stormpath::Http::HeaderInjection do
   let(:body) { MultiJson.dump(resource) }
   let(:request) do
     Stormpath::Http::Request.new('GET', href, nil, {}, body, test_api_key)
+  end
+
+  before do
+    allow_any_instance_of(Stormpath::Http::HeaderInjection).to receive(:user_agent_header_value)
+      .and_return('stormpath-sdk-ruby/1.7.0 ruby/2.3.1-p112 darwin/14')
   end
 
   describe 'valid request' do
