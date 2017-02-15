@@ -6,7 +6,6 @@ module Stormpath
     DEFAULT_SERVER_HOST = 'api.stormpath.com'.freeze
     DEFAULT_API_VERSION = 1
     DEFAULT_BASE_URL = 'https://' + DEFAULT_SERVER_HOST + '/v' + DEFAULT_API_VERSION.to_s
-    HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
     attr_reader :client, :request_executor, :cache_manager, :api_key, :base_url, :qualifier
 
@@ -45,18 +44,10 @@ module Stormpath
 
     def save(resource, clazz = nil)
       assert_not_nil(resource, 'resource argument cannot be null.')
-      assert_kind_of(
-        Stormpath::Resource::Base,
-        resource,
-        'resource argument must be instance of Stormpath::Resource::Base'
-      )
+      assert_kind_of(Stormpath::Resource::Base, resource, 'resource argument must be instance of Base')
       href = resource.href
       assert_not_nil(href, 'href or resource.href cannot be null.')
-      assert_true(
-        href.present?,
-        'save may only be called on objects that have already been persisted'\
-        ' (i.e. they have an existing href).'
-      )
+      assert_true(href.present?, 'save may only be called on objects that have already been persisted (i.e. they have an existing href).')
 
       clazz ||= resource.class
 
@@ -67,17 +58,14 @@ module Stormpath
 
     def delete(resource, property_name = nil)
       assert_not_nil(resource, 'resource argument cannot be null.')
-      assert_kind_of(
-        Stormpath::Resource::Base, resource, 'resource argument must be instance of ' \
-                                             'Stormpath::Resource::Base'
-      )
+      assert_kind_of(Stormpath::Resource::Base, resource, 'resource argument must be instance of Base')
 
       href = resource.href
       href += "/#{property_name}" if property_name
       href = qualify(href)
 
       execute_request('delete', href)
-      clear_cache_on_delete(href)
+      cache_manager.clear_cache_on_delete(href, base_url)
       nil
     end
 
@@ -89,7 +77,7 @@ module Stormpath
 
       raise_error_for(result) if response.error?
 
-      cache_walk(result)
+      cache_manager.cache_walk(result)
       instantiate(klass, result)
     end
 
@@ -98,19 +86,15 @@ module Stormpath
     def save_resource(href, resource, return_type)
       assert_not_nil(resource, 'resource argument cannot be null.')
       assert_not_nil(return_type, 'returnType class cannot be null.')
-      assert_kind_of(
-        Stormpath::Resource::Base,
-        resource,
-        'resource argument must be instance of Stormpath::Resource::Base'
-      )
+      assert_kind_of(Stormpath::Resource::Base, resource, 'resource argument must be instance of Base')
 
-      clear_cache_on_save(resource)
+      cache_manager.clear_cache_on_save(resource)
       response = execute_request('post', qualify(href), resource)
       instantiate(return_type, parse_response(response))
     end
 
     def execute_request(http_method, href, resource = nil, query = nil)
-      if http_method == 'get' && (cache = cache_for href)
+      if http_method == 'get' && (cache = cache_manager.cache_for(href))
         cached_result = cache.get(href)
         return cached_result if cached_result
       end
@@ -133,8 +117,8 @@ module Stormpath
 
       return if http_method == 'delete'
 
-      if result[HREF_PROP_NAME] && !resource.try(:mapping_rules?)
-        cache_walk(result)
+      if result[Stormpath::Resource::Base::HREF_PROP_NAME] && !resource.try(:mapping_rules?)
+        cache_manager.cache_walk(result)
       else
         result
       end
@@ -155,89 +139,6 @@ module Stormpath
 
     def raise_error_for(result)
       raise Stormpath::Error, Stormpath::Resource::Error.new(result)
-    end
-
-    def clear_cache_on_delete(href)
-      if href =~ custom_data_delete_field_url_regex
-        href = href.split('/')[0..-2].join('/')
-      end
-      clear_cache(href)
-    end
-
-    def custom_data_delete_field_url_regex
-      /#{base_url}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
-    end
-
-    def clear_cache(href)
-      cache = cache_for(href)
-      cache.delete(href) if cache
-    end
-
-    def cache_walk(resource)
-      assert_not_nil(resource[HREF_PROP_NAME], "resource must have 'href' property")
-      items = resource['items']
-
-      if items # collection resource
-        resource['items'] = items.map do |item|
-          cache_walk(item)
-          { HREF_PROP_NAME => item[HREF_PROP_NAME] }
-        end
-      else     # single resource
-        resource.each do |attr, value|
-          next unless value.is_a?(Hash) && value[HREF_PROP_NAME]
-          walked = cache_walk(value)
-          resource[attr] = { HREF_PROP_NAME => value[HREF_PROP_NAME] }
-          resource[attr]['items'] = walked['items'] if walked['items']
-        end
-        cache(resource) if resource.length > 1
-      end
-      resource
-    end
-
-    def cache(resource)
-      cache = cache_for(resource[HREF_PROP_NAME])
-      cache.put(resource[HREF_PROP_NAME], resource) if cache
-    end
-
-    def cache_for(href)
-      cache_manager.get_cache(region_for(href))
-    end
-
-    def region_for(href)
-      return nil if href.nil?
-      region = if href.include?('/customData')
-                 href.split('/')[-1]
-               else
-                 href.split('/')[-2]
-               end
-      Stormpath::Cache::CacheManager::CACHE_REGIONS.include?(region) ? region : nil
-    end
-
-    def clear_cache_on_save(resource)
-      if resource.is_a?(Stormpath::Resource::CustomDataStorage)
-        clear_custom_data_cache_on_custom_data_storage_save(resource)
-      elsif resource.is_a?(Stormpath::Resource::AccountStoreMapping)
-        clear_application_cache_on_account_store_save(resource)
-      end
-    end
-
-    def clear_custom_data_cache_on_custom_data_storage_save(resource)
-      if resource.dirty_properties.key?('customData') && (resource.new? == false)
-        cached_href = resource.href + '/customData'
-        clear_cache(cached_href)
-      end
-    end
-
-    def clear_application_cache_on_account_store_save(resource)
-      if resource.new?
-        if resource.default_account_store? == true || resource.default_group_store? == true
-          clear_cache(resource.application.href)
-        end
-      else
-        if !resource.dirty_properties['isDefaultAccountStore'].nil? || !resource.dirty_properties['isDefaultGroupStore'].nil?
-          clear_cache(resource.application.href)
-        end
-      end
     end
   end
 end

@@ -1,8 +1,11 @@
 module Stormpath
   module Cache
     class CacheManager
+      include Stormpath::Util::Assert
+
       CACHE_REGIONS = %w(applications directories accounts groups groupMemberships
                          accountMemberships tenants customData provider providerData).freeze
+      HREF_PROP_NAME = Stormpath::Resource::Base::HREF_PROP_NAME
 
       def initialize(opts = nil)
         @caches = {}
@@ -25,6 +28,88 @@ module Stormpath
 
       def stats
         Hash[@caches.map { |region, cache| [region, cache.stats] }]
+      end
+
+      def cache_walk(resource)
+        assert_not_nil(resource[HREF_PROP_NAME], "resource must have 'href' property")
+        items = resource['items']
+
+        if items # collection resource
+          resource['items'] = items.map do |item|
+            cache_walk(item)
+            { HREF_PROP_NAME => item[HREF_PROP_NAME] }
+          end
+        else     # single resource
+          resource.each do |attr, value|
+            next unless value.is_a?(Hash) && value[HREF_PROP_NAME]
+            walked = cache_walk(value)
+            resource[attr] = { HREF_PROP_NAME => value[HREF_PROP_NAME] }
+            resource[attr]['items'] = walked['items'] if walked['items']
+          end
+          cache(resource) if resource.length > 1
+        end
+        resource
+      end
+
+      def cache(resource)
+        cache = cache_for(resource[HREF_PROP_NAME])
+        cache.put(resource[HREF_PROP_NAME], resource) if cache
+      end
+
+      def clear_cache_on_delete(href, base_url)
+        if href =~ custom_data_delete_field_url_regex(base_url)
+          href = href.split('/')[0..-2].join('/')
+        end
+        clear_cache(href)
+      end
+
+      def clear_cache(href)
+        cache = cache_for(href)
+        cache.delete(href) if cache
+      end
+
+      def cache_for(href)
+        get_cache(region_for(href))
+      end
+
+      def region_for(href)
+        return nil if href.nil?
+        region = if href.include?('/customData')
+                   href.split('/')[-1]
+                 else
+                   href.split('/')[-2]
+                 end
+        CACHE_REGIONS.include?(region) ? region : nil
+      end
+
+      def clear_cache_on_save(resource)
+        if resource.is_a?(Stormpath::Resource::CustomDataStorage)
+          clear_custom_data_cache_on_custom_data_storage_save(resource)
+        elsif resource.is_a?(Stormpath::Resource::AccountStoreMapping)
+          clear_application_cache_on_account_store_save(resource)
+        end
+      end
+
+      def clear_custom_data_cache_on_custom_data_storage_save(resource)
+        if resource.dirty_properties.key?('customData') && (resource.new? == false)
+          clear_cache("#{resource.href}/customData")
+        end
+      end
+
+      def clear_application_cache_on_account_store_save(resource)
+        if resource.new?
+          if resource.default_account_store? == true || resource.default_group_store? == true
+            clear_cache(resource.application.href)
+          end
+        else
+          if !resource.dirty_properties['isDefaultAccountStore'].nil? || !resource.dirty_properties['isDefaultGroupStore'].nil?
+            clear_cache(resource.application.href)
+          end
+        end
+      end
+
+      def custom_data_delete_field_url_regex(base_url)
+        /#{base_url}\/(accounts|groups)\/\w+\/customData\/\w+[\/]{0,1}$/
       end
     end
   end
