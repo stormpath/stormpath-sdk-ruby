@@ -65,7 +65,7 @@ module Stormpath
       href = qualify(href)
 
       execute_request('delete', href)
-      cache_manager.clear_cache_on_delete(href, base_url)
+      cache_manager.clear_cache_on_delete(href)
     end
 
     def execute_raw_request(href, body, klass)

@@ -170,20 +170,75 @@ describe Stormpath::Cache::CacheManager, vcr: true do
   end
 
   describe 'clear_cache_on_save' do
-    let(:clear_cache_on_save) { manager.clear_cache_on_save(resource) }
+    let(:clear_cache_on_save) { test_api_client.cache_manager.clear_cache_on_save(resource) }
 
     context 'custom data storage' do
-      let(:resource) { Stormpath::Resource::CustomDataStorage.new }
-
-      it do
+      xit do
+        # TODO: when can this even happen?
+        # Stormpath::Resource::CustomDataStorage is a module, not a class
       end
     end
 
     context 'account store mapping' do
-    end
+      let(:app) { test_api_client.applications.create(application_attrs) }
+      let(:dir) { test_api_client.directories.create(directory_attrs) }
 
-    context 'other data' do
+      after do
+        dir.delete
+        app.delete
+      end
 
+      context 'new account store mapping' do
+        context 'default_account_store? || default_group_store? is false' do
+          let(:resource) { map_account_store(app, dir, 0, false, false) }
+
+          it 'should not clear application cache' do
+            expect(test_api_client.data_store.cache_manager.get_cache(:applications).stats.size).to eq 0
+            resource
+            expect(test_api_client.data_store.cache_manager.get_cache(:applications).stats.size).to eq 1
+          end
+        end
+
+        context 'default_account_store? || default_group_store? is true' do
+          let(:resource) { map_account_store(app, dir, 0, true, true) }
+
+          it 'should clear application cache' do
+            expect(test_api_client.data_store.cache_manager.get_cache(:applications).stats.size).to eq 0
+            resource
+            expect(test_api_client.data_store.cache_manager.get_cache(:applications).stats.size).to eq 0
+          end
+        end
+      end
+
+      context 'existing account store mapping' do
+        let!(:resource) { map_account_store(app, dir, 0, false, false) }
+
+        context 'is_default_account_store is present' do
+          let(:update_resource) do
+            resource.is_default_account_store = true
+            resource.save
+          end
+
+          it 'should clear application cache' do
+            expect(test_api_client.data_store.cache_manager.get_cache(:applications).stats.size).to eq 1
+            update_resource
+            expect(test_api_client.data_store.cache_manager.get_cache(:applications).stats.size).to eq 0
+          end
+        end
+
+        context 'is_default_group_store is present' do
+          let(:update_resource) do
+            resource.is_default_group_store = true
+            resource.save
+          end
+
+          it 'should clear application cache' do
+            expect(test_api_client.data_store.cache_manager.get_cache(:applications).stats.size).to eq 1
+            update_resource
+            expect(test_api_client.data_store.cache_manager.get_cache(:applications).stats.size).to eq 0
+          end
+        end
+      end
     end
   end
 end
