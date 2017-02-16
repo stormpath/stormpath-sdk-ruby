@@ -106,7 +106,7 @@ module Stormpath
             clear_cache(resource.application.href)
           end
         else
-          if !resource.dirty_properties['isDefaultAccountStore'].nil? || !resource.dirty_properties['isDefaultGroupStore'].nil?
+          if resource.dirty_properties['isDefaultAccountStore'].present? || resource.dirty_properties['isDefaultGroupStore'].present?
             clear_cache(resource.application.href)
           end
         end
