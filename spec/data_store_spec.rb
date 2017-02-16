@@ -32,7 +32,7 @@ shared_examples 'a data store' do
   end
 
   describe 'custom data regex matchers' do
-    let(:custom_data_url_regex) { cache_manager.send(:custom_data_url_regex, default_base_url) }
+    let(:custom_data_url_regex) { cache_manager.send(:custom_data_url_regex) }
     context 'CUSTOM_DATA_DELETE_FIELD_REGEX' do
       it 'should match custom data field href' do
         expect("#{default_base_url}/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData/rank")

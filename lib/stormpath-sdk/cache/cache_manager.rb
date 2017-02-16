@@ -106,7 +106,14 @@ module Stormpath
             clear_cache(resource.application.href)
           end
         else
-          if resource.dirty_properties['isDefaultAccountStore'].present? || resource.dirty_properties['isDefaultGroupStore'].present?
+          # TODO: refactoring opportunity: AccountStoreMappingSpec:76 and 91
+          # since the resource.dirty_properties['isDefaultAccountStore'] returns either nil or
+          # {'isDefaultAccountStore' => false || true} in situations when it is false
+          # resource.dirty_properties['isDefaultAccountStore'].present? will return false, not true
+          # should we leave it like this or use resource.dirty_properties.key?('isDefaultAccountStore')
+          # if we use the key? method, we leave the possibility to try and save an AccountStoreMapping
+          # with the isDefaultAccountStore set to something else than true || false
+          if !resource.dirty_properties['isDefaultAccountStore'].nil? || !resource.dirty_properties['isDefaultGroupStore'].nil?
             clear_cache(resource.application.href)
           end
         end

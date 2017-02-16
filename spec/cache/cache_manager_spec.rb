@@ -228,7 +228,7 @@ describe Stormpath::Cache::CacheManager, vcr: true do
 
         context 'is_default_group_store is present' do
           let(:update_resource) do
-            resource.is_default_group_store = true
+            resource.is_default_group_store = false
             resource.save
           end
 
