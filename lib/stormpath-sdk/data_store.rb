@@ -14,9 +14,9 @@ module Stormpath
 
       @request_executor = request_executor
       @api_key = api_key
-      @cache_manager = Stormpath::Cache::CacheManager.new(cache_opts)
       @client = client
       @base_url = base_url || DEFAULT_BASE_URL
+      @cache_manager = Stormpath::Cache::CacheManager.new(@base_url, cache_opts)
       @qualifier = Stormpath::Util::HrefQualifier.new(@base_url)
     end
 
@@ -66,7 +66,6 @@ module Stormpath
 
       execute_request('delete', href)
       cache_manager.clear_cache_on_delete(href, base_url)
-      nil
     end
 
     def execute_raw_request(href, body, klass)

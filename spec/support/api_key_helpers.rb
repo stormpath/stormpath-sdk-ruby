@@ -19,7 +19,7 @@ module Stormpath
 
       def get_cache_data(href)
         data_store = test_api_client.send :data_store
-        data_store.send :cache_for, href
+        data_store.cache_manager.send :cache_for, href
       end
 
       def fixture_path

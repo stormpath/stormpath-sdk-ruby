@@ -32,6 +32,10 @@ module Stormpath
       MultiJson.dump(STORMPATH_GRANT_RESPONSE)
     end
 
+    def self.mocked_directories_response
+      MultiJson.dump(DIRECTORIES_RESPONSE)
+    end
+
     def self.mocked_challenge_factor_grant_response
       MultiJson.dump(STORMPATH_GRANT_RESPONSE)
     end
@@ -185,6 +189,147 @@ module Stormpath
       accessToken: 'ya29.GwCFxf7GuqpKOx8AAACnZZvl-TR_UAqpwVHHfUlt-nM_yjVel2FiqjMgAoOtxQ',
       providerId: 'google',
       refreshToken: 'Ox8AAACn'
+    }.freeze
+
+    DIRECTORIES_RESPONSE = {
+      href: "https://api.stormpath.com/v1/tenants/2R2GKg3TU7EznS41eWF7Iy/directories",
+      offset: 0,
+      limit: 25,
+      size: 8,
+      items: [
+        {
+          href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g",
+          name: "Facebook Ruby on Rails Directory",
+          description: "* Please do not delete * - Facebook testing directory for Ruby on Rails",
+          status: "ENABLED",
+          createdAt: "2016-11-10T13:28:14.759Z",
+          modifiedAt: "2016-11-10T13:32:02.915Z",
+          tenant: {
+            href: "https://api.stormpath.com/v1/tenants/2R2GKg3TU7EznS41eWF7Iy"
+          },
+          provider: {
+            href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g/provider"
+          },
+          customData: {
+            href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g/customData"
+          },
+          passwordPolicy: {
+            href: "https://api.stormpath.com/v1/passwordPolicies/49kGCAp3wE2VyCulsp4n5g"
+          },
+          accountCreationPolicy: {
+            href: "https://api.stormpath.com/v1/accountCreationPolicies/49kGCAp3wE2VyCulsp4n5g"
+          },
+          accounts: {
+            href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g/accounts"
+          },
+          applicationMappings: {
+            href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g/applicationMappings"
+          },
+          applications: {
+            href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g/applications"
+          },
+          groups: {
+            href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g/groups"
+          },
+          organizations: {
+            href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g/organizations"
+          },
+          organizationMappings: {
+            href: "https://api.stormpath.com/v1/directories/49kGCAp3wE2VyCulsp4n5g/organizationMappings"
+          },
+          accountSchema: {
+            href: "https://api.stormpath.com/v1/schemas/49kt6eSi7QHOkuhzDVJIYu"
+          }
+        },
+        {
+          href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m",
+          name: "Github Ruby on Rails Directory",
+          description: "* Please do not delete * - Github testing directory for Ruby on Rails",
+          status: "ENABLED",
+          createdAt: "2016-11-10T13:28:49.938Z",
+          modifiedAt: "2016-11-10T13:28:49.938Z",
+          tenant: {
+            href: "https://api.stormpath.com/v1/tenants/2R2GKg3TU7EznS41eWF7Iy"
+          },
+          provider: {
+            href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m/provider"
+          },
+          customData: {
+            href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m/customData"
+          },
+          passwordPolicy: {
+            href: "https://api.stormpath.com/v1/passwordPolicies/4nJSiqHCZ1xRqoQIQdxB0m"
+          },
+          accountCreationPolicy: {
+            href: "https://api.stormpath.com/v1/accountCreationPolicies/4nJSiqHCZ1xRqoQIQdxB0m"
+          },
+          accounts: {
+            href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m/accounts"
+          },
+          applicationMappings: {
+            href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m/applicationMappings"
+          },
+          applications: {
+            href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m/applications"
+          },
+          groups: {
+            href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m/groups"
+          },
+          organizations: {
+            href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m/organizations"
+          },
+          organizationMappings: {
+            href: "https://api.stormpath.com/v1/directories/4nJSiqHCZ1xRqoQIQdxB0m/organizationMappings"
+          },
+          accountSchema: {
+            href: "https://api.stormpath.com/v1/schemas/4nK1JGcfOJj7eznNOMNqlQ"
+          }
+        },
+        {
+          href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8",
+          name: "Google Ruby on Rails Directory",
+          description: "* Please do not delete * - Google testing directory for Ruby on Rails",
+          status: "ENABLED",
+          createdAt: "2016-11-10T13:31:15.289Z",
+          modifiedAt: "2016-11-10T13:32:19.283Z",
+          tenant: {
+            href: "https://api.stormpath.com/v1/tenants/2R2GKg3TU7EznS41eWF7Iy"
+          },
+          provider: {
+            href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8/provider"
+          },
+          customData: {
+            href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8/customData"
+          },
+          passwordPolicy: {
+            href: "https://api.stormpath.com/v1/passwordPolicies/7QnCfVFmfHNQ2uZbuskna8"
+          },
+          accountCreationPolicy: {
+            href: "https://api.stormpath.com/v1/accountCreationPolicies/7QnCfVFmfHNQ2uZbuskna8"
+          },
+          accounts: {
+            href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8/accounts"
+          },
+          applicationMappings: {
+            href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8/applicationMappings"
+          },
+          applications: {
+            href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8/applications"
+          },
+          groups: {
+            href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8/groups"
+          },
+          organizations: {
+            href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8/organizations"
+          },
+          organizationMappings: {
+            href: "https://api.stormpath.com/v1/directories/7QnCfVFmfHNQ2uZbuskna8/organizationMappings"
+          },
+          accountSchema: {
+            href: "https://api.stormpath.com/v1/schemas/7QnlFvbFUZ95r5wgsbBTKm"
+          }
+        }
+      ]
     }.freeze
 
     STORMPATH_GRANT_RESPONSE = {
