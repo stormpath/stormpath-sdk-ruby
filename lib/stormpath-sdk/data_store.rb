@@ -10,8 +10,6 @@ module Stormpath
     attr_reader :client, :request_executor, :cache_manager, :api_key, :base_url, :qualifier
 
     def initialize(request_executor, api_key, cache_opts, client, base_url = nil)
-      assert_not_nil request_executor, 'RequestExecutor cannot be null.'
-
       @request_executor = request_executor
       @api_key = api_key
       @client = client
@@ -25,7 +23,7 @@ module Stormpath
     end
 
     def get_resource(href, clazz, query = nil)
-      data = execute_request('get', qualify(href), nil, query)
+      data = execute_request(:get, qualify(href), nil, query)
 
       clazz = clazz.call(data) if clazz.respond_to? :call
 
@@ -64,7 +62,7 @@ module Stormpath
       href += "/#{property_name}" if property_name
       href = qualify(href)
 
-      execute_request('delete', href)
+      execute_request(:delete, href)
       cache_manager.clear_cache_on_delete(href)
     end
 
@@ -88,12 +86,12 @@ module Stormpath
       assert_kind_of(Stormpath::Resource::Base, resource, 'resource argument must be instance of Base')
 
       cache_manager.clear_cache_on_save(resource)
-      response = execute_request('post', qualify(href), resource)
-      instantiate(return_type, parse_response(response))
+      response = execute_request(:post, qualify(href), resource)
+      instantiate(return_type, parsed_response(response))
     end
 
     def execute_request(http_method, href, resource = nil, query = nil)
-      if http_method == 'get' && (cache = cache_manager.cache_for(href))
+      if http_method == :get && (cache = cache_manager.cache_for(href))
         cached_result = cache.get(href)
         return cached_result if cached_result
       end
@@ -114,7 +112,7 @@ module Stormpath
         result = { is_new_account: is_new_account, account: result }
       end
 
-      return if http_method == 'delete'
+      return if http_method == :delete
 
       if result[Stormpath::Resource::Base::HREF_PROP_NAME] && !resource.try(:mapping_rules?)
         cache_manager.cache_walk(result)
@@ -123,7 +121,7 @@ module Stormpath
       end
     end
 
-    def parse_response(response)
+    def parsed_response(response)
       return {} if response.is_a?(String) && response.blank?
       response.to_hash
     end
