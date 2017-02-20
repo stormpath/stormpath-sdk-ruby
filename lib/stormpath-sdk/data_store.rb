@@ -66,18 +66,6 @@ module Stormpath
       cache_manager.clear_cache_on_delete(href)
     end
 
-    def execute_raw_request(href, body, klass)
-      request = Request.new('POST', href, nil, {}, body.to_json, api_key)
-      apply_headers_to_request(request)
-      response = request_executor.execute_request(request)
-      result = response.body.present? ? MultiJson.load(response.body) : ''
-
-      raise_error_for(result) if response.error?
-
-      cache_manager.cache_walk(result)
-      instantiate(klass, result)
-    end
-
     private
 
     def save_resource(href, resource, return_type)

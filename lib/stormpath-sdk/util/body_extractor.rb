@@ -83,7 +83,7 @@ module Stormpath
         # Their hashes should not be simplified
         property.is_a?(Hash) &&
           !resource_nested_submittable(resource, name) &&
-            !['items', 'phone', 'config'].include?(name)
+          !['items', 'phone', 'challenge', 'config'].include?(name)
       end
 
       def resource_nested_submittable(resource, name)

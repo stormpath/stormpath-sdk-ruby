@@ -15,7 +15,7 @@ describe Stormpath::Resource::Challenge, :vcr do
   end
 
   let(:challenge) { factor.challenges.create(message: 'Enter code: ${code}') }
-  let(:validate_challenge) { challenge.validate(code: '123456') }
+  let(:validate_challenge) { challenge.validate('123456') }
 
   before do
     stub_request(:post, "#{factor.href}/challenges")

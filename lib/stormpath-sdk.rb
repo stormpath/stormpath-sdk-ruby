@@ -102,6 +102,8 @@ module Stormpath
     autoload :HttpBasicAuthentication, 'stormpath-sdk/auth/http_basic_authentication'
     autoload :HttpBearerAuthentication, 'stormpath-sdk/auth/http_bearer_authentication'
     autoload :CreateFactor, 'stormpath-sdk/auth/create_factor'
+    autoload :ChallengeFactorAttempt, 'stormpath-sdk/auth/challenge_factor_attempt'
+    autoload :ChallengeValidator, 'stormpath-sdk/auth/challenge_validator'
     autoload :RegisterServiceProvider, 'stormpath-sdk/auth/register_service_provider'
   end
 
