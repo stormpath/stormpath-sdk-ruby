@@ -28,16 +28,12 @@ module Stormpath
       end
 
       def save
-        data_store.execute_raw_request(href, resource, Stormpath::Resource::Factor)
+        account.factors.create(factor_attrs)
       end
 
       private
 
-      def href
-        "#{account.href}/factors#{'?challenge=true' if challenge}"
-      end
-
-      def resource
+      def factor_attrs
         {}.tap do |body|
           body[:type] = type
           body[:phone] = phone if phone

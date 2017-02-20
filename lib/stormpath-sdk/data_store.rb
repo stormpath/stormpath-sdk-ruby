@@ -115,21 +115,6 @@ module Stormpath
       nil
     end
 
-    def execute_raw_request(href, body, klass)
-      request = Request.new('POST', href, nil, {}, body.to_json, @api_key)
-      apply_default_request_headers(request)
-      response = @request_executor.execute_request(request)
-      result = !response.body.empty? ? MultiJson.load(response.body) : ''
-
-      if response.error?
-        error = Stormpath::Resource::Error.new(result)
-        raise Stormpath::Error, error
-      end
-
-      cache_walk(result)
-      instantiate(klass, result)
-    end
-
     private
 
     def needs_to_be_fully_qualified?(href)
@@ -327,7 +312,7 @@ module Stormpath
 
           # Special use cases are with Custom Data, Provider and ProviderData, their hashes should not be simplified
           # As of the implementation for MFA, Phone resource is added too, as well ass config for LDAP
-          if property.is_a?(Hash) && !resource_nested_submittable(resource, name) && name != 'items' && name != 'phone' && name != 'config'
+          if property.is_a?(Hash) && !resource_nested_submittable(resource, name) && name != 'items' && name != 'phone' && name != 'challenge' && name != 'config'
             property = to_simple_reference(name, property)
           end
 
