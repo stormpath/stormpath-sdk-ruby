@@ -5,7 +5,7 @@ module Stormpath
     DEFAULT_TTI_SECONDS = 5 * 60
 
     class Cache
-      attr_reader :stats, :ttl_seconds, :tti_seconds
+      attr_reader :store, :stats, :ttl_seconds, :tti_seconds
 
       def initialize(opts = {})
         @ttl_seconds = opts[:ttl_seconds] || DEFAULT_TTL_SECONDS

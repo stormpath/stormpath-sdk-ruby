@@ -6,6 +6,7 @@ shared_examples 'a data store' do
   let(:data_store) do
     Stormpath::DataStore.new(request_executor, test_api_key, store, nil)
   end
+  let(:cache_manager) { data_store.cache_manager }
   let(:application_cache) { data_store.cache_manager.get_cache('applications') }
   let(:tenant_cache)      { data_store.cache_manager.get_cache('tenants') }
   let(:group_cache)       { data_store.cache_manager.get_cache('groups') }
@@ -17,36 +18,36 @@ shared_examples 'a data store' do
 
   describe '.region_for' do
     it 'pulls resource name from href' do
-      region = data_store.send :region_for, "#{default_base_url}/directories/4NykYrYH0OBiOOVOg8LXQ5"
-      expect(region).to eq('directories')
+      region = cache_manager.send :region_for, "#{default_base_url}/directories/4NykYrYH0OBiOOVOg8LXQ5"
+      expect(region).to eq(:directories)
     end
 
     it 'pulls resource name from href if its custom data also' do
-      region = data_store.send(
+      region = cache_manager.send(
         :region_for,
         "#{default_base_url}/v1/accounts/7jWpcEVSgawKkAZp8XDIEw/customData"
       )
-      expect(region).to eq('customData')
+      expect(region).to eq(:customData)
     end
   end
 
   describe 'custom data regex matchers' do
-    let(:custom_data_delete_field_url_regex) { data_store.send :custom_data_delete_field_url_regex }
+    let(:custom_data_url_regex) { cache_manager.send(:custom_data_url_regex) }
     context 'CUSTOM_DATA_DELETE_FIELD_REGEX' do
       it 'should match custom data field href' do
         expect("#{default_base_url}/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData/rank")
-          .to match(custom_data_delete_field_url_regex)
+          .to match(custom_data_url_regex)
 
         expect("#{default_base_url}/groups/4x6vwucf1w9wjHvt7paGoY/customData/rank")
-          .to match(custom_data_delete_field_url_regex)
+          .to match(custom_data_url_regex)
       end
 
       it 'should not match custom data resource href' do
         expect("#{default_base_url}/accounts/2f8U7r5JweVf1ZTtcJ08L8/customData")
-          .not_to match(custom_data_delete_field_url_regex)
+          .not_to match(custom_data_url_regex)
 
         expect("#{default_base_url}/groups/4x6vwucf1w9wjHvt7paGoY/customData")
-          .not_to match(custom_data_delete_field_url_regex)
+          .not_to match(custom_data_url_regex)
       end
     end
   end
@@ -155,31 +156,6 @@ shared_examples 'a data store' do
         expect(tenant_cache.size).to eq(2)
         expect(group_cache.size).to eq(4)
       end
-    end
-  end
-
-  context '#apply_default_user_agent' do
-    let(:request) do
-      Stormpath::Http::Request.new(
-        'get',
-        'http://example.com/resources/abc123',
-        nil,
-        {},
-        nil,
-        test_api_key
-      )
-    end
-
-    before do
-      allow(Gem::Platform.local).to receive(:os) { 'darwin' }
-      allow(Gem::Platform.local).to receive(:version) { '14' }
-
-      data_store.send(:apply_default_user_agent, request)
-    end
-
-    it 'adds User-Agent to header' do
-      expect(request.http_headers['User-Agent']).to include('darwin')
-      expect(request.http_headers['User-Agent']).to include('14')
     end
   end
 end

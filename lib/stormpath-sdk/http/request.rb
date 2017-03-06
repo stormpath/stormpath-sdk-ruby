@@ -37,7 +37,7 @@ module Stormpath
           @href = href
         end
 
-        @http_method = http_method.upcase
+        @http_method = http_method.to_s.upcase
         @http_headers = http_headers
         @body = body
         @api_key = api_key

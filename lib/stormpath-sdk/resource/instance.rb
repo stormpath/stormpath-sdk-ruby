@@ -23,6 +23,10 @@ module Stormpath
       def delete
         data_store.delete(self) unless new?
       end
+
+      def mapping_rules?
+        false
+      end
     end
   end
 end

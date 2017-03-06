@@ -17,6 +17,8 @@ require 'stormpath-sdk/version' unless defined? Stormpath::VERSION
 
 require 'stormpath-sdk/util/assert'
 require 'stormpath-sdk/util/uri_builder'
+require 'stormpath-sdk/util/href_qualifier'
+require 'stormpath-sdk/util/body_extractor'
 
 module Stormpath
   autoload :Error, 'stormpath-sdk/error'
@@ -134,6 +136,7 @@ module Stormpath
     autoload :Request, 'stormpath-sdk/http/request'
     autoload :Response, 'stormpath-sdk/http/response'
     autoload :HttpClientRequestExecutor, 'stormpath-sdk/http/http_client_request_executor'
+    autoload :HeaderInjection, 'stormpath-sdk/http/header_injection'
 
     module Authc
       autoload :Sauthc1Signer, 'stormpath-sdk/http/authc/sauthc1_signer'
