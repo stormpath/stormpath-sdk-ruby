@@ -797,6 +797,12 @@ registered on, can be kicked off with the
 application.send_password_reset_email 'john.smith@example.com'
 ```
 
+The method also takes an optional hash with key <code>account_store</code> which will restrict the account search to the account store with that value.
+
+```ruby
+application.send_password_reset_email 'john.smith@example.com', account_store: organization
+```
+
 If the workflow has been configured to verify through a non-Stormpath
 URL, you can verify the token sent in the query parameter
 <code>sptoken</code> with the <code>verify_password_reset_token</code>
